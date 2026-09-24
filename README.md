@@ -104,6 +104,17 @@ document.addEventListener('ntn:themechange', (e) => console.log(e.detail.theme))
 
 `data-theme` also works on a subtree, so a light panel can sit inside a dark app.
 
+**Your app owns light/dark?** Tell Nocturne to stay out of it:
+
+```html
+<html data-theme="dark" data-ntn-theme-control="manual">
+```
+
+Nocturne then never reads or writes `data-theme` or its `ntn-theme` storage key, adds no OS
+listener, and ignores its own theme controls. The CSS still follows `data-theme`, which your code
+sets. `setTheme()` and `toggleTheme()` still work if you call them. Put the attribute in the
+server-rendered HTML: `nocturne.js` starts itself as soon as it is imported and reads it then.
+
 ## Accent
 
 Accent is the only channel a product may override, and it applies to both themes. Load a theme

@@ -6,6 +6,15 @@
 */
 
 const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+
+/* Build an element from plain values. Strings become TEXT nodes and attributes are set with
+   setAttribute, so nothing is ever parsed as HTML — labels and values can be user data. */
+function make(tag, attrs = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [name, value] of Object.entries(attrs)) node.setAttribute(name, value);
+  node.append(...children);
+  return node;
+}
 const STORE = 'ntn-theme';
 const target = (el, attr) => {
   const v = el.getAttribute(attr);
@@ -58,6 +67,13 @@ function syncThemeControls(theme) {
     el.setAttribute('aria-selected', String(el.getAttribute('data-ntn-theme-set') === getThemePreference()));
   });
 }
+
+/* Opt-out for apps that own light/dark themselves: <html data-ntn-theme-control="manual">,
+   rendered by the server (it is read when this module starts, i.e. on import). Nocturne then
+   never reads or writes data-theme or its storage key, adds no OS listener, and ignores its own
+   theme controls. setTheme() and toggleTheme() still work when called directly. */
+let themeManaged = true;
+const themeIsManual = () => document.documentElement.getAttribute('data-ntn-theme-control') === 'manual';
 
 function initTheme() {
   const pref = read() || document.documentElement.dataset.theme || 'dark';
@@ -392,13 +408,19 @@ function comboRender(root) {
       out.setAttribute('data-empty', '');
     } else {
       out.removeAttribute('data-empty');
-      if (!comboMulti(root)) out.innerHTML = `<span>${chosen[0].dataset.label || comboLabel(chosen[0])}</span>`;
+      if (!comboMulti(root)) out.replaceChildren(make('span', {}, comboLabel(chosen[0])));
       else {
         const max = Number(root.dataset.ntnMax || 2);
-        const shown = chosen.slice(0, max);
-        out.innerHTML = shown.map((o) => `<span class="ntn-combo__chip"><span>${comboLabel(o)}</span>` +
-          `<button type="button" class="ntn-combo__chip-x" data-ntn-combo-clear="${o.dataset.value || comboLabel(o)}" aria-label="Remove ${comboLabel(o)}"><i class="fa-light fa-xmark"></i></button></span>`).join('') +
-          (chosen.length > max ? `<span class="ntn-combo__more">+${chosen.length - max}</span>` : '');
+        const nodes = chosen.slice(0, max).map((o) => make('span', { class: 'ntn-combo__chip' },
+          make('span', {}, comboLabel(o)),
+          make('button', {
+            type: 'button',
+            class: 'ntn-combo__chip-x',
+            'data-ntn-combo-clear': o.dataset.value || comboLabel(o),
+            'aria-label': 'Remove ' + comboLabel(o),
+          }, make('i', { class: 'fa-light fa-xmark' }))));
+        if (chosen.length > max) nodes.push(make('span', { class: 'ntn-combo__more' }, '+' + (chosen.length - max)));
+        out.replaceChildren(...nodes);
       }
     }
   }
@@ -631,7 +653,7 @@ function applyTable(table) {
   $$('[data-ntn-pages]', scope).forEach((el) => {
     el.innerHTML = pageList(s.page, pages).map((n) => (n === '…'
       ? '<span class="ntn-pager__gap">…</span>'
-      : '<button class="ntn-pager__page" data-ntn-goto="' + n + '"' + (n === s.page ? ' aria-current="page"' : '') + '>' + n + '</button>')).join('');
+      : '<button type="button" class="ntn-pager__page" data-ntn-goto="' + n + '"' + (n === s.page ? ' aria-current="page"' : '') + '>' + n + '</button>')).join('');
   });
   $$('[data-ntn-prev]', scope).forEach((b) => { b.disabled = s.page <= 1; });
   $$('[data-ntn-next]', scope).forEach((b) => { b.disabled = s.page >= pages; });
@@ -760,9 +782,9 @@ function drRender(root) {
   if (summary) {
     const text = drLabel(s.draftStart, s.draftEnd, s.time);
     const nights = !s.single && s.draftStart && s.draftEnd ? Math.round((s.draftEnd - s.draftStart) / 86400000) + 1 : 0;
-    summary.innerHTML = text
-      ? `<b>${text}</b>${nights ? ` · ${nights} day${nights === 1 ? '' : 's'}` : ''}`
-      : (s.single ? 'Pick a date' : 'Pick a start date');
+    // The label can carry a typed time value, so it is built as text, never parsed as HTML.
+    if (text) summary.replaceChildren(make('b', {}, text), nights ? ` · ${nights} day${nights === 1 ? '' : 's'}` : '');
+    else summary.textContent = s.single ? 'Pick a date' : 'Pick a start date';
   }
 
   const applied = drLabel(s.draftStart, s.draftEnd, s.time);
@@ -957,10 +979,10 @@ function onClick(e) {
   if (stepHit) { stepsGoto(stepHit.closest('.ntn-steps__step')); return; }
 
   const themeToggle = e.target.closest('[data-ntn-theme-toggle]');
-  if (themeToggle) { toggleTheme(); return; }
+  if (themeToggle && themeManaged) { toggleTheme(); return; }
 
   const themeSet = e.target.closest('[data-ntn-theme-set]');
-  if (themeSet) { setTheme(themeSet.getAttribute('data-ntn-theme-set')); return; }
+  if (themeSet && themeManaged) { setTheme(themeSet.getAttribute('data-ntn-theme-set')); return; }
 
   const open = e.target.closest('[data-ntn-open]');
   if (open) { const d = target(open, 'data-ntn-open'); if (d && d.showModal) { d.showModal(); return; } }
@@ -1075,16 +1097,23 @@ export function refresh(root = document) {
   $$('[data-ntn-tree]', root).forEach(treeSync);
   $$('[data-ntn-combo]', root).forEach(comboRender);
   $$('[data-ntn-daterange]', root).forEach(drSyncTrigger);
-  syncThemeControls(getTheme());
+  if (themeManaged) syncThemeControls(getTheme());
 }
 
 const reInk = () => $$('.ntn-tabs').forEach(tabInk);
 
 let started = false;
-export function start() {
+/**
+ * Wire every behaviour. Runs automatically on import, and only once, so a later call is a no-op;
+ * use the data-ntn-theme-control="manual" attribute to opt out of theme handling.
+ * @param {{ theme?: boolean }} [options] theme: false leaves light/dark entirely to the app.
+ *   Defaults to false when <html data-ntn-theme-control="manual"> is present, true otherwise.
+ */
+export function start(options = {}) {
   if (started) return;
   started = true;
-  initTheme();
+  themeManaged = options.theme ?? !themeIsManual();
+  if (themeManaged) initTheme();
   document.addEventListener('click', onClick);
   document.addEventListener('input', onChange);
   document.addEventListener('change', onChange);

@@ -24,9 +24,22 @@ below would normally be a major bump; it ships as a minor only because there are
   namespace renamed: classes, tokens, `data-*` hooks (and their `dataset` keys), events, the theme
   storage key and keyframes. An app can own its markup vocabulary (`.app-card`) and still use Nocturne,
   or swap to another kit built to the same names. Prefixes are lowercase letters and digits.
-- **`npm test`**, a zero-dependency guard that checks every declared token is prefixed, every
-  `var()` the CSS reads is declared, and a `--prefix` build leaves no trace of `ntn` and equals the
-  default build with the namespace swapped. It also runs on `prepack`.
+- **Theme opt-out.** `<html data-ntn-theme-control="manual">` hands light/dark to the app: `nocturne.js` never touches `data-theme` or `ntn-theme`, adds no
+  OS listener, and ignores `data-ntn-theme-toggle` / `data-ntn-theme-set`. Without it, nothing
+  changes.
+- **`npm test`**, a guard that checks every declared token is prefixed, every `var()` the CSS
+  reads is declared, and a `--prefix` build leaves no trace of `ntn` and equals the default build
+  with the namespace swapped. It also runs behaviour tests in a simulated browser (`jsdom`, a
+  dev-only dependency; the package still has no runtime dependencies). It runs on `prepack` too.
+
+### Fixed
+- **Security: combobox labels could inject HTML.** Chips, the single-select value and the chip
+  remove buttons were built by pasting option labels into `innerHTML`, so a label like
+  `<img src=x onerror=…>` (for example a user-entered tag name) became live markup. They are now
+  built as text nodes and attributes. The date range summary, which can show a typed time, is
+  built the same way.
+- **Pager buttons submitted forms.** The generated page-number buttons had no `type`, so inside a
+  `<form>` a click submitted it. They are now `type="button"`.
 
 ## 1.4.0 — 2026-09-21 (unpublished)
 
