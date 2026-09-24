@@ -1,0 +1,66 @@
+/* ── Checkbox, radio, switch ──────────────────────────────────────────────── */
+
+.ntn-check, .ntn-radio, .ntn-switch { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; }
+/* With a description the control aligns to the FIRST line of the label, not to the
+   top of the block — 1px nudges its 16px box onto the 18px line box's centre. */
+.ntn-check:has(.ntn-check__desc), .ntn-radio:has(.ntn-radio__desc), .ntn-switch:has(.ntn-switch__desc) { align-items: flex-start; }
+.ntn-check:has(.ntn-check__desc) input, .ntn-radio:has(.ntn-radio__desc) input { margin-top: 1px; }
+.ntn-switch:has(.ntn-switch__desc) input { margin-top: 0; }
+.ntn-check:has(input:disabled), .ntn-radio:has(input:disabled), .ntn-switch:has(input:disabled) { opacity: 0.5; cursor: not-allowed; }
+
+.ntn-check, .ntn-radio {
+  /* Tick and dash art. A theme with a dark --accent-fg overrides these. */
+  --ntn-check-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.5' fill='none' stroke='%23FFFFFF' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --ntn-check-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8h8' fill='none' stroke='%23FFFFFF' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.ntn-check input, .ntn-radio input {
+  appearance: none; -webkit-appearance: none; flex: 0 0 auto; margin: 0;
+  display: block; width: 16px; height: 16px; padding: 0;
+  background: var(--surface-2); border: 1px solid var(--border-strong); cursor: inherit;
+  background-repeat: no-repeat; background-position: center;
+  transition: background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard),
+              box-shadow var(--dur-fast) var(--ease-standard);
+}
+.ntn-check:hover input:not(:disabled), .ntn-radio:hover input:not(:disabled) { border-color: var(--accent-500); }
+.ntn-check:hover input:not(:disabled):not(:checked):not(:indeterminate),
+.ntn-radio:hover input:not(:disabled):not(:checked) { background-color: var(--accent-softer); }
+.ntn-check input { border-radius: var(--radius-xs); }
+.ntn-radio input { border-radius: var(--radius-full); }
+.ntn-check input:checked, .ntn-check input:indeterminate { background-color: var(--accent); border-color: var(--accent-500); }
+.ntn-check input:checked { background-image: var(--ntn-check-mark); background-size: 14px 14px; }
+.ntn-check input:indeterminate { background-image: var(--ntn-check-dash); background-size: 14px 14px; }
+/* Filled control, white dot — same language as the checkbox. The dot is 6px inside
+   a 14px padding box, so it lands on whole pixels and reads dead-centre; the old
+   7px dot split a pixel on both axes and looked skewed. */
+.ntn-radio input:checked {
+  border-color: var(--accent-500); background-color: var(--accent);
+  background-image: radial-gradient(circle closest-side, var(--accent-fg) 100%, transparent 100%);
+  background-size: 6px 6px;
+}
+.ntn-radio:hover input:checked:not(:disabled), .ntn-check:hover input:checked:not(:disabled) { background-color: var(--accent-hover); }
+
+.ntn-check__label, .ntn-radio__label, .ntn-switch__label { display: flex; flex-direction: column; gap: 2px; font-size: var(--text-sm); color: var(--text-primary); line-height: 1.3; }
+.ntn-check__desc, .ntn-radio__desc, .ntn-switch__desc { font-size: var(--text-xs); color: var(--text-muted); }
+
+.ntn-radio-group { display: flex; flex-direction: column; gap: var(--space-3); }
+.ntn-radio-group--row { flex-direction: row; flex-wrap: wrap; gap: var(--space-5); }
+
+.ntn-switch { gap: 12px; }
+.ntn-switch input {
+  appearance: none; -webkit-appearance: none; flex: 0 0 auto; margin: 0;
+  width: 38px; height: 21px; border-radius: var(--radius-full);
+  background-color: var(--n-400); border: 1px solid var(--border-strong); cursor: inherit;
+  background-image: radial-gradient(circle closest-side, var(--control-knob) 97%, transparent 100%);
+  background-size: 17px 17px; background-position: 2px 50%; background-repeat: no-repeat;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.4);
+  transition: background-color var(--dur-base) var(--ease-standard), background-position var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-standard), border-color var(--dur-base) var(--ease-standard);
+}
+.ntn-switch input:checked {
+  background-color: var(--accent); border-color: var(--accent-500);
+  background-image: radial-gradient(circle closest-side, var(--accent-fg) 97%, transparent 100%);
+  background-position: 18px 50%;
+  box-shadow: 0 0 14px -4px var(--accent-glow);
+}
+.ntn-switch--sm input { width: 30px; height: 17px; background-size: 13px 13px; }
+.ntn-switch--sm input:checked { background-position: 14px 50%; }

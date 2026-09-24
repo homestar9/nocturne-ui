@@ -1,0 +1,17 @@
+:root {
+  --dur-instant: 80ms;
+  --dur-fast:    140ms;
+  --dur-base:    200ms;
+  --dur-slow:    320ms;
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-out:      cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:   cubic-bezier(0.65, 0, 0.35, 1);
+
+  --z-base: 0;
+  --z-sticky: 100;
+  --z-dropdown: 300;
+  --z-tooltip: 500;
+  --z-modal: 700;
+  --z-toast: 900;
+}

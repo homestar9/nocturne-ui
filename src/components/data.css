@@ -1,0 +1,71 @@
+/* ── Table ────────────────────────────────────────────────────────────────── */
+
+.ntn-table { width: 100%; overflow-x: auto; }
+.ntn-table table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+/* The header row is its own band — it has to read as a divider between whatever
+   sits above the table (card head, toolbar, filters) and the first data row. */
+.ntn-table thead { background: var(--surface-2); }
+.ntn-table th {
+  padding: 10px var(--space-4); text-align: left; white-space: nowrap; user-select: none;
+  border-bottom: 1px solid var(--border-default);
+  font-size: var(--text-xs); font-weight: var(--weight-medium); color: var(--text-muted);
+}
+.ntn-table th i { font-size: 12px; color: var(--text-disabled); margin-left: 4px; }
+.ntn-table th[aria-sort] { cursor: pointer; color: var(--text-secondary); }
+.ntn-table th[aria-sort="ascending"] i, .ntn-table th[aria-sort="descending"] i { color: var(--accent-300); }
+.ntn-table td { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary); vertical-align: middle; }
+.ntn-table tbody tr { transition: background var(--dur-fast) var(--ease-standard); }
+.ntn-table tbody tr:hover { background: var(--surface-hover); }
+.ntn-table tbody tr[aria-selected="true"] { background: var(--accent-softer); }
+.ntn-table__num { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-primary); }
+.ntn-table__primary { color: var(--text-primary); font-weight: var(--weight-medium); }
+.ntn-table__actions { text-align: right; white-space: nowrap; }
+.ntn-table__empty { padding: 34px var(--space-4); text-align: center; color: var(--text-muted); }
+.ntn-table--compact td { padding: var(--space-2) var(--space-4); }
+.ntn-table--zebra tbody tr:nth-child(even) { background: var(--alpha-ink-04); }
+.ntn-table--zebra tbody tr:nth-child(even):hover { background: var(--surface-hover); }
+.ntn-table--zebra tbody td { border-bottom: 0; }
+.ntn-table--zebra tbody tr:last-child td { border-bottom: 1px solid var(--border-subtle); }
+/* Inside a card the outer cells line up with the card's own 20px gutter. */
+.ntn-card--flush .ntn-table th:first-child, .ntn-card--flush .ntn-table td:first-child { padding-left: var(--space-5); }
+.ntn-card--flush .ntn-table th:last-child,  .ntn-card--flush .ntn-table td:last-child  { padding-right: var(--space-5); }
+
+/* ── Table toolbar — the filter row above a table ─────────────────────────── */
+/* Shell: <section class="ntn-card ntn-card--flush"> head · toolbar · filters ·
+   .ntn-table · foot (pager). Every part is optional. */
+
+/* Vertical rhythm: the toolbar is a band of its own between the card head and the
+   table, so it carries padding on both sides and a rule underneath. */
+.ntn-toolbar { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; padding: var(--space-4) var(--space-5); }
+.ntn-toolbar:first-child { padding-top: var(--space-5); }
+.ntn-toolbar--divided { border-bottom: 1px solid var(--border-default); }
+/* A revealed filter panel brings its own top rule — never stack the two. */
+.ntn-toolbar--divided + .ntn-filters { border-top: 0; }
+.ntn-toolbar__start { display: flex; align-items: center; gap: var(--space-2); min-width: 0; flex-wrap: wrap; }
+.ntn-toolbar__end { display: flex; align-items: center; gap: var(--space-2); min-width: 0; margin-left: auto; }
+.ntn-toolbar__search { width: clamp(180px, 24vw, 280px); }
+@media (max-width: 720px) {
+  .ntn-toolbar__end { margin-left: 0; width: 100%; }
+  .ntn-toolbar__search { flex: 1; width: auto; }
+}
+
+/* Expandable filter form — hidden until its disclosure button reveals it. */
+.ntn-filters {
+  display: flex; align-items: flex-end; gap: var(--space-3); flex-wrap: wrap;
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--border-subtle); background: var(--alpha-ink-04);
+  animation: nocturne-rise var(--dur-base) var(--ease-out);
+}
+.ntn-filters__field { flex: 0 1 190px; min-width: 150px; }
+.ntn-filters__actions { display: flex; align-items: center; gap: var(--space-2); margin-left: auto; }
+.ntn-filters__applied { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; width: 100%; }
+.ntn-filter-tag {
+  display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 4px 0 10px;
+  border: 1px solid var(--accent-line); border-radius: var(--radius-full);
+  background: var(--accent-soft); color: var(--accent-200); font-size: var(--text-xs);
+}
+.ntn-filter-tag__remove {
+  display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px;
+  border: 0; border-radius: var(--radius-full); background: transparent; color: inherit; font-size: 11px; cursor: pointer;
+}
+.ntn-filter-tag__remove:hover { background: var(--accent-soft-hover); }

@@ -1,0 +1,98 @@
+/* ── Tree view ─────────────────────────────────────────────────────────────
+   A hierarchy list in the VS Code / Figma-layers idiom: twisty, icon, label,
+   trailing meta, and a drag grip. Nesting is real DOM nesting, so depth is
+   unbounded and a collapsed branch hides its subtree with one rule.
+
+   <div class="ntn-tree" role="tree" data-ntn-tree>
+     <div class="ntn-tree__item" role="treeitem" aria-expanded="true"> …row… <div class="ntn-tree__group" role="group">…</div> </div>
+   </div>
+
+   Drag-and-drop is driven by nocturne.js: grab the grip, and the row paints a
+   line for "drop above/below" or fills for "drop inside". */
+
+.ntn-tree {
+  --ntn-tree-indent: 22px;
+  display: flex; flex-direction: column; gap: 1px; width: 100%;
+  font-size: var(--text-sm); color: var(--text-secondary);
+}
+.ntn-tree__item { display: flex; flex-direction: column; gap: 1px; min-width: 0; outline: 0; }
+.ntn-tree__group { position: relative; display: flex; flex-direction: column; gap: 1px; padding-left: var(--ntn-tree-indent); }
+/* Depth guide — one hairline per level, so a deep branch stays readable. */
+.ntn-tree__group::before { content: ""; position: absolute; top: 0; bottom: 0; left: 10px; width: 1px; background: var(--border-default); }
+.ntn-tree__item[aria-expanded="false"] > .ntn-tree__group { display: none; }
+
+.ntn-tree__row {
+  position: relative; display: flex; align-items: center; gap: 4px;
+  min-height: 30px; padding: 0 8px 0 2px;
+  border: 1px solid transparent; border-radius: var(--radius-sm);
+  background: transparent; color: inherit; text-align: left; cursor: pointer;
+  font-family: var(--font-sans); font-size: inherit; width: 100%;
+  transition: background var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard);
+}
+.ntn-tree__row:hover { background: var(--surface-hover); color: var(--text-primary); }
+.ntn-tree__row:focus-visible,
+.ntn-tree__item:focus-visible > .ntn-tree__row { outline: 0; border-color: var(--accent-500); box-shadow: var(--ring-focus); }
+.ntn-tree__item[aria-selected="true"] > .ntn-tree__row { background: var(--accent-soft); border-color: var(--accent-line); color: var(--text-primary); }
+.ntn-tree__item[aria-selected="true"] > .ntn-tree__row .ntn-tree__icon { color: var(--accent-300); }
+.ntn-tree__item[aria-disabled="true"] > .ntn-tree__row { opacity: 0.45; pointer-events: none; }
+
+/* Grip stays in the layout at all times — revealing it must not shift the row. */
+.ntn-tree__grip {
+  display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+  width: 14px; height: 24px; border: 0; padding: 0; background: transparent;
+  color: var(--text-disabled); cursor: grab; opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard);
+}
+.ntn-tree__grip i { font-size: 12px; }
+.ntn-tree__row:hover .ntn-tree__grip, .ntn-tree__row:focus-visible .ntn-tree__grip,
+.ntn-tree__item:focus-visible > .ntn-tree__row .ntn-tree__grip, .ntn-tree__grip:focus-visible { opacity: 1; }
+.ntn-tree__grip:hover { color: var(--text-secondary); }
+.ntn-tree__grip:active { cursor: grabbing; }
+
+.ntn-tree__twisty {
+  display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+  width: 18px; height: 18px; padding: 0; border: 0; border-radius: var(--radius-xs);
+  background: transparent; color: var(--text-muted); cursor: pointer;
+}
+.ntn-tree__twisty i { font-size: 11px; transition: transform var(--dur-fast) var(--ease-out); }
+.ntn-tree__twisty:hover { background: var(--surface-active); color: var(--text-primary); }
+.ntn-tree__item[aria-expanded="true"] > .ntn-tree__row .ntn-tree__twisty i { transform: rotate(90deg); }
+/* Leaves keep the slot so labels line up with their siblings. */
+.ntn-tree__twisty--leaf { visibility: hidden; pointer-events: none; }
+
+.ntn-tree__icon { flex: 0 0 auto; width: 16px; font-size: 13px; color: var(--text-muted); text-align: center; }
+.ntn-tree__label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ntn-tree__meta { flex: 0 0 auto; font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text-disabled); }
+.ntn-tree__row > .ntn-badge { flex: 0 0 auto; }
+.ntn-tree__actions { display: flex; align-items: center; gap: 2px; flex: 0 0 auto; opacity: 0; transition: opacity var(--dur-fast) var(--ease-standard); }
+.ntn-tree__row:hover .ntn-tree__actions, .ntn-tree__row:focus-within .ntn-tree__actions { opacity: 1; }
+
+/* ── Drag feedback ──────────────────────────────────────────────────────── */
+.ntn-tree__item[data-ntn-dragging] > .ntn-tree__row { opacity: 0.4; }
+.ntn-tree[data-ntn-dragging] .ntn-tree__row { cursor: default; }
+.ntn-tree[data-ntn-dragging] .ntn-tree__grip { opacity: 1; }
+
+/* Insertion line: a 2px rule at the edge the item would land on, with a cap on
+   the left so the target depth is unmistakable. */
+.ntn-tree__row[data-ntn-drop="before"]::before,
+.ntn-tree__row[data-ntn-drop="after"]::before {
+  content: ""; position: absolute; left: 20px; right: 0; height: 2px;
+  background: var(--accent-500); border-radius: var(--radius-full);
+  box-shadow: -5px 0 0 -1px var(--accent-500);
+}
+.ntn-tree__row[data-ntn-drop="before"]::before { top: -1px; }
+.ntn-tree__row[data-ntn-drop="after"]::before { bottom: -1px; }
+.ntn-tree__row[data-ntn-drop="inside"] {
+  background: var(--accent-soft); border-color: var(--accent-500); color: var(--text-primary);
+  box-shadow: inset 0 0 0 1px var(--accent-line-strong);
+}
+
+.ntn-tree--sm { font-size: var(--text-xs); --ntn-tree-indent: 18px; }
+.ntn-tree--sm .ntn-tree__row { min-height: 26px; }
+/* Full-bleed inside a flush card: rows run edge to edge, no rounding. */
+.ntn-tree--flush { gap: 0; }
+.ntn-tree--flush .ntn-tree__row { border-radius: 0; border-left: 0; border-right: 0; padding-left: 8px; }
+.ntn-tree--flush .ntn-tree__group { padding-left: 0; }
+.ntn-tree--flush .ntn-tree__group::before { display: none; }
+.ntn-tree--flush .ntn-tree__group .ntn-tree__row { padding-left: calc(8px + var(--ntn-tree-indent)); }
+.ntn-tree--flush .ntn-tree__group .ntn-tree__group .ntn-tree__row { padding-left: calc(8px + var(--ntn-tree-indent) * 2); }

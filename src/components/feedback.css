@@ -1,0 +1,117 @@
+/* ── Badge, alert, tooltip, progress, spinner, avatar ─────────────────────── */
+
+.ntn-badge {
+  display: inline-flex; align-items: center; gap: 5px; flex: 0 0 auto; height: 22px; padding: 0 9px;
+  border-radius: var(--radius-full); background: var(--alpha-ink-06); color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+  font-size: var(--text-xs); font-weight: var(--weight-medium); letter-spacing: var(--tracking-body); white-space: nowrap;
+}
+.ntn-badge i { font-size: 11px; }
+.ntn-badge::before { content: none; }
+.ntn-badge--dot::before { content: ""; display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--n-600); flex: 0 0 auto; }
+.ntn-badge--accent { background: var(--accent-soft); color: var(--accent-300); border-color: var(--accent-line); }
+.ntn-badge--accent.ntn-badge--dot::before { background: var(--accent-400); }
+.ntn-badge--success { background: var(--success-soft); color: var(--success-400); border-color: var(--success-line); }
+.ntn-badge--success.ntn-badge--dot::before { background: var(--success-400); }
+.ntn-badge--warning { background: var(--warning-soft); color: var(--warning-400); border-color: var(--warning-line); }
+.ntn-badge--warning.ntn-badge--dot::before { background: var(--warning-400); }
+.ntn-badge--danger { background: var(--danger-soft); color: var(--danger-400); border-color: var(--danger-line); }
+.ntn-badge--danger.ntn-badge--dot::before { background: var(--danger-400); }
+.ntn-badge--info { background: var(--info-soft); color: var(--info-400); border-color: var(--info-line); }
+.ntn-badge--info.ntn-badge--dot::before { background: var(--info-400); }
+.ntn-badge--sm { height: 18px; padding: 0 7px; font-size: var(--text-2xs); }
+.ntn-badge--count { min-width: 18px; height: 18px; padding: 0 5px; justify-content: center; background: var(--surface-3); font-family: var(--font-mono); font-size: var(--text-2xs); font-weight: var(--weight-semibold); line-height: 1; }
+
+.ntn-alert {
+  display: flex; align-items: flex-start; flex-wrap: wrap; gap: var(--space-3); padding: 14px var(--space-4);
+  background: var(--info-soft); border: 1px solid var(--info-line); border-radius: var(--radius-lg);
+}
+.ntn-alert > i { font-size: 16px; margin-top: 1px; flex: 0 0 auto; color: var(--info-400); }
+.ntn-alert__body { flex: 1 1 180px; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.ntn-alert__title { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--text-primary); }
+.ntn-alert__text { font-size: var(--text-xs); color: var(--text-secondary); line-height: var(--leading-normal); }
+.ntn-alert__actions { display: flex; align-items: center; gap: var(--space-2); flex: 0 0 auto; margin-left: auto; }
+.ntn-alert--success { background: var(--success-soft); border-color: var(--success-line); }
+.ntn-alert--success > i { color: var(--success-400); }
+.ntn-alert--warning { background: var(--warning-soft); border-color: var(--warning-line); }
+.ntn-alert--warning > i { color: var(--warning-400); }
+.ntn-alert--danger { background: var(--danger-soft); border-color: var(--danger-line); }
+.ntn-alert--danger > i { color: var(--danger-400); }
+.ntn-alert--accent { background: var(--accent-soft); border-color: var(--accent-line); }
+.ntn-alert--accent > i { color: var(--accent-300); }
+.ntn-alert--banner { border-radius: 0; border-left: 0; border-right: 0; padding: 12px var(--space-4); }
+
+/* Tooltip — CSS only. Wrap the trigger, add the bubble as a sibling.
+   --wrap lets a bubble hold a sentence; __title + __text give it two lines. */
+.ntn-tooltip { position: relative; display: inline-flex; }
+.ntn-tooltip__bubble {
+  position: absolute; z-index: var(--z-tooltip); bottom: calc(100% + 9px); left: 50%; transform: translateX(-50%);
+  padding: 6px 9px; border-radius: var(--radius-md); background: var(--surface-3); border: 1px solid var(--border-default);
+  color: var(--text-primary); font-size: var(--text-xs); line-height: 1.35; white-space: nowrap; text-align: left;
+  box-shadow: var(--shadow-pop); pointer-events: none; opacity: 0; visibility: hidden;
+  transition: opacity var(--dur-fast) var(--ease-out) 90ms, visibility var(--dur-fast) 90ms;
+}
+/* Arrow — a rotated corner of the same surface, so it inherits the border. */
+.ntn-tooltip__bubble::after {
+  content: ""; position: absolute; width: 8px; height: 8px; background: inherit;
+  border: 1px solid var(--border-default); border-width: 0 1px 1px 0; transform: rotate(45deg);
+  bottom: -5px; left: 50%; margin-left: -4px;
+}
+.ntn-tooltip:hover .ntn-tooltip__bubble, .ntn-tooltip:focus-within .ntn-tooltip__bubble { opacity: 1; visibility: visible; animation: nocturne-rise var(--dur-fast) var(--ease-out); }
+.ntn-tooltip__bubble--bottom { bottom: auto; top: calc(100% + 9px); }
+.ntn-tooltip__bubble--bottom::after { bottom: auto; top: -5px; border-width: 1px 0 0 1px; }
+.ntn-tooltip__bubble--left { bottom: auto; top: 50%; left: auto; right: calc(100% + 9px); transform: translateY(-50%); }
+.ntn-tooltip__bubble--left::after { bottom: auto; top: 50%; left: auto; right: -5px; margin: -4px 0 0; border-width: 0 0 1px 1px; }
+.ntn-tooltip__bubble--right { bottom: auto; top: 50%; left: calc(100% + 9px); transform: translateY(-50%); }
+.ntn-tooltip__bubble--right::after { bottom: auto; top: 50%; left: -5px; margin: -4px 0 0; border-width: 1px 1px 0 0; }
+/* Align the bubble to the trigger's edge instead of its centre — for a bubble
+   wider than the thing it describes, sitting near the edge of the view. */
+.ntn-tooltip__bubble--start { left: 0; transform: none; }
+.ntn-tooltip__bubble--start::after { left: 14px; margin-left: 0; }
+.ntn-tooltip__bubble--end { left: auto; right: 0; transform: none; }
+.ntn-tooltip__bubble--end::after { left: auto; right: 14px; margin-left: 0; }
+.ntn-tooltip__bubble--wrap { white-space: normal; width: max-content; max-width: 232px; padding: 8px 10px; }
+.ntn-tooltip__title { display: block; font-size: var(--text-xs); font-weight: var(--weight-semibold); color: var(--text-primary); }
+.ntn-tooltip__text { display: block; margin-top: 2px; font-size: var(--text-xs); color: var(--text-muted); }
+.ntn-tooltip__key { display: inline-block; margin-left: 6px; font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text-disabled); }
+
+.ntn-progress { display: flex; flex-direction: column; gap: 7px; width: 100%; }
+.ntn-progress__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.ntn-progress__label { font-size: var(--text-xs); color: var(--text-secondary); }
+.ntn-progress__value { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-primary); }
+.ntn-progress__track { position: relative; height: 6px; border-radius: var(--radius-full); background: var(--n-300); overflow: hidden; }
+.ntn-progress__fill { height: 100%; width: 0; border-radius: var(--radius-full); background: linear-gradient(90deg, var(--accent-600), var(--accent-400)); transition: width var(--dur-slow) var(--ease-out); }
+.ntn-progress--sm .ntn-progress__track { height: 4px; }
+.ntn-progress--lg .ntn-progress__track { height: 10px; }
+.ntn-progress--success .ntn-progress__fill { background: var(--success-500); }
+.ntn-progress--warning .ntn-progress__fill { background: var(--warning-500); }
+.ntn-progress--danger .ntn-progress__fill { background: var(--danger-500); }
+.ntn-progress--neutral .ntn-progress__fill { background: var(--n-600); }
+.ntn-progress--indeterminate .ntn-progress__fill { width: 100%; background: linear-gradient(90deg, transparent, var(--accent-500), transparent); background-size: 200% 100%; animation: nocturne-shimmer 1.4s linear infinite; }
+
+.ntn-spinner { display: inline-block; width: 16px; height: 16px; flex: 0 0 auto; border-radius: 50%; border: 2px solid var(--n-400); border-top-color: var(--accent-400); animation: nocturne-spin 700ms linear infinite; }
+.ntn-spinner--lg { width: 24px; height: 24px; border-width: 3px; }
+.ntn-loading { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--text-muted); font-size: var(--text-xs); }
+
+.ntn-avatar {
+  display: inline-flex; align-items: center; justify-content: center; position: relative; flex: 0 0 auto;
+  width: 32px; height: 32px; border-radius: var(--radius-full); overflow: visible;
+  background: linear-gradient(140deg, var(--accent-700), var(--accent-500));
+  border: 1px solid var(--alpha-ink-10); color: var(--accent-fg);
+  font-size: 12px; font-weight: var(--weight-semibold); letter-spacing: 0.02em;
+}
+.ntn-avatar img { width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
+.ntn-avatar--xs { width: 20px; height: 20px; font-size: 9px; }
+.ntn-avatar--sm { width: 24px; height: 24px; font-size: 9px; }
+.ntn-avatar--lg { width: 40px; height: 40px; font-size: 14px; }
+.ntn-avatar--xl { width: 56px; height: 56px; font-size: 20px; }
+.ntn-avatar--ring { border: 2px solid var(--surface-1); }
+.ntn-avatar__status { position: absolute; right: -1px; bottom: -1px; width: 9px; height: 9px; border-radius: 50%; background: var(--n-600); border: 2px solid var(--surface-1); }
+.ntn-avatar__status--online { background: var(--success-500); }
+.ntn-avatar__status--busy { background: var(--danger-500); }
+.ntn-avatar__status--away { background: var(--warning-500); }
+
+.ntn-avatars { display: inline-flex; align-items: center; }
+.ntn-avatars .ntn-avatar { border: 2px solid var(--surface-1); }
+.ntn-avatars > * + * { margin-left: -8px; }
+.ntn-avatars__more { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; margin-left: -8px; border-radius: var(--radius-full); background: var(--surface-3); border: 2px solid var(--surface-1); color: var(--text-secondary); font-size: 9px; font-weight: var(--weight-medium); }

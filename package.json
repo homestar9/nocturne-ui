@@ -1,0 +1,58 @@
+{
+  "name": "@homestar9/nocturne-ui",
+  "version": "1.4.0",
+  "description": "Nocturne — a dark-first SaaS design system. CSS tokens, BEM component classes, and a bundled Claude Code skill.",
+  "license": "MIT",
+  "author": "David Levin",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "main": "./dist/nocturne.css",
+  "style": "./dist/nocturne.css",
+  "exports": {
+    ".": "./dist/nocturne.css",
+    "./css": "./dist/nocturne.css",
+    "./tokens": "./dist/tokens.css",
+    "./js": "./js/nocturne.js",
+    "./themes/*": "./themes/*",
+    "./src/*": "./src/*",
+    "./skill": "./skill/SKILL.md",
+    "./skill/*": "./skill/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "js",
+    "themes",
+    "skill",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "prepack": "node scripts/build.mjs"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/homestar9/nocturne-ui.git"
+  },
+  "homepage": "https://github.com/homestar9/nocturne-ui#readme",
+  "bugs": {
+    "url": "https://github.com/homestar9/nocturne-ui/issues"
+  },
+  "keywords": [
+    "design-system",
+    "css",
+    "dark-ui",
+    "bem",
+    "claude-code"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}

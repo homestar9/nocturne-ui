@@ -1,0 +1,54 @@
+/* ── Border effects — ntn-edge ────────────────────────────────────────────────
+   A border treatment that composes onto anything: a card, a panel, a toolbar, a
+   bare div. `ntn-edge` on its own is the default hairline; the modifiers add the
+   effect. `ntn-card--glow` / `ntn-card--processing` are kept as aliases so the
+   card shorthand still works. */
+
+/* One registered angle drives every moving effect. It inherits, so a host can
+   animate it once and its pseudo-elements read the same frame. */
+@property --ntn-spin { syntax: "<angle>"; initial-value: 0deg; inherits: true; }
+@keyframes nocturne-border-spin { to { --ntn-spin: 360deg; } }
+
+.ntn-edge { position: relative; border: 1px solid var(--border-subtle); border-radius: var(--radius-xl); }
+.ntn-edge--strong { border-color: var(--border-default); }
+
+/* Glow — the one element on the page you want read first. Accent hairline, a
+   halo, and a faint colour bleed from the top edge. */
+.ntn-edge--glow, .ntn-card--glow {
+  position: relative;
+  border-color: var(--accent-line);
+  background-image: radial-gradient(120% 90% at 50% -25%, var(--accent-soft), transparent 62%);
+  box-shadow: 0 0 0 1px var(--accent-line), 0 0 26px -10px var(--accent-glow),
+              0 24px 60px -34px var(--accent-glow), var(--shadow-md);
+}
+
+/* Processing — a light travels the edge while work is in flight, and an exterior
+   glow orbits with it. Both read the same --ntn-spin, so they never drift. */
+.ntn-edge--processing, .ntn-card--processing {
+  position: relative;
+  border-color: var(--border-default);
+  /* Static fallback first, for engines without trigonometric functions. */
+  box-shadow: 0 0 24px -12px var(--accent-glow), var(--shadow-md);
+  box-shadow: calc(cos(var(--ntn-spin)) * 9px) calc(sin(var(--ntn-spin)) * 9px) 26px -8px var(--accent-glow),
+              0 0 26px -16px var(--accent-glow), var(--shadow-md);
+  animation: nocturne-border-spin 2.8s linear infinite;
+}
+.ntn-edge--processing::before, .ntn-card--processing::before {
+  content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  border-radius: inherit; padding: 1.5px;
+  background: conic-gradient(from var(--ntn-spin),
+    transparent 0deg 186deg, var(--accent-700) 232deg, var(--accent-400) 288deg,
+    var(--cyan-400) 324deg, var(--accent-300) 348deg, transparent 360deg);
+  /* Ring only: paint the padding box, knock the content box back out. */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ntn-edge--processing, .ntn-card--processing {
+    animation: none;
+    box-shadow: 0 0 24px -12px var(--accent-glow), var(--shadow-md);
+  }
+}
