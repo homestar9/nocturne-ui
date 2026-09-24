@@ -8,100 +8,100 @@
   color-scheme: dark;
 
   /* Neutral ramp — cool, slightly blue-shifted graphite */
-  --n-0:    #050609;
-  --n-50:   #0A0C10;
-  --n-100:  #0F1217;
-  --n-200:  #14181F;
-  --n-300:  #1B202A;
-  --n-400:  #242A36;
-  --n-500:  #39414F;
-  --n-600:  #5A6474;
-  --n-700:  #8A93A3;
-  --n-800:  #B9C0CC;
-  --n-900:  #E6E9EF;
-  --n-1000: #FFFFFF;
+  --ntn-n-0:    #050609;
+  --ntn-n-50:   #0A0C10;
+  --ntn-n-100:  #0F1217;
+  --ntn-n-200:  #14181F;
+  --ntn-n-300:  #1B202A;
+  --ntn-n-400:  #242A36;
+  --ntn-n-500:  #39414F;
+  --ntn-n-600:  #5A6474;
+  --ntn-n-700:  #8A93A3;
+  --ntn-n-800:  #B9C0CC;
+  --ntn-n-900:  #E6E9EF;
+  --ntn-n-1000: #FFFFFF;
 
   /* Accent — synthwave violet (the themeable channel) */
-  --accent-100: #E9E0FF;
-  --accent-200: #D4C4FF;
-  --accent-300: #B9A0FC;
-  --accent-400: #A78BFA;
-  --accent-500: #8B5CF6;
-  --accent-600: #7C3AED;
-  --accent-700: #6427D1;
-  --accent-900: #2A1259;
+  --ntn-accent-100: #E9E0FF;
+  --ntn-accent-200: #D4C4FF;
+  --ntn-accent-300: #B9A0FC;
+  --ntn-accent-400: #A78BFA;
+  --ntn-accent-500: #8B5CF6;
+  --ntn-accent-600: #7C3AED;
+  --ntn-accent-700: #6427D1;
+  --ntn-accent-900: #2A1259;
 
   /* Supporting synthwave hues — data-viz and rare highlights only */
-  --magenta-400: #F07BF7;
-  --magenta-500: #D946EF;
-  --cyan-400:    #5EE7F5;
-  --cyan-500:    #22D3EE;
+  --ntn-magenta-400: #F07BF7;
+  --ntn-magenta-500: #D946EF;
+  --ntn-cyan-400:    #5EE7F5;
+  --ntn-cyan-500:    #22D3EE;
 
   /* Semantic hues */
-  --success-400: #4ADE9B;
-  --success-500: #22C58A;
-  --warning-400: #FBBF24;
-  --warning-500: #F1A916;
-  --danger-400:  #FF8088;
-  --danger-500:  #F2545B;
-  --info-400:    #7FB6FF;
-  --info-500:    #4E92F5;
+  --ntn-success-400: #4ADE9B;
+  --ntn-success-500: #22C58A;
+  --ntn-warning-400: #FBBF24;
+  --ntn-warning-500: #F1A916;
+  --ntn-danger-400:  #FF8088;
+  --ntn-danger-500:  #F2545B;
+  --ntn-info-400:    #7FB6FF;
+  --ntn-info-500:    #4E92F5;
 
   /* Alpha utilities — "ink" is white on dark, black on light. */
-  --alpha-ink-04: rgba(255,255,255,0.04);
-  --alpha-ink-06: rgba(255,255,255,0.06);
-  --alpha-ink-10: rgba(255,255,255,0.10);
+  --ntn-alpha-ink-04: rgba(255,255,255,0.04);
+  --ntn-alpha-ink-06: rgba(255,255,255,0.06);
+  --ntn-alpha-ink-10: rgba(255,255,255,0.10);
 
   /* Tinted surfaces and the hairlines that go with them */
-  --accent-soft:       rgba(139,92,246,0.14);
-  --accent-soft-hover: rgba(139,92,246,0.22);
-  --accent-softer:     rgba(139,92,246,0.07);
-  --accent-glow:       rgba(139,92,246,0.35);
-  --accent-line:        rgba(139,92,246,0.30);
-  --accent-line-strong: rgba(139,92,246,0.40);
-  --success-soft: rgba(34,197,138,0.14);  --success-line: rgba(34,197,138,0.30);
-  --warning-soft: rgba(241,169,22,0.15);  --warning-line: rgba(241,169,22,0.30);
-  --danger-soft:  rgba(242,84,91,0.14);   --danger-line:  rgba(242,84,91,0.30);
-  --info-soft:    rgba(78,146,245,0.14);  --info-line:    rgba(78,146,245,0.30);
+  --ntn-accent-soft:       rgba(139,92,246,0.14);
+  --ntn-accent-soft-hover: rgba(139,92,246,0.22);
+  --ntn-accent-softer:     rgba(139,92,246,0.07);
+  --ntn-accent-glow:       rgba(139,92,246,0.35);
+  --ntn-accent-line:        rgba(139,92,246,0.30);
+  --ntn-accent-line-strong: rgba(139,92,246,0.40);
+  --ntn-success-soft: rgba(34,197,138,0.14);  --ntn-success-line: rgba(34,197,138,0.30);
+  --ntn-warning-soft: rgba(241,169,22,0.15);  --ntn-warning-line: rgba(241,169,22,0.30);
+  --ntn-danger-soft:  rgba(242,84,91,0.14);   --ntn-danger-line:  rgba(242,84,91,0.30);
+  --ntn-info-soft:    rgba(78,146,245,0.14);  --ntn-info-line:    rgba(78,146,245,0.30);
 
   /* ── Semantic aliases: use these in components ─────────────────────────── */
-  --bg-app:         var(--n-50);
-  --bg-sunken:      var(--n-0);
-  --surface-1:      var(--n-100);
-  --surface-2:      var(--n-200);
-  --surface-3:      var(--n-300);
-  --surface-hover:  var(--alpha-ink-04);
-  --surface-active: var(--alpha-ink-06);
-  --surface-inset:  rgba(0,0,0,0.25);
+  --ntn-bg-app:         var(--ntn-n-50);
+  --ntn-bg-sunken:      var(--ntn-n-0);
+  --ntn-surface-1:      var(--ntn-n-100);
+  --ntn-surface-2:      var(--ntn-n-200);
+  --ntn-surface-3:      var(--ntn-n-300);
+  --ntn-surface-hover:  var(--ntn-alpha-ink-04);
+  --ntn-surface-active: var(--ntn-alpha-ink-06);
+  --ntn-surface-inset:  rgba(0,0,0,0.25);
   /* Translucent bar behind the sticky top bar's blur */
-  --bg-blur:        rgba(10,12,16,0.72);
+  --ntn-bg-blur:        rgba(10,12,16,0.72);
 
-  --border-subtle:  #171C24;
-  --border-default: var(--n-400);
-  --border-strong:  var(--n-500);
-  --border-accent:  var(--accent-600);
+  --ntn-border-subtle:  #171C24;
+  --ntn-border-default: var(--ntn-n-400);
+  --ntn-border-strong:  var(--ntn-n-500);
+  --ntn-border-accent:  var(--ntn-accent-600);
 
-  --text-primary:   var(--n-900);
-  --text-secondary: var(--n-800);
-  --text-muted:     var(--n-700);
-  --text-disabled:  var(--n-600);
-  --text-inverse:   var(--n-0);
-  --text-accent:    var(--accent-300);
+  --ntn-text-primary:   var(--ntn-n-900);
+  --ntn-text-secondary: var(--ntn-n-800);
+  --ntn-text-muted:     var(--ntn-n-700);
+  --ntn-text-disabled:  var(--ntn-n-600);
+  --ntn-text-inverse:   var(--ntn-n-0);
+  --ntn-text-accent:    var(--ntn-accent-300);
 
-  --accent:         var(--accent-600);
-  --accent-hover:   var(--accent-500);
-  --accent-active:  var(--accent-700);
+  --ntn-accent:         var(--ntn-accent-600);
+  --ntn-accent-hover:   var(--ntn-accent-500);
+  --ntn-accent-active:  var(--ntn-accent-700);
   /* Ink that sits ON the accent — knobs, marks, primary-button labels */
-  --accent-fg:      #FFFFFF;
-  --danger-fg:      #1A0508;
+  --ntn-accent-fg:      #FFFFFF;
+  --ntn-danger-fg:      #1A0508;
   /* Off-state knob of a switch */
-  --control-knob:   var(--n-700);
+  --ntn-control-knob:   var(--ntn-n-700);
 
-  --focus-ring:     rgba(139,92,246,0.55);
-  --scrim:          rgba(5,6,9,0.72);
+  --ntn-focus-ring:     rgba(139,92,246,0.55);
+  --ntn-scrim:          rgba(5,6,9,0.72);
 
-  --chart-1: var(--accent-500);
-  --chart-2: var(--magenta-500);
-  --chart-3: var(--cyan-500);
-  --chart-4: var(--n-600);
+  --ntn-chart-1: var(--ntn-accent-500);
+  --ntn-chart-2: var(--ntn-magenta-500);
+  --ntn-chart-3: var(--ntn-cyan-500);
+  --ntn-chart-4: var(--ntn-n-600);
 }

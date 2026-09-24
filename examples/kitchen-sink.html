@@ -19,16 +19,16 @@
 
   /* Page chrome for this browser only — not part of the library. */
   .ntn-app__scroll { scroll-behavior: smooth; }
-  .sink { display: flex; flex-direction: column; gap: var(--space-4); scroll-margin-top: var(--space-4); }
+  .sink { display: flex; flex-direction: column; gap: var(--ntn-space-4); scroll-margin-top: var(--ntn-space-4); }
   .sink__head {
-    display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap;
-    padding-top: var(--space-6); border-top: 1px solid var(--border-subtle);
+    display: flex; align-items: baseline; gap: var(--ntn-space-3); flex-wrap: wrap;
+    padding-top: var(--ntn-space-6); border-top: 1px solid var(--ntn-border-subtle);
   }
   .sink:first-of-type .sink__head { border-top: 0; padding-top: 0; }
-  .sink__title { margin: 0; font-size: var(--text-xl); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-heading); color: var(--text-primary); }
-  .sink__code { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--accent-300); background: var(--accent-soft); border: 1px solid var(--accent-line); padding: 2px 7px; border-radius: var(--radius-xs); }
-  .sink__note { margin: 0; flex: 1 1 280px; font-size: var(--text-xs); color: var(--text-muted); }
-  .sink__label { font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--text-disabled); font-weight: var(--weight-medium); }
+  .sink__title { margin: 0; font-size: var(--ntn-text-xl); font-weight: var(--ntn-weight-semibold); letter-spacing: var(--ntn-tracking-heading); color: var(--ntn-text-primary); }
+  .sink__code { font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); color: var(--ntn-accent-300); background: var(--ntn-accent-soft); border: 1px solid var(--ntn-accent-line); padding: 2px 7px; border-radius: var(--ntn-radius-xs); }
+  .sink__note { margin: 0; flex: 1 1 280px; font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
+  .sink__label { font-size: var(--ntn-text-2xs); text-transform: uppercase; letter-spacing: var(--ntn-tracking-caps); color: var(--ntn-text-disabled); font-weight: var(--ntn-weight-medium); }
 </style>
 </head>
 <body>
@@ -110,7 +110,7 @@
     </header>
 
     <div class="ntn-app__scroll">
-      <main class="ntn-page" style="gap:var(--space-6)">
+      <main class="ntn-page" style="gap:var(--ntn-space-6)">
 
         <div class="ntn-page__head">
           <div>
@@ -268,7 +268,7 @@
             <p class="sink__note">A listbox on the <code>.ntn-menu</code> surface: option descriptions, icons, type-to-filter and multi-select chips. Full keyboard support — <code>↑↓</code> to move, <code>↵</code> to pick, <code>esc</code> to close — and it fires <code>ntn:combochange</code>.</p>
           </header>
           <div class="ntn-card" style="overflow:visible"><div class="ntn-card__body ntn-stack" style="overflow:visible">
-            <div class="ntn-row" style="align-items:flex-start; gap:var(--space-5); flex-wrap:wrap">
+            <div class="ntn-row" style="align-items:flex-start; gap:var(--ntn-space-5); flex-wrap:wrap">
 
               <div class="ntn-combo" style="max-width:280px" data-ntn-combo>
                 <span class="ntn-combo__label">Region</span>
@@ -460,7 +460,7 @@
               </div>
             </div>
             <hr class="ntn-divider">
-            <div class="ntn-row" style="flex-wrap:wrap;gap:var(--space-5)">
+            <div class="ntn-row" style="flex-wrap:wrap;gap:var(--ntn-space-5)">
               <div class="ntn-row">
                 <span class="sink__label" style="min-width:64px">Single</span>
                 <div class="ntn-daterange ntn-daterange--single" data-ntn-daterange data-ntn-single data-ntn-start="2026-10-02">
@@ -852,7 +852,7 @@
             <code class="sink__code">.ntn-tree</code>
             <p class="sink__note">Nested <code>__item</code> elements — depth is real DOM nesting. Drag by the grip: the outer thirds of a row insert <b>above</b> or <b>below</b>, the middle drops <b>inside</b>. <code>alt</code>+arrows is the keyboard equivalent; moves fire <code>ntn:treemove</code>.</p>
           </header>
-          <div class="ntn-row" style="align-items:flex-start; gap:var(--space-5); flex-wrap:wrap">
+          <div class="ntn-row" style="align-items:flex-start; gap:var(--ntn-space-5); flex-wrap:wrap">
             <div class="ntn-card" style="flex:1 1 340px; min-width:min(100%,300px)">
               <header class="ntn-card__head">
                 <div><h3 class="ntn-card__title">Workspace files</h3><p class="ntn-card__sub">Drag a row by its grip to re-file it</p></div>
@@ -1155,7 +1155,7 @@
             <p class="sink__note">CSS only: wrap the trigger, add <code>__bubble</code> as a sibling. Opens on hover <b>and</b> keyboard focus, after a 90 ms delay so a mouse crossing the row stays quiet. Four sides, <code>--start</code>/<code>--end</code> alignment, <code>--wrap</code> for a sentence.</p>
           </header>
           <div class="ntn-card" style="overflow:visible"><div class="ntn-card__body ntn-stack" style="overflow:visible">
-            <div class="ntn-row" style="gap:var(--space-6); padding:var(--space-5) 0; flex-wrap:wrap; justify-content:center">
+            <div class="ntn-row" style="gap:var(--ntn-space-6); padding:var(--ntn-space-5) 0; flex-wrap:wrap; justify-content:center">
               <span class="ntn-tooltip">
                 <button class="ntn-btn ntn-btn--sm">Top</button>
                 <span class="ntn-tooltip__bubble" role="tooltip">Default placement</span>
@@ -1174,7 +1174,7 @@
               </span>
             </div>
             <hr class="ntn-divider">
-            <div class="ntn-row" style="gap:var(--space-6); padding:var(--space-5) 0 var(--space-2); flex-wrap:wrap; justify-content:center">
+            <div class="ntn-row" style="gap:var(--ntn-space-6); padding:var(--ntn-space-5) 0 var(--ntn-space-2); flex-wrap:wrap; justify-content:center">
               <span class="ntn-tooltip">
                 <button class="ntn-icon-btn ntn-icon-btn--sm" aria-label="Retention policy"><i class="fa-light fa-circle-info"></i></button>
                 <span class="ntn-tooltip__bubble ntn-tooltip__bubble--wrap" role="tooltip">
@@ -1259,23 +1259,23 @@
             <p class="sink__note">A border treatment that composes onto anything — a card, a panel, a toolbar, a bare div. <code>ntn-edge</code> alone is the default hairline; <code>ntn-card--glow</code> and <code>ntn-card--processing</code> stay as card shorthands.</p>
           </header>
           <div class="ntn-grid ntn-grid--3">
-            <div class="ntn-edge" style="padding:var(--space-5);background:var(--surface-1)">
+            <div class="ntn-edge" style="padding:var(--ntn-space-5);background:var(--ntn-surface-1)">
               <p class="sink__label">Default</p>
-              <p style="margin:6px 0 0;font-size:var(--text-sm);color:var(--text-secondary)">A hairline and the standard radius. The baseline every effect starts from.</p>
+              <p style="margin:6px 0 0;font-size:var(--ntn-text-sm);color:var(--ntn-text-secondary)">A hairline and the standard radius. The baseline every effect starts from.</p>
             </div>
-            <div class="ntn-edge ntn-edge--glow" style="padding:var(--space-5);background:var(--surface-1)">
+            <div class="ntn-edge ntn-edge--glow" style="padding:var(--ntn-space-5);background:var(--ntn-surface-1)">
               <p class="sink__label">Glow</p>
-              <p style="margin:6px 0 0;font-size:var(--text-sm);color:var(--text-secondary)">Accent hairline, halo, and a colour bleed from the top edge. The one element read first.</p>
+              <p style="margin:6px 0 0;font-size:var(--ntn-text-sm);color:var(--ntn-text-secondary)">Accent hairline, halo, and a colour bleed from the top edge. The one element read first.</p>
             </div>
-            <div class="ntn-edge ntn-edge--processing" style="padding:var(--space-5);background:var(--surface-1)">
+            <div class="ntn-edge ntn-edge--processing" style="padding:var(--ntn-space-5);background:var(--ntn-surface-1)">
               <p class="sink__label">Processing</p>
-              <p style="margin:6px 0 0;font-size:var(--text-sm);color:var(--text-secondary)">A light travels the edge and an exterior glow orbits with it. Remove the class when the job lands.</p>
+              <p style="margin:6px 0 0;font-size:var(--ntn-text-sm);color:var(--ntn-text-secondary)">A light travels the edge and an exterior glow orbits with it. Remove the class when the job lands.</p>
             </div>
           </div>
-          <div class="ntn-row" style="flex-wrap:wrap;gap:var(--space-4)">
-            <button class="ntn-btn ntn-edge--glow" style="border-radius:var(--radius-md)"><i class="fa-light fa-sparkles"></i>On a button</button>
-            <button class="ntn-btn ntn-edge--processing" style="border-radius:var(--radius-md)"><span class="ntn-spinner"></span>Deploying</button>
-            <span class="ntn-edge ntn-edge--processing" style="display:inline-flex;align-items:center;gap:var(--space-2);padding:6px 14px;border-radius:var(--radius-full);font-size:var(--text-xs);color:var(--text-secondary)">On a pill</span>
+          <div class="ntn-row" style="flex-wrap:wrap;gap:var(--ntn-space-4)">
+            <button class="ntn-btn ntn-edge--glow" style="border-radius:var(--ntn-radius-md)"><i class="fa-light fa-sparkles"></i>On a button</button>
+            <button class="ntn-btn ntn-edge--processing" style="border-radius:var(--ntn-radius-md)"><span class="ntn-spinner"></span>Deploying</button>
+            <span class="ntn-edge ntn-edge--processing" style="display:inline-flex;align-items:center;gap:var(--ntn-space-2);padding:6px 14px;border-radius:var(--ntn-radius-full);font-size:var(--ntn-text-xs);color:var(--ntn-text-secondary)">On a pill</span>
           </div>
           <section class="ntn-card ntn-card--processing">
             <header class="ntn-card__head">
@@ -1370,7 +1370,7 @@
             <section id="tab-billing" class="ntn-card" hidden>
               <div class="ntn-card__body">Next invoice of <span class="ntn-num">$24,678.81</span> is issued on 1 October.</div>
             </section>
-            <div class="ntn-row" style="gap:var(--space-4); flex-wrap:wrap">
+            <div class="ntn-row" style="gap:var(--ntn-space-4); flex-wrap:wrap">
               <div class="ntn-tabs ntn-tabs--pill" role="tablist" aria-label="Range">
                 <button class="ntn-tabs__tab" role="tab" aria-selected="true">Day</button>
                 <button class="ntn-tabs__tab" role="tab" aria-selected="false">Week</button>
@@ -1386,7 +1386,7 @@
               <button class="ntn-tabs__tab" role="tab" aria-selected="false">Staging</button>
               <button class="ntn-tabs__tab" role="tab" aria-selected="false">Preview</button>
             </div>
-            <div class="ntn-row" style="align-items:stretch; gap:var(--space-5); flex-wrap:wrap">
+            <div class="ntn-row" style="align-items:stretch; gap:var(--ntn-space-5); flex-wrap:wrap">
               <div class="ntn-tabs ntn-tabs--vertical" role="tablist" aria-label="Account" style="flex:0 0 172px">
                 <button class="ntn-tabs__tab" role="tab" aria-selected="true" data-ntn-panel="#tab-profile"><i class="fa-light fa-user"></i>Profile</button>
                 <button class="ntn-tabs__tab" role="tab" aria-selected="false" data-ntn-panel="#tab-keys"><i class="fa-light fa-key"></i>API keys</button>
@@ -1427,7 +1427,7 @@
             <p class="sink__note">The dropdown surface for action menus and custom pickers — position it yourself. Nest one by wrapping a row and its panel in <code>.ntn-menu__sub</code>: hover and focus open it with no script, and <code>nocturne.js</code> adds <code>← →</code> traversal plus an edge flip.</p>
           </header>
           <div class="ntn-card" style="overflow:visible"><div class="ntn-card__body" style="overflow:visible">
-            <div class="ntn-row" style="align-items:flex-start; gap:var(--space-6); flex-wrap:wrap">
+            <div class="ntn-row" style="align-items:flex-start; gap:var(--ntn-space-6); flex-wrap:wrap">
               <div class="ntn-menu" style="width:236px">
                 <p class="ntn-menu__label">This file</p>
                 <button class="ntn-menu__item"><span><i class="fa-light fa-pen"></i> Rename</span><span class="ntn-menu__shortcut">F2</span></button>
@@ -1458,7 +1458,7 @@
                 <hr class="ntn-divider">
                 <button class="ntn-menu__item ntn-menu__item--danger"><span><i class="fa-light fa-trash"></i> Delete</span><span class="ntn-menu__shortcut">⌫</span></button>
               </div>
-              <p class="sink__note" style="flex:0 1 260px">Two levels deep here. A submenu row carries <code>aria-haspopup</code> and a <code>__caret</code>; the panel inside it is just another <code>.ntn-menu</code>. Dividers now use <code>--border-default</code>, so they read on the menu surface.</p>
+              <p class="sink__note" style="flex:0 1 260px">Two levels deep here. A submenu row carries <code>aria-haspopup</code> and a <code>__caret</code>; the panel inside it is just another <code>.ntn-menu</code>. Dividers now use <code>--ntn-border-default</code>, so they read on the menu surface.</p>
             </div>
           </div></div>
         </section>
@@ -1499,7 +1499,7 @@
                 </li>
               </ol>
             </div></div>
-            <div class="ntn-row" style="align-items:stretch; gap:var(--space-4); flex-wrap:wrap">
+            <div class="ntn-row" style="align-items:stretch; gap:var(--ntn-space-4); flex-wrap:wrap">
               <div class="ntn-card" style="flex:1 1 320px; min-width:min(100%,280px)">
                 <div class="ntn-card__body ntn-stack">
                   <p class="sink__label">Bars</p>

@@ -9,59 +9,59 @@
   color-scheme: light;
 
   /* Neutral ramp reverses: 0 is furthest from the ink, 1000 is the ink. */
-  --n-0:    #FFFFFF;
-  --n-50:   #FAFBFC;
-  --n-100:  #F4F6F8;
-  --n-200:  #EDEFF3;
-  --n-300:  #E4E7ED;
-  --n-400:  #D5D9E1;
-  --n-500:  #B4BAC6;
-  --n-600:  #6E7685;
-  --n-700:  #5E6573;
-  --n-800:  #333A47;
-  --n-900:  #10141B;
-  --n-1000: #000000;
+  --ntn-n-0:    #FFFFFF;
+  --ntn-n-50:   #FAFBFC;
+  --ntn-n-100:  #F4F6F8;
+  --ntn-n-200:  #EDEFF3;
+  --ntn-n-300:  #E4E7ED;
+  --ntn-n-400:  #D5D9E1;
+  --ntn-n-500:  #B4BAC6;
+  --ntn-n-600:  #6E7685;
+  --ntn-n-700:  #5E6573;
+  --ntn-n-800:  #333A47;
+  --ntn-n-900:  #10141B;
+  --ntn-n-1000: #000000;
 
   /* Accent: the light tints become unreadable as ink, so 100–400 darken.
      500–900 are unchanged, which keeps fills and gradients identical. */
-  --accent-100: #F1ECFF;
-  --accent-200: #6D28D9;
-  --accent-300: #6427D1;
-  --accent-400: #7C3AED;
+  --ntn-accent-100: #F1ECFF;
+  --ntn-accent-200: #6D28D9;
+  --ntn-accent-300: #6427D1;
+  --ntn-accent-400: #7C3AED;
 
   /* Semantic 400s are the tint-on-text values — darkened for white grounds. */
-  --success-400: #0B7A50;
-  --warning-400: #8A5D04;
-  --danger-400:  #C4323A;
-  --info-400:    #1D5FC4;
+  --ntn-success-400: #0B7A50;
+  --ntn-warning-400: #8A5D04;
+  --ntn-danger-400:  #C4323A;
+  --ntn-info-400:    #1D5FC4;
 
-  --alpha-ink-04: rgba(16,20,27,0.035);
-  --alpha-ink-06: rgba(16,20,27,0.055);
-  --alpha-ink-10: rgba(16,20,27,0.10);
+  --ntn-alpha-ink-04: rgba(16,20,27,0.035);
+  --ntn-alpha-ink-06: rgba(16,20,27,0.055);
+  --ntn-alpha-ink-10: rgba(16,20,27,0.10);
 
   /* Surfaces are set outright: grey canvas, white paper, grey recesses. */
-  --bg-app:        #F6F7F9;
-  --bg-sunken:     #FFFFFF;
-  --surface-1:     #FFFFFF;
-  --surface-2:     #FFFFFF;
-  --surface-3:     #F1F3F7;
-  --surface-inset: rgba(16,20,27,0.05);
-  --bg-blur:       rgba(255,255,255,0.78);
+  --ntn-bg-app:        #F6F7F9;
+  --ntn-bg-sunken:     #FFFFFF;
+  --ntn-surface-1:     #FFFFFF;
+  --ntn-surface-2:     #FFFFFF;
+  --ntn-surface-3:     #F1F3F7;
+  --ntn-surface-inset: rgba(16,20,27,0.05);
+  --ntn-bg-blur:       rgba(255,255,255,0.78);
 
-  --border-subtle:  #E7EAF0;
-  --border-default: #DCE0E8;
-  --border-strong:  #C3C9D4;
+  --ntn-border-subtle:  #E7EAF0;
+  --ntn-border-default: #DCE0E8;
+  --ntn-border-strong:  #C3C9D4;
 
-  --text-inverse: #FFFFFF;
+  --ntn-text-inverse: #FFFFFF;
 
-  --control-knob: #FFFFFF;
+  --ntn-control-knob: #FFFFFF;
 
   /* Depth is a soft grey drop, never a black one. */
-  --shadow-xs:  0 1px 2px rgba(16,20,27,0.06);
-  --shadow-sm:  0 1px 2px rgba(16,20,27,0.08);
-  --shadow-md:  0 8px 24px -14px rgba(16,20,27,0.20), 0 1px 2px rgba(16,20,27,0.04);
-  --shadow-lg:  0 24px 60px -24px rgba(16,20,27,0.28), 0 1px 3px rgba(16,20,27,0.06);
-  --shadow-pop: 0 12px 32px -10px rgba(16,20,27,0.22);
+  --ntn-shadow-xs:  0 1px 2px rgba(16,20,27,0.06);
+  --ntn-shadow-sm:  0 1px 2px rgba(16,20,27,0.08);
+  --ntn-shadow-md:  0 8px 24px -14px rgba(16,20,27,0.20), 0 1px 2px rgba(16,20,27,0.04);
+  --ntn-shadow-lg:  0 24px 60px -24px rgba(16,20,27,0.28), 0 1px 3px rgba(16,20,27,0.06);
+  --ntn-shadow-pop: 0 12px 32px -10px rgba(16,20,27,0.22);
 
-  --scrim: rgba(16,20,27,0.42);
+  --ntn-scrim: rgba(16,20,27,0.42);
 }

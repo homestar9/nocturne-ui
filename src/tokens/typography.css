@@ -1,29 +1,29 @@
 :root {
-  --text-2xs: 11px;
-  --text-xs:  12px;
-  --text-sm:  13px;
-  --text-md:  14px;
-  --text-lg:  16px;
-  --text-xl:  18px;
-  --text-2xl: 22px;
-  --text-3xl: 28px;
-  --text-4xl: 34px;
-  --text-5xl: 44px;
+  --ntn-text-2xs: 11px;
+  --ntn-text-xs:  12px;
+  --ntn-text-sm:  13px;
+  --ntn-text-md:  14px;
+  --ntn-text-lg:  16px;
+  --ntn-text-xl:  18px;
+  --ntn-text-2xl: 22px;
+  --ntn-text-3xl: 28px;
+  --ntn-text-4xl: 34px;
+  --ntn-text-5xl: 44px;
 
-  --leading-tight:  1.15;
-  --leading-snug:   1.3;
-  --leading-normal: 1.5;
-  --leading-loose:  1.65;
+  --ntn-leading-tight:  1.15;
+  --ntn-leading-snug:   1.3;
+  --ntn-leading-normal: 1.5;
+  --ntn-leading-loose:  1.65;
 
-  --weight-light:    300;
-  --weight-regular:  400;
-  --weight-medium:   500;
-  --weight-semibold: 600;
-  --weight-bold:     700;
+  --ntn-weight-light:    300;
+  --ntn-weight-regular:  400;
+  --ntn-weight-medium:   500;
+  --ntn-weight-semibold: 600;
+  --ntn-weight-bold:     700;
 
-  --tracking-display: -0.022em;
-  --tracking-heading: -0.014em;
-  --tracking-body:    -0.004em;
-  --tracking-wide:    0.06em;
-  --tracking-caps:    0.09em;
+  --ntn-tracking-display: -0.022em;
+  --ntn-tracking-heading: -0.014em;
+  --ntn-tracking-body:    -0.004em;
+  --ntn-tracking-wide:    0.06em;
+  --ntn-tracking-caps:    0.09em;
 }

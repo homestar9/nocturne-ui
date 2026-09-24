@@ -1,24 +1,24 @@
 /* Example client theme. Accent is the only channel a theme may touch. */
 :root {
-  --accent-100: #DCFCE9;
-  --accent-200: #B6F5D3;
-  --accent-300: #7DE8B4;
-  --accent-400: #4ADE9B;
-  --accent-500: #22C58A;
-  --accent-600: #17A873;
-  --accent-700: #0E7F57;
-  --accent-900: #06331F;
+  --ntn-accent-100: #DCFCE9;
+  --ntn-accent-200: #B6F5D3;
+  --ntn-accent-300: #7DE8B4;
+  --ntn-accent-400: #4ADE9B;
+  --ntn-accent-500: #22C58A;
+  --ntn-accent-600: #17A873;
+  --ntn-accent-700: #0E7F57;
+  --ntn-accent-900: #06331F;
 
-  --accent-soft:   rgba(34,197,138,0.14);
-  --accent-softer: rgba(34,197,138,0.07);
-  --accent-glow:   rgba(34,197,138,0.35);
-  --focus-ring:    rgba(34,197,138,0.55);
+  --ntn-accent-soft:   rgba(34,197,138,0.14);
+  --ntn-accent-softer: rgba(34,197,138,0.07);
+  --ntn-accent-glow:   rgba(34,197,138,0.35);
+  --ntn-focus-ring:    rgba(34,197,138,0.55);
 
-  --accent-fg: #04140C;
-  --chart-1: var(--accent-500);
+  --ntn-accent-fg: #04140C;
+  --ntn-chart-1: var(--ntn-accent-500);
 }
 
-/* --accent-fg is dark in this theme, so the checkbox art follows it. */
+/* --ntn-accent-fg is dark in this theme, so the checkbox art follows it. */
 .ntn-check {
   --ntn-check-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.5' fill='none' stroke='%2304140C' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --ntn-check-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8h8' fill='none' stroke='%2304140C' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");

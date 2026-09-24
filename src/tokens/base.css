@@ -6,37 +6,37 @@
 
 html, body {
   margin: 0;
-  transition: background-color var(--dur-base) var(--ease-standard), color var(--dur-base) var(--ease-standard);
+  transition: background-color var(--ntn-dur-base) var(--ntn-ease-standard), color var(--ntn-dur-base) var(--ntn-ease-standard);
   padding: 0;
-  background: var(--bg-app);
-  color: var(--text-primary);
-  font-family: var(--font-sans);
-  font-size: var(--text-md);
-  line-height: var(--leading-normal);
-  letter-spacing: var(--tracking-body);
+  background: var(--ntn-bg-app);
+  color: var(--ntn-text-primary);
+  font-family: var(--ntn-font-sans);
+  font-size: var(--ntn-text-md);
+  line-height: var(--ntn-leading-normal);
+  letter-spacing: var(--ntn-tracking-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-a { color: var(--text-accent); text-decoration: none; }
-a:hover { color: var(--accent-200); }
+a { color: var(--ntn-text-accent); text-decoration: none; }
+a:hover { color: var(--ntn-accent-200); }
 
-::selection { background: var(--accent-soft); color: var(--text-primary); }
+::selection { background: var(--ntn-accent-soft); color: var(--ntn-text-primary); }
 
 /* Icons are written as bare <i class="fa-…">; cancel the element's default italic. */
 i[class*="fa-"] { font-style: normal; }
 
 /* The ring never changes an element's shape — each component keeps its own radius. */
-:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+:focus-visible { outline: none; box-shadow: var(--ntn-ring-focus); }
 /* Fields inside a bordered group let the group own the ring — no double outline. */
 .ntn-field__control :focus-visible, .ntn-search :focus-visible { box-shadow: none; }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--n-400); border: 3px solid transparent; background-clip: content-box; border-radius: var(--radius-full); }
-::-webkit-scrollbar-thumb:hover { background: var(--n-500); background-clip: content-box; }
+::-webkit-scrollbar-thumb { background: var(--ntn-n-400); border: 3px solid transparent; background-clip: content-box; border-radius: var(--ntn-radius-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--ntn-n-500); background-clip: content-box; }
 
-@keyframes nocturne-spin { to { transform: rotate(360deg); } }
-@keyframes nocturne-pulse { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
-@keyframes nocturne-rise { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
-@keyframes nocturne-shimmer { from { background-position: -200% 0 } to { background-position: 200% 0 } }
+@keyframes ntn-spin { to { transform: rotate(360deg); } }
+@keyframes ntn-pulse { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
+@keyframes ntn-rise { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
+@keyframes ntn-shimmer { from { background-position: -200% 0 } to { background-position: 200% 0 } }

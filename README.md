@@ -23,11 +23,11 @@ npm install @homestar9/nocturne-ui
 No bundler? Load it from a CDN, or vendor the one file — `dist/nocturne.css` is self-contained:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.4.0/dist/nocturne.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.5.0/dist/nocturne.css">
 ```
 
 ```bash
-curl -O https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.4.0/dist/nocturne.css
+curl -O https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.5.0/dist/nocturne.css
 ```
 
 ## Use
@@ -117,6 +117,30 @@ import '@homestar9/nocturne-ui/themes/emerald.css';
 Or write your own eleven lines — copy `themes/emerald.css` and change the hexes. Neutrals,
 semantics, spacing, and type are shared across every product and are not forkable.
 
+## Namespace and prefix
+
+Everything Nocturne defines lives in one namespace, `ntn`: classes (`.ntn-card`), design tokens
+(`--ntn-accent`, `--ntn-surface-1`), behaviour hooks (`data-ntn-open`), events (`ntn:tabchange`),
+the theme storage key and keyframe names. Nothing collides with your own CSS or another library.
+
+An app that wants its **own** class names can rebuild Nocturne under a different prefix. Every
+identifier is renamed together, so the output is the same stylesheet and script with a new
+namespace:
+
+```bash
+npx nocturne-build --prefix app --out vendor/nocturne     # .app-card, --app-accent, data-app-open, app:tabchange
+```
+
+```js
+import { build } from '@homestar9/nocturne-ui/build';
+await build({ prefix: 'app', outDir: 'vendor/nocturne' });  // nocturne.css, tokens.css, nocturne.js, themes/
+```
+
+A prefix is lowercase letters and digits, starting with a letter, because `data-app-open` has to map
+to `dataset.appOpen` in the script. This is how an app can own its markup vocabulary and still
+swap in a different UI kit later: any kit that can be built to the same prefix and block names
+drops in without touching a template.
+
 ## Claude Code
 
 The package carries its own skill. In a consuming repo, add this to `CLAUDE.md`:
@@ -144,10 +168,13 @@ and the CSS in the same commit — the agent can never be briefed on a version y
 
 ```bash
 npm run build      # flattens src/ into dist/ — no dependencies
+npm test           # namespace checks: every token prefixed, every var() declared, prefix builds rename everything
 open examples/kitchen-sink.html
 ```
 
-Edit files in `src/`, never in `dist/`. `dist/` is regenerated on `prepack`.
+Edit files in `src/`, never in `dist/`. `dist/` is regenerated (and tested) on `prepack`.
+Always spell the namespace `ntn` in source — the prefix build renames exactly that spelling, so a
+new class, token, hook or event written any other way would escape it.
 
 ## Release
 

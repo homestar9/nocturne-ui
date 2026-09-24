@@ -1,14 +1,14 @@
 /* ── Layout: app shell, page, grid, text primitives ───────────────────────── */
 
-.ntn-app { display: flex; min-height: 100vh; background: var(--bg-app); }
+.ntn-app { display: flex; min-height: 100vh; background: var(--ntn-bg-app); }
 .ntn-app__main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .ntn-app__scroll { flex: 1; min-height: 0; overflow-y: auto; }
 
-.ntn-page { width: 100%; max-width: 1360px; margin: 0 auto; padding: var(--space-6); display: flex; flex-direction: column; gap: 14px; }
-.ntn-page__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
-.ntn-page__title { margin: 0; font-size: var(--text-2xl); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-display); line-height: var(--leading-tight); color: var(--text-primary); }
-.ntn-page__sub { margin: 4px 0 0; font-size: var(--text-sm); color: var(--text-muted); }
-.ntn-page__actions { display: flex; align-items: center; gap: var(--space-2); flex: 0 0 auto; }
+.ntn-page { width: 100%; max-width: 1360px; margin: 0 auto; padding: var(--ntn-space-6); display: flex; flex-direction: column; gap: 14px; }
+.ntn-page__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ntn-space-4); flex-wrap: wrap; }
+.ntn-page__title { margin: 0; font-size: var(--ntn-text-2xl); font-weight: var(--ntn-weight-semibold); letter-spacing: var(--ntn-tracking-display); line-height: var(--ntn-leading-tight); color: var(--ntn-text-primary); }
+.ntn-page__sub { margin: 4px 0 0; font-size: var(--ntn-text-sm); color: var(--ntn-text-muted); }
+.ntn-page__actions { display: flex; align-items: center; gap: var(--ntn-space-2); flex: 0 0 auto; }
 
 .ntn-grid { display: grid; gap: 14px; }
 .ntn-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -23,16 +23,16 @@
   .ntn-grid--2, .ntn-grid--3, .ntn-grid--4, .ntn-grid--split, .ntn-grid--split-reverse { grid-template-columns: minmax(0, 1fr); }
 }
 
-.ntn-row { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.ntn-row { display: flex; align-items: center; gap: var(--ntn-space-2); flex-wrap: wrap; }
 .ntn-row--between { justify-content: space-between; }
 .ntn-row--end { justify-content: flex-end; }
-.ntn-stack { display: flex; flex-direction: column; gap: var(--space-3); }
+.ntn-stack { display: flex; flex-direction: column; gap: var(--ntn-space-3); }
 
 /* Text primitives — the only three type helpers in the system. */
-.ntn-eyebrow { font-size: var(--text-2xs); font-weight: var(--weight-medium); text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--text-disabled); margin: 0; }
-.ntn-num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-.ntn-kbd { padding: 2px 6px; border-radius: var(--radius-xs); border: 1px solid var(--border-default); background: var(--surface-3); color: var(--text-muted); font-family: var(--font-mono); font-size: var(--text-2xs); }
+.ntn-eyebrow { font-size: var(--ntn-text-2xs); font-weight: var(--ntn-weight-medium); text-transform: uppercase; letter-spacing: var(--ntn-tracking-caps); color: var(--ntn-text-disabled); margin: 0; }
+.ntn-num { font-family: var(--ntn-font-mono); font-variant-numeric: tabular-nums; }
+.ntn-kbd { padding: 2px 6px; border-radius: var(--ntn-radius-xs); border: 1px solid var(--ntn-border-default); background: var(--ntn-surface-3); color: var(--ntn-text-muted); font-family: var(--ntn-font-mono); font-size: var(--ntn-text-2xs); }
 
-.ntn-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-3); padding: var(--space-12) var(--space-6); text-align: center; color: var(--text-muted); font-size: var(--text-sm); }
-.ntn-empty i { font-size: 20px; color: var(--text-disabled); }
-.ntn-empty__title { font-size: var(--text-md); font-weight: var(--weight-medium); color: var(--text-primary); }
+.ntn-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--ntn-space-3); padding: var(--ntn-space-12) var(--ntn-space-6); text-align: center; color: var(--ntn-text-muted); font-size: var(--ntn-text-sm); }
+.ntn-empty i { font-size: 20px; color: var(--ntn-text-disabled); }
+.ntn-empty__title { font-size: var(--ntn-text-md); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-primary); }

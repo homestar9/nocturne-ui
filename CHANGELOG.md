@@ -4,12 +4,31 @@ All notable changes to Nocturne. The version in `package.json` is the contract:
 bump **patch** for fixes, **minor** for new components or tokens, **major** for
 renamed or removed class names and tokens.
 
-## 1.4.0 — 2026-09-21
+## 1.5.0 — Unreleased
 
-### Packaging
-- **First public release.** Published to npmjs.com as `@homestar9/nocturne-ui` under the MIT
-  license. It was previously named `@angrysam/nocturne` and aimed at GitHub Packages, but was never
-  published there, so no consumer has to migrate. The CSS, class names and tokens are unchanged.
+The first public release: MIT, on npmjs.com as `@homestar9/nocturne-ui`. Earlier versions were
+private (`@angrysam/nocturne`) and never published, so nobody has to migrate. The token rename
+below would normally be a major bump; it ships as a minor only because there are no consumers yet.
+
+### Changed
+- **Every design token is namespaced.** `--accent` is now `--ntn-accent`, `--surface-1` is
+  `--ntn-surface-1`, `--n-500` is `--ntn-n-500`, and likewise for all 156 tokens: colours,
+  type, spacing, radii, elevation, motion and z-index. Nothing Nocturne declares can collide with
+  an app's own custom properties any more. Rename rule: put `ntn-` after the leading `--`.
+- **Keyframes are namespaced:** `nocturne-spin`, `-pulse`, `-rise`, `-shimmer` and
+  `-border-spin` are now `ntn-spin` and so on.
+
+### Added
+- **Build-time prefix.** `nocturne-build --prefix <name> --out <dir>` (or
+  `import { build } from '@homestar9/nocturne-ui/build'`) emits the CSS, JS and themes with the whole
+  namespace renamed: classes, tokens, `data-*` hooks (and their `dataset` keys), events, the theme
+  storage key and keyframes. An app can own its markup vocabulary (`.app-card`) and still use Nocturne,
+  or swap to another kit built to the same names. Prefixes are lowercase letters and digits.
+- **`npm test`**, a zero-dependency guard that checks every declared token is prefixed, every
+  `var()` the CSS reads is declared, and a `--prefix` build leaves no trace of `ntn` and equals the
+  default build with the namespace swapped. It also runs on `prepack`.
+
+## 1.4.0 — 2026-09-21 (unpublished)
 
 ### Added
 - **`ntn-tree`** — tree view: `__row` with a drag `__grip`, `__twisty`, `__icon`, `__label`,

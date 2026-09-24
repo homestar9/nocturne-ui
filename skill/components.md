@@ -365,7 +365,7 @@ the effect. Set your own `border-radius` and the effect follows it.
 
 | Class | Effect |
 | --- | --- |
-| `ntn-edge` | Default hairline, `--radius-xl`. `--strong` for `--border-default` |
+| `ntn-edge` | Default hairline, `--ntn-radius-xl`. `--strong` for `--ntn-border-default` |
 | `ntn-edge--glow` | Accent hairline, halo, and a colour bleed from the top edge. The one element on the page you want read first |
 | `ntn-edge--processing` | A light travels the edge and an exterior glow orbits with it. Pair with a `ntn-spinner` or an indeterminate `ntn-progress`; remove the class when the job lands |
 
@@ -478,7 +478,7 @@ Modifiers: `--xs` `--sm` `--lg` `--xl` `--ring`. Status dot: `__status` with
 A wrapper block; `table`, `th`, `td` are styled by tag. Cell classes: `__num` (right-aligned
 mono), `__primary` (emphasised first column), `__actions` (right-aligned button cell),
 `__empty` (empty-state cell). Modifiers: `--compact` `--zebra`.
-The header row is a filled band (`--surface-2`) with a stronger rule under it, so it separates
+The header row is a filled band (`--ntn-surface-2`) with a stronger rule under it, so it separates
 the table from whatever sits above it. Reach for `--zebra` on long, number-heavy lists; leave
 it off when rows carry badges and avatars.
 Sortable headers carry `aria-sort="none|ascending|descending"`. Selection uses
@@ -887,11 +887,11 @@ Tokens that carry theme meaning, when you need them directly:
 
 | Token | Role |
 | --- | --- |
-| `--accent-fg` | Ink sitting ON the accent (labels, knobs, brand marks) |
-| `--control-knob` | A switch's off-state knob |
-| `--alpha-ink-04/06/10` | Wash over the current surface — white on dark, black on light |
-| `--bg-blur` | Translucent fill behind the sticky top bar |
-| `--accent-line`, `--success-line`, `--warning-line`, `--danger-line`, `--info-line` | Hairlines for tinted surfaces |
+| `--ntn-accent-fg` | Ink sitting ON the accent (labels, knobs, brand marks) |
+| `--ntn-control-knob` | A switch's off-state knob |
+| `--ntn-alpha-ink-04/06/10` | Wash over the current surface — white on dark, black on light |
+| `--ntn-bg-blur` | Translucent fill behind the sticky top bar |
+| `--ntn-accent-line`, `--ntn-success-line`, `--ntn-warning-line`, `--ntn-danger-line`, `--ntn-info-line` | Hairlines for tinted surfaces |
 
 ## JS hooks
 
