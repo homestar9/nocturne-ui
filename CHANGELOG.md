@@ -4,7 +4,7 @@ All notable changes to Nocturne. The version in `package.json` is the contract:
 bump **patch** for fixes, **minor** for new components or tokens, **major** for
 renamed or removed class names and tokens.
 
-## 1.5.0 — Unreleased
+## 1.5.0 — 2026-09-24
 
 The first public release: MIT, on npmjs.com as `@homestar9/nocturne-ui`. Earlier versions were
 private (`@angrysam/nocturne`) and never published, so nobody has to migrate. The token rename
