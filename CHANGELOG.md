@@ -4,7 +4,9 @@ All notable changes to Nocturne. The version in `package.json` is the contract:
 bump **patch** for fixes, **minor** for new components or tokens, **major** for
 renamed or removed class names and tokens.
 
-## 1.6.0 — Unreleased
+## [Unreleased]
+
+## 1.6.0 — 2026-09-25
 
 ### Added
 - **`ntn-dropdown` and `ntn-popover`**: a trigger (`aria-haspopup`) plus a menu or a free-form
