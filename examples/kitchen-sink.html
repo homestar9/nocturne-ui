@@ -391,6 +391,7 @@
             <div class="ntn-search ntn-search--sm"><i class="fa-light fa-magnifying-glass"></i><input type="search" placeholder="Small"></div>
             <div class="ntn-search"><i class="fa-light fa-magnifying-glass"></i><input type="search" placeholder="Search here ..."><span class="ntn-search__shortcut">⌘K</span></div>
             <div class="ntn-search ntn-search--lg"><i class="fa-light fa-magnifying-glass"></i><input type="search" placeholder="Large"></div>
+            <div class="ntn-search" data-loading><i class="fa-light fa-magnifying-glass"></i><input type="search" value="invoices" aria-busy="true"></div>
           </div></div>
         </section>
 
@@ -564,6 +565,12 @@
                 <label class="ntn-radio"><input type="radio" name="plan"><span class="ntn-radio__label">Business</span></label>
                 <label class="ntn-radio"><input type="radio" name="plan" disabled><span class="ntn-radio__label">Enterprise</span></label>
               </div>
+              <hr class="ntn-divider">
+              <fieldset class="ntn-radio-group ntn-radio-group--segmented">
+                <legend>Content mode</legend>
+                <label class="ntn-radio"><input type="radio" name="mode" value="document" checked><span class="ntn-radio__label"><i class="fa-light fa-file-lines"></i>Document</span></label>
+                <label class="ntn-radio"><input type="radio" name="mode" value="sections"><span class="ntn-radio__label"><i class="fa-light fa-layer-group"></i>Sections</span></label>
+              </fieldset>
             </div></div>
             <div class="ntn-card"><div class="ntn-card__body ntn-stack">
               <label class="ntn-switch">

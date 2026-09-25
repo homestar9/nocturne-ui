@@ -7,6 +7,11 @@ renamed or removed class names and tokens.
 ## 1.6.0 — Unreleased
 
 ### Added
+- **`ntn-radio-group--segmented`**: native radios drawn as a segmented switch, for picking one of
+  two to four short options. The `<legend>` stays for assistive tech but is hidden from view.
+  Posting and arrow keys stay native.
+- **Search loading state**: `data-loading` on `ntn-search` turns the leading icon into a
+  CSS spinner (so it works with any icon set).
 - **`dist/nocturne.nofonts.css`** (package export `./css/nofonts`): the full stylesheet without the
   Google Fonts `@import`, for apps that self-host Geist or run a strict CSP. Prefixed builds emit
   it too.

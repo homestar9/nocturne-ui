@@ -260,7 +260,8 @@ Elements: `__head` `__label` `__value`. The fill and the readout are driven by
 
 ## Search — `ntn-search`
 
-Elements: `__shortcut`. Modifiers: `--sm` `--lg`.
+Elements: `__shortcut`. Modifiers: `--sm` `--lg`. Loading: `data-loading` on the block turns the
+leading icon into a spinner (put `aria-busy="true"` on the input).
 
 ```html
 <div class="ntn-search">
@@ -274,7 +275,8 @@ Elements: `__shortcut`. Modifiers: `--sm` `--lg`.
 
 ## Checkbox — `ntn-check` · Radio — `ntn-radio` · Switch — `ntn-switch`
 
-Elements: `__label` `__desc`. Group radios in `ntn-radio-group` (`--row` for horizontal).
+Elements: `__label` `__desc`. Group radios in `ntn-radio-group` (`--row` for horizontal,
+`--segmented` for a pick-one switch of two to four short options, drawn like a toggle group).
 State comes from the native input: `checked`, `indeterminate` (set in JS), `disabled`.
 
 Checkbox and radio share one language: 16px control, accent fill when on, white mark.
@@ -292,6 +294,12 @@ With a `__desc` the control aligns to the first line of the label, not to the to
   <label class="ntn-radio"><input type="radio" name="plan" checked><span class="ntn-radio__label">Team</span></label>
   <label class="ntn-radio"><input type="radio" name="plan"><span class="ntn-radio__label">Enterprise</span></label>
 </div>
+
+<fieldset class="ntn-radio-group ntn-radio-group--segmented">
+  <legend>Content mode</legend>
+  <label class="ntn-radio"><input type="radio" name="mode" value="document" checked><span class="ntn-radio__label"><i class="fa-light fa-file-lines"></i>Document</span></label>
+  <label class="ntn-radio"><input type="radio" name="mode" value="sections"><span class="ntn-radio__label"><i class="fa-light fa-layer-group"></i>Sections</span></label>
+</fieldset>
 
 <label class="ntn-switch">
   <input type="checkbox" role="switch" checked>

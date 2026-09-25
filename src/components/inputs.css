@@ -113,5 +113,12 @@
 .ntn-search input::placeholder { color: var(--ntn-text-disabled); }
 .ntn-search:focus-within { border-color: var(--ntn-accent-500); box-shadow: var(--ntn-ring-focus); }
 .ntn-search__shortcut { padding: 2px 6px; border-radius: var(--ntn-radius-xs); border: 1px solid var(--ntn-border-default); background: var(--ntn-surface-3); color: var(--ntn-text-muted); font-family: var(--ntn-font-mono); font-size: var(--ntn-text-2xs); flex: 0 0 auto; }
+/* Loading: data-loading on the block turns the leading icon into a spinner while results are on
+   their way (set aria-busy="true" on the input too). Drawn in CSS, so any icon set works. */
+.ntn-search[data-loading] > i:first-child {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid var(--ntn-border-default); border-top-color: var(--ntn-accent-500);
+  color: transparent; font-size: 0; animation: ntn-spin 700ms linear infinite;
+}
 .ntn-search--sm { height: var(--ntn-control-sm); }
 .ntn-search--lg { height: var(--ntn-control-lg); }

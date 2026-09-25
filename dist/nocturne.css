@@ -631,6 +631,13 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
 .ntn-search input::placeholder { color: var(--ntn-text-disabled); }
 .ntn-search:focus-within { border-color: var(--ntn-accent-500); box-shadow: var(--ntn-ring-focus); }
 .ntn-search__shortcut { padding: 2px 6px; border-radius: var(--ntn-radius-xs); border: 1px solid var(--ntn-border-default); background: var(--ntn-surface-3); color: var(--ntn-text-muted); font-family: var(--ntn-font-mono); font-size: var(--ntn-text-2xs); flex: 0 0 auto; }
+/* Loading: data-loading on the block turns the leading icon into a spinner while results are on
+   their way (set aria-busy="true" on the input too). Drawn in CSS, so any icon set works. */
+.ntn-search[data-loading] > i:first-child {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid var(--ntn-border-default); border-top-color: var(--ntn-accent-500);
+  color: transparent; font-size: 0; animation: ntn-spin 700ms linear infinite;
+}
 .ntn-search--sm { height: var(--ntn-control-sm); }
 .ntn-search--lg { height: var(--ntn-control-lg); }
 
@@ -969,6 +976,34 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
 
 .ntn-radio-group { display: flex; flex-direction: column; gap: var(--ntn-space-3); }
 .ntn-radio-group--row { flex-direction: row; flex-wrap: wrap; gap: var(--ntn-space-5); }
+
+/* Segmented: the same native radios, drawn like a toggle group, for a pick-one switch of two to
+   four short options. Posting, arrow keys and screen-reader semantics stay those of a radio group.
+   Write it as a <fieldset> with a <legend> (kept for assistive tech, hidden from view). */
+.ntn-radio-group--segmented {
+  display: inline-flex; flex-direction: row; gap: 0; width: auto; min-width: 0; margin: 0; padding: 0; align-self: flex-start;
+  border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-md);
+  background: var(--ntn-surface-2); box-shadow: var(--ntn-shadow-xs);
+}
+.ntn-radio-group--segmented > legend {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.ntn-radio-group--segmented .ntn-radio {
+  position: relative; align-items: center; gap: 6px;
+  height: calc(var(--ntn-control-md) - 2px); padding: 0 12px;
+  border-left: 1px solid var(--ntn-border-subtle); color: var(--ntn-text-muted);
+  transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard);
+}
+.ntn-radio-group--segmented .ntn-radio:first-of-type { border-left: 0; border-radius: 7px 0 0 7px; }
+.ntn-radio-group--segmented .ntn-radio:last-of-type { border-radius: 0 7px 7px 0; }
+.ntn-radio-group--segmented .ntn-radio input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.ntn-radio-group--segmented .ntn-radio__label { flex-direction: row; align-items: center; gap: 6px; font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-medium); color: inherit; }
+.ntn-radio-group--segmented .ntn-radio__label i { font-size: 14px; }
+.ntn-radio-group--segmented .ntn-radio:hover { background: var(--ntn-surface-hover); color: var(--ntn-text-secondary); }
+.ntn-radio-group--segmented .ntn-radio:has(input:checked) { background: var(--ntn-surface-3); color: var(--ntn-text-primary); }
+.ntn-radio-group--segmented .ntn-radio:has(input:checked) i { color: var(--ntn-accent-300); }
+.ntn-radio-group--segmented .ntn-radio:has(input:focus-visible) { box-shadow: var(--ntn-ring-focus); z-index: 1; }
 
 .ntn-switch { gap: 12px; }
 .ntn-switch input {
