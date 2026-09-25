@@ -136,6 +136,31 @@ accent tint (soft fills, hairlines, glow, focus ring) derives from the ramp. Two
 
 Neutrals, semantics, spacing, and type are shared across every product and are not forkable.
 
+### Glass hooks
+
+Nocturne's cards are opaque. An app that uses the kit as the base of a different look (a frosted
+"glass" skin, say) can blur what sits behind its surfaces with two tokens. Both default to `none`,
+which costs nothing:
+
+| Token | Read by |
+| --- | --- |
+| `--ntn-surface-filter` | `ntn-card`, `ntn-sidebar` |
+| `--ntn-pop-filter` | `ntn-modal`, `ntn-menu`, `ntn-popover`, the date-range panel, tooltip bubbles |
+
+Pair them with translucent surface colours, or the blur has nothing to show through:
+
+```css
+:root {
+  --ntn-surface-1: rgb(20 22 30 / 0.6);
+  --ntn-surface-filter: blur(16px) saturate(1.3);
+  --ntn-pop-filter: blur(24px);
+}
+```
+
+Any value other than `none` makes the element a containing block for `position: fixed`
+descendants, and a nested blurred element only blurs its blurred ancestor. The top bar already
+blurs, via `--ntn-blur-panel`.
+
 ## Namespace and prefix
 
 Everything Nocturne defines lives in one namespace, `ntn`: classes (`.ntn-card`), design tokens

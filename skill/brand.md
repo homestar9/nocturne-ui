@@ -30,7 +30,9 @@ wide soft drop (`--ntn-shadow-md`), never a bright glow or heavy blur. Gradients
 four places: the brand mark tile, avatar initials, slider/progress fill, chart area fills.
 
 Transparency and blur exist in two places only: the sticky top bar (72% app colour + 20px blur)
-and the modal scrim (72% black + 6px blur). Cards are always opaque.
+and the modal scrim (72% black + 6px blur). Cards are always opaque. (`--ntn-surface-filter` and
+`--ntn-pop-filter` exist for apps that skin the kit into a different look. Leave them at `none`
+when building to the Nocturne brand.)
 
 ## Type
 

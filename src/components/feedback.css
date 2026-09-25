@@ -52,7 +52,7 @@
   position: absolute; z-index: var(--ntn-z-tooltip); bottom: calc(100% + 9px); left: 50%; transform: translateX(-50%);
   padding: 6px 9px; border-radius: var(--ntn-radius-md); background: var(--ntn-surface-3); border: 1px solid var(--ntn-border-default);
   color: var(--ntn-text-primary); font-size: var(--ntn-text-xs); line-height: 1.35; white-space: nowrap; text-align: left;
-  box-shadow: var(--ntn-shadow-pop); pointer-events: none; opacity: 0; visibility: hidden;
+  box-shadow: var(--ntn-shadow-pop); pointer-events: none; opacity: 0; visibility: hidden; backdrop-filter: var(--ntn-pop-filter);
   transition: opacity var(--ntn-dur-fast) var(--ntn-ease-out) 90ms, visibility var(--ntn-dur-fast) 90ms;
 }
 /* Arrow — a rotated corner of the same surface, so it inherits the border. */

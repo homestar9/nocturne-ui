@@ -10,4 +10,8 @@
   --ntn-ring-focus: 0 0 0 3px var(--ntn-focus-ring);
   --ntn-blur-scrim: blur(6px);
   --ntn-blur-panel: blur(20px);
+  /* Glass hooks: a theme with translucent surfaces sets these to blur(...). none adds no containing
+     block or stacking context, so the default costs nothing. */
+  --ntn-surface-filter: none;
+  --ntn-pop-filter: none;
 }

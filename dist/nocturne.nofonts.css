@@ -206,6 +206,10 @@
   --ntn-ring-focus: 0 0 0 3px var(--ntn-focus-ring);
   --ntn-blur-scrim: blur(6px);
   --ntn-blur-panel: blur(20px);
+  /* Glass hooks: a theme with translucent surfaces sets these to blur(...). none adds no containing
+     block or stacking context, so the default costs nothing. */
+  --ntn-surface-filter: none;
+  --ntn-pop-filter: none;
 }
 
 :root {
@@ -657,6 +661,7 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
   background: var(--ntn-surface-2); color: var(--ntn-text-primary);
   border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg);
   box-shadow: var(--ntn-shadow-lg); animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out);
+  backdrop-filter: var(--ntn-pop-filter);
 }
 .ntn-popover__foot { display: flex; justify-content: flex-end; gap: var(--ntn-space-2); padding-top: var(--ntn-space-3); border-top: 1px solid var(--ntn-border-subtle); }
 
@@ -664,6 +669,7 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
   min-width: 180px; padding: 4px;
   background: var(--ntn-surface-2); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg);
   box-shadow: var(--ntn-shadow-lg); animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out);
+  backdrop-filter: var(--ntn-pop-filter);
 }
 .ntn-menu__item {
   display: flex; align-items: center; justify-content: space-between; gap: var(--ntn-space-2);
@@ -834,10 +840,10 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
    so the footer never joins a horizontal sum. __row holds the presets beside the
    calendars — that row alone sets the panel's width. */
 .ntn-daterange__panel {
-  position: absolute; top: calc(100% + 6px); left: 0; z-index: 60;
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: var(--ntn-z-dropdown);
   display: flex; flex-direction: column; width: max-content;
   background: var(--ntn-surface-2); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg);
-  box-shadow: var(--ntn-shadow-lg); overflow: hidden;
+  box-shadow: var(--ntn-shadow-lg); overflow: hidden; backdrop-filter: var(--ntn-pop-filter);
   animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out);
 }
 .ntn-daterange__row { display: flex; align-items: stretch; }
@@ -1141,7 +1147,7 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
   position: absolute; z-index: var(--ntn-z-tooltip); bottom: calc(100% + 9px); left: 50%; transform: translateX(-50%);
   padding: 6px 9px; border-radius: var(--ntn-radius-md); background: var(--ntn-surface-3); border: 1px solid var(--ntn-border-default);
   color: var(--ntn-text-primary); font-size: var(--ntn-text-xs); line-height: 1.35; white-space: nowrap; text-align: left;
-  box-shadow: var(--ntn-shadow-pop); pointer-events: none; opacity: 0; visibility: hidden;
+  box-shadow: var(--ntn-shadow-pop); pointer-events: none; opacity: 0; visibility: hidden; backdrop-filter: var(--ntn-pop-filter);
   transition: opacity var(--ntn-dur-fast) var(--ntn-ease-out) 90ms, visibility var(--ntn-dur-fast) 90ms;
 }
 /* Arrow — a rotated corner of the same surface, so it inherits the border. */
@@ -1220,7 +1226,7 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
   position: relative;
   display: flex; flex-direction: column;
   background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-xl);
-  box-shadow: var(--ntn-shadow-md);
+  box-shadow: var(--ntn-shadow-md); backdrop-filter: var(--ntn-surface-filter);
   transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), transform var(--ntn-dur-fast) var(--ntn-ease-out);
 }
 .ntn-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ntn-space-4); padding: var(--ntn-space-5) var(--ntn-space-5) 0; }
@@ -1256,6 +1262,7 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
 .ntn-modal {
   width: 100%; max-width: 520px; padding: 0; border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-2xl);
   background: var(--ntn-surface-1); color: var(--ntn-text-primary); box-shadow: var(--ntn-shadow-lg); overflow: hidden;
+  backdrop-filter: var(--ntn-pop-filter);
 }
 .ntn-modal::backdrop { background: var(--ntn-scrim); backdrop-filter: var(--ntn-blur-scrim); }
 .ntn-modal[open] { animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out); }
@@ -1548,7 +1555,7 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
   display: flex; flex-direction: column; gap: 4px; flex: 0 0 auto;
   width: var(--ntn-sidebar-w); height: 100vh; position: sticky; top: 0; padding: var(--ntn-space-3);
   background: var(--ntn-bg-sunken); border-right: 1px solid var(--ntn-border-subtle);
-  transition: width var(--ntn-dur-base) var(--ntn-ease-out); overflow: hidden;
+  transition: width var(--ntn-dur-base) var(--ntn-ease-out); overflow: hidden; backdrop-filter: var(--ntn-surface-filter);
 }
 .ntn-sidebar__brand { display: flex; align-items: center; gap: 10px; margin-bottom: var(--ntn-space-3); padding: 10px; border-radius: var(--ntn-radius-lg); background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-subtle); }
 .ntn-sidebar__mark { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; flex: 0 0 auto; border-radius: var(--ntn-radius-sm); background: linear-gradient(140deg, var(--ntn-accent-600), var(--ntn-accent-400)); color: var(--ntn-accent-fg); font-size: 16px; }

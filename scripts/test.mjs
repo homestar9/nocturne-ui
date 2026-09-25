@@ -41,6 +41,15 @@ try {
   const strip = (s) => s.replace(/^\/\*![\s\S]*?\*\/\n\n/, '').replace(/^@import[^\n]*\n+/gm, '');
   check(strip(nofonts) === strip(css), 'nocturne.nofonts.css is otherwise identical to nocturne.css');
 
+  console.log('Glass hooks (R15)');
+  check(/--ntn-surface-filter:\s*none;/.test(css) && /--ntn-pop-filter:\s*none;/.test(css), 'both hooks default to none');
+  const HOOKS = { 'ntn-card': 'surface', 'ntn-sidebar': 'surface', 'ntn-modal': 'pop', 'ntn-menu': 'pop',
+    'ntn-popover': 'pop', 'ntn-daterange__panel': 'pop', 'ntn-tooltip__bubble': 'pop' };
+  for (const [block, hook] of Object.entries(HOOKS)) {
+    const rule = css.match(new RegExp(`(?:^|\\n)\\.${block} \\{([^}]*)\\}`));
+    check(rule && rule[1].includes(`backdrop-filter: var(--ntn-${hook}-filter)`), `.${block} reads --ntn-${hook}-filter`);
+  }
+
   console.log('Prefix build');
   for (const file of baseFiles) {
     const rel = relative(base, file);

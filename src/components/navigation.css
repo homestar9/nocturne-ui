@@ -16,7 +16,7 @@
   display: flex; flex-direction: column; gap: 4px; flex: 0 0 auto;
   width: var(--ntn-sidebar-w); height: 100vh; position: sticky; top: 0; padding: var(--ntn-space-3);
   background: var(--ntn-bg-sunken); border-right: 1px solid var(--ntn-border-subtle);
-  transition: width var(--ntn-dur-base) var(--ntn-ease-out); overflow: hidden;
+  transition: width var(--ntn-dur-base) var(--ntn-ease-out); overflow: hidden; backdrop-filter: var(--ntn-surface-filter);
 }
 .ntn-sidebar__brand { display: flex; align-items: center; gap: 10px; margin-bottom: var(--ntn-space-3); padding: 10px; border-radius: var(--ntn-radius-lg); background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-subtle); }
 .ntn-sidebar__mark { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; flex: 0 0 auto; border-radius: var(--ntn-radius-sm); background: linear-gradient(140deg, var(--ntn-accent-600), var(--ntn-accent-400)); color: var(--ntn-accent-fg); font-size: 16px; }

@@ -30,6 +30,9 @@ renamed or removed class names and tokens.
   squeezed column. The existing `data-ntn-toggle` opens it (`data-open`). An optional
   `ntn-sidebar__scrim` sibling dims the page. Escape or a scrim click closes it, and focus goes in
   and comes back out. The rail (`data-collapsed`) now applies only above 720px.
+- **Glass hooks**: `--ntn-surface-filter` (cards, sidebar) and `--ntn-pop-filter` (modal, menu,
+  popover, date-range panel, tooltip) feed `backdrop-filter`. Both default to `none`, so
+  Nocturne renders byte-identically; a skin with translucent surfaces sets them.
 - **`dist/nocturne.nofonts.css`** (package export `./css/nofonts`): the full stylesheet without the
   Google Fonts `@import`, for apps that self-host Geist or run a strict CSP. Prefixed builds emit
   it too.
@@ -57,6 +60,11 @@ renamed or removed class names and tokens.
   default `ntn-card` now spills out instead of being cut off, so the kitchen sink's
   `style="overflow:visible"` workarounds are gone. `ntn-card__foot` rounds its own bottom corners.
   `ntn-card--flush` still clips, because it holds edge-to-edge tables and media.
+
+### Fixed
+- The date-range panel used a hard-coded `z-index: 60`, so a sticky top bar (`--ntn-z-sticky`,
+  100) could cover it. It now uses `--ntn-z-dropdown` like the other popups.
+- The kitchen sink used an `ntn-card--sm` modifier that never existed; it is gone from the demo.
 
 ## 1.5.0 — 2026-09-24
 
