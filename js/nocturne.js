@@ -612,15 +612,164 @@ function onSubmenuKey(item, e) {
     }
     return;
   }
-  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Home' || e.key === 'End') {
     const holder = item.closest('.ntn-menu');
-    const items = $$(':scope > .ntn-menu__item, :scope > .ntn-menu__sub > .ntn-menu__item', holder);
+    const items = $$(':scope > .ntn-menu__item, :scope > .ntn-menu__sub > .ntn-menu__item', holder)
+      .filter((i) => i.getAttribute('aria-disabled') !== 'true');
     const i = items.indexOf(item);
     if (i < 0) return;
     e.preventDefault();
-    const to = e.key === 'ArrowDown' ? (i + 1) % items.length : (i - 1 + items.length) % items.length;
+    let to = e.key === 'ArrowDown' ? (i + 1) % items.length : (i - 1 + items.length) % items.length;
+    if (e.key === 'Home') to = 0;
+    if (e.key === 'End') to = items.length - 1;
     items[to].focus();
   }
+}
+
+/* ── Dropdown + popover ──────────────────────────────────────────────────────
+   <div class="ntn-dropdown" data-ntn-dropdown>
+     <button type="button" class="ntn-btn" aria-haspopup="menu" aria-expanded="false">Actions</button>
+     <div class="ntn-menu" role="menu" data-ntn-placement="bottom-end">…ntn-menu__item…</div>
+   </div>
+   The panel (an ntn-menu, or an ntn-popover with role="dialog" for a form) is given the popover
+   attribute, so it opens in the TOP LAYER: no ancestor's overflow clips it, no z-index fights. It
+   stays where it is in the DOM, so form controls inside it still belong to the surrounding form.
+   Opening one closes the others. A pointerdown outside closes it, except inside an element matching
+   the panel's data-ntn-owner (a date picker appended to <body>, say); so does focus leaving it.
+   Escape closes it and returns focus to the trigger (and does not also close an enclosing dialog).
+   Fires ntn:dropdownshow / ntn:dropdownhide on the dropdown, after positioning. */
+
+let ddSeq = 0;
+const ddRoot = (el) => (el && el.closest ? el.closest('[data-ntn-dropdown]') : null);
+const ddPanel = (root) => root.querySelector(':scope > [popover], :scope > .ntn-menu, :scope > .ntn-popover');
+const ddTrigger = (root) => root.querySelector(':scope > [aria-haspopup], :scope > [data-ntn-dropdown-trigger]');
+const ddIsOpen = (root) => root.hasAttribute('data-ntn-open');
+const DD_FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+/** Wires ARIA and the popover attribute once. Safe to call repeatedly. */
+function ddSetup(root) {
+  const panel = ddPanel(root);
+  const trigger = ddTrigger(root);
+  if (!panel || !trigger) return false;
+  if (!panel.hasAttribute('popover') && typeof panel.showPopover === 'function') panel.setAttribute('popover', 'manual');
+  if (!panel.hasAttribute('popover')) panel.hidden = !ddIsOpen(root);
+  if (!panel.id) panel.id = 'ntn-dd-' + (++ddSeq);
+  trigger.setAttribute('aria-controls', panel.id);
+  trigger.setAttribute('aria-expanded', String(ddIsOpen(root)));
+  if (trigger.tagName === 'BUTTON' && !trigger.hasAttribute('type')) trigger.type = 'button';
+  return true;
+}
+
+/** Positions the panel against its trigger: preferred side and edge, flipped and kept on screen. */
+function ddPlace(root) {
+  const panel = ddPanel(root);
+  const trigger = ddTrigger(root);
+  if (!panel || !trigger) return;
+  const r = trigger.getBoundingClientRect();
+  const [side, align] = (panel.dataset.ntnPlacement || 'bottom-end').split('-');
+  const gap = Number(panel.dataset.ntnOffset || 6);
+  const margin = 8;
+  const w = panel.offsetWidth;
+  const h = panel.offsetHeight;
+  const below = r.bottom + gap;
+  const above = r.top - gap - h;
+  let top = side === 'top' ? above : below;
+  if (side === 'top' && top < margin && below + h <= innerHeight - margin) top = below;
+  if (side !== 'top' && top + h > innerHeight - margin && above >= margin) top = above;
+  let left = align === 'start' ? r.left : r.right - w;
+  left = Math.max(margin, Math.min(left, innerWidth - w - margin));
+  panel.style.left = Math.round(left) + 'px';
+  panel.style.top = Math.round(Math.max(margin, top)) + 'px';
+  panel.setAttribute('data-ntn-side', top < r.top ? 'top' : 'bottom');
+}
+
+/**
+ * Opens a dropdown or popover.
+ * @param {Element} target  the dropdown, its trigger, or anything inside it
+ * @param {{ focus?: 'first'|'last'|false }} [options]  what receives focus (default: the first item or field)
+ */
+function ddOpen(target, { focus = 'first' } = {}) {
+  const root = ddRoot(target);
+  if (!root || ddIsOpen(root) || !ddSetup(root)) return;
+  $$('[data-ntn-dropdown][data-ntn-open]').forEach((other) => { if (!other.contains(root)) ddClose(other); });
+  const panel = ddPanel(root);
+  root.setAttribute('data-ntn-open', '');
+  if (panel.hasAttribute('popover')) {
+    try { panel.showPopover(); } catch (e) { /* already open or detached */ }
+  } else {
+    panel.hidden = false;
+  }
+  ddPlace(root);
+  ddTrigger(root).setAttribute('aria-expanded', 'true');
+  if (focus) {
+    const menuItems = $$('.ntn-menu__item:not([aria-disabled="true"])', panel).filter((i) => !i.closest('.ntn-menu__sub > .ntn-menu'));
+    const pool = menuItems.length ? menuItems : $$(DD_FOCUSABLE, panel);
+    const to = focus === 'last' ? pool[pool.length - 1] : pool[0];
+    if (to) to.focus();
+  }
+  root.dispatchEvent(new CustomEvent('ntn:dropdownshow', { bubbles: true, detail: { panel } }));
+}
+
+/**
+ * Closes a dropdown or popover (and any open inside it).
+ * @param {Element} target  the dropdown, its trigger, or anything inside it
+ * @param {{ returnFocus?: boolean }} [options]  focus the trigger afterwards (default: only if focus was inside)
+ */
+function ddClose(target, { returnFocus = false } = {}) {
+  const root = ddRoot(target);
+  if (!root || !ddIsOpen(root)) return;
+  const panel = ddPanel(root);
+  $$('[data-ntn-dropdown][data-ntn-open]', panel).forEach((inner) => ddClose(inner));
+  const hadFocus = panel.contains(document.activeElement);
+  root.removeAttribute('data-ntn-open');
+  if (panel.hasAttribute('popover')) {
+    try { panel.hidePopover(); } catch (e) { /* already closed */ }
+  } else {
+    panel.hidden = true;
+  }
+  $$('.ntn-menu__sub[data-ntn-open]', panel).forEach((s) => s.removeAttribute('data-ntn-open'));
+  const trigger = ddTrigger(root);
+  trigger.setAttribute('aria-expanded', 'false');
+  if (returnFocus || hadFocus) trigger.focus();
+  root.dispatchEvent(new CustomEvent('ntn:dropdownhide', { bubbles: true, detail: { panel } }));
+}
+
+/**
+ * Opens a closed dropdown or closes an open one.
+ * @param {Element} target  the dropdown, its trigger, or anything inside it
+ */
+function ddToggle(target) {
+  const root = ddRoot(target);
+  if (root) (ddIsOpen(root) ? ddClose(root) : ddOpen(root));
+}
+
+/* Public API. Thin wrappers, so internal callers never collide with a local named open/close. */
+export function open(target, options) { ddOpen(target, options); }
+export function close(target, options) { ddClose(target, options); }
+export function toggle(target) { ddToggle(target); }
+
+/** True when `el` is inside the element a panel names as its owner (e.g. a body-mounted picker). */
+function ddOwned(root, el) {
+  const owner = ddPanel(root)?.getAttribute('data-ntn-owner');
+  return !!(owner && el && el.closest && el.closest(owner));
+}
+
+function ddOnPointerDown(e) {
+  $$('[data-ntn-dropdown][data-ntn-open]').forEach((root) => {
+    if (!root.contains(e.target) && !ddOwned(root, e.target)) ddClose(root);
+  });
+}
+
+function ddOnFocusOut(e) {
+  const to = e.relatedTarget;
+  if (!to) return;
+  $$('[data-ntn-dropdown][data-ntn-open]').forEach((root) => {
+    if (root.contains(e.target) && !root.contains(to) && !ddOwned(root, to)) ddClose(root);
+  });
+}
+
+function ddReposition() {
+  $$('[data-ntn-dropdown][data-ntn-open]').forEach(ddPlace);
 }
 
 /* Table select-all + per-row aria-selected. */
@@ -985,6 +1134,15 @@ function stepsGoto(step) {
 }
 
 function onClick(e) {
+  // Dropdown trigger: toggle. A chosen menu item, or a data-ntn-close inside an open panel
+  // (a filter form's Apply), closes it; the item's own action still runs.
+  const ddTrig = e.target.closest('[data-ntn-dropdown] > [aria-haspopup], [data-ntn-dropdown] > [data-ntn-dropdown-trigger]');
+  if (ddTrig && !ddTrig.disabled && ddTrig.getAttribute('aria-disabled') !== 'true') { ddToggle(ddTrig); return; }
+  const ddItem = e.target.closest('[data-ntn-dropdown][data-ntn-open] .ntn-menu__item');
+  if (ddItem && !ddItem.hasAttribute('aria-haspopup') && ddItem.getAttribute('aria-disabled') !== 'true') ddClose(ddItem);
+  const ddCloser = e.target.closest('[data-ntn-dropdown][data-ntn-open] [data-ntn-close]');
+  if (ddCloser) { ddClose(ddCloser, { returnFocus: true }); return; }
+
   const drRoot = e.target.closest('[data-ntn-daterange]');
   $$('[data-ntn-daterange]').forEach((r) => { if (r !== drRoot && drState(r).open) drClose(r, false); });
   if (drRoot && drOnClick(drRoot, e)) return;
@@ -1094,18 +1252,40 @@ function onKeyDown(e) {
   const t = e.target;
   const q = (sel) => (t && t.closest ? t.closest(sel) : null);
 
+  // A closed dropdown's trigger: arrow keys open it on the first / last item.
+  const ddTrig = q('[data-ntn-dropdown] > [aria-haspopup], [data-ntn-dropdown] > [data-ntn-dropdown-trigger]');
+  if (ddTrig && !ddIsOpen(ddRoot(ddTrig)) && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+    e.preventDefault();
+    ddOpen(ddTrig, { focus: e.key === 'ArrowUp' ? 'last' : 'first' });
+    return;
+  }
+
   const tab = q('.ntn-tabs__tab');
   if (tab) { onTabKey(tab, e); return; }
   const combo = q('[data-ntn-combo]');
-  if (combo) { onComboKey(combo, e); return; }
+  if (combo) {
+    onComboKey(combo, e);
+    // An Escape the combo used (to close its own panel) stops here; otherwise it may close a dropdown.
+    if (e.key !== 'Escape' || e.defaultPrevented) return;
+  }
   const item = q('.ntn-tree__item');
   if (item && t === item) { onTreeKey(item, e); return; }
   const mi = q('.ntn-menu__item');
   if (mi) onSubmenuKey(mi, e);
 
   if (e.key !== 'Escape') return;
-  $$('[data-ntn-daterange]').forEach((r) => { if (drState(r).open) drClose(r, false); });
+  // Innermost first: an open date picker, then an open submenu, then the dropdown around the focus.
+  const openRanges = $$('[data-ntn-daterange]').filter((r) => drState(r).open);
+  if (openRanges.length) { openRanges.forEach((r) => drClose(r, false)); e.preventDefault(); return; }
+  const openSub = q('.ntn-menu__sub[data-ntn-open]');
   $$('.ntn-menu__sub[data-ntn-open]').forEach((s) => s.removeAttribute('data-ntn-open'));
+  if (openSub) { e.preventDefault(); const owner = openSub.querySelector(':scope > .ntn-menu__item'); if (owner) owner.focus(); return; }
+  const dd = q('[data-ntn-dropdown][data-ntn-open]') || $$('[data-ntn-dropdown][data-ntn-open]').pop();
+  if (dd) {
+    // preventDefault also stops a native <dialog> around the menu from closing on this Escape.
+    e.preventDefault();
+    ddClose(dd, { returnFocus: true });
+  }
 }
 
 function onChange(e) {
@@ -1148,6 +1328,7 @@ export function refresh(root = document) {
   within('[data-ntn-tree]').forEach(treeSync);
   within('[data-ntn-combo]').forEach(comboRender);
   within('[data-ntn-daterange]').forEach(drSyncTrigger);
+  within('[data-ntn-dropdown]').forEach(ddSetup);
   if (themeManaged) syncThemeControls(getTheme());
 }
 
@@ -1175,6 +1356,10 @@ export function start(options = {}) {
   });
   document.addEventListener('keydown', onKeyDown);
   document.addEventListener('pointerdown', onTreePointerDown);
+  document.addEventListener('pointerdown', ddOnPointerDown);
+  document.addEventListener('focusout', ddOnFocusOut);
+  document.addEventListener('scroll', ddReposition, true);
+  addEventListener('resize', ddReposition);
   document.addEventListener('dragstart', onTreeDragStart);
   document.addEventListener('dragover', onTreeDragOver);
   document.addEventListener('drop', onTreeDrop);
@@ -1190,4 +1375,4 @@ if (typeof document !== 'undefined') {
   else start();
 }
 
-export default { start, refresh, getTheme, getThemePreference, setTheme, toggleTheme };
+export default { start, refresh, configure, open, close, toggle, getTheme, getThemePreference, setTheme, toggleTheme };

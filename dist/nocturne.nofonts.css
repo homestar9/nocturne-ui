@@ -639,9 +639,26 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
 .ntn-search--sm { height: var(--ntn-control-sm); }
 .ntn-search--lg { height: var(--ntn-control-lg); }
 
-/* ── Menu, submenu, combobox ───────────────────────────────────────────────
+/* ── Menu, submenu, combobox, dropdown, popover ─────────────────────────────
    .ntn-menu is the dropdown surface — for action menus, pickers and popovers.
-   Position the surface yourself (or let .ntn-combo do it). */
+   Inside an ntn-dropdown, nocturne.js opens and positions it; standalone, position it yourself
+   (or let .ntn-combo do it). */
+
+/* Dropdown: a trigger (aria-haspopup) plus its panel. nocturne.js gives the panel the popover
+   attribute, so it opens in the top layer, and sets left/top from the trigger. */
+.ntn-dropdown { position: relative; display: inline-flex; }
+.ntn-dropdown > [popover] { position: fixed; inset: auto; margin: 0; }
+.ntn-dropdown > [popover]:not(:popover-open) { display: none; }
+
+/* Popover: a panel for content that is not a menu (a filter form, a short editor), role="dialog". */
+.ntn-popover {
+  min-width: 240px; max-width: min(420px, calc(100vw - 16px)); padding: var(--ntn-space-4);
+  display: flex; flex-direction: column; gap: var(--ntn-space-3);
+  background: var(--ntn-surface-2); color: var(--ntn-text-primary);
+  border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg);
+  box-shadow: var(--ntn-shadow-lg); animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out);
+}
+.ntn-popover__foot { display: flex; justify-content: flex-end; gap: var(--ntn-space-2); padding-top: var(--ntn-space-3); border-top: 1px solid var(--ntn-border-subtle); }
 
 .ntn-menu {
   min-width: 180px; padding: 4px;

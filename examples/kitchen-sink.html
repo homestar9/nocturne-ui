@@ -1509,6 +1509,43 @@
           </div></div>
         </section>
 
+        <!-- ── Dropdown + popover ───────────────────────────────────── -->
+        <section class="sink" id="dropdown">
+          <header class="sink__head">
+            <h2 class="sink__title">Dropdown and popover</h2>
+            <code class="sink__code">.ntn-dropdown</code>
+            <p class="sink__note">A trigger with <code>aria-haspopup</code> plus a panel. <code>nocturne.js</code> opens the panel in the top layer, so even this flush (clipping) card can't cut it off. Arrow keys, Home/End, Escape and outside clicks work.</p>
+          </header>
+          <div class="ntn-card ntn-card--flush">
+            <header class="ntn-card__head">
+              <div><h3 class="ntn-card__title">Invoices</h3><p class="ntn-card__sub">Actions menu and filter popover</p></div>
+              <div class="ntn-card__actions">
+                <div class="ntn-dropdown" data-ntn-dropdown>
+                  <button type="button" class="ntn-btn ntn-btn--sm" aria-haspopup="dialog" aria-expanded="false"><i class="fa-light fa-filter"></i>Filters</button>
+                  <div class="ntn-popover" role="dialog" aria-label="Filters" data-ntn-placement="bottom-end">
+                    <label class="ntn-field ntn-field--sm"><span class="ntn-field__label">Created after</span><span class="ntn-field__control"><input type="date" name="createdAfter"></span></label>
+                    <label class="ntn-select ntn-select--sm"><span class="ntn-select__label">Status</span><span class="ntn-select__control"><select name="status"><option value="">Any</option><option>Paid</option><option>Overdue</option></select></span></label>
+                    <div class="ntn-popover__foot">
+                      <button type="button" class="ntn-btn ntn-btn--sm ntn-btn--subtle" data-ntn-close>Clear</button>
+                      <button type="button" class="ntn-btn ntn-btn--sm ntn-btn--primary" data-ntn-close>Apply</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="ntn-dropdown" data-ntn-dropdown>
+                  <button type="button" class="ntn-btn ntn-btn--sm" aria-haspopup="menu" aria-expanded="false">Actions<i class="fa-light fa-chevron-down"></i></button>
+                  <div class="ntn-menu" role="menu" data-ntn-placement="bottom-end">
+                    <a class="ntn-menu__item" role="menuitem" href="#dropdown"><span><i class="fa-light fa-pen"></i> Edit</span></a>
+                    <a class="ntn-menu__item" role="menuitem" href="#dropdown"><span><i class="fa-light fa-copy"></i> Duplicate</span></a>
+                    <hr class="ntn-divider">
+                    <button type="button" class="ntn-menu__item ntn-menu__item--danger" role="menuitem"><span><i class="fa-light fa-trash"></i> Delete</span></button>
+                  </div>
+                </div>
+              </div>
+            </header>
+            <div class="ntn-card__body"><div class="ntn-empty"><i class="fa-light fa-file-invoice"></i><p class="ntn-empty__title">Open a menu: it floats above this clipping card.</p></div></div>
+          </div>
+        </section>
+
         <!-- ── Progress steps ─────────────────────────────────────────── -->
         <section class="sink" id="steps">
           <header class="sink__head">

@@ -10,7 +10,8 @@ import { readFile } from 'node:fs/promises';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const moduleUrl = new URL('../js/nocturne.js', import.meta.url).href;
 const GLOBALS = ['window', 'document', 'localStorage', 'CustomEvent', 'Event', 'MouseEvent', 'KeyboardEvent',
-  'Node', 'HTMLElement', 'getComputedStyle', 'addEventListener', 'removeEventListener', 'requestAnimationFrame'];
+  'Node', 'HTMLElement', 'getComputedStyle', 'addEventListener', 'removeEventListener', 'requestAnimationFrame',
+  'innerWidth', 'innerHeight', 'FocusEvent'];
 
 let failures = 0;
 let run = 0;
@@ -132,6 +133,52 @@ console.log('Tabs announce real changes only, and refresh() is quiet (R13)');
   mod.refresh(document.getElementById('host'));
   mod.refresh(document.getElementById('host'));
   check(events.join(',') === 'x:initial', `a newly rendered list is announced once with initial (events: ${events.join(',')})`);
+}
+
+console.log('Dropdown and popover (R1, R2)');
+{
+  const { document, window, mod } = await page(
+    `<form id="f">
+       <div class="ntn-dropdown" data-ntn-dropdown id="dd">
+         <button class="ntn-btn" aria-haspopup="dialog">Filters</button>
+         <div class="ntn-popover" role="dialog" data-ntn-owner=".picker">
+           <input name="q"><button type="button" data-ntn-close>Apply</button>
+         </div>
+       </div>
+     </form>
+     <div class="picker"><button type="button" id="day">5</button></div>
+     <button type="button" id="outside">Elsewhere</button>`);
+  const dd = document.getElementById('dd');
+  const trigger = dd.querySelector('[aria-haspopup]');
+  const panel = dd.querySelector('.ntn-popover');
+  const events = [];
+  dd.addEventListener('ntn:dropdownshow', () => events.push('show'));
+  dd.addEventListener('ntn:dropdownhide', () => events.push('hide'));
+  const isOpen = () => dd.hasAttribute('data-ntn-open');
+  const pointer = (el) => el.dispatchEvent(new window.Event('pointerdown', { bubbles: true }));
+
+  check(trigger.getAttribute('aria-controls') === panel.id && trigger.type === 'button', 'set-up wires aria-controls and type="button" on the trigger');
+  click(trigger);
+  check(isOpen() && trigger.getAttribute('aria-expanded') === 'true', 'clicking the trigger opens it');
+  check(document.activeElement === panel.querySelector('input'), 'the first field receives focus');
+  pointer(document.getElementById('day'));
+  check(isOpen(), 'a pointerdown inside the data-ntn-owner element keeps it open');
+  pointer(panel.querySelector('input'));
+  check(isOpen(), 'a pointerdown inside the panel keeps it open');
+  pointer(document.getElementById('outside'));
+  check(!isOpen() && trigger.getAttribute('aria-expanded') === 'false', 'a pointerdown elsewhere closes it');
+
+  mod.open(dd);
+  click(panel.querySelector('[data-ntn-close]'));
+  check(!isOpen() && document.activeElement === trigger, 'data-ntn-close closes it and focus returns to the trigger');
+  check(panel.closest('form') === document.getElementById('f'), 'the panel stays inside its form');
+
+  mod.open(trigger);
+  panel.querySelector('input').dispatchEvent(new window.FocusEvent('focusout', { bubbles: true, relatedTarget: document.getElementById('outside') }));
+  check(!isOpen(), 'focus leaving the dropdown closes it');
+  mod.toggle(dd); mod.toggle(dd);
+  check(!isOpen(), 'toggle() opens and closes');
+  check(events.join(',') === 'show,hide,show,hide,show,hide,show,hide', `show/hide events fire in pairs (${events.join(',')})`);
 }
 
 console.log('Generated buttons never submit a form');

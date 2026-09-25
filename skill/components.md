@@ -243,6 +243,51 @@ practical limit for a pointer.
 </div>
 ```
 
+## Dropdown — `ntn-dropdown` · Popover — `ntn-popover`
+
+A trigger with `aria-haspopup` plus its panel, inside `<div class="ntn-dropdown" data-ntn-dropdown>`.
+The panel is an `ntn-menu` (`role="menu"`, items `ntn-menu__item` with `role="menuitem"`) or, for
+content that is not a menu (a filter form), an `ntn-popover` (`role="dialog"`, `aria-label`, optional
+`__foot`).
+
+`nocturne.js` opens the panel in the **top layer** (Popover API):
+- no ancestor clips it, not even a `--flush` card;
+- it stays in place in the DOM, so form fields inside belong to the surrounding form;
+- placement comes from `data-ntn-placement` (`bottom-end` default, `bottom-start`, `top-end`,
+  `top-start`), flipped and kept on screen.
+
+Behaviour:
+- **Keyboard:** `↓`/`↑` on the trigger opens on the first/last item; `↑`/`↓`/`Home`/`End` move
+  through items.
+- **Closing:** Escape closes it and returns focus to the trigger; inside a modal, only the menu
+  closes. A click outside, focus leaving, choosing an item, or a `data-ntn-close` inside the panel
+  (e.g. Apply) close it too.
+- **Opening** one closes the others.
+- **`data-ntn-owner=".selector"`** on the panel ignores clicks inside that element, for a picker
+  appended to `<body>`.
+- **Events** `ntn:dropdownshow` / `ntn:dropdownhide`; functions `open(el)`, `close(el)`, `toggle(el)`.
+
+```html
+<div class="ntn-dropdown" data-ntn-dropdown>
+  <button type="button" class="ntn-btn ntn-btn--sm" aria-haspopup="menu" aria-expanded="false">Actions<i class="fa-light fa-chevron-down"></i></button>
+  <div class="ntn-menu" role="menu" data-ntn-placement="bottom-end">
+    <a class="ntn-menu__item" role="menuitem" href="/items/1/edit"><span><i class="fa-light fa-pen"></i> Edit</span></a>
+    <hr class="ntn-divider">
+    <button type="button" class="ntn-menu__item ntn-menu__item--danger" role="menuitem"><span><i class="fa-light fa-trash"></i> Delete</span></button>
+  </div>
+</div>
+
+<div class="ntn-dropdown" data-ntn-dropdown>
+  <button type="button" class="ntn-btn ntn-btn--sm" aria-haspopup="dialog" aria-expanded="false"><i class="fa-light fa-filter"></i>Filters</button>
+  <div class="ntn-popover" role="dialog" aria-label="Filters" data-ntn-placement="bottom-end">
+    …fields…
+    <div class="ntn-popover__foot"><button type="button" class="ntn-btn ntn-btn--sm ntn-btn--primary" data-ntn-close>Apply</button></div>
+  </div>
+</div>
+```
+
+---
+
 ## Slider — `ntn-slider`
 
 Elements: `__head` `__label` `__value`. The fill and the readout are driven by

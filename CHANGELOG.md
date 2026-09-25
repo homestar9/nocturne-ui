@@ -7,6 +7,17 @@ renamed or removed class names and tokens.
 ## 1.6.0 — Unreleased
 
 ### Added
+- **`ntn-dropdown` and `ntn-popover`**: a trigger (`aria-haspopup`) plus a menu or a free-form
+  panel, opened by `nocturne.js` in the top layer, so no ancestor (not even a flush card) clips it.
+  - **Placement:** `data-ntn-placement`, flipped and kept on screen.
+  - **Keyboard:** arrows on the trigger open it; arrows, `Home` and `End` move through items.
+  - **Closing:** Escape returns focus to the trigger and closes only the menu inside a modal.
+    Outside clicks, focus leaving, choosing an item and `data-ntn-close` also close it.
+  - **Opening** one closes the others.
+  - **`data-ntn-owner`** exempts a body-mounted picker from outside clicks.
+  - **Events and API:** `ntn:dropdownshow` / `ntn:dropdownhide`, and exports `open()`,
+    `close()`, `toggle()`.
+- **Menus: `Home` / `End`** jump to the first / last item, and arrow keys skip disabled items.
 - **`ntn-rating`**: a star rating built on native radios (values 1…max plus a value-0 "Clear").
   A form always posts it, arrow keys work natively, and the stars are CSS-drawn (no icon set).
   It has a hover preview and a read-only variant (`--readonly`, `role="img"`).
