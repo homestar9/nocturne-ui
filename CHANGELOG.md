@@ -17,6 +17,13 @@ renamed or removed class names and tokens.
   it too.
 
 ### Changed
+- **`ntn:tabchange` fires only for real changes.**
+  - A list is announced once when first set up, with `detail.initial: true`.
+  - After that, the event fires only when the selection actually changes. A later `refresh()`
+    and clicking the already-selected tab are silent. Before, every `refresh()` re-announced every
+    tab list, so apps redrew panels for nothing each time they inserted HTML.
+  - Tab `<button>`s without a `type` get `type="button"`, so a tab never submits its form.
+  - `refresh(root)` also covers `root` itself when it matches, so `refresh(tabList)` works.
 - **Accent tints derive from the ramp.** `--ntn-accent-soft`, `-soft-hover`, `-softer`, `-glow`,
   `-line`, `-line-strong` and `--ntn-focus-ring` are now `color-mix()` of `--ntn-accent-500`.
   A brand theme only sets the ramp and `--ntn-accent-fg`, and nothing stays violet (before this,

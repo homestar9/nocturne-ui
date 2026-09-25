@@ -100,6 +100,40 @@ console.log('Icons come from a pluggable renderer (M6)');
   check(themeIcon && themeIcon.dataset.icon === 'theme-light', 'theme toggle icon uses the app renderer (a sun while dark)');
 }
 
+console.log('Tabs announce real changes only, and refresh() is quiet (R13)');
+{
+  const { document, mod } = await page(
+    `<form><div class="ntn-tabs" role="tablist" id="t">
+       <button class="ntn-tabs__tab" data-value="a" data-ntn-panel="#pa" aria-selected="true">A</button>
+       <button class="ntn-tabs__tab" data-value="b" data-ntn-panel="#pb">B</button>
+     </div></form>
+     <section id="pa">A</section><section id="pb" hidden>B</section>`);
+  const events = [];
+  document.addEventListener('ntn:tabchange', (e) => events.push(`${e.detail.value}${e.detail.initial ? ':initial' : ''}`));
+  // start() already ran on import (before the listener), so re-run the set-up path explicitly.
+  mod.refresh();
+  mod.refresh(document.getElementById('t'));
+  check(events.length === 0, `refresh() after start does not re-announce (events: ${events.join(',') || 'none'})`);
+  const tabs = document.querySelectorAll('.ntn-tabs__tab');
+  check([...tabs].every((t) => t.getAttribute('type') === 'button'), 'tab buttons get type="button", so a tab never submits its form');
+  click(tabs[1]);
+  check(events.join(',') === 'b', `clicking another tab announces it once (events: ${events.join(',')})`);
+  check(document.getElementById('pb').hidden === false && document.getElementById('pa').hidden === true, 'the chosen panel shows');
+  click(tabs[1]);
+  check(events.join(',') === 'b', 'clicking the already-selected tab announces nothing');
+}
+{
+  // A list first seen by refresh() (rendered after start) is announced once, marked initial.
+  const { document, mod } = await page('<div id="host"></div>');
+  const events = [];
+  document.addEventListener('ntn:tabchange', (e) => events.push(`${e.detail.value}${e.detail.initial ? ':initial' : ''}`));
+  document.getElementById('host').innerHTML =
+    `<div class="ntn-tabs" role="tablist"><button class="ntn-tabs__tab" data-value="x" data-ntn-panel="#px" aria-selected="true">X</button></div><section id="px">X</section>`;
+  mod.refresh(document.getElementById('host'));
+  mod.refresh(document.getElementById('host'));
+  check(events.join(',') === 'x:initial', `a newly rendered list is announced once with initial (events: ${events.join(',')})`);
+}
+
 console.log('Generated buttons never submit a form');
 {
   const rows = Array.from({ length: 12 }, (_, i) => `<tr><td>${i}</td></tr>`).join('');

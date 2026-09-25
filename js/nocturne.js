@@ -159,9 +159,17 @@ function tabInk(list) {
   list.setAttribute('data-ntn-ink', '');
 }
 
-function selectTab(tab, focus) {
+/* Tab lists already announced once, so a later refresh() never re-fires ntn:tabchange. */
+const announcedTabs = new WeakSet();
+
+/**
+ * Selects a tab (and shows its panel). Announces ntn:tabchange only when the selection really
+ * changes, or once with detail.initial when a list is first set up.
+ */
+function selectTab(tab, focus, { announce = true, initial = false } = {}) {
   const list = tab.closest('.ntn-tabs');
   if (!list) return;
+  const changed = list.querySelector('.ntn-tabs__tab[aria-selected="true"]') !== tab;
   tabAll(list).forEach((t) => {
     const on = t === tab;
     t.setAttribute('aria-selected', String(on));
@@ -175,7 +183,9 @@ function selectTab(tab, focus) {
   });
   tabInk(list);
   if (focus === true) tab.focus();
-  list.dispatchEvent(new CustomEvent('ntn:tabchange', { bubbles: true, detail: { value: tab.dataset.value || tab.textContent.trim(), tab } }));
+  if (announce && (changed || initial)) {
+    list.dispatchEvent(new CustomEvent('ntn:tabchange', { bubbles: true, detail: { value: tab.dataset.value || tab.textContent.trim(), tab, initial } }));
+  }
 }
 
 /* Vertical tabs are declared with aria-orientation="vertical" (the --vertical modifier still works). */
@@ -188,10 +198,14 @@ function setupTabs(list) {
   if (!tabs.some((t) => t.getAttribute('aria-selected') === 'true')) tabs[0].setAttribute('aria-selected', 'true');
   tabs.forEach((t) => {
     if (!t.hasAttribute('role')) t.setAttribute('role', 'tab');
+    // A tab never submits the form it sits in.
+    if (t.tagName === 'BUTTON' && !t.hasAttribute('type')) t.type = 'button';
     t.tabIndex = t.getAttribute('aria-selected') === 'true' ? 0 : -1;
   });
   const sel = list.querySelector('.ntn-tabs__tab[aria-selected="true"]');
-  if (sel && sel.hasAttribute('data-ntn-panel')) selectTab(sel);
+  const first = !announcedTabs.has(list);
+  announcedTabs.add(list);
+  if (sel && sel.hasAttribute('data-ntn-panel')) selectTab(sel, false, { announce: first, initial: first });
   else tabInk(list);
 }
 
@@ -1124,14 +1138,16 @@ function onChange(e) {
 
 /** Re-scan the DOM. Call after rendering new markup (framework updates, HTMX swaps). */
 export function refresh(root = document) {
-  $$('.ntn-slider input[type="range"]', root).forEach(syncSlider);
-  $$('.ntn-progress__fill[data-value]', root).forEach(syncProgress);
-  $$('.ntn-table', root).forEach(syncTable);
-  $$('.ntn-table[data-ntn-paginate]', root).forEach(applyTable);
-  $$('.ntn-tabs', root).forEach(setupTabs);
-  $$('[data-ntn-tree]', root).forEach(treeSync);
-  $$('[data-ntn-combo]', root).forEach(comboRender);
-  $$('[data-ntn-daterange]', root).forEach(drSyncTrigger);
+  // Everything matching inside root, plus root itself when it matches (refresh(tabList) works).
+  const within = (sel) => (root !== document && root.matches && root.matches(sel) ? [root] : []).concat($$(sel, root));
+  within('.ntn-slider input[type="range"]').forEach(syncSlider);
+  within('.ntn-progress__fill[data-value]').forEach(syncProgress);
+  within('.ntn-table').forEach(syncTable);
+  within('.ntn-table[data-ntn-paginate]').forEach(applyTable);
+  within('.ntn-tabs').forEach(setupTabs);
+  within('[data-ntn-tree]').forEach(treeSync);
+  within('[data-ntn-combo]').forEach(comboRender);
+  within('[data-ntn-daterange]').forEach(drSyncTrigger);
   if (themeManaged) syncThemeControls(getTheme());
 }
 
