@@ -18,6 +18,10 @@ html, body {
   text-rendering: optimizeLegibility;
 }
 
+/* A data-theme subtree sets its own text colour (it would otherwise inherit the page's).
+   Zero specificity, so any component colour still wins. */
+:where([data-theme]:not(:root)) { color: var(--ntn-text-primary); }
+
 a { color: var(--ntn-text-accent); text-decoration: none; }
 a:hover { color: var(--ntn-accent-200); }
 

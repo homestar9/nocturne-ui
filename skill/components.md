@@ -180,8 +180,18 @@ rendering; selection lives on each option's `aria-selected`, so the DOM is the s
 `data-ntn-max` chips before a `+N`), and a `__search` input with `data-ntn-combo-search` to
 filter. Fires `ntn:combochange` with `{ value, values, labels, multiple }`.
 
+**In a form**, give the root `data-ntn-name="field"`. `nocturne.js` then keeps hidden
+`<input name="field">` children in step with the selection, so it posts like a `<select>`:
+- **multi:** one input per chosen value, in option order, and nothing when none are chosen;
+- **single:** exactly one input, `""` when nothing is chosen.
+
+Each user change also fires a bubbling `change` from the combo root. `form.reset()` restores the
+selection the combo was first rendered with. If you change `aria-selected` yourself, call
+`refresh(root)` to re-sync the inputs. Without the script nothing posts, so server-render the
+hidden inputs too if the form must work without it.
+
 ```html
-<div class="ntn-combo" data-ntn-combo data-ntn-multi data-ntn-max="2">
+<div class="ntn-combo" data-ntn-combo data-ntn-multi data-ntn-max="2" data-ntn-name="channels">
   <span class="ntn-combo__label">Notify channels</span>
   <button type="button" class="ntn-combo__trigger" aria-haspopup="listbox" aria-expanded="false">
     <span class="ntn-combo__value" data-ntn-combo-value data-ntn-placeholder="No channels"></span>
@@ -243,6 +253,51 @@ practical limit for a pointer.
 </div>
 ```
 
+## Dropdown — `ntn-dropdown` · Popover — `ntn-popover`
+
+A trigger with `aria-haspopup` plus its panel, inside `<div class="ntn-dropdown" data-ntn-dropdown>`.
+The panel is an `ntn-menu` (`role="menu"`, items `ntn-menu__item` with `role="menuitem"`) or, for
+content that is not a menu (a filter form), an `ntn-popover` (`role="dialog"`, `aria-label`, optional
+`__foot`).
+
+`nocturne.js` opens the panel in the **top layer** (Popover API):
+- no ancestor clips it, not even a `--flush` card;
+- it stays in place in the DOM, so form fields inside belong to the surrounding form;
+- placement comes from `data-ntn-placement` (`bottom-end` default, `bottom-start`, `top-end`,
+  `top-start`), flipped and kept on screen.
+
+Behaviour:
+- **Keyboard:** `↓`/`↑` on the trigger opens on the first/last item; `↑`/`↓`/`Home`/`End` move
+  through items.
+- **Closing:** Escape closes it and returns focus to the trigger; inside a modal, only the menu
+  closes. A click outside, focus leaving, choosing an item, or a `data-ntn-close` inside the panel
+  (e.g. Apply) close it too.
+- **Opening** one closes the others.
+- **`data-ntn-owner=".selector"`** on the panel ignores clicks inside that element, for a picker
+  appended to `<body>`.
+- **Events** `ntn:dropdownshow` / `ntn:dropdownhide`; functions `open(el)`, `close(el)`, `toggle(el)`.
+
+```html
+<div class="ntn-dropdown" data-ntn-dropdown>
+  <button type="button" class="ntn-btn ntn-btn--sm" aria-haspopup="menu" aria-expanded="false">Actions<i class="fa-light fa-chevron-down"></i></button>
+  <div class="ntn-menu" role="menu" data-ntn-placement="bottom-end">
+    <a class="ntn-menu__item" role="menuitem" href="/items/1/edit"><span><i class="fa-light fa-pen"></i> Edit</span></a>
+    <hr class="ntn-divider">
+    <button type="button" class="ntn-menu__item ntn-menu__item--danger" role="menuitem"><span><i class="fa-light fa-trash"></i> Delete</span></button>
+  </div>
+</div>
+
+<div class="ntn-dropdown" data-ntn-dropdown>
+  <button type="button" class="ntn-btn ntn-btn--sm" aria-haspopup="dialog" aria-expanded="false"><i class="fa-light fa-filter"></i>Filters</button>
+  <div class="ntn-popover" role="dialog" aria-label="Filters" data-ntn-placement="bottom-end">
+    …fields…
+    <div class="ntn-popover__foot"><button type="button" class="ntn-btn ntn-btn--sm ntn-btn--primary" data-ntn-close>Apply</button></div>
+  </div>
+</div>
+```
+
+---
+
 ## Slider — `ntn-slider`
 
 Elements: `__head` `__label` `__value`. The fill and the readout are driven by
@@ -260,7 +315,8 @@ Elements: `__head` `__label` `__value`. The fill and the readout are driven by
 
 ## Search — `ntn-search`
 
-Elements: `__shortcut`. Modifiers: `--sm` `--lg`.
+Elements: `__shortcut`. Modifiers: `--sm` `--lg`. Loading: `data-loading` on the block turns the
+leading icon into a spinner (put `aria-busy="true"` on the input).
 
 ```html
 <div class="ntn-search">
@@ -274,7 +330,8 @@ Elements: `__shortcut`. Modifiers: `--sm` `--lg`.
 
 ## Checkbox — `ntn-check` · Radio — `ntn-radio` · Switch — `ntn-switch`
 
-Elements: `__label` `__desc`. Group radios in `ntn-radio-group` (`--row` for horizontal).
+Elements: `__label` `__desc`. Group radios in `ntn-radio-group` (`--row` for horizontal,
+`--segmented` for a pick-one switch of two to four short options, drawn like a toggle group).
 State comes from the native input: `checked`, `indeterminate` (set in JS), `disabled`.
 
 Checkbox and radio share one language: 16px control, accent fill when on, white mark.
@@ -293,10 +350,43 @@ With a `__desc` the control aligns to the first line of the label, not to the to
   <label class="ntn-radio"><input type="radio" name="plan"><span class="ntn-radio__label">Enterprise</span></label>
 </div>
 
+<fieldset class="ntn-radio-group ntn-radio-group--segmented">
+  <legend>Content mode</legend>
+  <label class="ntn-radio"><input type="radio" name="mode" value="document" checked><span class="ntn-radio__label"><i class="fa-light fa-file-lines"></i>Document</span></label>
+  <label class="ntn-radio"><input type="radio" name="mode" value="sections"><span class="ntn-radio__label"><i class="fa-light fa-layer-group"></i>Sections</span></label>
+</fieldset>
+
 <label class="ntn-switch">
   <input type="checkbox" role="switch" checked>
   <span class="ntn-switch__label">Usage alerts</span>
 </label>
+```
+
+---
+
+## Rating — `ntn-rating`
+
+A `<fieldset>` of native radios: one `__star` per value (1…max) plus a `__clear` radio with value 0.
+The form therefore ALWAYS posts the field (0 = no rating), and the arrow keys work as in any radio
+group. Stars are drawn in CSS and light up to the checked one, with a hover preview. "Clear" shows
+once a star is chosen. Render `checked` on the value-0 radio when there is no rating yet. Modifier:
+`--sm`. Colour knob: `--ntn-rating-color` (default `--ntn-warning-400`).
+
+```html
+<fieldset class="ntn-rating">
+  <legend class="ntn-rating__legend">Rating</legend>
+  <label class="ntn-rating__star"><input type="radio" name="rating" value="1"><span>1 star</span></label>
+  <label class="ntn-rating__star"><input type="radio" name="rating" value="2"><span>2 stars</span></label>
+  <label class="ntn-rating__star"><input type="radio" name="rating" value="3" checked><span>3 stars</span></label>
+  <label class="ntn-rating__star"><input type="radio" name="rating" value="4"><span>4 stars</span></label>
+  <label class="ntn-rating__star"><input type="radio" name="rating" value="5"><span>5 stars</span></label>
+  <label class="ntn-rating__clear"><input type="radio" name="rating" value="0"><span>Clear</span></label>
+</fieldset>
+
+<!-- Read-only (a show screen): one span per star, data-on on the lit ones. -->
+<span class="ntn-rating ntn-rating--readonly" role="img" aria-label="3 of 5 stars">
+  <span class="ntn-rating__star" data-on></span><span class="ntn-rating__star" data-on></span><span class="ntn-rating__star" data-on></span><span class="ntn-rating__star"></span><span class="ntn-rating__star"></span>
+</span>
 ```
 
 ---
@@ -729,6 +819,12 @@ Elements: `__brand` `__mark` `__brand-text` `__name` `__meta` `__nav` `__group` 
 `data-collapsed` on the block — toggle it via `data-ntn-toggle=".ntn-sidebar"`.
 Wrap item text in `__label` so the rail can hide it (a bare direct-child `<span>` still works).
 
+At 720px and below the sidebar becomes an off-canvas **drawer**, and the rail is off. The same
+`data-ntn-toggle` then sets `data-open` to slide it in. Put an empty `<div class="ntn-sidebar__scrim">`
+straight after the `<aside>` to dim the page behind it. `nocturne.js` moves focus to the current
+item, sets `aria-expanded` on the toggle, and closes the drawer on Escape or a scrim click,
+returning focus to the toggle. Without the script, set `data-open` yourself.
+
 ```html
 <aside class="ntn-sidebar">
   <div class="ntn-sidebar__brand">
@@ -746,6 +842,7 @@ Wrap item text in `__label` so the rail can hide it (a bare direct-child `<span>
     </div>
   </nav>
 </aside>
+<div class="ntn-sidebar__scrim"></div>
 ```
 
 ## Tabs — `ntn-tabs`
@@ -948,7 +1045,7 @@ table, so header, toolbar, filter form and pager can sit anywhere in that wrappe
 | `data-ntn-open="#id"` | `showModal()` on that dialog |
 | `data-ntn-close` | Closes the enclosing dialog |
 | `data-ntn-dismiss` | Removes the enclosing `.ntn-alert` |
-| `data-ntn-toggle="<selector>"` | Toggles `data-collapsed` (sidebar rail) |
+| `data-ntn-toggle="<selector>"` | Toggles `data-collapsed` (sidebar rail); on a sidebar at 720px and below, toggles `data-open` (drawer) |
 | `data-ntn-panel="#id"` on a tab | Tab switching; the tablist also gets keyboard nav and a sliding indicator, and fires `ntn:tabchange` |
 | `data-ntn-tree` on `.ntn-tree` | Selection, expand/collapse, keyboard nav and handle-gated drag; fires `ntn:treemove`, `ntn:treeselect`, `ntn:treetoggle` |
 | `data-ntn-nest` on `.ntn-tree` | Lets leaf rows accept a child on drop |
@@ -956,6 +1053,7 @@ table, so header, toolbar, filter form and pager can sit anywhere in that wrappe
 | `data-ntn-combo` on `.ntn-combo` | Owns the listbox: open/close, filtering, keyboard, chips; fires `ntn:combochange` |
 | `data-ntn-multi` / `data-ntn-max="2"` on `.ntn-combo` | Multi-select, and how many chips show before `+N` |
 | `data-ntn-combo-value` / `-search` / `-count` / `-none` | Trigger readout, filter input, "n selected", clear-all |
+| `data-ntn-name="field"` on `.ntn-combo` | Posts the selection with its form (hidden inputs), fires `change`, honours `form.reset()` |
 | `data-ntn-steps` on `.ntn-steps` | Clicking `__hit` walks the step states; fires `ntn:stepchange` |
 | `data-ntn-reveal="#id"` | Shows/hides that element (filter forms), keeps `aria-expanded` |
 | `data-ntn-select-all` on a checkbox | Select-all inside `.ntn-table` |

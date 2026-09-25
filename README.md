@@ -102,7 +102,10 @@ setTheme('auto');          // 'dark' | 'light' | 'auto'
 document.addEventListener('ntn:themechange', (e) => console.log(e.detail.theme));
 ```
 
-`data-theme` also works on a subtree, so a light panel can sit inside a dark app.
+`data-theme` also works on a subtree, so a light panel can sit inside a dark app, or a dark one
+inside a light app. The subtree looks exactly as it would on a page of that mode. If you override
+a mode-dependent token (a surface, text or border colour, a shadow), write it for
+`:root, [data-theme]` too, or a subtree falls back to Nocturne's value.
 
 **Your app owns light/dark?** Tell Nocturne to stay out of it:
 
@@ -125,8 +128,43 @@ import '@homestar9/nocturne-ui';
 import '@homestar9/nocturne-ui/themes/emerald.css';
 ```
 
-Or write your own eleven lines — copy `themes/emerald.css` and change the hexes. Neutrals,
-semantics, spacing, and type are shared across every product and are not forkable.
+Or write your own: copy `themes/emerald.css` and change the hexes. A brand theme sets only the
+accent ramp (`--ntn-accent-100` to `-900`) and the ink that sits on it (`--ntn-accent-fg`). Every
+accent tint (soft fills, hairlines, glow, focus ring) derives from the ramp. Two details:
+
+- **Light mode:** it darkens the stops used as text (100–400). Declare yours in a
+  `:root[data-theme="light"], :root [data-theme="light"]` block, and your dark ramp in
+  `:root, :root [data-theme="dark"]`, as emerald does. The light stops then win whatever the
+  load order, and the brand follows into `data-theme` subtrees.
+- **Dark ink:** if your accent needs dark ink, point the checkbox art at it too:
+  `--ntn-check-mark: var(--ntn-check-mark-ink); --ntn-check-dash: var(--ntn-check-dash-ink);`
+
+Neutrals, semantics, spacing, and type are shared across every product and are not forkable.
+
+### Glass hooks
+
+Nocturne's cards are opaque. An app that uses the kit as the base of a different look (a frosted
+"glass" skin, say) can blur what sits behind its surfaces with two tokens. Both default to `none`,
+which costs nothing:
+
+| Token | Read by |
+| --- | --- |
+| `--ntn-surface-filter` | `ntn-card`, `ntn-sidebar` |
+| `--ntn-pop-filter` | `ntn-modal`, `ntn-menu`, `ntn-popover`, the date-range panel, tooltip bubbles |
+
+Pair them with translucent surface colours, or the blur has nothing to show through:
+
+```css
+:root {
+  --ntn-surface-1: rgb(20 22 30 / 0.6);
+  --ntn-surface-filter: blur(16px) saturate(1.3);
+  --ntn-pop-filter: blur(24px);
+}
+```
+
+Any value other than `none` makes the element a containing block for `position: fixed`
+descendants, and a nested blurred element only blurs its blurred ancestor. The top bar already
+blurs, via `--ntn-blur-panel`.
 
 ## Namespace and prefix
 

@@ -27,10 +27,10 @@
    so the footer never joins a horizontal sum. __row holds the presets beside the
    calendars — that row alone sets the panel's width. */
 .ntn-daterange__panel {
-  position: absolute; top: calc(100% + 6px); left: 0; z-index: 60;
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: var(--ntn-z-dropdown);
   display: flex; flex-direction: column; width: max-content;
   background: var(--ntn-surface-2); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg);
-  box-shadow: var(--ntn-shadow-lg); overflow: hidden;
+  box-shadow: var(--ntn-shadow-lg); overflow: hidden; backdrop-filter: var(--ntn-pop-filter);
   animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out);
 }
 .ntn-daterange__row { display: flex; align-items: stretch; }

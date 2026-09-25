@@ -1,6 +1,6 @@
 {
   "name": "@homestar9/nocturne-ui",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Nocturne — a dark-first SaaS design system. CSS tokens, BEM component classes, and a bundled Claude Code skill.",
   "license": "MIT",
   "author": "David Levin",
@@ -13,6 +13,7 @@
   "exports": {
     ".": "./dist/nocturne.css",
     "./css": "./dist/nocturne.css",
+    "./css/nofonts": "./dist/nocturne.nofonts.css",
     "./tokens": "./dist/tokens.css",
     "./js": "./js/nocturne.js",
     "./themes/*": "./themes/*",

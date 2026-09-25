@@ -10,7 +10,8 @@ import { readFile } from 'node:fs/promises';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const moduleUrl = new URL('../js/nocturne.js', import.meta.url).href;
 const GLOBALS = ['window', 'document', 'localStorage', 'CustomEvent', 'Event', 'MouseEvent', 'KeyboardEvent',
-  'Node', 'HTMLElement', 'getComputedStyle', 'addEventListener', 'removeEventListener', 'requestAnimationFrame'];
+  'Node', 'HTMLElement', 'getComputedStyle', 'addEventListener', 'removeEventListener', 'requestAnimationFrame',
+  'innerWidth', 'innerHeight', 'FocusEvent'];
 
 let failures = 0;
 let run = 0;
@@ -98,6 +99,156 @@ console.log('Icons come from a pluggable renderer (M6)');
     'after configure({ icon }) + refresh(), chip remove uses the app renderer');
   const themeIcon = document.querySelector('[data-ntn-theme-icon]');
   check(themeIcon && themeIcon.dataset.icon === 'theme-light', 'theme toggle icon uses the app renderer (a sun while dark)');
+}
+
+console.log('Tabs announce real changes only, and refresh() is quiet (R13)');
+{
+  const { document, mod } = await page(
+    `<form><div class="ntn-tabs" role="tablist" id="t">
+       <button class="ntn-tabs__tab" data-value="a" data-ntn-panel="#pa" aria-selected="true">A</button>
+       <button class="ntn-tabs__tab" data-value="b" data-ntn-panel="#pb">B</button>
+     </div></form>
+     <section id="pa">A</section><section id="pb" hidden>B</section>`);
+  const events = [];
+  document.addEventListener('ntn:tabchange', (e) => events.push(`${e.detail.value}${e.detail.initial ? ':initial' : ''}`));
+  // start() already ran on import (before the listener), so re-run the set-up path explicitly.
+  mod.refresh();
+  mod.refresh(document.getElementById('t'));
+  check(events.length === 0, `refresh() after start does not re-announce (events: ${events.join(',') || 'none'})`);
+  const tabs = document.querySelectorAll('.ntn-tabs__tab');
+  check([...tabs].every((t) => t.getAttribute('type') === 'button'), 'tab buttons get type="button", so a tab never submits its form');
+  click(tabs[1]);
+  check(events.join(',') === 'b', `clicking another tab announces it once (events: ${events.join(',')})`);
+  check(document.getElementById('pb').hidden === false && document.getElementById('pa').hidden === true, 'the chosen panel shows');
+  click(tabs[1]);
+  check(events.join(',') === 'b', 'clicking the already-selected tab announces nothing');
+}
+{
+  // A list first seen by refresh() (rendered after start) is announced once, marked initial.
+  const { document, mod } = await page('<div id="host"></div>');
+  const events = [];
+  document.addEventListener('ntn:tabchange', (e) => events.push(`${e.detail.value}${e.detail.initial ? ':initial' : ''}`));
+  document.getElementById('host').innerHTML =
+    `<div class="ntn-tabs" role="tablist"><button class="ntn-tabs__tab" data-value="x" data-ntn-panel="#px" aria-selected="true">X</button></div><section id="px">X</section>`;
+  mod.refresh(document.getElementById('host'));
+  mod.refresh(document.getElementById('host'));
+  check(events.join(',') === 'x:initial', `a newly rendered list is announced once with initial (events: ${events.join(',')})`);
+}
+
+console.log('Dropdown and popover (R1, R2)');
+{
+  const { document, window, mod } = await page(
+    `<form id="f">
+       <div class="ntn-dropdown" data-ntn-dropdown id="dd">
+         <button class="ntn-btn" aria-haspopup="dialog">Filters</button>
+         <div class="ntn-popover" role="dialog" data-ntn-owner=".picker">
+           <input name="q"><button type="button" data-ntn-close>Apply</button>
+         </div>
+       </div>
+     </form>
+     <div class="picker"><button type="button" id="day">5</button></div>
+     <button type="button" id="outside">Elsewhere</button>`);
+  const dd = document.getElementById('dd');
+  const trigger = dd.querySelector('[aria-haspopup]');
+  const panel = dd.querySelector('.ntn-popover');
+  const events = [];
+  dd.addEventListener('ntn:dropdownshow', () => events.push('show'));
+  dd.addEventListener('ntn:dropdownhide', () => events.push('hide'));
+  const isOpen = () => dd.hasAttribute('data-ntn-open');
+  const pointer = (el) => el.dispatchEvent(new window.Event('pointerdown', { bubbles: true }));
+
+  check(trigger.getAttribute('aria-controls') === panel.id && trigger.type === 'button', 'set-up wires aria-controls and type="button" on the trigger');
+  click(trigger);
+  check(isOpen() && trigger.getAttribute('aria-expanded') === 'true', 'clicking the trigger opens it');
+  check(document.activeElement === panel.querySelector('input'), 'the first field receives focus');
+  pointer(document.getElementById('day'));
+  check(isOpen(), 'a pointerdown inside the data-ntn-owner element keeps it open');
+  pointer(panel.querySelector('input'));
+  check(isOpen(), 'a pointerdown inside the panel keeps it open');
+  pointer(document.getElementById('outside'));
+  check(!isOpen() && trigger.getAttribute('aria-expanded') === 'false', 'a pointerdown elsewhere closes it');
+
+  mod.open(dd);
+  click(panel.querySelector('[data-ntn-close]'));
+  check(!isOpen() && document.activeElement === trigger, 'data-ntn-close closes it and focus returns to the trigger');
+  check(panel.closest('form') === document.getElementById('f'), 'the panel stays inside its form');
+
+  mod.open(trigger);
+  panel.querySelector('input').dispatchEvent(new window.FocusEvent('focusout', { bubbles: true, relatedTarget: document.getElementById('outside') }));
+  check(!isOpen(), 'focus leaving the dropdown closes it');
+  mod.toggle(dd); mod.toggle(dd);
+  check(!isOpen(), 'toggle() opens and closes');
+  check(events.join(',') === 'show,hide,show,hide,show,hide,show,hide', `show/hide events fire in pairs (${events.join(',')})`);
+}
+
+console.log('Combo form association (R7)');
+{
+  const opt = (v, label, sel = false) => `<li class="ntn-combo__option" role="option" data-value="${v}" aria-selected="${sel}">${label}</li>`;
+  const combo = (attrs, opts) => `<div class="ntn-combo" data-ntn-combo ${attrs}>
+       <button type="button" class="ntn-combo__trigger"><span class="ntn-combo__value" data-ntn-combo-value></span></button>
+       <div class="ntn-combo__panel" hidden><ul class="ntn-combo__list">${opts}</ul></div></div>`;
+  const { document, window, mod } = await page(
+    `<form id="f">
+       ${combo('id="tags" data-ntn-multi data-ntn-name="tags" data-ntn-max="5"', opt('a', 'Alpha', true) + opt('b', 'Beta') + opt('c', 'Gamma'))}
+       ${combo('id="status" data-ntn-name="status"', opt('open', 'Open') + opt('closed', 'Closed'))}
+       ${combo('id="loose"', opt('x', 'X', true))}
+     </form>`);
+  const form = document.getElementById('f');
+  const data = () => new window.FormData(form);
+  const pick = (id, v) => click(document.querySelector(`#${id} [data-value="${v}"]`));
+  const changes = [];
+  form.addEventListener('change', (e) => changes.push(e.target.id));
+
+  check(JSON.stringify(data().getAll('tags')) === '["a"]', 'a multi combo posts its initial selection');
+  check(data().has('status') && data().get('status') === '', 'a single combo with nothing chosen posts an empty value, like a <select>');
+  check(!document.querySelector('#loose input'), 'a combo without data-ntn-name adds no inputs');
+  pick('tags', 'c');
+  check(JSON.stringify(data().getAll('tags')) === '["a","c"]', `picking adds a value (${JSON.stringify(data().getAll('tags'))})`);
+  pick('status', 'closed');
+  check(data().get('status') === 'closed' && data().getAll('status').length === 1, 'a single combo posts exactly one value');
+  check(changes.join(',') === 'tags,status', `each pick fires a bubbling change the form hears (${changes.join(',')})`);
+  click(document.querySelector('#tags [data-ntn-combo-clear="a"]'));
+  check(JSON.stringify(data().getAll('tags')) === '["c"]', 'removing a chip drops its value');
+
+  document.querySelector('#tags [data-value="b"]').setAttribute('aria-selected', 'true');
+  mod.refresh(document.getElementById('tags'));
+  check(JSON.stringify(data().getAll('tags')) === '["b","c"]', 'an app that changes aria-selected and calls refresh() gets matching inputs');
+
+  form.reset();
+  check(JSON.stringify(data().getAll('tags')) === '["a"]' && data().get('status') === '', 'form.reset() restores the first-rendered selection');
+  check(document.querySelector('#tags [data-ntn-combo-value]').textContent.includes('Alpha'), '...and redraws the chips');
+}
+
+console.log('Sidebar drawer on a phone (R11)');
+{
+  const { document, window } = await page(
+    `<aside class="ntn-sidebar" id="sb"><nav class="ntn-sidebar__nav">
+       <a class="ntn-sidebar__item" href="#a">A</a><a class="ntn-sidebar__item" href="#b" aria-current="page">B</a>
+     </nav></aside>
+     <div class="ntn-sidebar__scrim"></div>
+     <button type="button" data-ntn-toggle=".ntn-sidebar" aria-expanded="false">Menu</button>`);
+  const sb = document.getElementById('sb');
+  const toggle = document.querySelector('[data-ntn-toggle]');
+  const key = (k) => document.activeElement.dispatchEvent(new window.KeyboardEvent('keydown', { key: k, bubbles: true }));
+  let phone = false;
+  globalThis.matchMedia = (q) => ({ matches: phone && q === '(max-width: 720px)', media: q, addEventListener() {}, removeEventListener() {} });
+
+  click(toggle);
+  check(sb.hasAttribute('data-collapsed') && !sb.hasAttribute('data-open'), 'wide screen: the toggle collapses to the rail, as before');
+  click(toggle);
+
+  phone = true;
+  toggle.focus();
+  click(toggle);
+  check(sb.hasAttribute('data-open') && !sb.hasAttribute('data-collapsed'), 'phone: the same toggle opens the drawer instead');
+  check(toggle.getAttribute('aria-expanded') === 'true', 'the toggle reports aria-expanded="true"');
+  check(document.activeElement === sb.querySelector('[aria-current="page"]'), 'focus moves to the current item');
+  key('Escape');
+  check(!sb.hasAttribute('data-open') && document.activeElement === toggle, 'Escape closes it and returns focus to the toggle');
+  click(toggle);
+  click(document.querySelector('.ntn-sidebar__scrim'));
+  check(!sb.hasAttribute('data-open') && toggle.getAttribute('aria-expanded') === 'false', 'a click on the scrim closes it');
+  delete globalThis.matchMedia;
 }
 
 console.log('Generated buttons never submit a form');

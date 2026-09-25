@@ -34,6 +34,39 @@ try {
   const undeclared = [...read].filter((n) => !declared.has(n) && !setFromJs.has(n));
   check(undeclared.length === 0, `every var() the CSS reads is declared (${read.size} names)` + (undeclared.length ? ': ' + undeclared.join(' ') : ''));
 
+  console.log('Font-free stylesheet');
+  const nofonts = await readFile(join(base, 'nocturne.nofonts.css'), 'utf8');
+  check(/@import\s+url\(["']https:\/\/fonts\.googleapis/.test(css), 'nocturne.css still loads Geist from Google Fonts');
+  check(!/@import\s+url/.test(nofonts), 'nocturne.nofonts.css makes no remote @import');
+  const strip = (s) => s.replace(/^\/\*![\s\S]*?\*\/\n\n/, '').replace(/^@import[^\n]*\n+/gm, '');
+  check(strip(nofonts) === strip(css), 'nocturne.nofonts.css is otherwise identical to nocturne.css');
+
+  console.log('Glass hooks (R15)');
+  check(/--ntn-surface-filter:\s*none;/.test(css) && /--ntn-pop-filter:\s*none;/.test(css), 'both hooks default to none');
+  const HOOKS = { 'ntn-card': 'surface', 'ntn-sidebar': 'surface', 'ntn-modal': 'pop', 'ntn-menu': 'pop',
+    'ntn-popover': 'pop', 'ntn-daterange__panel': 'pop', 'ntn-tooltip__bubble': 'pop' };
+  for (const [block, hook] of Object.entries(HOOKS)) {
+    const rule = css.match(new RegExp(`(?:^|\\n)\\.${block} \\{([^}]*)\\}`));
+    check(rule && rule[1].includes(`backdrop-filter: var(--ntn-${hook}-filter)`), `.${block} reads --ntn-${hook}-filter`);
+  }
+
+  console.log('data-theme works on a subtree');
+  // Group the token file's declarations by rule selector.
+  const tokensCss = (await readFile(join(base, 'tokens.css'), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '');
+  const blocks = [...tokensCss.matchAll(/([^{}]+)\{([^}]*)\}/g)].map((m) => ({
+    sel: m[1].trim().replace(/\s+/g, ' '),
+    decls: [...m[2].matchAll(/(--ntn-[a-z0-9-]+)\s*:([^;]*);/g)].map((d) => [d[1], d[2]]),
+  }));
+  const namesIn = (pred) => new Set(blocks.filter((b) => pred(b.sel)).flatMap((b) => b.decls.map(([n]) => n)));
+  const lightNames = namesIn((s) => s === '[data-theme="light"]');
+  const darkNames = namesIn((s) => /\[data-theme="dark"\]|\[data-theme\](?!=)/.test(s));
+  const missingDark = [...lightNames].filter((n) => !darkNames.has(n));
+  check(lightNames.size > 30 && missingDark.length === 0,
+    `each of the ${lightNames.size} tokens the light theme remaps also has a value on dark subtrees` + (missingDark.length ? ': ' + missingDark.join(' ') : ''));
+  const rootOnly = blocks.filter((b) => b.sel === ':root').flatMap((b) => b.decls);
+  const stale = rootOnly.filter(([, v]) => [...v.matchAll(/var\((--ntn-[a-z0-9-]+)/g)].some((m) => lightNames.has(m[1]))).map(([n]) => n);
+  check(stale.length === 0, 'no :root-only token reads a mode token (it would resolve once, at the root)' + (stale.length ? ': ' + stale.join(' ') : ''));
+
   console.log('Prefix build');
   for (const file of baseFiles) {
     const rel = relative(base, file);

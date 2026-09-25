@@ -8,11 +8,8 @@
 .ntn-switch:has(.ntn-switch__desc) input { margin-top: 0; }
 .ntn-check:has(input:disabled), .ntn-radio:has(input:disabled), .ntn-switch:has(input:disabled) { opacity: 0.5; cursor: not-allowed; }
 
-.ntn-check, .ntn-radio {
-  /* Tick and dash art. A theme with a dark --ntn-accent-fg overrides these. */
-  --ntn-check-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.5' fill='none' stroke='%23FFFFFF' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  --ntn-check-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8h8' fill='none' stroke='%23FFFFFF' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E");
-}
+/* The tick and dash art are tokens (--ntn-check-mark / --ntn-check-dash, tokens/colors.css), so a
+   theme with a dark --ntn-accent-fg swaps them at :root. */
 .ntn-check input, .ntn-radio input {
   appearance: none; -webkit-appearance: none; flex: 0 0 auto; margin: 0;
   display: block; width: 16px; height: 16px; padding: 0;
@@ -44,6 +41,81 @@
 
 .ntn-radio-group { display: flex; flex-direction: column; gap: var(--ntn-space-3); }
 .ntn-radio-group--row { flex-direction: row; flex-wrap: wrap; gap: var(--ntn-space-5); }
+
+/* Rating: a <fieldset> of native radios, value 1…max, plus a "Clear" radio with value 0, so a form
+   ALWAYS posts the field (0 = no rating) and the arrow keys work as in any radio group. Stars are
+   drawn in CSS (a masked shape, so no icon set is needed) and light up to the checked one, with a
+   hover preview. The star sits on ::before so the focus ring around the label is not masked away.
+   Read-only: <span class="ntn-rating ntn-rating--readonly" role="img" aria-label="4 of 5 stars">
+   with one <span class="ntn-rating__star"> per star, data-on on the lit ones. */
+.ntn-rating {
+  --ntn-rating-color: var(--ntn-warning-400);
+  --ntn-rating-off: var(--ntn-border-strong);
+  display: inline-flex; align-items: center; gap: 2px; margin: 0; padding: 0; border: 0; min-width: 0; align-self: flex-start;
+}
+.ntn-rating__legend {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.ntn-rating__star { position: relative; display: inline-flex; width: 24px; height: 24px; border-radius: var(--ntn-radius-xs); cursor: pointer; }
+.ntn-rating__star::before {
+  content: ""; position: absolute; inset: 2px; background: var(--ntn-rating-off);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.52l-5.88 3.09 1.12-6.55L2.48 9.42l6.58-.96z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.52l-5.88 3.09 1.12-6.55L2.48 9.42l6.58-.96z'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: background-color var(--ntn-dur-fast) var(--ntn-ease-standard);
+}
+.ntn-rating__star input, .ntn-rating__clear input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.ntn-rating__star > span {
+  position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+/* Lit: the checked star and every star before it (and data-on in the read-only form). */
+.ntn-rating__star:has(input:checked)::before,
+.ntn-rating__star:has(~ .ntn-rating__star input:checked)::before,
+.ntn-rating__star[data-on]::before { background: var(--ntn-rating-color); }
+/* Hover preview: light up to the hovered star, dim the rest. */
+.ntn-rating:not(.ntn-rating--readonly):has(.ntn-rating__star:hover) .ntn-rating__star::before { background: var(--ntn-rating-off); }
+.ntn-rating:not(.ntn-rating--readonly) .ntn-rating__star:hover::before,
+.ntn-rating:not(.ntn-rating--readonly) .ntn-rating__star:has(~ .ntn-rating__star:hover)::before { background: var(--ntn-rating-color); }
+.ntn-rating__star:has(input:focus-visible), .ntn-rating__clear:has(input:focus-visible) { box-shadow: var(--ntn-ring-focus); }
+.ntn-rating:has(input:disabled) { opacity: 0.5; }
+.ntn-rating:has(input:disabled) .ntn-rating__star, .ntn-rating:has(input:disabled) .ntn-rating__clear { cursor: not-allowed; }
+/* "Clear" shows only once a star is chosen. */
+.ntn-rating__clear {
+  position: relative; margin-left: 6px; padding: 2px 6px; border-radius: var(--ntn-radius-xs);
+  font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); cursor: pointer;
+}
+.ntn-rating__clear:hover { color: var(--ntn-text-primary); background: var(--ntn-surface-hover); }
+.ntn-rating:not(:has(.ntn-rating__star input:checked)) .ntn-rating__clear { visibility: hidden; }
+.ntn-rating--readonly .ntn-rating__star { width: 18px; height: 18px; cursor: default; }
+.ntn-rating--sm .ntn-rating__star { width: 18px; height: 18px; }
+
+/* Segmented: the same native radios, drawn like a toggle group, for a pick-one switch of two to
+   four short options. Posting, arrow keys and screen-reader semantics stay those of a radio group.
+   Write it as a <fieldset> with a <legend> (kept for assistive tech, hidden from view). */
+.ntn-radio-group--segmented {
+  display: inline-flex; flex-direction: row; gap: 0; width: auto; min-width: 0; margin: 0; padding: 0; align-self: flex-start;
+  border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-md);
+  background: var(--ntn-surface-2); box-shadow: var(--ntn-shadow-xs);
+}
+.ntn-radio-group--segmented > legend {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.ntn-radio-group--segmented .ntn-radio {
+  position: relative; align-items: center; gap: 6px;
+  height: calc(var(--ntn-control-md) - 2px); padding: 0 12px;
+  border-left: 1px solid var(--ntn-border-subtle); color: var(--ntn-text-muted);
+  transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard);
+}
+.ntn-radio-group--segmented .ntn-radio:first-of-type { border-left: 0; border-radius: 7px 0 0 7px; }
+.ntn-radio-group--segmented .ntn-radio:last-of-type { border-radius: 0 7px 7px 0; }
+.ntn-radio-group--segmented .ntn-radio input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.ntn-radio-group--segmented .ntn-radio__label { flex-direction: row; align-items: center; gap: 6px; font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-medium); color: inherit; }
+.ntn-radio-group--segmented .ntn-radio__label i { font-size: 14px; }
+.ntn-radio-group--segmented .ntn-radio:hover { background: var(--ntn-surface-hover); color: var(--ntn-text-secondary); }
+.ntn-radio-group--segmented .ntn-radio:has(input:checked) { background: var(--ntn-surface-3); color: var(--ntn-text-primary); }
+.ntn-radio-group--segmented .ntn-radio:has(input:checked) i { color: var(--ntn-accent-300); }
+.ntn-radio-group--segmented .ntn-radio:has(input:focus-visible) { box-shadow: var(--ntn-ring-focus); z-index: 1; }
 
 .ntn-switch { gap: 12px; }
 .ntn-switch input {

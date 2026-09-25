@@ -1,4 +1,7 @@
-:root {
+/* Shadows are mode primitives (theme-light.css softens them), the accent glow and focus ring are
+   aliases re-resolved on every [data-theme] element, and the blurs are constants. Same three-block
+   split as colors.css, so a data-theme subtree gets its own depth. */
+:root, [data-theme="dark"] {
   /* Dark UI depth comes from a hairline + a soft drop, never from heavy blur */
   --ntn-shadow-none: none;
   --ntn-shadow-xs: 0 1px 2px rgba(0,0,0,0.35);
@@ -6,8 +9,18 @@
   --ntn-shadow-md: 0 8px 24px -12px rgba(0,0,0,0.70), 0 0 0 1px rgba(255,255,255,0.02) inset;
   --ntn-shadow-lg: 0 24px 60px -24px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.03) inset;
   --ntn-shadow-pop: 0 12px 32px -8px rgba(0,0,0,0.75);
+}
+
+:root, [data-theme] {
   --ntn-glow-accent: 0 0 0 1px var(--ntn-accent-600), 0 6px 22px -8px var(--ntn-accent-glow);
   --ntn-ring-focus: 0 0 0 3px var(--ntn-focus-ring);
+}
+
+:root {
   --ntn-blur-scrim: blur(6px);
   --ntn-blur-panel: blur(20px);
+  /* Glass hooks: a theme with translucent surfaces sets these to blur(...). none adds no containing
+     block or stacking context, so the default costs nothing. */
+  --ntn-surface-filter: none;
+  --ntn-pop-filter: none;
 }

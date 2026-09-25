@@ -4,6 +4,88 @@ All notable changes to Nocturne. The version in `package.json` is the contract:
 bump **patch** for fixes, **minor** for new components or tokens, **major** for
 renamed or removed class names and tokens.
 
+## [Unreleased]
+
+## 1.6.0 — 2026-09-25
+
+### Added
+- **`ntn-dropdown` and `ntn-popover`**: a trigger (`aria-haspopup`) plus a menu or a free-form
+  panel, opened by `nocturne.js` in the top layer, so no ancestor (not even a flush card) clips it.
+  - **Placement:** `data-ntn-placement`, flipped and kept on screen.
+  - **Keyboard:** arrows on the trigger open it; arrows, `Home` and `End` move through items.
+  - **Closing:** Escape returns focus to the trigger and closes only the menu inside a modal.
+    Outside clicks, focus leaving, choosing an item and `data-ntn-close` also close it.
+  - **Opening** one closes the others.
+  - **`data-ntn-owner`** exempts a body-mounted picker from outside clicks.
+  - **Events and API:** `ntn:dropdownshow` / `ntn:dropdownhide`, and exports `open()`,
+    `close()`, `toggle()`.
+- **`ntn-combo` posts with its form.** Add `data-ntn-name="x"` and `nocturne.js` keeps hidden
+  `<input name="x">` children in step with the selection. Multi-select posts one per value.
+  Single-select posts exactly one, `""` when empty, like a `<select>` with an empty first option.
+  - Every user change also fires a bubbling native `change` after `ntn:combochange`.
+  - `form.reset()` restores the first-rendered selection.
+  - `refresh(root)` re-syncs after you set `aria-selected` yourself.
+- **Menus: `Home` / `End`** jump to the first / last item, and arrow keys skip disabled items.
+- **`ntn-rating`**: a star rating built on native radios (values 1…max plus a value-0 "Clear").
+  A form always posts it, arrow keys work natively, and the stars are CSS-drawn (no icon set).
+  It has a hover preview and a read-only variant (`--readonly`, `role="img"`).
+- **`ntn-radio-group--segmented`**: native radios drawn as a segmented switch, for picking one of
+  two to four short options. The `<legend>` stays for assistive tech but is hidden from view.
+  Posting and arrow keys stay native.
+- **Search loading state**: `data-loading` on `ntn-search` turns the leading icon into a
+  CSS spinner (so it works with any icon set).
+- **Sidebar drawer**: at 720px and below, `ntn-sidebar` is an off-canvas drawer instead of a
+  squeezed column. The existing `data-ntn-toggle` opens it (`data-open`). An optional
+  `ntn-sidebar__scrim` sibling dims the page. Escape or a scrim click closes it, and focus goes in
+  and comes back out. The rail (`data-collapsed`) now applies only above 720px.
+- **Glass hooks**: `--ntn-surface-filter` (cards, sidebar) and `--ntn-pop-filter` (modal, menu,
+  popover, date-range panel, tooltip) feed `backdrop-filter`. Both default to `none`, so
+  Nocturne renders byte-identically; a skin with translucent surfaces sets them.
+- **`dist/nocturne.nofonts.css`** (package export `./css/nofonts`): the full stylesheet without the
+  Google Fonts `@import`, for apps that self-host Geist or run a strict CSP. Prefixed builds emit
+  it too.
+
+### Changed
+- **`ntn:tabchange` fires only for real changes.**
+  - A list is announced once when first set up, with `detail.initial: true`.
+  - After that, the event fires only when the selection actually changes. A later `refresh()`
+    and clicking the already-selected tab are silent. Before, every `refresh()` re-announced every
+    tab list, so apps redrew panels for nothing each time they inserted HTML.
+  - Tab `<button>`s without a `type` get `type="button"`, so a tab never submits its form.
+  - `refresh(root)` also covers `root` itself when it matches, so `refresh(tabList)` works.
+- **Accent tints derive from the ramp.** `--ntn-accent-soft`, `-soft-hover`, `-softer`, `-glow`,
+  `-line`, `-line-strong` and `--ntn-focus-ring` are now `color-mix()` of `--ntn-accent-500`.
+  A brand theme only sets the ramp and `--ntn-accent-fg`, and nothing stays violet (before this,
+  emerald left the lines and the soft hover violet). Nocturne's own colours are unchanged.
+- **Checkbox art is a token.** `--ntn-check-mark` and `--ntn-check-dash` live on `:root` with dark
+  `-ink` variants, so a theme with a dark `--ntn-accent-fg` swaps them in one line. Before, they
+  sat on `.ntn-check`, where a `:root` override never reached them. The multi-select combo's
+  checkbox face uses the same token instead of its own hard-coded white tick.
+- **`themes/emerald.css`** sets just the ramp and the ink, and puts its light-mode stops in a
+  `:root[data-theme="light"]` block. It used to overwrite the light theme's darkened stops, which
+  left pale green text on white.
+- **Cards no longer clip their content.** A combobox panel, tooltip or date picker opened inside a
+  default `ntn-card` now spills out instead of being cut off, so the kitchen sink's
+  `style="overflow:visible"` workarounds are gone. `ntn-card__foot` rounds its own bottom corners.
+  `ntn-card--flush` still clips, because it holds edge-to-edge tables and media.
+
+### Fixed
+- **`data-theme` on a subtree now works in both directions.** Aliases such as
+  `--ntn-text-primary: var(--ntn-n-900)` resolved once at `:root`, so a light panel inside a dark
+  page kept the dark page's text colours. A dark panel inside a light page kept everything light.
+  - Tokens now sit in three blocks:
+    - mode primitives on `:root, [data-theme="dark"]`;
+    - constants on `:root`;
+    - aliases re-declared on `:root, [data-theme]`.
+  - A subtree sets its own text colour.
+  - `npm test` checks the split, and pages with `data-theme` only on `<html>` render
+    byte-identically.
+  - `themes/emerald.css` uses `:root [data-theme]` selectors so the brand follows into subtrees.
+    Custom brand themes should do the same (see Accent in the README).
+- The date-range panel used a hard-coded `z-index: 60`, so a sticky top bar (`--ntn-z-sticky`,
+  100) could cover it. It now uses `--ntn-z-dropdown` like the other popups.
+- The kitchen sink used an `ntn-card--sm` modifier that never existed; it is gone from the demo.
+
 ## 1.5.0 — 2026-09-24
 
 The first public release: MIT, on npmjs.com as `@homestar9/nocturne-ui`. Earlier versions were
