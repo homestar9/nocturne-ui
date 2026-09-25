@@ -134,7 +134,7 @@
 }
 .ntn-combo__option[aria-selected="true"] .ntn-combo__box {
   background-color: var(--ntn-accent); border-color: var(--ntn-accent-500);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.5' fill='none' stroke='%23FFFFFF' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: var(--ntn-check-mark);
 }
 .ntn-combo__empty { margin: 0; padding: 14px 10px; text-align: center; font-size: var(--ntn-text-xs); color: var(--ntn-text-disabled); }
 .ntn-combo__foot { display: flex; align-items: center; justify-content: space-between; gap: var(--ntn-space-2); margin-top: 2px; padding: 6px 4px 2px; border-top: 1px solid var(--ntn-border-subtle); }

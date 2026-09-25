@@ -125,8 +125,16 @@ import '@homestar9/nocturne-ui';
 import '@homestar9/nocturne-ui/themes/emerald.css';
 ```
 
-Or write your own eleven lines — copy `themes/emerald.css` and change the hexes. Neutrals,
-semantics, spacing, and type are shared across every product and are not forkable.
+Or write your own: copy `themes/emerald.css` and change the hexes. A brand theme sets only the
+accent ramp (`--ntn-accent-100` to `-900`) and the ink that sits on it (`--ntn-accent-fg`). Every
+accent tint (soft fills, hairlines, glow, focus ring) derives from the ramp. Two details:
+
+- **Light mode:** it darkens the stops used as text (100–400). Declare yours in a
+  `:root[data-theme="light"]` block, as emerald does, so they win whatever the load order.
+- **Dark ink:** if your accent needs dark ink, point the checkbox art at it too:
+  `--ntn-check-mark: var(--ntn-check-mark-ink); --ntn-check-dash: var(--ntn-check-dash-ink);`
+
+Neutrals, semantics, spacing, and type are shared across every product and are not forkable.
 
 ## Namespace and prefix
 

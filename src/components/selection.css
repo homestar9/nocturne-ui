@@ -8,11 +8,8 @@
 .ntn-switch:has(.ntn-switch__desc) input { margin-top: 0; }
 .ntn-check:has(input:disabled), .ntn-radio:has(input:disabled), .ntn-switch:has(input:disabled) { opacity: 0.5; cursor: not-allowed; }
 
-.ntn-check, .ntn-radio {
-  /* Tick and dash art. A theme with a dark --ntn-accent-fg overrides these. */
-  --ntn-check-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.5' fill='none' stroke='%23FFFFFF' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  --ntn-check-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8h8' fill='none' stroke='%23FFFFFF' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E");
-}
+/* The tick and dash art are tokens (--ntn-check-mark / --ntn-check-dash, tokens/colors.css), so a
+   theme with a dark --ntn-accent-fg swaps them at :root. */
 .ntn-check input, .ntn-radio input {
   appearance: none; -webkit-appearance: none; flex: 0 0 auto; margin: 0;
   display: block; width: 16px; height: 16px; padding: 0;

@@ -65,13 +65,14 @@
   --ntn-alpha-ink-06: rgba(255,255,255,0.06);
   --ntn-alpha-ink-10: rgba(255,255,255,0.10);
 
-  /* Tinted surfaces and the hairlines that go with them */
-  --ntn-accent-soft:       rgba(139,92,246,0.14);
-  --ntn-accent-soft-hover: rgba(139,92,246,0.22);
-  --ntn-accent-softer:     rgba(139,92,246,0.07);
-  --ntn-accent-glow:       rgba(139,92,246,0.35);
-  --ntn-accent-line:        rgba(139,92,246,0.30);
-  --ntn-accent-line-strong: rgba(139,92,246,0.40);
+  /* Tinted surfaces and the hairlines that go with them. The accent tints DERIVE from the
+     ramp's 500 stop, so a brand theme only sets --ntn-accent-100…900 and --ntn-accent-fg. */
+  --ntn-accent-soft:        color-mix(in srgb, var(--ntn-accent-500) 14%, transparent);
+  --ntn-accent-soft-hover:  color-mix(in srgb, var(--ntn-accent-500) 22%, transparent);
+  --ntn-accent-softer:      color-mix(in srgb, var(--ntn-accent-500) 7%, transparent);
+  --ntn-accent-glow:        color-mix(in srgb, var(--ntn-accent-500) 35%, transparent);
+  --ntn-accent-line:        color-mix(in srgb, var(--ntn-accent-500) 30%, transparent);
+  --ntn-accent-line-strong: color-mix(in srgb, var(--ntn-accent-500) 40%, transparent);
   --ntn-success-soft: rgba(34,197,138,0.14);  --ntn-success-line: rgba(34,197,138,0.30);
   --ntn-warning-soft: rgba(241,169,22,0.15);  --ntn-warning-line: rgba(241,169,22,0.30);
   --ntn-danger-soft:  rgba(242,84,91,0.14);   --ntn-danger-line:  rgba(242,84,91,0.30);
@@ -113,10 +114,18 @@
   /* Off-state knob of a switch */
   --ntn-control-knob:   var(--ntn-n-700);
 
-  --ntn-focus-ring:     rgba(139,92,246,0.55);
+  --ntn-focus-ring:     color-mix(in srgb, var(--ntn-accent-500) 55%, transparent);
   --ntn-scrim:          rgba(5,6,9,0.72);
 
   --ntn-chart-1: var(--ntn-accent-500);
+
+  /* Checkbox tick and dash, drawn in the ink that sits on the accent. White by default. A
+     theme whose --ntn-accent-fg is dark points these at the -ink variants:
+       --ntn-check-mark: var(--ntn-check-mark-ink); --ntn-check-dash: var(--ntn-check-dash-ink); */
+  --ntn-check-mark:     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.5' fill='none' stroke='%23FFFFFF' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --ntn-check-dash:     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8h8' fill='none' stroke='%23FFFFFF' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --ntn-check-mark-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.5' fill='none' stroke='%230A0C10' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --ntn-check-dash-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8h8' fill='none' stroke='%230A0C10' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
   --ntn-chart-2: var(--ntn-magenta-500);
   --ntn-chart-3: var(--ntn-cyan-500);
   --ntn-chart-4: var(--ntn-n-600);
@@ -759,7 +768,7 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
 }
 .ntn-combo__option[aria-selected="true"] .ntn-combo__box {
   background-color: var(--ntn-accent); border-color: var(--ntn-accent-500);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.5' fill='none' stroke='%23FFFFFF' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: var(--ntn-check-mark);
 }
 .ntn-combo__empty { margin: 0; padding: 14px 10px; text-align: center; font-size: var(--ntn-text-xs); color: var(--ntn-text-disabled); }
 .ntn-combo__foot { display: flex; align-items: center; justify-content: space-between; gap: var(--ntn-space-2); margin-top: 2px; padding: 6px 4px 2px; border-top: 1px solid var(--ntn-border-subtle); }
@@ -925,11 +934,8 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
 .ntn-switch:has(.ntn-switch__desc) input { margin-top: 0; }
 .ntn-check:has(input:disabled), .ntn-radio:has(input:disabled), .ntn-switch:has(input:disabled) { opacity: 0.5; cursor: not-allowed; }
 
-.ntn-check, .ntn-radio {
-  /* Tick and dash art. A theme with a dark --ntn-accent-fg overrides these. */
-  --ntn-check-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.5' fill='none' stroke='%23FFFFFF' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  --ntn-check-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8h8' fill='none' stroke='%23FFFFFF' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E");
-}
+/* The tick and dash art are tokens (--ntn-check-mark / --ntn-check-dash, tokens/colors.css), so a
+   theme with a dark --ntn-accent-fg swaps them at :root. */
 .ntn-check input, .ntn-radio input {
   appearance: none; -webkit-appearance: none; flex: 0 0 auto; margin: 0;
   display: block; width: 16px; height: 16px; padding: 0;

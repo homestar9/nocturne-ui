@@ -12,6 +12,17 @@ renamed or removed class names and tokens.
   it too.
 
 ### Changed
+- **Accent tints derive from the ramp.** `--ntn-accent-soft`, `-soft-hover`, `-softer`, `-glow`,
+  `-line`, `-line-strong` and `--ntn-focus-ring` are now `color-mix()` of `--ntn-accent-500`.
+  A brand theme only sets the ramp and `--ntn-accent-fg`, and nothing stays violet (before this,
+  emerald left the lines and the soft hover violet). Nocturne's own colours are unchanged.
+- **Checkbox art is a token.** `--ntn-check-mark` and `--ntn-check-dash` live on `:root` with dark
+  `-ink` variants, so a theme with a dark `--ntn-accent-fg` swaps them in one line. Before, they
+  sat on `.ntn-check`, where a `:root` override never reached them. The multi-select combo's
+  checkbox face uses the same token instead of its own hard-coded white tick.
+- **`themes/emerald.css`** sets just the ramp and the ink, and puts its light-mode stops in a
+  `:root[data-theme="light"]` block. It used to overwrite the light theme's darkened stops, which
+  left pale green text on white.
 - **Cards no longer clip their content.** A combobox panel, tooltip or date picker opened inside a
   default `ntn-card` now spills out instead of being cut off, so the kitchen sink's
   `style="overflow:visible"` workarounds are gone. `ntn-card__foot` rounds its own bottom corners.
