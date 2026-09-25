@@ -42,6 +42,53 @@
 .ntn-radio-group { display: flex; flex-direction: column; gap: var(--ntn-space-3); }
 .ntn-radio-group--row { flex-direction: row; flex-wrap: wrap; gap: var(--ntn-space-5); }
 
+/* Rating: a <fieldset> of native radios, value 1…max, plus a "Clear" radio with value 0, so a form
+   ALWAYS posts the field (0 = no rating) and the arrow keys work as in any radio group. Stars are
+   drawn in CSS (a masked shape, so no icon set is needed) and light up to the checked one, with a
+   hover preview. The star sits on ::before so the focus ring around the label is not masked away.
+   Read-only: <span class="ntn-rating ntn-rating--readonly" role="img" aria-label="4 of 5 stars">
+   with one <span class="ntn-rating__star"> per star, data-on on the lit ones. */
+.ntn-rating {
+  --ntn-rating-color: var(--ntn-warning-400);
+  --ntn-rating-off: var(--ntn-border-strong);
+  display: inline-flex; align-items: center; gap: 2px; margin: 0; padding: 0; border: 0; min-width: 0; align-self: flex-start;
+}
+.ntn-rating__legend {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.ntn-rating__star { position: relative; display: inline-flex; width: 24px; height: 24px; border-radius: var(--ntn-radius-xs); cursor: pointer; }
+.ntn-rating__star::before {
+  content: ""; position: absolute; inset: 2px; background: var(--ntn-rating-off);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.52l-5.88 3.09 1.12-6.55L2.48 9.42l6.58-.96z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.52l-5.88 3.09 1.12-6.55L2.48 9.42l6.58-.96z'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: background-color var(--ntn-dur-fast) var(--ntn-ease-standard);
+}
+.ntn-rating__star input, .ntn-rating__clear input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.ntn-rating__star > span {
+  position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+/* Lit: the checked star and every star before it (and data-on in the read-only form). */
+.ntn-rating__star:has(input:checked)::before,
+.ntn-rating__star:has(~ .ntn-rating__star input:checked)::before,
+.ntn-rating__star[data-on]::before { background: var(--ntn-rating-color); }
+/* Hover preview: light up to the hovered star, dim the rest. */
+.ntn-rating:not(.ntn-rating--readonly):has(.ntn-rating__star:hover) .ntn-rating__star::before { background: var(--ntn-rating-off); }
+.ntn-rating:not(.ntn-rating--readonly) .ntn-rating__star:hover::before,
+.ntn-rating:not(.ntn-rating--readonly) .ntn-rating__star:has(~ .ntn-rating__star:hover)::before { background: var(--ntn-rating-color); }
+.ntn-rating__star:has(input:focus-visible), .ntn-rating__clear:has(input:focus-visible) { box-shadow: var(--ntn-ring-focus); }
+.ntn-rating:has(input:disabled) { opacity: 0.5; }
+.ntn-rating:has(input:disabled) .ntn-rating__star, .ntn-rating:has(input:disabled) .ntn-rating__clear { cursor: not-allowed; }
+/* "Clear" shows only once a star is chosen. */
+.ntn-rating__clear {
+  position: relative; margin-left: 6px; padding: 2px 6px; border-radius: var(--ntn-radius-xs);
+  font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); cursor: pointer;
+}
+.ntn-rating__clear:hover { color: var(--ntn-text-primary); background: var(--ntn-surface-hover); }
+.ntn-rating:not(:has(.ntn-rating__star input:checked)) .ntn-rating__clear { visibility: hidden; }
+.ntn-rating--readonly .ntn-rating__star { width: 18px; height: 18px; cursor: default; }
+.ntn-rating--sm .ntn-rating__star { width: 18px; height: 18px; }
+
 /* Segmented: the same native radios, drawn like a toggle group, for a pick-one switch of two to
    four short options. Posting, arrow keys and screen-reader semantics stay those of a radio group.
    Write it as a <fieldset> with a <legend> (kept for assistive tech, hidden from view). */

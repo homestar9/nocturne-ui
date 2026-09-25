@@ -7,6 +7,9 @@ renamed or removed class names and tokens.
 ## 1.6.0 — Unreleased
 
 ### Added
+- **`ntn-rating`**: a star rating built on native radios (values 1…max plus a value-0 "Clear").
+  A form always posts it, arrow keys work natively, and the stars are CSS-drawn (no icon set).
+  It has a hover preview and a read-only variant (`--readonly`, `role="img"`).
 - **`ntn-radio-group--segmented`**: native radios drawn as a segmented switch, for picking one of
   two to four short options. The `<legend>` stays for assistive tech but is hidden from view.
   Posting and arrow keys stay native.

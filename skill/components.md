@@ -309,6 +309,33 @@ With a `__desc` the control aligns to the first line of the label, not to the to
 
 ---
 
+## Rating — `ntn-rating`
+
+A `<fieldset>` of native radios: one `__star` per value (1…max) plus a `__clear` radio with value 0.
+The form therefore ALWAYS posts the field (0 = no rating), and the arrow keys work as in any radio
+group. Stars are drawn in CSS and light up to the checked one, with a hover preview. "Clear" shows
+once a star is chosen. Render `checked` on the value-0 radio when there is no rating yet. Modifier:
+`--sm`. Colour knob: `--ntn-rating-color` (default `--ntn-warning-400`).
+
+```html
+<fieldset class="ntn-rating">
+  <legend class="ntn-rating__legend">Rating</legend>
+  <label class="ntn-rating__star"><input type="radio" name="rating" value="1"><span>1 star</span></label>
+  <label class="ntn-rating__star"><input type="radio" name="rating" value="2"><span>2 stars</span></label>
+  <label class="ntn-rating__star"><input type="radio" name="rating" value="3" checked><span>3 stars</span></label>
+  <label class="ntn-rating__star"><input type="radio" name="rating" value="4"><span>4 stars</span></label>
+  <label class="ntn-rating__star"><input type="radio" name="rating" value="5"><span>5 stars</span></label>
+  <label class="ntn-rating__clear"><input type="radio" name="rating" value="0"><span>Clear</span></label>
+</fieldset>
+
+<!-- Read-only (a show screen): one span per star, data-on on the lit ones. -->
+<span class="ntn-rating ntn-rating--readonly" role="img" aria-label="3 of 5 stars">
+  <span class="ntn-rating__star" data-on></span><span class="ntn-rating__star" data-on></span><span class="ntn-rating__star" data-on></span><span class="ntn-rating__star"></span><span class="ntn-rating__star"></span>
+</span>
+```
+
+---
+
 ## Card — `ntn-card`
 
 Elements: `__head` `__title` `__sub` `__actions` `__body` `__foot`.
