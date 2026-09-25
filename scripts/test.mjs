@@ -34,6 +34,13 @@ try {
   const undeclared = [...read].filter((n) => !declared.has(n) && !setFromJs.has(n));
   check(undeclared.length === 0, `every var() the CSS reads is declared (${read.size} names)` + (undeclared.length ? ': ' + undeclared.join(' ') : ''));
 
+  console.log('Font-free stylesheet');
+  const nofonts = await readFile(join(base, 'nocturne.nofonts.css'), 'utf8');
+  check(/@import\s+url\(["']https:\/\/fonts\.googleapis/.test(css), 'nocturne.css still loads Geist from Google Fonts');
+  check(!/@import\s+url/.test(nofonts), 'nocturne.nofonts.css makes no remote @import');
+  const strip = (s) => s.replace(/^\/\*![\s\S]*?\*\/\n\n/, '').replace(/^@import[^\n]*\n+/gm, '');
+  check(strip(nofonts) === strip(css), 'nocturne.nofonts.css is otherwise identical to nocturne.css');
+
   console.log('Prefix build');
   for (const file of baseFiles) {
     const rel = relative(base, file);

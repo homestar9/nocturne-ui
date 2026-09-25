@@ -1,7 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap");
 
 /* Nocturne ships no licensed binaries. Geist / Geist Mono are loaded from Google Fonts.
-   Self-hosting: drop woff2 files in assets/fonts/ and replace the @import with @font-face rules. */
+   Self-hosting: load dist/nocturne.nofonts.css (the same stylesheet without this @import) and
+   declare @font-face rules for Geist and Geist Mono yourself. */
 :root {
   --ntn-font-sans: "Geist", ui-sans-serif, -apple-system, "Segoe UI", Helvetica, sans-serif;
   --ntn-font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;

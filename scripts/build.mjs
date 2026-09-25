@@ -62,6 +62,11 @@ export async function vocabularyVars() {
   return new Set([...[...js.matchAll(STATE_VAR_CALL)].map((m) => m[1]), ...KNOBS]);
 }
 
+/** The CSS with its hoisted remote @imports removed. */
+function stripRemoteImports(css) {
+  return css.replace(/^@import\s+url\(["']https?:[^)]+\);?\s*\n*/gm, '');
+}
+
 /**
  * Renames the source namespace in one pass. Custom properties go to `tokenPrefix` (design
  * tokens) or `prefix` (vocabulary vars); every other "ntn" (classes, data-ntn-* hooks, ntn:*
@@ -117,6 +122,11 @@ export async function build({ prefix = SOURCE_PREFIX, tokenPrefix = prefix, outD
     for (const [entry, name] of [['src/nocturne.css', 'nocturne.css'], ['src/tokens.css', 'tokens.css']]) {
       const css = hoistRemoteImports(await flatten(resolve(root, entry)));
       await write(name, banner(name, pkg.version, prefix, tokenPrefix) + rename(css));
+      // The same stylesheet without remote @imports (the Google Fonts request), for apps that
+      // self-host Geist or run a strict CSP. --ntn-font-sans still names Geist.
+      if (name === 'nocturne.css') {
+        await write('nocturne.nofonts.css', banner('nocturne.nofonts.css', pkg.version, prefix, tokenPrefix) + rename(stripRemoteImports(css)));
+      }
     }
   }
   if (include.includes('js')) {

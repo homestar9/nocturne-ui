@@ -13,6 +13,7 @@
   "exports": {
     ".": "./dist/nocturne.css",
     "./css": "./dist/nocturne.css",
+    "./css/nofonts": "./dist/nocturne.nofonts.css",
     "./tokens": "./dist/tokens.css",
     "./js": "./js/nocturne.js",
     "./themes/*": "./themes/*",
