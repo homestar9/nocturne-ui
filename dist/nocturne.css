@@ -1109,9 +1109,13 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
 
 /* ── Card, stat, modal, accordion, divider ────────────────────────────────── */
 
+/* A card does NOT clip its content, so a combobox panel, tooltip or date picker opened inside
+   it can spill out. Children that paint a background at the card's edge round their own corners
+   (__foot below). A --flush card is the exception: it holds edge-to-edge tables and media, so it
+   clips; menus and popovers inside one render in the top layer and are not affected. */
 .ntn-card {
   position: relative;
-  display: flex; flex-direction: column; overflow: hidden;
+  display: flex; flex-direction: column;
   background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-xl);
   box-shadow: var(--ntn-shadow-md);
   transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), transform var(--ntn-dur-fast) var(--ntn-ease-out);
@@ -1121,7 +1125,8 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
 .ntn-card__sub { margin: 3px 0 0; font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
 .ntn-card__actions { display: flex; align-items: center; gap: var(--ntn-space-2); flex: 0 0 auto; }
 .ntn-card__body { padding: var(--ntn-space-5); flex: 1; min-height: 0; }
-.ntn-card__foot { padding: var(--ntn-space-3) var(--ntn-space-5); border-top: 1px solid var(--ntn-border-subtle); background: var(--ntn-alpha-ink-04); font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
+.ntn-card__foot { padding: var(--ntn-space-3) var(--ntn-space-5); border-top: 1px solid var(--ntn-border-subtle); background: var(--ntn-alpha-ink-04); font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); border-radius: 0 0 calc(var(--ntn-radius-xl) - 1px) calc(var(--ntn-radius-xl) - 1px); }
+.ntn-card--flush { overflow: hidden; }
 .ntn-card--flush .ntn-card__body { padding: 0; }
 /* A flush card is the table/list shell: its head always needs a rule under it,
    otherwise the head, the toolbar and the first row run together. */

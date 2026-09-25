@@ -4,6 +4,19 @@ All notable changes to Nocturne. The version in `package.json` is the contract:
 bump **patch** for fixes, **minor** for new components or tokens, **major** for
 renamed or removed class names and tokens.
 
+## 1.6.0 — Unreleased
+
+### Added
+- **`dist/nocturne.nofonts.css`** (package export `./css/nofonts`): the full stylesheet without the
+  Google Fonts `@import`, for apps that self-host Geist or run a strict CSP. Prefixed builds emit
+  it too.
+
+### Changed
+- **Cards no longer clip their content.** A combobox panel, tooltip or date picker opened inside a
+  default `ntn-card` now spills out instead of being cut off, so the kitchen sink's
+  `style="overflow:visible"` workarounds are gone. `ntn-card__foot` rounds its own bottom corners.
+  `ntn-card--flush` still clips, because it holds edge-to-edge tables and media.
+
 ## 1.5.0 — 2026-09-24
 
 The first public release: MIT, on npmjs.com as `@homestar9/nocturne-ui`. Earlier versions were
