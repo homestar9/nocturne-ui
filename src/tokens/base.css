@@ -23,8 +23,9 @@ a:hover { color: var(--ntn-accent-200); }
 
 ::selection { background: var(--ntn-accent-soft); color: var(--ntn-text-primary); }
 
-/* Icons are written as bare <i class="fa-…">; cancel the element's default italic. */
-i[class*="fa-"] { font-style: normal; }
+/* Icons are bare <i> elements: an icon-font class, a data-icon key, or empty (mask icons).
+   Cancel their default italic without touching an <i> used for real italics in content. */
+i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
 
 /* The ring never changes an element's shape — each component keeps its own radius. */
 :focus-visible { outline: none; box-shadow: var(--ntn-ring-focus); }

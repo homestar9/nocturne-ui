@@ -15,19 +15,51 @@
 .ntn-btn:active { transform: translateY(0.5px); }
 .ntn-btn:disabled, .ntn-btn[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; transform: none; }
 
-.ntn-btn--primary { background: var(--ntn-accent); color: var(--ntn-accent-fg); border-color: var(--ntn-accent-500); box-shadow: 0 1px 2px rgba(0,0,0,0.45), 0 8px 20px -14px var(--ntn-accent-glow); }
-.ntn-btn--primary:hover { background: var(--ntn-accent-hover); border-color: var(--ntn-accent-400); color: var(--ntn-accent-fg); }
-.ntn-btn--primary:active { background: var(--ntn-accent-active); }
+/* Two independent axes, both named for MEANING. Combine one of each:
+     emphasis — (default) · --primary (the main action) · --secondary (supporting) · --subtle (low-key)
+     tone     — accent unless one of: --success · --warning · --danger · --info
+   .ntn-btn--primary.ntn-btn--danger is a strong destructive action; .ntn-btn--subtle.ntn-btn--danger a
+   quiet "Remove". A tone modifier only sets the colour family below; emphasis decides how it's painted. */
+.ntn-btn {
+  --ntn-btn-solid: var(--ntn-accent);        --ntn-btn-solid-hover: var(--ntn-accent-hover);
+  --ntn-btn-solid-active: var(--ntn-accent-active);
+  --ntn-btn-edge: var(--ntn-accent-500);     --ntn-btn-edge-hover: var(--ntn-accent-400);
+  --ntn-btn-on-solid: var(--ntn-accent-fg);
+  --ntn-btn-shadow: 0 1px 2px rgba(0,0,0,0.45), 0 8px 20px -14px var(--ntn-accent-glow);
+  --ntn-btn-soft: var(--ntn-accent-soft);    --ntn-btn-soft-hover: var(--ntn-accent-soft-hover);
+  --ntn-btn-line: var(--ntn-accent-line);    --ntn-btn-line-strong: var(--ntn-accent-line-strong);
+  --ntn-btn-ink: var(--ntn-accent-300);      --ntn-btn-ink-hover: var(--ntn-accent-200);
+}
+.ntn-btn--success, .ntn-btn--warning, .ntn-btn--danger, .ntn-btn--info {
+  --ntn-btn-solid: var(--ntn-btn-tone-500); --ntn-btn-solid-hover: var(--ntn-btn-tone-400);
+  --ntn-btn-solid-active: var(--ntn-btn-tone-500);
+  --ntn-btn-edge: var(--ntn-btn-tone-500);  --ntn-btn-edge-hover: var(--ntn-btn-tone-400);
+  --ntn-btn-shadow: var(--ntn-shadow-xs);
+  --ntn-btn-soft-hover: color-mix(in srgb, var(--ntn-btn-tone-500) 22%, transparent);
+  --ntn-btn-line-strong: color-mix(in srgb, var(--ntn-btn-tone-500) 45%, transparent);
+  --ntn-btn-ink: var(--ntn-btn-tone-400);   --ntn-btn-ink-hover: var(--ntn-btn-tone-400);
+}
+.ntn-btn--success { --ntn-btn-tone-500: var(--ntn-success-500); --ntn-btn-tone-400: var(--ntn-success-400); --ntn-btn-on-solid: var(--ntn-success-fg); --ntn-btn-soft: var(--ntn-success-soft); --ntn-btn-line: var(--ntn-success-line); }
+.ntn-btn--warning { --ntn-btn-tone-500: var(--ntn-warning-500); --ntn-btn-tone-400: var(--ntn-warning-400); --ntn-btn-on-solid: var(--ntn-warning-fg); --ntn-btn-soft: var(--ntn-warning-soft); --ntn-btn-line: var(--ntn-warning-line); }
+.ntn-btn--danger  { --ntn-btn-tone-500: var(--ntn-danger-500);  --ntn-btn-tone-400: var(--ntn-danger-400);  --ntn-btn-on-solid: var(--ntn-danger-fg);  --ntn-btn-soft: var(--ntn-danger-soft);  --ntn-btn-line: var(--ntn-danger-line); }
+.ntn-btn--info    { --ntn-btn-tone-500: var(--ntn-info-500);    --ntn-btn-tone-400: var(--ntn-info-400);    --ntn-btn-on-solid: var(--ntn-info-fg);    --ntn-btn-soft: var(--ntn-info-soft);    --ntn-btn-line: var(--ntn-info-line); }
 
-.ntn-btn--ghost { background: transparent; border-color: transparent; color: var(--ntn-text-secondary); box-shadow: none; }
-.ntn-btn--ghost:hover { background: var(--ntn-surface-hover); border-color: transparent; }
-.ntn-btn--ghost:active { background: var(--ntn-surface-active); }
+/* Default emphasis + a tone: outlined in that tone. */
+.ntn-btn:is(.ntn-btn--success, .ntn-btn--warning, .ntn-btn--danger, .ntn-btn--info):not(.ntn-btn--primary, .ntn-btn--secondary, .ntn-btn--subtle) { color: var(--ntn-btn-ink); border-color: var(--ntn-btn-line); }
+.ntn-btn:is(.ntn-btn--success, .ntn-btn--warning, .ntn-btn--danger, .ntn-btn--info):not(.ntn-btn--primary, .ntn-btn--secondary, .ntn-btn--subtle):hover { color: var(--ntn-btn-ink-hover); border-color: var(--ntn-btn-line-strong); }
 
-.ntn-btn--danger { background: var(--ntn-danger-500); border-color: var(--ntn-danger-500); color: var(--ntn-danger-fg); }
-.ntn-btn--danger:hover { background: var(--ntn-danger-400); color: var(--ntn-danger-fg); }
+.ntn-btn--primary { background: var(--ntn-btn-solid); color: var(--ntn-btn-on-solid); border-color: var(--ntn-btn-edge); box-shadow: var(--ntn-btn-shadow); }
+.ntn-btn--primary:hover { background: var(--ntn-btn-solid-hover); border-color: var(--ntn-btn-edge-hover); color: var(--ntn-btn-on-solid); }
+.ntn-btn--primary:active { background: var(--ntn-btn-solid-active); }
 
-.ntn-btn--soft { background: var(--ntn-accent-soft); border-color: var(--ntn-accent-line); color: var(--ntn-accent-300); box-shadow: none; }
-.ntn-btn--soft:hover { background: var(--ntn-accent-soft-hover); border-color: var(--ntn-accent-line-strong); color: var(--ntn-accent-200); }
+.ntn-btn--secondary { background: var(--ntn-btn-soft); border-color: var(--ntn-btn-line); color: var(--ntn-btn-ink); box-shadow: none; }
+.ntn-btn--secondary:hover { background: var(--ntn-btn-soft-hover); border-color: var(--ntn-btn-line-strong); color: var(--ntn-btn-ink-hover); }
+
+.ntn-btn--subtle { background: transparent; border-color: transparent; color: var(--ntn-text-secondary); box-shadow: none; }
+.ntn-btn--subtle:hover { background: var(--ntn-surface-hover); border-color: transparent; }
+.ntn-btn--subtle:active { background: var(--ntn-surface-active); }
+.ntn-btn--subtle:is(.ntn-btn--success, .ntn-btn--warning, .ntn-btn--danger, .ntn-btn--info) { color: var(--ntn-btn-ink); }
+.ntn-btn--subtle:is(.ntn-btn--success, .ntn-btn--warning, .ntn-btn--danger, .ntn-btn--info):hover { background: var(--ntn-btn-soft); color: var(--ntn-btn-ink-hover); }
 
 .ntn-btn--sm { height: var(--ntn-control-sm); padding: 0 10px; gap: 6px; font-size: var(--ntn-text-xs); border-radius: var(--ntn-radius-sm); }
 .ntn-btn--sm i { font-size: 14px; }
@@ -75,7 +107,7 @@
 .ntn-icon { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; font-size: 16px; line-height: 1; color: currentColor; }
 .ntn-icon--sm { font-size: 14px; }
 .ntn-icon--lg { font-size: 18px; }
-.ntn-icon--accent { color: var(--ntn-accent-300); }
+.ntn-icon--primary { color: var(--ntn-accent-300); }
 .ntn-icon--muted { color: var(--ntn-text-muted); }
 
 /* Toggle group — segmented filter control. Each button carries aria-pressed. */

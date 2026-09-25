@@ -108,6 +108,9 @@
   /* Ink that sits ON the accent — knobs, marks, primary-button labels */
   --ntn-accent-fg:      #FFFFFF;
   --ntn-danger-fg:      #1A0508;
+  --ntn-success-fg:     #03170E;
+  --ntn-warning-fg:     #1A1102;
+  --ntn-info-fg:        #04101F;
   /* Off-state knob of a switch */
   --ntn-control-knob:   var(--ntn-n-700);
 
@@ -308,8 +311,9 @@ a:hover { color: var(--ntn-accent-200); }
 
 ::selection { background: var(--ntn-accent-soft); color: var(--ntn-text-primary); }
 
-/* Icons are written as bare <i class="fa-…">; cancel the element's default italic. */
-i[class*="fa-"] { font-style: normal; }
+/* Icons are bare <i> elements: an icon-font class, a data-icon key, or empty (mask icons).
+   Cancel their default italic without touching an <i> used for real italics in content. */
+i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
 
 /* The ring never changes an element's shape — each component keeps its own radius. */
 :focus-visible { outline: none; box-shadow: var(--ntn-ring-focus); }
@@ -382,19 +386,51 @@ i[class*="fa-"] { font-style: normal; }
 .ntn-btn:active { transform: translateY(0.5px); }
 .ntn-btn:disabled, .ntn-btn[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; transform: none; }
 
-.ntn-btn--primary { background: var(--ntn-accent); color: var(--ntn-accent-fg); border-color: var(--ntn-accent-500); box-shadow: 0 1px 2px rgba(0,0,0,0.45), 0 8px 20px -14px var(--ntn-accent-glow); }
-.ntn-btn--primary:hover { background: var(--ntn-accent-hover); border-color: var(--ntn-accent-400); color: var(--ntn-accent-fg); }
-.ntn-btn--primary:active { background: var(--ntn-accent-active); }
+/* Two independent axes, both named for MEANING. Combine one of each:
+     emphasis — (default) · --primary (the main action) · --secondary (supporting) · --subtle (low-key)
+     tone     — accent unless one of: --success · --warning · --danger · --info
+   .ntn-btn--primary.ntn-btn--danger is a strong destructive action; .ntn-btn--subtle.ntn-btn--danger a
+   quiet "Remove". A tone modifier only sets the colour family below; emphasis decides how it's painted. */
+.ntn-btn {
+  --ntn-btn-solid: var(--ntn-accent);        --ntn-btn-solid-hover: var(--ntn-accent-hover);
+  --ntn-btn-solid-active: var(--ntn-accent-active);
+  --ntn-btn-edge: var(--ntn-accent-500);     --ntn-btn-edge-hover: var(--ntn-accent-400);
+  --ntn-btn-on-solid: var(--ntn-accent-fg);
+  --ntn-btn-shadow: 0 1px 2px rgba(0,0,0,0.45), 0 8px 20px -14px var(--ntn-accent-glow);
+  --ntn-btn-soft: var(--ntn-accent-soft);    --ntn-btn-soft-hover: var(--ntn-accent-soft-hover);
+  --ntn-btn-line: var(--ntn-accent-line);    --ntn-btn-line-strong: var(--ntn-accent-line-strong);
+  --ntn-btn-ink: var(--ntn-accent-300);      --ntn-btn-ink-hover: var(--ntn-accent-200);
+}
+.ntn-btn--success, .ntn-btn--warning, .ntn-btn--danger, .ntn-btn--info {
+  --ntn-btn-solid: var(--ntn-btn-tone-500); --ntn-btn-solid-hover: var(--ntn-btn-tone-400);
+  --ntn-btn-solid-active: var(--ntn-btn-tone-500);
+  --ntn-btn-edge: var(--ntn-btn-tone-500);  --ntn-btn-edge-hover: var(--ntn-btn-tone-400);
+  --ntn-btn-shadow: var(--ntn-shadow-xs);
+  --ntn-btn-soft-hover: color-mix(in srgb, var(--ntn-btn-tone-500) 22%, transparent);
+  --ntn-btn-line-strong: color-mix(in srgb, var(--ntn-btn-tone-500) 45%, transparent);
+  --ntn-btn-ink: var(--ntn-btn-tone-400);   --ntn-btn-ink-hover: var(--ntn-btn-tone-400);
+}
+.ntn-btn--success { --ntn-btn-tone-500: var(--ntn-success-500); --ntn-btn-tone-400: var(--ntn-success-400); --ntn-btn-on-solid: var(--ntn-success-fg); --ntn-btn-soft: var(--ntn-success-soft); --ntn-btn-line: var(--ntn-success-line); }
+.ntn-btn--warning { --ntn-btn-tone-500: var(--ntn-warning-500); --ntn-btn-tone-400: var(--ntn-warning-400); --ntn-btn-on-solid: var(--ntn-warning-fg); --ntn-btn-soft: var(--ntn-warning-soft); --ntn-btn-line: var(--ntn-warning-line); }
+.ntn-btn--danger  { --ntn-btn-tone-500: var(--ntn-danger-500);  --ntn-btn-tone-400: var(--ntn-danger-400);  --ntn-btn-on-solid: var(--ntn-danger-fg);  --ntn-btn-soft: var(--ntn-danger-soft);  --ntn-btn-line: var(--ntn-danger-line); }
+.ntn-btn--info    { --ntn-btn-tone-500: var(--ntn-info-500);    --ntn-btn-tone-400: var(--ntn-info-400);    --ntn-btn-on-solid: var(--ntn-info-fg);    --ntn-btn-soft: var(--ntn-info-soft);    --ntn-btn-line: var(--ntn-info-line); }
 
-.ntn-btn--ghost { background: transparent; border-color: transparent; color: var(--ntn-text-secondary); box-shadow: none; }
-.ntn-btn--ghost:hover { background: var(--ntn-surface-hover); border-color: transparent; }
-.ntn-btn--ghost:active { background: var(--ntn-surface-active); }
+/* Default emphasis + a tone: outlined in that tone. */
+.ntn-btn:is(.ntn-btn--success, .ntn-btn--warning, .ntn-btn--danger, .ntn-btn--info):not(.ntn-btn--primary, .ntn-btn--secondary, .ntn-btn--subtle) { color: var(--ntn-btn-ink); border-color: var(--ntn-btn-line); }
+.ntn-btn:is(.ntn-btn--success, .ntn-btn--warning, .ntn-btn--danger, .ntn-btn--info):not(.ntn-btn--primary, .ntn-btn--secondary, .ntn-btn--subtle):hover { color: var(--ntn-btn-ink-hover); border-color: var(--ntn-btn-line-strong); }
 
-.ntn-btn--danger { background: var(--ntn-danger-500); border-color: var(--ntn-danger-500); color: var(--ntn-danger-fg); }
-.ntn-btn--danger:hover { background: var(--ntn-danger-400); color: var(--ntn-danger-fg); }
+.ntn-btn--primary { background: var(--ntn-btn-solid); color: var(--ntn-btn-on-solid); border-color: var(--ntn-btn-edge); box-shadow: var(--ntn-btn-shadow); }
+.ntn-btn--primary:hover { background: var(--ntn-btn-solid-hover); border-color: var(--ntn-btn-edge-hover); color: var(--ntn-btn-on-solid); }
+.ntn-btn--primary:active { background: var(--ntn-btn-solid-active); }
 
-.ntn-btn--soft { background: var(--ntn-accent-soft); border-color: var(--ntn-accent-line); color: var(--ntn-accent-300); box-shadow: none; }
-.ntn-btn--soft:hover { background: var(--ntn-accent-soft-hover); border-color: var(--ntn-accent-line-strong); color: var(--ntn-accent-200); }
+.ntn-btn--secondary { background: var(--ntn-btn-soft); border-color: var(--ntn-btn-line); color: var(--ntn-btn-ink); box-shadow: none; }
+.ntn-btn--secondary:hover { background: var(--ntn-btn-soft-hover); border-color: var(--ntn-btn-line-strong); color: var(--ntn-btn-ink-hover); }
+
+.ntn-btn--subtle { background: transparent; border-color: transparent; color: var(--ntn-text-secondary); box-shadow: none; }
+.ntn-btn--subtle:hover { background: var(--ntn-surface-hover); border-color: transparent; }
+.ntn-btn--subtle:active { background: var(--ntn-surface-active); }
+.ntn-btn--subtle:is(.ntn-btn--success, .ntn-btn--warning, .ntn-btn--danger, .ntn-btn--info) { color: var(--ntn-btn-ink); }
+.ntn-btn--subtle:is(.ntn-btn--success, .ntn-btn--warning, .ntn-btn--danger, .ntn-btn--info):hover { background: var(--ntn-btn-soft); color: var(--ntn-btn-ink-hover); }
 
 .ntn-btn--sm { height: var(--ntn-control-sm); padding: 0 10px; gap: 6px; font-size: var(--ntn-text-xs); border-radius: var(--ntn-radius-sm); }
 .ntn-btn--sm i { font-size: 14px; }
@@ -442,7 +478,7 @@ i[class*="fa-"] { font-style: normal; }
 .ntn-icon { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; font-size: 16px; line-height: 1; color: currentColor; }
 .ntn-icon--sm { font-size: 14px; }
 .ntn-icon--lg { font-size: 18px; }
-.ntn-icon--accent { color: var(--ntn-accent-300); }
+.ntn-icon--primary { color: var(--ntn-accent-300); }
 .ntn-icon--muted { color: var(--ntn-text-muted); }
 
 /* Toggle group — segmented filter control. Each button carries aria-pressed. */
@@ -488,17 +524,32 @@ i[class*="fa-"] { font-style: normal; }
 }
 .ntn-field__control input::placeholder, .ntn-field__control textarea::placeholder { color: var(--ntn-text-disabled); }
 .ntn-field__control:focus-within { border-color: var(--ntn-accent-500); box-shadow: var(--ntn-ring-focus); }
+/* Anatomy, in order: __label, then __control holding [leading <i> | __prefix] <input> [__suffix | __action],
+   then __hint and __error. Mark an invalid field with aria-invalid="true" on the input (point
+   aria-describedby at __error); data-invalid on the block still works. Use the required attribute
+   for required fields, and give every text input a placeholder (" " if nothing to say), which lets
+   themes float the label with :placeholder-shown. */
+.ntn-field__prefix,
 .ntn-field__suffix { font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); flex: 0 0 auto; }
+.ntn-field__action {
+  display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+  width: var(--ntn-control-sm); height: calc(var(--ntn-control-sm) - 4px); margin-right: -6px;
+  border: 0; border-radius: var(--ntn-radius-sm); background: transparent; color: var(--ntn-text-muted); cursor: pointer;
+  transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard);
+}
+.ntn-field__action:hover { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); }
+.ntn-field__control .ntn-field__action i { font-size: 14px; color: inherit; }
 .ntn-field__hint { font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
+.ntn-field__error { font-size: var(--ntn-text-xs); color: var(--ntn-danger-400); }
 .ntn-field--sm .ntn-field__control { height: var(--ntn-control-sm); padding: 0 8px; }
 .ntn-field--sm .ntn-field__control input { font-size: var(--ntn-text-xs); }
 .ntn-field--lg .ntn-field__control { height: var(--ntn-control-lg); padding: 0 12px; }
 .ntn-field--lg .ntn-field__control input { font-size: var(--ntn-text-md); }
 .ntn-field--textarea .ntn-field__control { height: auto; padding: 10px; align-items: flex-start; }
 .ntn-field--textarea textarea { resize: vertical; min-height: 78px; line-height: var(--ntn-leading-normal); }
-.ntn-field[data-invalid] .ntn-field__control { border-color: var(--ntn-danger-500); box-shadow: 0 0 0 3px var(--ntn-danger-soft); }
-.ntn-field[data-invalid] .ntn-field__hint { color: var(--ntn-danger-400); }
-.ntn-field:has(input:disabled) .ntn-field__control { background: var(--ntn-surface-1); opacity: 0.55; }
+.ntn-field:is([data-invalid], :has([aria-invalid="true"])) .ntn-field__control { border-color: var(--ntn-danger-500); box-shadow: 0 0 0 3px var(--ntn-danger-soft); }
+.ntn-field:is([data-invalid], :has([aria-invalid="true"])) .ntn-field__hint { color: var(--ntn-danger-400); }
+.ntn-field:has(input:disabled, textarea:disabled) .ntn-field__control { background: var(--ntn-surface-1); opacity: 0.55; }
 
 .ntn-select { display: flex; flex-direction: column; gap: 6px; width: 100%; }
 .ntn-select__label { font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-secondary); }
@@ -520,6 +571,8 @@ i[class*="fa-"] { font-style: normal; }
 .ntn-select__control select:disabled { opacity: 0.5; cursor: not-allowed; }
 .ntn-select__control option { background: var(--ntn-surface-2); color: var(--ntn-text-primary); }
 .ntn-select__hint { font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
+.ntn-select__error { font-size: var(--ntn-text-xs); color: var(--ntn-danger-400); }
+.ntn-select:is([data-invalid], :has([aria-invalid="true"])) .ntn-select__control select { border-color: var(--ntn-danger-500); box-shadow: 0 0 0 3px var(--ntn-danger-soft); }
 .ntn-select--sm .ntn-select__control select { height: var(--ntn-control-sm); font-size: var(--ntn-text-xs); padding: 0 28px 0 10px; }
 .ntn-select--lg .ntn-select__control select { height: var(--ntn-control-lg); font-size: var(--ntn-text-md); padding: 0 34px 0 14px; }
 /* Label beside the control — for toolbars and pagination rows. */
@@ -529,13 +582,14 @@ i[class*="fa-"] { font-style: normal; }
 
 /* Menu and combobox live in components/menu.css. */
 
-.ntn-slider { display: flex; flex-direction: column; gap: var(--ntn-space-3); width: 100%; }
+/* --ntn-slider-pct is written by nocturne.js onto this block (a state var: it follows the class
+   prefix), so the track, a value bubble or any sibling can read it. */
+.ntn-slider { --ntn-slider-pct: 50%; display: flex; flex-direction: column; gap: var(--ntn-space-3); width: 100%; }
 .ntn-slider__head { display: flex; align-items: center; justify-content: space-between; gap: var(--ntn-space-3); }
 .ntn-slider__label { font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-secondary); }
 .ntn-slider__value { font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); color: var(--ntn-text-primary); }
 .ntn-slider input[type="range"] {
   appearance: none; -webkit-appearance: none; width: 100%; height: 16px; margin: 0; cursor: pointer;
-  --ntn-slider-pct: 50%;
   /* Track drawn on the input itself so it renders identically in every engine. */
   background-image: linear-gradient(90deg, var(--ntn-accent-600), var(--ntn-accent-400)), linear-gradient(var(--ntn-n-400), var(--ntn-n-400));
   background-size: var(--ntn-slider-pct) 4px, 100% 4px;
@@ -588,8 +642,8 @@ i[class*="fa-"] { font-style: normal; }
 .ntn-menu__item i { font-size: 14px; }
 .ntn-menu__item:hover, .ntn-menu__item[data-ntn-active] { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); }
 .ntn-menu__item:focus-visible { outline: 0; background: var(--ntn-surface-hover); color: var(--ntn-text-primary); box-shadow: var(--ntn-ring-focus); }
-.ntn-menu__item[aria-selected="true"] { background: var(--ntn-accent-soft); color: var(--ntn-text-primary); }
-.ntn-menu__item[aria-selected="true"] i { color: var(--ntn-accent-300); }
+.ntn-menu__item:is([aria-checked="true"], [aria-selected="true"]) { background: var(--ntn-accent-soft); color: var(--ntn-text-primary); }
+.ntn-menu__item:is([aria-checked="true"], [aria-selected="true"]) i { color: var(--ntn-accent-300); }
 .ntn-menu__item:disabled, .ntn-menu__item[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; background: transparent; }
 .ntn-menu__item--danger { color: var(--ntn-danger-400); }
 .ntn-menu__item--danger:hover, .ntn-menu__item--danger[data-ntn-active] { background: var(--ntn-danger-soft); color: var(--ntn-danger-400); }
@@ -940,8 +994,9 @@ i[class*="fa-"] { font-style: normal; }
 .ntn-badge i { font-size: 11px; }
 .ntn-badge::before { content: none; }
 .ntn-badge--dot::before { content: ""; display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--ntn-n-600); flex: 0 0 auto; }
-.ntn-badge--accent { background: var(--ntn-accent-soft); color: var(--ntn-accent-300); border-color: var(--ntn-accent-line); }
-.ntn-badge--accent.ntn-badge--dot::before { background: var(--ntn-accent-400); }
+/* Tones: --neutral (the default, stated explicitly) · --primary · --success · --warning · --danger · --info */
+.ntn-badge--primary { background: var(--ntn-accent-soft); color: var(--ntn-accent-300); border-color: var(--ntn-accent-line); }
+.ntn-badge--primary.ntn-badge--dot::before { background: var(--ntn-accent-400); }
 .ntn-badge--success { background: var(--ntn-success-soft); color: var(--ntn-success-400); border-color: var(--ntn-success-line); }
 .ntn-badge--success.ntn-badge--dot::before { background: var(--ntn-success-400); }
 .ntn-badge--warning { background: var(--ntn-warning-soft); color: var(--ntn-warning-400); border-color: var(--ntn-warning-line); }
@@ -962,14 +1017,17 @@ i[class*="fa-"] { font-style: normal; }
 .ntn-alert__title { font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-semibold); color: var(--ntn-text-primary); }
 .ntn-alert__text { font-size: var(--ntn-text-xs); color: var(--ntn-text-secondary); line-height: var(--ntn-leading-normal); }
 .ntn-alert__actions { display: flex; align-items: center; gap: var(--ntn-space-2); flex: 0 0 auto; margin-left: auto; }
+/* Tones: --info (the default; state it anyway) · --primary · --success · --warning · --danger */
+.ntn-alert--info { background: var(--ntn-info-soft); border-color: var(--ntn-info-line); }
+.ntn-alert--info > i { color: var(--ntn-info-400); }
 .ntn-alert--success { background: var(--ntn-success-soft); border-color: var(--ntn-success-line); }
 .ntn-alert--success > i { color: var(--ntn-success-400); }
 .ntn-alert--warning { background: var(--ntn-warning-soft); border-color: var(--ntn-warning-line); }
 .ntn-alert--warning > i { color: var(--ntn-warning-400); }
 .ntn-alert--danger { background: var(--ntn-danger-soft); border-color: var(--ntn-danger-line); }
 .ntn-alert--danger > i { color: var(--ntn-danger-400); }
-.ntn-alert--accent { background: var(--ntn-accent-soft); border-color: var(--ntn-accent-line); }
-.ntn-alert--accent > i { color: var(--ntn-accent-300); }
+.ntn-alert--primary { background: var(--ntn-accent-soft); border-color: var(--ntn-accent-line); }
+.ntn-alert--primary > i { color: var(--ntn-accent-300); }
 .ntn-alert--banner { border-radius: 0; border-left: 0; border-right: 0; padding: 12px var(--ntn-space-4); }
 
 /* Tooltip — CSS only. Wrap the trigger, add the bubble as a sibling.
@@ -1011,7 +1069,8 @@ i[class*="fa-"] { font-style: normal; }
 .ntn-progress__label { font-size: var(--ntn-text-xs); color: var(--ntn-text-secondary); }
 .ntn-progress__value { font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); color: var(--ntn-text-primary); }
 .ntn-progress__track { position: relative; height: 6px; border-radius: var(--ntn-radius-full); background: var(--ntn-n-300); overflow: hidden; }
-.ntn-progress__fill { height: 100%; width: 0; border-radius: var(--ntn-radius-full); background: linear-gradient(90deg, var(--ntn-accent-600), var(--ntn-accent-400)); transition: width var(--ntn-dur-slow) var(--ntn-ease-out); }
+/* --ntn-progress (0–100%) is written by nocturne.js onto .ntn-progress from the fill's data-value. */
+.ntn-progress__fill { height: 100%; width: var(--ntn-progress, 0%); border-radius: var(--ntn-radius-full); background: linear-gradient(90deg, var(--ntn-accent-600), var(--ntn-accent-400)); transition: width var(--ntn-dur-slow) var(--ntn-ease-out); }
 .ntn-progress--sm .ntn-progress__track { height: 4px; }
 .ntn-progress--lg .ntn-progress__track { height: 10px; }
 .ntn-progress--success .ntn-progress__fill { background: var(--ntn-success-500); }
@@ -1093,6 +1152,16 @@ i[class*="fa-"] { font-style: normal; }
 .ntn-modal[open] { animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out); }
 .ntn-modal__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ntn-space-4); padding: var(--ntn-space-5) var(--ntn-space-5) 0; }
 .ntn-modal__title { margin: 0; font-size: var(--ntn-text-xl); font-weight: var(--ntn-weight-semibold); letter-spacing: var(--ntn-tracking-heading); color: var(--ntn-text-primary); }
+/* The dismiss button in the head (pair it with data-ntn-close and aria-label="Close"). */
+.ntn-modal__close {
+  display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+  width: var(--ntn-control-sm); height: var(--ntn-control-sm);
+  border: 1px solid transparent; border-radius: var(--ntn-radius-md); background: transparent;
+  color: var(--ntn-text-muted); cursor: pointer;
+  transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard);
+}
+.ntn-modal__close:hover { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); }
+.ntn-modal__close i { font-size: 14px; }
 .ntn-modal__desc { margin: 6px 0 0; font-size: var(--ntn-text-sm); color: var(--ntn-text-muted); line-height: var(--ntn-leading-normal); }
 .ntn-modal__body { padding: var(--ntn-space-5); display: flex; flex-direction: column; gap: 14px; }
 .ntn-modal__foot { display: flex; justify-content: flex-end; gap: var(--ntn-space-2); padding: 14px var(--ntn-space-5); border-top: 1px solid var(--ntn-border-subtle); background: var(--ntn-alpha-ink-04); }
@@ -1388,7 +1457,7 @@ i[class*="fa-"] { font-style: normal; }
   transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard);
 }
 .ntn-sidebar__item i { font-size: 17px; flex: 0 0 auto; }
-.ntn-sidebar__item > span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ntn-sidebar__item > span, .ntn-sidebar__label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ntn-sidebar__item > .ntn-badge { flex: 0 0 auto; }
 .ntn-sidebar__item:hover { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); }
 .ntn-sidebar__item[aria-current="page"] { background: var(--ntn-surface-3); border-color: var(--ntn-border-default); color: var(--ntn-text-primary); font-weight: var(--ntn-weight-medium); }
@@ -1398,7 +1467,8 @@ i[class*="fa-"] { font-style: normal; }
 .ntn-sidebar__foot { margin-top: var(--ntn-space-3); }
 .ntn-sidebar[data-collapsed] { width: var(--ntn-rail-w); padding: var(--ntn-space-3) var(--ntn-space-2); }
 .ntn-sidebar[data-collapsed] .ntn-sidebar__item { justify-content: center; padding: 9px 0; }
-.ntn-sidebar[data-collapsed] .ntn-sidebar__item span,
+.ntn-sidebar[data-collapsed] .ntn-sidebar__item > span,
+.ntn-sidebar[data-collapsed] .ntn-sidebar__label,
 .ntn-sidebar[data-collapsed] .ntn-sidebar__item .ntn-badge,
 .ntn-sidebar[data-collapsed] .ntn-sidebar__section,
 .ntn-sidebar[data-collapsed] .ntn-sidebar__brand-text,
@@ -1457,15 +1527,15 @@ i[class*="fa-"] { font-style: normal; }
 .ntn-tabs--fill .ntn-tabs__tab { flex: 1 1 0; justify-content: center; }
 
 /* Vertical list — the ink bar runs down the trailing edge. */
-.ntn-tabs--vertical { flex-direction: column; align-items: stretch; gap: 2px; border-bottom: 0; border-right: 1px solid var(--ntn-border-default); overflow: visible; }
-.ntn-tabs--vertical .ntn-tabs__tab { margin: 0 -1px 0 0; padding: 8px 12px; border-bottom: 0; border-right: 2px solid transparent; justify-content: flex-start; text-align: left; }
-.ntn-tabs--vertical .ntn-tabs__tab[aria-selected="true"] { border-right-color: var(--ntn-accent-500); background: var(--ntn-surface-hover); border-radius: var(--ntn-radius-md) 0 0 var(--ntn-radius-md); }
-.ntn-tabs--vertical[data-ntn-ink]::after {
+:is(.ntn-tabs--vertical, .ntn-tabs[aria-orientation="vertical"]) { flex-direction: column; align-items: stretch; gap: 2px; border-bottom: 0; border-right: 1px solid var(--ntn-border-default); overflow: visible; }
+:is(.ntn-tabs--vertical, .ntn-tabs[aria-orientation="vertical"]) .ntn-tabs__tab { margin: 0 -1px 0 0; padding: 8px 12px; border-bottom: 0; border-right: 2px solid transparent; justify-content: flex-start; text-align: left; }
+:is(.ntn-tabs--vertical, .ntn-tabs[aria-orientation="vertical"]) .ntn-tabs__tab[aria-selected="true"] { border-right-color: var(--ntn-accent-500); background: var(--ntn-surface-hover); border-radius: var(--ntn-radius-md) 0 0 var(--ntn-radius-md); }
+:is(.ntn-tabs--vertical, .ntn-tabs[aria-orientation="vertical"])[data-ntn-ink]::after {
   left: auto; right: 0; bottom: auto; top: 0; width: 2px;
   height: var(--ntn-tab-h, 0); transform: translateY(var(--ntn-tab-y, 0));
   transition: transform var(--ntn-dur-base) var(--ntn-ease-out), height var(--ntn-dur-base) var(--ntn-ease-out);
 }
-.ntn-tabs--vertical[data-ntn-ink] .ntn-tabs__tab[aria-selected="true"] { border-right-color: transparent; }
+:is(.ntn-tabs--vertical, .ntn-tabs[aria-orientation="vertical"])[data-ntn-ink] .ntn-tabs__tab[aria-selected="true"] { border-right-color: transparent; }
 
 .ntn-tabs--sm .ntn-tabs__tab { font-size: var(--ntn-text-xs); }
 .ntn-tabs__panel:focus-visible { outline: 0; box-shadow: var(--ntn-ring-focus); border-radius: var(--ntn-radius-lg); }

@@ -83,6 +83,23 @@ console.log('Theme opt-out (R4)');
   check(document.documentElement.getAttribute('data-theme') === 'light', 'without the opt-out, the stored preference is applied (unchanged behaviour)');
 }
 
+console.log('Icons come from a pluggable renderer (M6)');
+{
+  const { document, mod } = await page(
+    `<button data-ntn-theme-toggle><i data-ntn-theme-icon></i></button>
+     <div class="ntn-combo" data-ntn-combo data-ntn-multi>
+       <button class="ntn-combo__trigger"><span class="ntn-combo__value" data-ntn-combo-value></span></button>
+       <ul><li class="ntn-combo__option" data-value="a" aria-selected="true">Alpha</li></ul>
+     </div>`, { html: 'data-theme="dark"' });
+  check(document.querySelector('.ntn-combo__chip-x i.fa-light.fa-xmark'), 'default renderer draws Font Awesome Light');
+  mod.configure({ icon: (key) => { const i = document.createElement('i'); i.className = 'app-icon'; i.dataset.icon = key; return i; } });
+  mod.refresh();
+  check(document.querySelector('.ntn-combo__chip-x i.app-icon[data-icon="close"]') && !document.querySelector('.ntn-combo__chip-x .fa-xmark'),
+    'after configure({ icon }) + refresh(), chip remove uses the app renderer');
+  const themeIcon = document.querySelector('[data-ntn-theme-icon]');
+  check(themeIcon && themeIcon.dataset.icon === 'theme-light', 'theme toggle icon uses the app renderer (a sun while dark)');
+}
+
 console.log('Generated buttons never submit a form');
 {
   const rows = Array.from({ length: 12 }, (_, i) => `<tr><td>${i}</td></tr>`).join('');
@@ -97,8 +114,8 @@ console.log('Source guard');
 {
   const src = await readFile(resolve(root, 'js/nocturne.js'), 'utf8');
   const writes = src.split('\n').map((l, i) => [i + 1, l]).filter(([, l]) => /innerHTML\s*=|insertAdjacentHTML|outerHTML\s*=/.test(l));
-  // Allowed: the pager (page numbers only) and the calendar grid (dates and Intl month names only).
-  const allowed = writes.filter(([, l]) => /el\.innerHTML = pageList\(|cal\.innerHTML =/.test(l));
+  // Allowed: the pager (page numbers only) and the calendar grid (dates and weekday initials only).
+  const allowed = writes.filter(([, l]) => /el\.innerHTML = pageList\(|grid\.innerHTML = DOW/.test(l));
   check(writes.length === allowed.length,
     'raw HTML is only written from numbers and dates' + (writes.length > allowed.length ? ': lines ' + writes.filter((w) => !allowed.includes(w)).map((w) => w[0]).join(', ') : ''));
 }

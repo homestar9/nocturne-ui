@@ -16,17 +16,32 @@
 }
 .ntn-field__control input::placeholder, .ntn-field__control textarea::placeholder { color: var(--ntn-text-disabled); }
 .ntn-field__control:focus-within { border-color: var(--ntn-accent-500); box-shadow: var(--ntn-ring-focus); }
+/* Anatomy, in order: __label, then __control holding [leading <i> | __prefix] <input> [__suffix | __action],
+   then __hint and __error. Mark an invalid field with aria-invalid="true" on the input (point
+   aria-describedby at __error); data-invalid on the block still works. Use the required attribute
+   for required fields, and give every text input a placeholder (" " if nothing to say), which lets
+   themes float the label with :placeholder-shown. */
+.ntn-field__prefix,
 .ntn-field__suffix { font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); flex: 0 0 auto; }
+.ntn-field__action {
+  display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+  width: var(--ntn-control-sm); height: calc(var(--ntn-control-sm) - 4px); margin-right: -6px;
+  border: 0; border-radius: var(--ntn-radius-sm); background: transparent; color: var(--ntn-text-muted); cursor: pointer;
+  transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard);
+}
+.ntn-field__action:hover { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); }
+.ntn-field__control .ntn-field__action i { font-size: 14px; color: inherit; }
 .ntn-field__hint { font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
+.ntn-field__error { font-size: var(--ntn-text-xs); color: var(--ntn-danger-400); }
 .ntn-field--sm .ntn-field__control { height: var(--ntn-control-sm); padding: 0 8px; }
 .ntn-field--sm .ntn-field__control input { font-size: var(--ntn-text-xs); }
 .ntn-field--lg .ntn-field__control { height: var(--ntn-control-lg); padding: 0 12px; }
 .ntn-field--lg .ntn-field__control input { font-size: var(--ntn-text-md); }
 .ntn-field--textarea .ntn-field__control { height: auto; padding: 10px; align-items: flex-start; }
 .ntn-field--textarea textarea { resize: vertical; min-height: 78px; line-height: var(--ntn-leading-normal); }
-.ntn-field[data-invalid] .ntn-field__control { border-color: var(--ntn-danger-500); box-shadow: 0 0 0 3px var(--ntn-danger-soft); }
-.ntn-field[data-invalid] .ntn-field__hint { color: var(--ntn-danger-400); }
-.ntn-field:has(input:disabled) .ntn-field__control { background: var(--ntn-surface-1); opacity: 0.55; }
+.ntn-field:is([data-invalid], :has([aria-invalid="true"])) .ntn-field__control { border-color: var(--ntn-danger-500); box-shadow: 0 0 0 3px var(--ntn-danger-soft); }
+.ntn-field:is([data-invalid], :has([aria-invalid="true"])) .ntn-field__hint { color: var(--ntn-danger-400); }
+.ntn-field:has(input:disabled, textarea:disabled) .ntn-field__control { background: var(--ntn-surface-1); opacity: 0.55; }
 
 .ntn-select { display: flex; flex-direction: column; gap: 6px; width: 100%; }
 .ntn-select__label { font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-secondary); }
@@ -48,6 +63,8 @@
 .ntn-select__control select:disabled { opacity: 0.5; cursor: not-allowed; }
 .ntn-select__control option { background: var(--ntn-surface-2); color: var(--ntn-text-primary); }
 .ntn-select__hint { font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
+.ntn-select__error { font-size: var(--ntn-text-xs); color: var(--ntn-danger-400); }
+.ntn-select:is([data-invalid], :has([aria-invalid="true"])) .ntn-select__control select { border-color: var(--ntn-danger-500); box-shadow: 0 0 0 3px var(--ntn-danger-soft); }
 .ntn-select--sm .ntn-select__control select { height: var(--ntn-control-sm); font-size: var(--ntn-text-xs); padding: 0 28px 0 10px; }
 .ntn-select--lg .ntn-select__control select { height: var(--ntn-control-lg); font-size: var(--ntn-text-md); padding: 0 34px 0 14px; }
 /* Label beside the control — for toolbars and pagination rows. */
@@ -57,13 +74,14 @@
 
 /* Menu and combobox live in components/menu.css. */
 
-.ntn-slider { display: flex; flex-direction: column; gap: var(--ntn-space-3); width: 100%; }
+/* --ntn-slider-pct is written by nocturne.js onto this block (a state var: it follows the class
+   prefix), so the track, a value bubble or any sibling can read it. */
+.ntn-slider { --ntn-slider-pct: 50%; display: flex; flex-direction: column; gap: var(--ntn-space-3); width: 100%; }
 .ntn-slider__head { display: flex; align-items: center; justify-content: space-between; gap: var(--ntn-space-3); }
 .ntn-slider__label { font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-secondary); }
 .ntn-slider__value { font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); color: var(--ntn-text-primary); }
 .ntn-slider input[type="range"] {
   appearance: none; -webkit-appearance: none; width: 100%; height: 16px; margin: 0; cursor: pointer;
-  --ntn-slider-pct: 50%;
   /* Track drawn on the input itself so it renders identically in every engine. */
   background-image: linear-gradient(90deg, var(--ntn-accent-600), var(--ntn-accent-400)), linear-gradient(var(--ntn-n-400), var(--ntn-n-400));
   background-size: var(--ntn-slider-pct) 4px, 100% 4px;

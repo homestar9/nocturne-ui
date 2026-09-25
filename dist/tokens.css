@@ -108,6 +108,9 @@
   /* Ink that sits ON the accent — knobs, marks, primary-button labels */
   --ntn-accent-fg:      #FFFFFF;
   --ntn-danger-fg:      #1A0508;
+  --ntn-success-fg:     #03170E;
+  --ntn-warning-fg:     #1A1102;
+  --ntn-info-fg:        #04101F;
   /* Off-state knob of a switch */
   --ntn-control-knob:   var(--ntn-n-700);
 

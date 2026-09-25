@@ -53,16 +53,16 @@
         <p class="ntn-sidebar__section">Inputs</p>
         <a class="ntn-sidebar__item" href="#field"><i class="fa-light fa-font"></i><span>Text field</span></a>
         <a class="ntn-sidebar__item" href="#select"><i class="fa-light fa-caret-down"></i><span>Select</span></a>
-        <a class="ntn-sidebar__item" href="#combo"><i class="fa-light fa-square-caret-down"></i><span>Dropdown · Multi-select</span><span class="ntn-badge ntn-badge--accent ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#combo"><i class="fa-light fa-square-caret-down"></i><span>Dropdown · Multi-select</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#search"><i class="fa-light fa-magnifying-glass"></i><span>Search</span></a>
         <a class="ntn-sidebar__item" href="#slider"><i class="fa-light fa-sliders"></i><span>Slider</span></a>
-        <a class="ntn-sidebar__item" href="#daterange"><i class="fa-light fa-calendar-range"></i><span>Date &amp; range</span><span class="ntn-badge ntn-badge--accent ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#daterange"><i class="fa-light fa-calendar-range"></i><span>Date &amp; range</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#selection"><i class="fa-light fa-square-check"></i><span>Checkbox · Radio · Switch</span></a>
       </div>
       <div class="ntn-sidebar__group">
         <p class="ntn-sidebar__section">Data</p>
-        <a class="ntn-sidebar__item" href="#table"><i class="fa-light fa-table"></i><span>Table</span><span class="ntn-badge ntn-badge--accent ntn-badge--sm">new</span></a>
-        <a class="ntn-sidebar__item" href="#tree"><i class="fa-light fa-folder-tree"></i><span>Tree view</span><span class="ntn-badge ntn-badge--accent ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#table"><i class="fa-light fa-table"></i><span>Table</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#tree"><i class="fa-light fa-folder-tree"></i><span>Tree view</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#pagination"><i class="fa-light fa-ellipsis"></i><span>Pagination</span></a>
         <a class="ntn-sidebar__item" href="#stats"><i class="fa-light fa-chart-simple"></i><span>Stats</span></a>
       </div>
@@ -72,13 +72,13 @@
         <a class="ntn-sidebar__item" href="#alerts"><i class="fa-light fa-triangle-exclamation"></i><span>Alerts</span></a>
         <a class="ntn-sidebar__item" href="#progress"><i class="fa-light fa-bars-progress"></i><span>Progress · Spinner</span></a>
         <a class="ntn-sidebar__item" href="#avatars"><i class="fa-light fa-user"></i><span>Avatars</span></a>
-        <a class="ntn-sidebar__item" href="#tooltip"><i class="fa-light fa-message"></i><span>Tooltip</span><span class="ntn-badge ntn-badge--accent ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#tooltip"><i class="fa-light fa-message"></i><span>Tooltip</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#empty"><i class="fa-light fa-inbox"></i><span>Empty state</span></a>
       </div>
       <div class="ntn-sidebar__group">
         <p class="ntn-sidebar__section">Containers</p>
         <a class="ntn-sidebar__item" href="#cards"><i class="fa-light fa-clone"></i><span>Cards</span></a>
-        <a class="ntn-sidebar__item" href="#edges"><i class="fa-light fa-wand-magic-sparkles"></i><span>Border effects</span><span class="ntn-badge ntn-badge--accent ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#edges"><i class="fa-light fa-wand-magic-sparkles"></i><span>Border effects</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#accordion"><i class="fa-light fa-list"></i><span>Accordion</span></a>
         <a class="ntn-sidebar__item" href="#modal"><i class="fa-light fa-window-restore"></i><span>Modal</span></a>
       </div>
@@ -87,7 +87,7 @@
         <a class="ntn-sidebar__item" href="#tabs"><i class="fa-light fa-folder"></i><span>Tabs</span></a>
         <a class="ntn-sidebar__item" href="#crumbs"><i class="fa-light fa-angles-right"></i><span>Breadcrumbs</span></a>
         <a class="ntn-sidebar__item" href="#menu"><i class="fa-light fa-bars"></i><span>Menu</span></a>
-        <a class="ntn-sidebar__item" href="#steps"><i class="fa-light fa-circle-nodes"></i><span>Progress steps</span><span class="ntn-badge ntn-badge--accent ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#steps"><i class="fa-light fa-circle-nodes"></i><span>Progress steps</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
       </div>
     </nav>
   </aside>
@@ -128,16 +128,30 @@
           <header class="sink__head">
             <h2 class="sink__title">Buttons</h2>
             <code class="sink__code">.ntn-btn</code>
-            <p class="sink__note">Five variants, three sizes. One primary per view; <code>--danger</code> only for irreversible actions.</p>
+            <p class="sink__note">Two axes named for meaning: emphasis (default, <code>--primary</code>, <code>--secondary</code>, <code>--subtle</code>) and tone (<code>--success</code>, <code>--warning</code>, <code>--danger</code>, <code>--info</code>). One primary per view.</p>
           </header>
           <div class="ntn-card"><div class="ntn-card__body ntn-stack">
             <span class="sink__label">Variants</span>
             <div class="ntn-row">
               <button class="ntn-btn ntn-btn--primary"><i class="fa-light fa-plus"></i>Add item</button>
               <button class="ntn-btn">Cancel</button>
-              <button class="ntn-btn ntn-btn--soft"><i class="fa-light fa-wand-magic-sparkles"></i>Suggest</button>
-              <button class="ntn-btn ntn-btn--danger">Delete</button>
-              <button class="ntn-btn ntn-btn--ghost">Ghost</button>
+              <button class="ntn-btn ntn-btn--secondary"><i class="fa-light fa-wand-magic-sparkles"></i>Suggest</button>
+              <button class="ntn-btn ntn-btn--primary ntn-btn--danger">Delete</button>
+              <button class="ntn-btn ntn-btn--subtle">Subtle</button>
+            </div>
+            <hr class="ntn-divider">
+            <span class="sink__label">Emphasis × tone</span>
+            <div class="ntn-row">
+              <button class="ntn-btn ntn-btn--primary ntn-btn--danger">Delete forever</button>
+              <button class="ntn-btn ntn-btn--secondary ntn-btn--danger">Revoke</button>
+              <button class="ntn-btn ntn-btn--danger">Archive</button>
+              <button class="ntn-btn ntn-btn--subtle ntn-btn--danger"><i class="fa-light fa-trash"></i>Remove</button>
+            </div>
+            <div class="ntn-row">
+              <button class="ntn-btn ntn-btn--primary ntn-btn--success">Approve</button>
+              <button class="ntn-btn ntn-btn--secondary ntn-btn--warning">Hold</button>
+              <button class="ntn-btn ntn-btn--info">Details</button>
+              <button class="ntn-btn ntn-btn--subtle ntn-btn--success">Mark done</button>
             </div>
             <hr class="ntn-divider">
             <span class="sink__label">Sizes and states</span>
@@ -207,7 +221,7 @@
           <header class="sink__head">
             <h2 class="sink__title">Text field</h2>
             <code class="sink__code">.ntn-field</code>
-            <p class="sink__note">Label, control, hint. <code>data-invalid</code> on the block paints the error state.</p>
+            <p class="sink__note">Label, control (with <code>__prefix</code> / <code>__suffix</code> / <code>__action</code> slots), hint, error. <code>aria-invalid="true"</code> on the input (or <code>data-invalid</code> on the block) paints the error state.</p>
           </header>
           <div class="ntn-grid ntn-grid--2">
             <div class="ntn-card"><div class="ntn-card__body ntn-stack">
@@ -231,6 +245,18 @@
                 <span class="ntn-field__label">Description</span>
                 <span class="ntn-field__control"><textarea placeholder="What is this project for?"></textarea></span>
               </label>
+            </div></div>
+            <div class="ntn-card"><div class="ntn-card__body ntn-stack">
+              <div class="ntn-field">
+                <label class="ntn-field__label" for="sink-slug">URL slug</label>
+                <span class="ntn-field__control"><span class="ntn-field__prefix">/</span><input id="sink-slug" type="text" value="spring-launch" placeholder=" " required></span>
+                <span class="ntn-field__hint">Prefix slot, and <code>required</code> as an attribute.</span>
+              </div>
+              <div class="ntn-field">
+                <label class="ntn-field__label" for="sink-title">Title</label>
+                <span class="ntn-field__control"><input id="sink-title" type="text" value="the spring launch" placeholder=" " aria-invalid="true" aria-describedby="sink-title-error"><button type="button" class="ntn-field__action" aria-label="Title case"><i class="fa-light fa-font"></i></button></span>
+                <span class="ntn-field__error" id="sink-title-error">Title must be at least 20 characters.</span>
+              </div>
             </div></div>
           </div>
         </section>
@@ -330,7 +356,7 @@
                   </div>
                   <div class="ntn-combo__foot">
                     <span class="ntn-combo__hint" data-ntn-combo-count>2 selected</span>
-                    <button type="button" class="ntn-btn ntn-btn--ghost ntn-btn--sm" data-ntn-combo-none>Clear</button>
+                    <button type="button" class="ntn-btn ntn-btn--subtle ntn-btn--sm" data-ntn-combo-none>Clear</button>
                   </div>
                 </div>
               </div>
@@ -420,7 +446,7 @@
                   <footer class="ntn-daterange__foot">
                     <span class="ntn-daterange__summary" data-ntn-daterange-summary></span>
                     <div class="ntn-daterange__actions">
-                      <button class="ntn-btn ntn-btn--ghost ntn-btn--sm" type="button" data-ntn-daterange-cancel>Cancel</button>
+                      <button class="ntn-btn ntn-btn--subtle ntn-btn--sm" type="button" data-ntn-daterange-cancel>Cancel</button>
                       <button class="ntn-btn ntn-btn--primary ntn-btn--sm" type="button" data-ntn-daterange-apply>Apply</button>
                     </div>
                   </footer>
@@ -452,7 +478,7 @@
                   <footer class="ntn-daterange__foot">
                     <span class="ntn-daterange__summary" data-ntn-daterange-summary></span>
                     <div class="ntn-daterange__actions">
-                      <button class="ntn-btn ntn-btn--ghost ntn-btn--sm" type="button" data-ntn-daterange-cancel>Cancel</button>
+                      <button class="ntn-btn ntn-btn--subtle ntn-btn--sm" type="button" data-ntn-daterange-cancel>Cancel</button>
                       <button class="ntn-btn ntn-btn--primary ntn-btn--sm" type="button" data-ntn-daterange-apply>Apply</button>
                     </div>
                   </footer>
@@ -478,7 +504,7 @@
                     <footer class="ntn-daterange__foot">
                       <span class="ntn-daterange__summary" data-ntn-daterange-summary></span>
                       <div class="ntn-daterange__actions">
-                        <button class="ntn-btn ntn-btn--ghost ntn-btn--sm" type="button" data-ntn-daterange-cancel>Cancel</button>
+                        <button class="ntn-btn ntn-btn--subtle ntn-btn--sm" type="button" data-ntn-daterange-cancel>Cancel</button>
                         <button class="ntn-btn ntn-btn--primary ntn-btn--sm" type="button" data-ntn-daterange-apply>Apply</button>
                       </div>
                     </footer>
@@ -505,7 +531,7 @@
                         <input type="time" value="09:30" step="900" data-ntn-daterange-time>
                       </label>
                       <div class="ntn-daterange__actions">
-                        <button class="ntn-btn ntn-btn--ghost ntn-btn--sm" type="button" data-ntn-daterange-cancel>Cancel</button>
+                        <button class="ntn-btn ntn-btn--subtle ntn-btn--sm" type="button" data-ntn-daterange-cancel>Cancel</button>
                         <button class="ntn-btn ntn-btn--primary ntn-btn--sm" type="button" data-ntn-daterange-apply>Apply</button>
                       </div>
                     </footer>
@@ -562,7 +588,7 @@
           <section class="ntn-card ntn-card--flush" data-ntn-table-scope>
             <header class="ntn-card__head">
               <div class="ntn-card__heading">
-                <h3 class="ntn-card__title">Team members <span class="ntn-badge ntn-badge--accent ntn-badge--sm">14 users</span></h3>
+                <h3 class="ntn-card__title">Team members <span class="ntn-badge ntn-badge--primary ntn-badge--sm">14 users</span></h3>
                 <p class="ntn-card__sub">Manage who has access to this workspace and what they can do.</p>
               </div>
               <div class="ntn-card__actions">
@@ -603,8 +629,8 @@
                 <span class="ntn-select__control"><select><option>Any amount</option><option>Over $500</option><option>Over $1,000</option></select></span>
               </label>
               <div class="ntn-filters__actions">
-                <button class="ntn-btn ntn-btn--ghost ntn-btn--sm">Clear all</button>
-                <button class="ntn-btn ntn-btn--sm ntn-btn--soft">Apply filters</button>
+                <button class="ntn-btn ntn-btn--subtle ntn-btn--sm">Clear all</button>
+                <button class="ntn-btn ntn-btn--sm ntn-btn--secondary">Apply filters</button>
               </div>
               <div class="ntn-filters__applied">
                 <span class="ntn-filter-tag">Status: Active<button class="ntn-filter-tag__remove" aria-label="Remove status filter"><i class="fa-light fa-xmark"></i></button></span>
@@ -629,7 +655,7 @@
                   <tr data-tags="owner">
                     <td><label class="ntn-check"><input type="checkbox" checked aria-label="Select Michael Reyes"></label></td>
                     <td class="ntn-table__primary">Michael Reyes</td>
-                    <td><span class="ntn-badge ntn-badge--accent ntn-badge--sm">owner</span></td>
+                    <td><span class="ntn-badge ntn-badge--primary ntn-badge--sm">owner</span></td>
                     <td><span class="ntn-badge ntn-badge--success ntn-badge--dot ntn-badge--sm">active</span></td>
                     <td>2 hours ago</td>
                     <td class="ntn-table__num">$1,204.55</td>
@@ -746,7 +772,7 @@
                   <tr data-tags="owner">
                     <td><label class="ntn-check"><input type="checkbox" aria-label="Select Ines Duarte"></label></td>
                     <td class="ntn-table__primary">Inés Duarte</td>
-                    <td><span class="ntn-badge ntn-badge--accent ntn-badge--sm">owner</span></td>
+                    <td><span class="ntn-badge ntn-badge--primary ntn-badge--sm">owner</span></td>
                     <td><span class="ntn-badge ntn-badge--success ntn-badge--dot ntn-badge--sm">active</span></td>
                     <td>Today</td>
                     <td class="ntn-table__num">$3,560.00</td>
@@ -1060,7 +1086,7 @@
               <span class="ntn-badge ntn-badge--success ntn-badge--dot">active</span>
               <span class="ntn-badge ntn-badge--warning ntn-badge--dot">pending</span>
               <span class="ntn-badge ntn-badge--danger">failed</span>
-              <span class="ntn-badge ntn-badge--accent">intuitive</span>
+              <span class="ntn-badge ntn-badge--primary">intuitive</span>
               <span class="ntn-badge ntn-badge--info ntn-badge--sm">beta</span>
               <span class="ntn-badge">neutral</span>
               <span class="ntn-badge ntn-badge--count">12</span>
@@ -1187,7 +1213,7 @@
                 <span class="ntn-tooltip__bubble" role="tooltip">Command palette<span class="ntn-tooltip__key">⌘K</span></span>
               </span>
               <span class="ntn-tooltip">
-                <button class="ntn-btn ntn-btn--sm ntn-btn--ghost">Edge aligned</button>
+                <button class="ntn-btn ntn-btn--sm ntn-btn--subtle">Edge aligned</button>
                 <span class="ntn-tooltip__bubble ntn-tooltip__bubble--wrap ntn-tooltip__bubble--start" role="tooltip">Aligned to the trigger's left edge — for a wide bubble on a narrow control.</span>
               </span>
             </div>
@@ -1431,7 +1457,7 @@
               <div class="ntn-menu" style="width:236px">
                 <p class="ntn-menu__label">This file</p>
                 <button class="ntn-menu__item"><span><i class="fa-light fa-pen"></i> Rename</span><span class="ntn-menu__shortcut">F2</span></button>
-                <button class="ntn-menu__item" aria-selected="true"><span><i class="fa-light fa-copy"></i> Duplicate</span><i class="fa-light fa-check"></i></button>
+                <button class="ntn-menu__item" role="menuitemcheckbox" aria-checked="true"><span><i class="fa-light fa-copy"></i> Duplicate</span><i class="fa-light fa-check"></i></button>
                 <div class="ntn-menu__sub">
                   <button class="ntn-menu__item" aria-haspopup="true" aria-expanded="false"><span><i class="fa-light fa-share"></i> Share</span><i class="fa-light fa-chevron-right ntn-menu__caret"></i></button>
                   <div class="ntn-menu" role="menu">
@@ -1440,7 +1466,7 @@
                     <div class="ntn-menu__sub">
                       <button class="ntn-menu__item" aria-haspopup="true" aria-expanded="false"><span><i class="fa-light fa-users"></i> Invite team</span><i class="fa-light fa-chevron-right ntn-menu__caret"></i></button>
                       <div class="ntn-menu" role="menu">
-                        <button class="ntn-menu__item" aria-selected="true"><span>Can view</span><i class="fa-light fa-check"></i></button>
+                        <button class="ntn-menu__item" role="menuitemradio" aria-checked="true"><span>Can view</span><i class="fa-light fa-check"></i></button>
                         <button class="ntn-menu__item"><span>Can comment</span></button>
                         <button class="ntn-menu__item"><span>Can edit</span></button>
                       </div>
@@ -1556,7 +1582,7 @@
       <h2 class="ntn-modal__title">Invite a teammate</h2>
       <p class="ntn-modal__desc">They will get access to this workspace only.</p>
     </div>
-    <button class="ntn-icon-btn ntn-icon-btn--sm" aria-label="Close" data-ntn-close><i class="fa-light fa-xmark"></i></button>
+    <button type="button" class="ntn-modal__close" aria-label="Close" data-ntn-close><i class="fa-light fa-xmark"></i></button>
   </header>
   <div class="ntn-modal__body">
     <label class="ntn-field">

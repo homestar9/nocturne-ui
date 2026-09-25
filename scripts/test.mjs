@@ -9,7 +9,7 @@
 import { readFile, rm, mkdtemp } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
-import { build, applyPrefix } from './build.mjs';
+import { build, applyPrefix, vocabularyVars } from './build.mjs';
 
 let failures = 0;
 const check = (ok, msg) => { if (ok) { console.log('  ok   ' + msg); } else { failures++; console.error('  FAIL ' + msg); } };
@@ -47,8 +47,28 @@ try {
   const altJs = await readFile(join(alt, 'nocturne.js'), 'utf8');
   check(/dataset\.zz[A-Z]/.test(altJs) && /data-zz-/.test(altJs), 'camelCase dataset keys follow the prefix (data-zz-x ↔ dataset.zzX)');
 
+  console.log('Split prefixes (classes "zz", tokens stay "ntn")');
+  const split = join(tmp, 'split');
+  await build({ prefix: 'zz', tokenPrefix: 'ntn', outDir: split });
+  const vocab = await vocabularyVars();
+  check(['slider-pct', 'progress', 'tab-x', 'tab-w', 'tree-indent'].every((n) => vocab.has(n)),
+    `vocabulary vars discovered: ${[...vocab].join(' ')}`);
+  for (const rel of ['nocturne.css', 'tokens.css', 'nocturne.js', join('themes', 'emerald.css')]) {
+    const t = await readFile(join(split, rel), 'utf8');
+    const leak = t.match(/\.ntn-[a-z]|data-ntn-|ntn:[a-z]|dataset\.ntn|['"]ntn-theme|keyframes ntn-/);
+    check(!leak, `${rel}: no ntn class, hook, event, storage key or keyframe survives` + (leak ? ` (found "${leak[0]}")` : ''));
+    const stray = [...new Set([...t.matchAll(/--zz-([a-zA-Z0-9-]+)/g)].map((m) => m[1]))].filter((n) => !vocab.has(n));
+    check(stray.length === 0, `${rel}: the only --zz-* properties are vocabulary vars` + (stray.length ? ': ' + stray.join(' ') : ''));
+  }
+  const splitCss = await readFile(join(split, 'nocturne.css'), 'utf8');
+  check(/var\(--ntn-accent\)/.test(splitCss) && /\.zz-card\b/.test(splitCss) && /var\(--zz-slider-pct\)/.test(splitCss),
+    'tokens stay --ntn-*, classes become .zz-*, state vars become --zz-*');
+
   console.log('Prefix validation');
   for (const bad of ['', 'Cms', 'my-ui', '1x', 'a_b', 'c s']) {
+    let threwToken = false;
+    try { await build({ prefix: 'ok', tokenPrefix: bad, outDir: join(tmp, 'bad') }); } catch { threwToken = true; }
+    check(threwToken, `rejects tokenPrefix ${JSON.stringify(bad)}`);
     let threw = false;
     try { await build({ prefix: bad, outDir: join(tmp, 'bad') }); } catch { threw = true; }
     check(threw, `rejects prefix ${JSON.stringify(bad)}`);

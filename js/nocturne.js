@@ -15,6 +15,19 @@ function make(tag, attrs = {}, ...children) {
   node.append(...children);
   return node;
 }
+/* Icons the behaviours draw themselves, by SEMANTIC key. The default renders Font Awesome Light;
+   an app with its own icon system calls configure({ icon: (key) => element }) and then refresh(). */
+const FA_ICONS = { close: 'xmark', prev: 'chevron-left', next: 'chevron-right', 'theme-light': 'sun', 'theme-dark': 'moon' };
+let renderIcon = (key) => make('i', { class: 'fa-light fa-' + (FA_ICONS[key] || key), 'aria-hidden': 'true' });
+
+/**
+ * Swap how nocturne.js renders the icons it creates (chip remove, calendar arrows, theme toggle).
+ * @param {{ icon?: (key: string) => Element }} options  Keys: close, prev, next, theme-light, theme-dark.
+ */
+export function configure({ icon } = {}) {
+  if (typeof icon === 'function') renderIcon = icon;
+}
+
 const STORE = 'ntn-theme';
 const target = (el, attr) => {
   const v = el.getAttribute(attr);
@@ -61,7 +74,12 @@ function syncThemeControls(theme) {
   $$('[data-ntn-theme-toggle]').forEach((el) => {
     el.setAttribute('aria-pressed', String(theme === 'light'));
     const icon = el.querySelector('[data-ntn-theme-icon]');
-    if (icon) icon.className = theme === 'light' ? 'fa-light fa-moon' : 'fa-light fa-sun';
+    if (icon) {
+      // Shows the mode a click switches TO: a moon while light, a sun while dark.
+      const next = renderIcon(theme === 'light' ? 'theme-dark' : 'theme-light');
+      next.setAttribute('data-ntn-theme-icon', '');
+      icon.replaceWith(next);
+    }
   });
   $$('[data-ntn-theme-set]').forEach((el) => {
     el.setAttribute('aria-selected', String(el.getAttribute('data-ntn-theme-set') === getThemePreference()));
@@ -90,17 +108,24 @@ function syncSlider(input) {
   const min = Number(input.min || 0);
   const max = Number(input.max || 100);
   const pct = max === min ? 0 : ((Number(input.value) - min) / (max - min)) * 100;
-  input.style.setProperty('--ntn-slider-pct', pct + '%');
   const block = input.closest('.ntn-slider');
+  (block || input).style.setProperty('--ntn-slider-pct', pct + '%');
   const out = block && block.querySelector('.ntn-slider__value');
   if (out) out.textContent = input.value + (out.dataset.unit || '');
 }
 
-/* Progress width from data-value (keeps percentages out of the markup's style attr). */
+/* Progress from data-value (keeps percentages out of the markup's style attr). Publishes
+   --ntn-progress on the block (a state var any kit can read) and the progressbar ARIA values. */
 function syncProgress(fill) {
   const max = Number(fill.dataset.max || 100);
-  const pct = Math.max(0, Math.min(100, (Number(fill.dataset.value || 0) / max) * 100));
-  fill.style.width = pct + '%';
+  const value = Number(fill.dataset.value || 0);
+  const pct = Math.max(0, Math.min(100, (value / max) * 100));
+  const block = fill.closest('.ntn-progress') || fill;
+  block.style.setProperty('--ntn-progress', pct + '%');
+  if (!block.hasAttribute('role')) block.setAttribute('role', 'progressbar');
+  block.setAttribute('aria-valuemin', '0');
+  block.setAttribute('aria-valuemax', String(max));
+  block.setAttribute('aria-valuenow', String(value));
 }
 
 /* ── Tabs ────────────────────────────────────────────────────────────────────
@@ -120,7 +145,7 @@ function tabInk(list) {
      publishing that would hide both the ink bar AND the CSS fallback, so the
      flag only goes on once a real measurement exists. */
   if (!tab.offsetWidth || !tab.offsetHeight) return;
-  if (list.classList.contains('ntn-tabs--vertical')) {
+  if (tabsVertical(list)) {
     list.style.setProperty('--ntn-tab-y', tab.offsetTop + 'px');
     list.style.setProperty('--ntn-tab-h', tab.offsetHeight + 'px');
   } else {
@@ -153,7 +178,11 @@ function selectTab(tab, focus) {
   list.dispatchEvent(new CustomEvent('ntn:tabchange', { bubbles: true, detail: { value: tab.dataset.value || tab.textContent.trim(), tab } }));
 }
 
+/* Vertical tabs are declared with aria-orientation="vertical" (the --vertical modifier still works). */
+const tabsVertical = (list) => list.getAttribute('aria-orientation') === 'vertical' || list.classList.contains('ntn-tabs--vertical');
+
 function setupTabs(list) {
+  if (list.classList.contains('ntn-tabs--vertical') && !list.hasAttribute('aria-orientation')) list.setAttribute('aria-orientation', 'vertical');
   const tabs = tabAll(list);
   if (!tabs.length) return;
   if (!tabs.some((t) => t.getAttribute('aria-selected') === 'true')) tabs[0].setAttribute('aria-selected', 'true');
@@ -168,7 +197,7 @@ function setupTabs(list) {
 
 function onTabKey(tab, e) {
   const list = tab.closest('.ntn-tabs');
-  const vertical = list.classList.contains('ntn-tabs--vertical');
+  const vertical = tabsVertical(list);
   const tabs = tabEnabled(list);
   const i = tabs.indexOf(tab);
   let to = -1;
@@ -418,7 +447,7 @@ function comboRender(root) {
             class: 'ntn-combo__chip-x',
             'data-ntn-combo-clear': o.dataset.value || comboLabel(o),
             'aria-label': 'Remove ' + comboLabel(o),
-          }, make('i', { class: 'fa-light fa-xmark' }))));
+          }, renderIcon('close'))));
         if (chosen.length > max) nodes.push(make('span', { class: 'ntn-combo__more' }, '+' + (chosen.length - max)));
         out.replaceChildren(...nodes);
       }
@@ -763,13 +792,19 @@ function drRenderCal(root, s, cal, offset, last) {
     );
   }
 
-  cal.innerHTML =
-    `<div class="ntn-daterange__head">
-      <button type="button" class="ntn-daterange__nav" data-ntn-month="-1" aria-label="Previous month"${offset ? ' data-ghost' : ''}><i class="fa-light fa-chevron-left"></i></button>
-      <span class="ntn-daterange__month">${drMonthFmt.format(view)}</span>
-      <button type="button" class="ntn-daterange__nav" data-ntn-month="1" aria-label="Next month"${offset === last ? '' : ' data-ghost'}><i class="fa-light fa-chevron-right"></i></button>
-    </div>
-    <div class="ntn-daterange__grid">${DOW.map((x) => `<span class="ntn-daterange__dow">${x}</span>`).join('')}${cells.join('')}</div>`;
+  const nav = (dir, label, ghost) => make('button', {
+    type: 'button', class: 'ntn-daterange__nav', 'data-ntn-month': String(dir), 'aria-label': label,
+    ...(ghost ? { 'data-ghost': '' } : {}),
+  }, renderIcon(dir < 0 ? 'prev' : 'next'));
+  // The grid holds only dates and weekday initials, so it is safe to write as HTML.
+  const grid = make('div', { class: 'ntn-daterange__grid' });
+  grid.innerHTML = DOW.map((x) => `<span class="ntn-daterange__dow">${x}</span>`).join('') + cells.join('');
+  cal.replaceChildren(
+    make('div', { class: 'ntn-daterange__head' },
+      nav(-1, 'Previous month', !!offset),
+      make('span', { class: 'ntn-daterange__month' }, drMonthFmt.format(view)),
+      nav(1, 'Next month', offset !== last)),
+    grid);
 }
 
 function drRender(root) {

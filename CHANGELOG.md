@@ -17,6 +17,26 @@ below would normally be a major bump; it ships as a minor only because there are
   an app's own custom properties any more. Rename rule: put `ntn-` after the leading `--`.
 - **Keyframes are namespaced:** `nocturne-spin`, `-pulse`, `-rise`, `-shimmer` and
   `-border-spin` are now `ntn-spin` and so on.
+- **Modifiers are named for meaning, not looks.** Buttons now have two axes that combine:
+  - **Emphasis:** default, `--primary`, `--secondary` or `--subtle`.
+  - **Tone:** `--success`, `--warning`, `--danger` or `--info`.
+
+  Renames: `ntn-btn--ghost` → `--subtle`, `ntn-btn--soft` → `--secondary`, and the tone
+  `--accent` → `--primary` on `ntn-badge`, `ntn-alert` and `ntn-icon`.
+
+  **`ntn-btn--danger` alone is now an outlined destructive button.** The old solid red button
+  is `ntn-btn--primary ntn-btn--danger`.
+
+  Every emphasis combines with every tone. Before this, `--ghost --danger` rendered solid red
+  because `--danger` won by source order; `--subtle --danger` is now a quiet red button.
+- **Progress and slider values publish CSS variables on their blocks:** `--ntn-progress` and
+  `--ntn-slider-pct` sit on `.ntn-progress` / `.ntn-slider`. Before, the width was inline and
+  the variable sat on the input. Progress also gets `role="progressbar"` and the `aria-value*`
+  attributes.
+- **Vertical tabs** are declared with `aria-orientation="vertical"`. The `--vertical` modifier
+  still works, and the script adds the attribute to it.
+- **The icon italic reset** no longer keys on Font Awesome class names. It covers
+  `i[class*="fa-"]`, `i[data-icon]` and empty `<i>`, and leaves `<i>` used for real italics alone.
 
 ### Added
 - **Build-time prefix.** `nocturne-build --prefix <name> --out <dir>` (or
@@ -24,6 +44,31 @@ below would normally be a major bump; it ships as a minor only because there are
   namespace renamed: classes, tokens, `data-*` hooks (and their `dataset` keys), events, the theme
   storage key and keyframes. An app can own its markup vocabulary (`.app-card`) and still use Nocturne,
   or swap to another kit built to the same names. Prefixes are lowercase letters and digits.
+- **A separate prefix for tokens.** `--token-prefix` (`tokenPrefix`) keeps design tokens
+  kit-named (`--ntn-*`) while classes, hooks and events take your prefix.
+
+  State variables the script writes, and the `--ntn-tree-indent` knob, always follow the class
+  prefix because they belong to the markup. The state variables are discovered from the script,
+  so the list can't drift.
+- **Pluggable icons.** `configure({ icon: (key) => element })` swaps how `nocturne.js` draws the
+  icons it creates. The keys are `close`, `prev`, `next`, `theme-light` and `theme-dark`, and the
+  default is Font Awesome Light. The calendar head is now built as DOM, not an HTML string.
+- **Field anatomy:**
+  - `ntn-field__prefix` and `ntn-field__action`, a small icon button inside the control;
+  - `ntn-field__error` and `ntn-select__error`;
+  - an invalid state from `aria-invalid="true"` on the input, with `data-invalid` still working.
+
+  Documented rules: `required` as an attribute, and a placeholder on every text input
+  (`" "` when there's nothing to say) so themes can float the label.
+- **Accessibility and markup hooks:**
+  - Menu rows take `aria-checked="true"` with `role="menuitemcheckbox|menuitemradio"`.
+    `aria-selected` is still styled but isn't valid on menu items.
+  - `ntn-sidebar__label` for item text.
+  - `ntn-tabs__label` (optional) around tab text.
+  - `ntn-modal__close` for the head's dismiss button.
+  - An explicit `ntn-alert--info` (info is still the default).
+  - New tokens `--ntn-success-fg`, `--ntn-warning-fg` and `--ntn-info-fg` for ink on solid
+    status colours.
 - **Theme opt-out.** `<html data-ntn-theme-control="manual">` hands light/dark to the app: `nocturne.js` never touches `data-theme` or `ntn-theme`, adds no
   OS listener, and ignores `data-ntn-theme-toggle` / `data-ntn-theme-set`. Without it, nothing
   changes.

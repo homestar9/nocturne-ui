@@ -53,19 +53,27 @@ which case use `.ntn-icon`.
 
 ## Button — `ntn-btn`
 
-Modifiers: `--primary` `--ghost` `--danger` `--soft` · `--sm` `--lg` · `--block`
+Two axes, named for **meaning** — combine one of each:
+
+- Emphasis: (default) · `--primary` the main action · `--secondary` a supporting action with more
+  weight than default · `--subtle` a low-key action
+- Tone: accent unless one of `--success` `--warning` `--danger` `--info`
+
+Size: `--sm` `--lg` · `--block`
 States: `disabled`, `data-loading` (spins the leading icon).
 
 ```html
 <button class="ntn-btn ntn-btn--primary"><i class="fa-light fa-plus"></i>Add item</button>
 <button class="ntn-btn">Cancel</button>
-<button class="ntn-btn ntn-btn--ghost ntn-btn--sm"><i class="fa-light fa-ellipsis"></i></button>
-<button class="ntn-btn ntn-btn--danger" disabled>Delete workspace</button>
+<button class="ntn-btn ntn-btn--subtle ntn-btn--sm"><i class="fa-light fa-ellipsis"></i></button>
+<button class="ntn-btn ntn-btn--primary ntn-btn--danger" disabled>Delete workspace</button>
 <button class="ntn-btn ntn-btn--primary" data-loading><i class="fa-light fa-sort"></i>Saving</button>
 ```
 
-Default (secondary) is the everyday button. One primary per view. `--soft` is for a highlighted
-non-destructive action inside a card; `--danger` only for irreversible actions.
+Default is the everyday button. One `--primary` per view. `--secondary` is for a highlighted
+non-destructive action inside a card. A tone says what the action means, not how loud it is:
+`--primary --danger` for an irreversible action, `--subtle --danger` for a reversible "Remove",
+`--danger` alone for an outlined destructive option.
 
 ## Icon button — `ntn-icon-btn`
 
@@ -89,8 +97,39 @@ Modifier: `--extended` (adds a label). Fixed bottom-right.
 
 ## Text field — `ntn-field`
 
-Elements: `__label` `__control` `__suffix` `__hint`. Modifiers: `--sm` `--lg` `--textarea`.
-Error: `data-invalid` on the block (the hint turns red). Disable the `input`, not the block.
+Elements, in order: `__label`, then `__control` holding [a leading `<i>` or `__prefix`] the input
+[`__suffix` or `__action`], then `__hint` and `__error`. Modifiers: `--sm` `--lg` `--textarea`.
+
+- **Error:** `aria-invalid="true"` on the input, `aria-describedby` pointing at `__error`
+  (`data-invalid` on the block also works). The control turns red.
+- **Required:** the `required` attribute, never a typed asterisk.
+- **Placeholder:** every text input carries one (`placeholder=" "` when there is nothing to say),
+  so themes can float the label with `:placeholder-shown`.
+- **Disabled:** disable the input, not the block.
+- **`__action`** is a small icon button inside the control (a clear or title-case button, say),
+  with `type="button"` and an `aria-label`.
+
+```html
+<div class="ntn-field">
+  <label class="ntn-field__label" for="slug">URL slug</label>
+  <span class="ntn-field__control">
+    <span class="ntn-field__prefix">/</span>
+    <input id="slug" type="text" placeholder=" " required>
+  </span>
+</div>
+
+<div class="ntn-field">
+  <label class="ntn-field__label" for="title">Title</label>
+  <span class="ntn-field__control">
+    <input id="title" type="text" placeholder=" " aria-invalid="true" aria-describedby="title-error">
+    <button type="button" class="ntn-field__action" aria-label="Title case"><i class="fa-light fa-font"></i></button>
+  </span>
+  <span class="ntn-field__error" id="title-error">Title must be at least 20 characters.</span>
+</div>
+```
+
+A bare `<label class="ntn-field">` wrapper (below) is fine when the control holds one input and
+no button.
 
 ```html
 <label class="ntn-field">
@@ -114,8 +153,8 @@ Error: `data-invalid` on the block (the hint turns red). Disable the `input`, no
 
 ## Select — `ntn-select`
 
-Native `<select>`, styled. Elements: `__label` `__control` `__hint`. Modifiers: `--sm` `--lg`
-`--inline`. Smallest footprint, and it gets the platform picker on mobile — use it whenever the
+Native `<select>`, styled. Elements: `__label` `__control` `__hint` `__error`. Modifiers: `--sm` `--lg`
+`--inline`. Error: `aria-invalid="true"` on the `<select>` (or `data-invalid` on the block). Smallest footprint, and it gets the platform picker on mobile — use it whenever the
 options are plain strings. Reach for `ntn-combo` when they need descriptions, icons, filtering
 or multi-select.
 
@@ -164,7 +203,7 @@ filter. Fires `ntn:combochange` with `{ value, values, labels, multiple }`.
     </div>
     <div class="ntn-combo__foot">
       <span class="ntn-combo__hint" data-ntn-combo-count></span>
-      <button type="button" class="ntn-btn ntn-btn--ghost ntn-btn--sm" data-ntn-combo-none>Clear</button>
+      <button type="button" class="ntn-btn ntn-btn--subtle ntn-btn--sm" data-ntn-combo-none>Clear</button>
     </div>
   </div>
 </div>
@@ -176,8 +215,9 @@ Single-select drops `data-ntn-multi` and swaps `__box` for a trailing
 ## Menu — `ntn-menu`
 
 Dropdown surface for action menus and custom pickers. Elements: `__item` `__label` (section
-heading) `__shortcut` `__caret` `__sub`. Item modifier: `--danger`. Selected row:
-`aria-selected="true"`; disabled row: `aria-disabled="true"`. Positioning is the app's job.
+heading) `__shortcut` `__caret` `__sub`. Item modifier: `--danger`. A checkable row is
+`role="menuitemcheckbox"` (or `menuitemradio` in a pick-one group) with `aria-checked="true"`;
+disabled row: `aria-disabled="true"`. Positioning is the app's job.
 
 Nest a menu by wrapping the parent row and its panel in `__sub`: hover and focus open the
 flyout in CSS alone. `nocturne.js` adds `←`/`→` traversal and flips the panel to the left when
@@ -310,7 +350,7 @@ Delta modifiers: `--down` `--flat` (default is positive/green).
 
 ## Modal — `ntn-modal`
 
-A native `<dialog>`. Elements: `__head` `__title` `__desc` `__body` `__foot`.
+A native `<dialog>`. Elements: `__head` `__title` `__desc` `__close` `__body` `__foot`.
 Modifiers: `--sm` `--lg`. Open with `data-ntn-open="#id"`, close with `data-ntn-close`
 (or `dialog.showModal()` / `.close()`).
 
@@ -323,7 +363,7 @@ Modifiers: `--sm` `--lg`. Open with `data-ntn-open="#id"`, close with `data-ntn-
       <h2 class="ntn-modal__title">Invite a teammate</h2>
       <p class="ntn-modal__desc">They will get access to this workspace only.</p>
     </div>
-    <button class="ntn-icon-btn ntn-icon-btn--sm" aria-label="Close" data-ntn-close><i class="fa-light fa-xmark"></i></button>
+    <button type="button" class="ntn-modal__close" aria-label="Close" data-ntn-close><i class="fa-light fa-xmark"></i></button>
   </header>
   <div class="ntn-modal__body">…</div>
   <footer class="ntn-modal__foot">
@@ -381,7 +421,7 @@ inherited by its ring, so the light and the glow never drift apart. Under
 
 ## Badge — `ntn-badge`
 
-Modifiers: `--accent` `--success` `--warning` `--danger` `--info` · `--dot` (leading status dot)
+Modifiers: `--neutral` (default) `--primary` `--success` `--warning` `--danger` `--info` · `--dot` (leading status dot)
 · `--sm` · `--count` (numeric pill). Text is a lowercase noun.
 
 ```html
@@ -393,7 +433,7 @@ Modifiers: `--accent` `--success` `--warning` `--danger` `--info` · `--dot` (le
 ## Alert — `ntn-alert`
 
 Elements: `__body` `__title` `__text` `__actions`. Modifiers: `--success` `--warning`
-`--danger` `--accent` · `--banner` (full-bleed, square). Default tone is info.
+`--danger` `--primary` `--info` · `--banner` (full-bleed, square). Default tone is info; state it with `--info`.
 Dismiss with `data-ntn-dismiss`.
 
 ```html
@@ -503,7 +543,7 @@ off and the markup is static.
 <section class="ntn-card ntn-card--flush" data-ntn-table-scope>
   <header class="ntn-card__head">
     <div class="ntn-card__heading">
-      <h3 class="ntn-card__title">Team members <span class="ntn-badge ntn-badge--accent ntn-badge--sm">14 users</span></h3>
+      <h3 class="ntn-card__title">Team members <span class="ntn-badge ntn-badge--primary ntn-badge--sm">14 users</span></h3>
       <p class="ntn-card__sub">Manage who has access to this workspace.</p>
     </div>
     <div class="ntn-card__actions">
@@ -536,8 +576,8 @@ off and the markup is static.
       <span class="ntn-select__control"><select><option>Any status</option></select></span>
     </label>
     <div class="ntn-filters__actions">
-      <button class="ntn-btn ntn-btn--ghost ntn-btn--sm">Clear all</button>
-      <button class="ntn-btn ntn-btn--soft ntn-btn--sm">Apply filters</button>
+      <button class="ntn-btn ntn-btn--subtle ntn-btn--sm">Clear all</button>
+      <button class="ntn-btn ntn-btn--secondary ntn-btn--sm">Apply filters</button>
     </div>
     <div class="ntn-filters__applied">
       <span class="ntn-filter-tag">Status: Active<button class="ntn-filter-tag__remove" aria-label="Remove"><i class="fa-light fa-xmark"></i></button></span>
@@ -642,7 +682,7 @@ plain dates. There is no range + time variant — two times in one popover is a 
     <footer class="ntn-daterange__foot">
       <span class="ntn-daterange__summary" data-ntn-daterange-summary></span>
       <div class="ntn-daterange__actions">
-        <button class="ntn-btn ntn-btn--ghost ntn-btn--sm" type="button" data-ntn-daterange-cancel>Cancel</button>
+        <button class="ntn-btn ntn-btn--subtle ntn-btn--sm" type="button" data-ntn-daterange-cancel>Cancel</button>
         <button class="ntn-btn ntn-btn--primary ntn-btn--sm" type="button" data-ntn-daterange-apply>Apply</button>
       </div>
     </footer>
@@ -685,9 +725,9 @@ Elements: `__brand` `__mark` `__center` `__right`. Sticky, blurred, 56px.
 ## Sidebar — `ntn-sidebar`
 
 Elements: `__brand` `__mark` `__brand-text` `__name` `__meta` `__nav` `__group` `__section`
-`__item` `__sub` `__foot`. Active item: `aria-current="page"`. Collapse to the 56px rail with
+`__item` `__label` `__sub` `__foot`. Active item: `aria-current="page"`. Collapse to the 56px rail with
 `data-collapsed` on the block — toggle it via `data-ntn-toggle=".ntn-sidebar"`.
-Item text must be wrapped in a `<span>` so the rail can hide it.
+Wrap item text in `__label` so the rail can hide it (a bare direct-child `<span>` still works).
 
 ```html
 <aside class="ntn-sidebar">
@@ -701,8 +741,8 @@ Item text must be wrapped in a `<span>` so the rail can hide it.
   <nav class="ntn-sidebar__nav">
     <div class="ntn-sidebar__group">
       <p class="ntn-sidebar__section">Platform</p>
-      <a class="ntn-sidebar__item" href="#" aria-current="page"><i class="fa-light fa-gauge-high"></i><span>Overview</span></a>
-      <a class="ntn-sidebar__item" href="#"><i class="fa-light fa-users"></i><span>Users</span><span class="ntn-badge ntn-badge--count">8</span></a>
+      <a class="ntn-sidebar__item" href="#" aria-current="page"><i class="fa-light fa-gauge-high"></i><span class="ntn-sidebar__label">Overview</span></a>
+      <a class="ntn-sidebar__item" href="#"><i class="fa-light fa-users"></i><span class="ntn-sidebar__label">Users</span><span class="ntn-badge ntn-badge--count">8</span></a>
     </div>
   </nav>
 </aside>
@@ -710,7 +750,8 @@ Item text must be wrapped in a `<span>` so the rail can hide it.
 
 ## Tabs — `ntn-tabs`
 
-Element: `__tab`. Modifiers: `--pill` (segmented) `--fill` (equal widths) `--vertical` `--sm`.
+Elements: `__tab`, optional `__label` around the tab text. Modifiers: `--pill` (segmented) `--fill` (equal
+widths) `--sm`. Vertical: `aria-orientation="vertical"` on the list (the `--vertical` modifier still works).
 Selected: `aria-selected="true"`; disable one with `disabled`. Add `data-ntn-panel="#id"` to let
 `nocturne.js` show and hide panels — it also wires `aria-controls`/`aria-labelledby` and
 `role="tabpanel"`.
@@ -732,7 +773,7 @@ tabs wider than its container scrolls, and the selected tab is kept in view. Fir
 ```
 
 Tabs switch views inside one page; they are not navigation. More than about six, or labels
-longer than two words, means a `--vertical` list or a sidebar instead.
+longer than two words, means a vertical list or a sidebar instead.
 
 ## Breadcrumbs — `ntn-crumbs`
 

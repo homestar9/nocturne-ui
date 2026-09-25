@@ -9,8 +9,9 @@
 .ntn-badge i { font-size: 11px; }
 .ntn-badge::before { content: none; }
 .ntn-badge--dot::before { content: ""; display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--ntn-n-600); flex: 0 0 auto; }
-.ntn-badge--accent { background: var(--ntn-accent-soft); color: var(--ntn-accent-300); border-color: var(--ntn-accent-line); }
-.ntn-badge--accent.ntn-badge--dot::before { background: var(--ntn-accent-400); }
+/* Tones: --neutral (the default, stated explicitly) · --primary · --success · --warning · --danger · --info */
+.ntn-badge--primary { background: var(--ntn-accent-soft); color: var(--ntn-accent-300); border-color: var(--ntn-accent-line); }
+.ntn-badge--primary.ntn-badge--dot::before { background: var(--ntn-accent-400); }
 .ntn-badge--success { background: var(--ntn-success-soft); color: var(--ntn-success-400); border-color: var(--ntn-success-line); }
 .ntn-badge--success.ntn-badge--dot::before { background: var(--ntn-success-400); }
 .ntn-badge--warning { background: var(--ntn-warning-soft); color: var(--ntn-warning-400); border-color: var(--ntn-warning-line); }
@@ -31,14 +32,17 @@
 .ntn-alert__title { font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-semibold); color: var(--ntn-text-primary); }
 .ntn-alert__text { font-size: var(--ntn-text-xs); color: var(--ntn-text-secondary); line-height: var(--ntn-leading-normal); }
 .ntn-alert__actions { display: flex; align-items: center; gap: var(--ntn-space-2); flex: 0 0 auto; margin-left: auto; }
+/* Tones: --info (the default; state it anyway) · --primary · --success · --warning · --danger */
+.ntn-alert--info { background: var(--ntn-info-soft); border-color: var(--ntn-info-line); }
+.ntn-alert--info > i { color: var(--ntn-info-400); }
 .ntn-alert--success { background: var(--ntn-success-soft); border-color: var(--ntn-success-line); }
 .ntn-alert--success > i { color: var(--ntn-success-400); }
 .ntn-alert--warning { background: var(--ntn-warning-soft); border-color: var(--ntn-warning-line); }
 .ntn-alert--warning > i { color: var(--ntn-warning-400); }
 .ntn-alert--danger { background: var(--ntn-danger-soft); border-color: var(--ntn-danger-line); }
 .ntn-alert--danger > i { color: var(--ntn-danger-400); }
-.ntn-alert--accent { background: var(--ntn-accent-soft); border-color: var(--ntn-accent-line); }
-.ntn-alert--accent > i { color: var(--ntn-accent-300); }
+.ntn-alert--primary { background: var(--ntn-accent-soft); border-color: var(--ntn-accent-line); }
+.ntn-alert--primary > i { color: var(--ntn-accent-300); }
 .ntn-alert--banner { border-radius: 0; border-left: 0; border-right: 0; padding: 12px var(--ntn-space-4); }
 
 /* Tooltip — CSS only. Wrap the trigger, add the bubble as a sibling.
@@ -80,7 +84,8 @@
 .ntn-progress__label { font-size: var(--ntn-text-xs); color: var(--ntn-text-secondary); }
 .ntn-progress__value { font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); color: var(--ntn-text-primary); }
 .ntn-progress__track { position: relative; height: 6px; border-radius: var(--ntn-radius-full); background: var(--ntn-n-300); overflow: hidden; }
-.ntn-progress__fill { height: 100%; width: 0; border-radius: var(--ntn-radius-full); background: linear-gradient(90deg, var(--ntn-accent-600), var(--ntn-accent-400)); transition: width var(--ntn-dur-slow) var(--ntn-ease-out); }
+/* --ntn-progress (0–100%) is written by nocturne.js onto .ntn-progress from the fill's data-value. */
+.ntn-progress__fill { height: 100%; width: var(--ntn-progress, 0%); border-radius: var(--ntn-radius-full); background: linear-gradient(90deg, var(--ntn-accent-600), var(--ntn-accent-400)); transition: width var(--ntn-dur-slow) var(--ntn-ease-out); }
 .ntn-progress--sm .ntn-progress__track { height: 4px; }
 .ntn-progress--lg .ntn-progress__track { height: 10px; }
 .ntn-progress--success .ntn-progress__fill { background: var(--ntn-success-500); }

@@ -18,8 +18,9 @@ page-level recipes.
 
 1. **One class per element, and it is always a BEM name.** `class="ntn-card__title"`, never
    `class="card-title text-lg bold"`. Block `ntn-x`, element `ntn-x__y`, modifier `ntn-x--z`.
-   A modifier sits alongside its block (`ntn-btn ntn-btn--primary`) and is the only case where
-   an element carries two classes.
+   Modifiers sit alongside their block (`ntn-btn ntn-btn--primary`, or one per axis:
+   `ntn-btn ntn-btn--subtle ntn-btn--danger`) and are the only case where an element carries
+   more than one class. Modifiers name a **meaning** (`--primary`, `--danger`), never a look.
 2. **No inline styles. Ever.** No `style="…"`, no utility classes, no Tailwind, no CSS-in-JS.
    If a value is missing from the system, it is a gap in the system — add it to `src/` and
    version it, do not patch it at the call site.

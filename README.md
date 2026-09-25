@@ -152,6 +152,38 @@ to `dataset.appOpen` in the script. This is how an app can own its markup vocabu
 swap in a different UI kit later: any kit that can be built to the same prefix and block names
 drops in without touching a template.
 
+**Keep the design tokens kit-named** with `--token-prefix` (`tokenPrefix` in Node). Classes, hooks
+and events take your prefix, and tokens stay `--ntn-*`. Your own CSS can then map them onto a
+contract of your own without mixing up the two:
+
+```bash
+npx nocturne-build --prefix app --token-prefix ntn --out vendor/nocturne   # .app-card, but var(--ntn-accent)
+```
+
+A few custom properties belong to the markup rather than the kit, and always take the class
+prefix. These are the **state variables** the script writes (`--ntn-slider-pct` and
+`--ntn-progress` on their blocks, and `--ntn-tab-x/-y/-w/-h` for the tab indicator), plus the
+**knob** `--ntn-tree-indent` that you may set yourself. Any kit styling the same markup reads them.
+
+### Icons the script draws
+
+`nocturne.js` renders a few icons itself: chip remove, calendar arrows and the theme toggle. By
+default they are Font Awesome Light. An app with its own icon system swaps the renderer. Keys are
+`close`, `prev`, `next`, `theme-light` and `theme-dark`:
+
+```js
+import { configure, refresh } from '@homestar9/nocturne-ui/js';
+configure({
+  icon: (key) => {
+    const i = document.createElement('i');
+    i.className = 'app-icon';
+    i.dataset.icon = key;
+    return i;
+  },
+});
+refresh();   // re-render anything drawn before configure()
+```
+
 ## Claude Code
 
 The package carries its own skill. In a consuming repo, add this to `CLAUDE.md`:

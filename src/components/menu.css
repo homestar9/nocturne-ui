@@ -16,8 +16,8 @@
 .ntn-menu__item i { font-size: 14px; }
 .ntn-menu__item:hover, .ntn-menu__item[data-ntn-active] { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); }
 .ntn-menu__item:focus-visible { outline: 0; background: var(--ntn-surface-hover); color: var(--ntn-text-primary); box-shadow: var(--ntn-ring-focus); }
-.ntn-menu__item[aria-selected="true"] { background: var(--ntn-accent-soft); color: var(--ntn-text-primary); }
-.ntn-menu__item[aria-selected="true"] i { color: var(--ntn-accent-300); }
+.ntn-menu__item:is([aria-checked="true"], [aria-selected="true"]) { background: var(--ntn-accent-soft); color: var(--ntn-text-primary); }
+.ntn-menu__item:is([aria-checked="true"], [aria-selected="true"]) i { color: var(--ntn-accent-300); }
 .ntn-menu__item:disabled, .ntn-menu__item[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; background: transparent; }
 .ntn-menu__item--danger { color: var(--ntn-danger-400); }
 .ntn-menu__item--danger:hover, .ntn-menu__item--danger[data-ntn-active] { background: var(--ntn-danger-soft); color: var(--ntn-danger-400); }
