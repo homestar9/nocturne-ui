@@ -16,8 +16,16 @@
    only thing a client theme needs to override.
 
    Dark is the default. The light theme lives in theme-light.css and remaps
-   these same names — components never branch on theme. */
-:root {
+   these same names — components never branch on theme.
+
+   Three blocks, so data-theme works on a subtree as well as on <html>:
+   1. Mode primitives, on :root and any [data-theme="dark"] subtree.
+   2. Constants that are the same in both modes, on :root only, so a theme's
+      override of them (a brand's ink, say) is inherited everywhere.
+   3. Aliases, re-declared on every [data-theme] element. A custom property
+      resolves its var()s where it is declared, so without this a light panel
+      inside a dark page would inherit dark text resolved at :root. */
+:root, [data-theme="dark"] {
   color-scheme: dark;
 
   /* Neutral ramp — cool, slightly blue-shifted graphite */
@@ -64,7 +72,31 @@
   --ntn-alpha-ink-04: rgba(255,255,255,0.04);
   --ntn-alpha-ink-06: rgba(255,255,255,0.06);
   --ntn-alpha-ink-10: rgba(255,255,255,0.10);
+}
 
+:root {
+  --ntn-success-soft: rgba(34,197,138,0.14);  --ntn-success-line: rgba(34,197,138,0.30);
+  --ntn-warning-soft: rgba(241,169,22,0.15);  --ntn-warning-line: rgba(241,169,22,0.30);
+  --ntn-danger-soft:  rgba(242,84,91,0.14);   --ntn-danger-line:  rgba(242,84,91,0.30);
+  --ntn-info-soft:    rgba(78,146,245,0.14);  --ntn-info-line:    rgba(78,146,245,0.30);
+
+  /* Ink that sits ON the accent — knobs, marks, primary-button labels */
+  --ntn-accent-fg:      #FFFFFF;
+  --ntn-danger-fg:      #1A0508;
+  --ntn-success-fg:     #03170E;
+  --ntn-warning-fg:     #1A1102;
+  --ntn-info-fg:        #04101F;
+
+  /* Checkbox tick and dash, drawn in the ink that sits on the accent. White by default. A
+     theme whose --ntn-accent-fg is dark points these at the -ink variants:
+       --ntn-check-mark: var(--ntn-check-mark-ink); --ntn-check-dash: var(--ntn-check-dash-ink); */
+  --ntn-check-mark:     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.5' fill='none' stroke='%23FFFFFF' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --ntn-check-dash:     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8h8' fill='none' stroke='%23FFFFFF' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --ntn-check-mark-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.5' fill='none' stroke='%230A0C10' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --ntn-check-dash-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8h8' fill='none' stroke='%230A0C10' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+:root, [data-theme] {
   /* Tinted surfaces and the hairlines that go with them. The accent tints DERIVE from the
      ramp's 500 stop, so a brand theme only sets --ntn-accent-100…900 and --ntn-accent-fg. */
   --ntn-accent-soft:        color-mix(in srgb, var(--ntn-accent-500) 14%, transparent);
@@ -73,10 +105,6 @@
   --ntn-accent-glow:        color-mix(in srgb, var(--ntn-accent-500) 35%, transparent);
   --ntn-accent-line:        color-mix(in srgb, var(--ntn-accent-500) 30%, transparent);
   --ntn-accent-line-strong: color-mix(in srgb, var(--ntn-accent-500) 40%, transparent);
-  --ntn-success-soft: rgba(34,197,138,0.14);  --ntn-success-line: rgba(34,197,138,0.30);
-  --ntn-warning-soft: rgba(241,169,22,0.15);  --ntn-warning-line: rgba(241,169,22,0.30);
-  --ntn-danger-soft:  rgba(242,84,91,0.14);   --ntn-danger-line:  rgba(242,84,91,0.30);
-  --ntn-info-soft:    rgba(78,146,245,0.14);  --ntn-info-line:    rgba(78,146,245,0.30);
 
   /* ── Semantic aliases: use these in components ─────────────────────────── */
   --ntn-bg-app:         var(--ntn-n-50);
@@ -105,12 +133,6 @@
   --ntn-accent:         var(--ntn-accent-600);
   --ntn-accent-hover:   var(--ntn-accent-500);
   --ntn-accent-active:  var(--ntn-accent-700);
-  /* Ink that sits ON the accent — knobs, marks, primary-button labels */
-  --ntn-accent-fg:      #FFFFFF;
-  --ntn-danger-fg:      #1A0508;
-  --ntn-success-fg:     #03170E;
-  --ntn-warning-fg:     #1A1102;
-  --ntn-info-fg:        #04101F;
   /* Off-state knob of a switch */
   --ntn-control-knob:   var(--ntn-n-700);
 
@@ -118,14 +140,6 @@
   --ntn-scrim:          rgba(5,6,9,0.72);
 
   --ntn-chart-1: var(--ntn-accent-500);
-
-  /* Checkbox tick and dash, drawn in the ink that sits on the accent. White by default. A
-     theme whose --ntn-accent-fg is dark points these at the -ink variants:
-       --ntn-check-mark: var(--ntn-check-mark-ink); --ntn-check-dash: var(--ntn-check-dash-ink); */
-  --ntn-check-mark:     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.5' fill='none' stroke='%23FFFFFF' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  --ntn-check-dash:     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8h8' fill='none' stroke='%23FFFFFF' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E");
-  --ntn-check-mark-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.5' fill='none' stroke='%230A0C10' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  --ntn-check-dash-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8h8' fill='none' stroke='%230A0C10' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
   --ntn-chart-2: var(--ntn-magenta-500);
   --ntn-chart-3: var(--ntn-cyan-500);
   --ntn-chart-4: var(--ntn-n-600);
@@ -194,7 +208,10 @@
   --ntn-page-max:   1440px;
 }
 
-:root {
+/* Shadows are mode primitives (theme-light.css softens them), the accent glow and focus ring are
+   aliases re-resolved on every [data-theme] element, and the blurs are constants. Same three-block
+   split as colors.css, so a data-theme subtree gets its own depth. */
+:root, [data-theme="dark"] {
   /* Dark UI depth comes from a hairline + a soft drop, never from heavy blur */
   --ntn-shadow-none: none;
   --ntn-shadow-xs: 0 1px 2px rgba(0,0,0,0.35);
@@ -202,8 +219,14 @@
   --ntn-shadow-md: 0 8px 24px -12px rgba(0,0,0,0.70), 0 0 0 1px rgba(255,255,255,0.02) inset;
   --ntn-shadow-lg: 0 24px 60px -24px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.03) inset;
   --ntn-shadow-pop: 0 12px 32px -8px rgba(0,0,0,0.75);
+}
+
+:root, [data-theme] {
   --ntn-glow-accent: 0 0 0 1px var(--ntn-accent-600), 0 6px 22px -8px var(--ntn-accent-glow);
   --ntn-ring-focus: 0 0 0 3px var(--ntn-focus-ring);
+}
+
+:root {
   --ntn-blur-scrim: blur(6px);
   --ntn-blur-panel: blur(20px);
   /* Glass hooks: a theme with translucent surfaces sets these to blur(...). none adds no containing
@@ -317,6 +340,10 @@ html, body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
+
+/* A data-theme subtree sets its own text colour (it would otherwise inherit the page's).
+   Zero specificity, so any component colour still wins. */
+:where([data-theme]:not(:root)) { color: var(--ntn-text-primary); }
 
 a { color: var(--ntn-text-accent); text-decoration: none; }
 a:hover { color: var(--ntn-accent-200); }

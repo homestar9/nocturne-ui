@@ -102,7 +102,10 @@ setTheme('auto');          // 'dark' | 'light' | 'auto'
 document.addEventListener('ntn:themechange', (e) => console.log(e.detail.theme));
 ```
 
-`data-theme` also works on a subtree, so a light panel can sit inside a dark app.
+`data-theme` also works on a subtree, so a light panel can sit inside a dark app, or a dark one
+inside a light app. The subtree looks exactly as it would on a page of that mode. If you override
+a mode-dependent token (a surface, text or border colour, a shadow), write it for
+`:root, [data-theme]` too, or a subtree falls back to Nocturne's value.
 
 **Your app owns light/dark?** Tell Nocturne to stay out of it:
 
@@ -130,7 +133,9 @@ accent ramp (`--ntn-accent-100` to `-900`) and the ink that sits on it (`--ntn-a
 accent tint (soft fills, hairlines, glow, focus ring) derives from the ramp. Two details:
 
 - **Light mode:** it darkens the stops used as text (100–400). Declare yours in a
-  `:root[data-theme="light"]` block, as emerald does, so they win whatever the load order.
+  `:root[data-theme="light"], :root [data-theme="light"]` block, and your dark ramp in
+  `:root, :root [data-theme="dark"]`, as emerald does. The light stops then win whatever the
+  load order, and the brand follows into `data-theme` subtrees.
 - **Dark ink:** if your accent needs dark ink, point the checkbox art at it too:
   `--ntn-check-mark: var(--ntn-check-mark-ink); --ntn-check-dash: var(--ntn-check-dash-ink);`
 

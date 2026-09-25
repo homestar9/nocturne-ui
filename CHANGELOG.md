@@ -62,6 +62,18 @@ renamed or removed class names and tokens.
   `ntn-card--flush` still clips, because it holds edge-to-edge tables and media.
 
 ### Fixed
+- **`data-theme` on a subtree now works in both directions.** Aliases such as
+  `--ntn-text-primary: var(--ntn-n-900)` resolved once at `:root`, so a light panel inside a dark
+  page kept the dark page's text colours. A dark panel inside a light page kept everything light.
+  - Tokens now sit in three blocks:
+    - mode primitives on `:root, [data-theme="dark"]`;
+    - constants on `:root`;
+    - aliases re-declared on `:root, [data-theme]`.
+  - A subtree sets its own text colour.
+  - `npm test` checks the split, and pages with `data-theme` only on `<html>` render
+    byte-identically.
+  - `themes/emerald.css` uses `:root [data-theme]` selectors so the brand follows into subtrees.
+    Custom brand themes should do the same (see Accent in the README).
 - The date-range panel used a hard-coded `z-index: 60`, so a sticky top bar (`--ntn-z-sticky`,
   100) could cover it. It now uses `--ntn-z-dropdown` like the other popups.
 - The kitchen sink used an `ntn-card--sm` modifier that never existed; it is gone from the demo.

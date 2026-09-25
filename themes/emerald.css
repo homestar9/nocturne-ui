@@ -1,8 +1,9 @@
 /* Example brand theme. A brand theme sets the accent RAMP and the ink that sits on it; every
    accent tint (soft, line, glow, focus ring) derives from the ramp. Light mode darkens the stops
-   used as text (100–400), so declare those in their own :root[data-theme="light"] block, which
-   outranks Nocturne's light theme whatever the load order. */
-:root {
+   used as text (100–400), so declare those in their own light block. The ":root [data-theme]"
+   selectors carry the brand into data-theme subtrees (a light panel in a dark page, or the
+   reverse), and outrank Nocturne's own mode blocks whatever the load order. */
+:root, :root [data-theme="dark"] {
   --ntn-accent-100: #DCFCE9;
   --ntn-accent-200: #B6F5D3;
   --ntn-accent-300: #7DE8B4;
@@ -19,7 +20,7 @@
   --ntn-check-dash: var(--ntn-check-dash-ink);
 }
 
-:root[data-theme="light"] {
+:root[data-theme="light"], :root [data-theme="light"] {
   --ntn-accent-100: #E6FAF0;
   --ntn-accent-200: #0B6B4A;
   --ntn-accent-300: #0E7F57;
