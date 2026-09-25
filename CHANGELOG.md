@@ -26,6 +26,10 @@ renamed or removed class names and tokens.
   Posting and arrow keys stay native.
 - **Search loading state**: `data-loading` on `ntn-search` turns the leading icon into a
   CSS spinner (so it works with any icon set).
+- **Sidebar drawer**: at 720px and below, `ntn-sidebar` is an off-canvas drawer instead of a
+  squeezed column. The existing `data-ntn-toggle` opens it (`data-open`). An optional
+  `ntn-sidebar__scrim` sibling dims the page. Escape or a scrim click closes it, and focus goes in
+  and comes back out. The rail (`data-collapsed`) now applies only above 720px.
 - **`dist/nocturne.nofonts.css`** (package export `./css/nofonts`): the full stylesheet without the
   Google Fonts `@import`, for apps that self-host Geist or run a strict CSP. Prefixed builds emit
   it too.

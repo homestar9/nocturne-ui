@@ -1576,16 +1576,39 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
 .ntn-sidebar__sub { display: flex; flex-direction: column; gap: 1px; margin-left: 20px; border-left: 1px solid var(--ntn-border-subtle); }
 .ntn-sidebar__sub .ntn-sidebar__item { padding: 7px 10px 7px 20px; }
 .ntn-sidebar__foot { margin-top: var(--ntn-space-3); }
-.ntn-sidebar[data-collapsed] { width: var(--ntn-rail-w); padding: var(--ntn-space-3) var(--ntn-space-2); }
-.ntn-sidebar[data-collapsed] .ntn-sidebar__item { justify-content: center; padding: 9px 0; }
-.ntn-sidebar[data-collapsed] .ntn-sidebar__item > span,
-.ntn-sidebar[data-collapsed] .ntn-sidebar__label,
-.ntn-sidebar[data-collapsed] .ntn-sidebar__item .ntn-badge,
-.ntn-sidebar[data-collapsed] .ntn-sidebar__section,
-.ntn-sidebar[data-collapsed] .ntn-sidebar__brand-text,
-.ntn-sidebar[data-collapsed] .ntn-sidebar__sub,
-.ntn-sidebar[data-collapsed] .ntn-sidebar__foot { display: none; }
-.ntn-sidebar[data-collapsed] .ntn-sidebar__brand { justify-content: center; padding: var(--ntn-space-2); }
+/* The rail (data-collapsed) is a wide-screen idea; on a phone the sidebar is a drawer instead. */
+@media (min-width: 721px) {
+  .ntn-sidebar[data-collapsed] { width: var(--ntn-rail-w); padding: var(--ntn-space-3) var(--ntn-space-2); }
+  .ntn-sidebar[data-collapsed] .ntn-sidebar__item { justify-content: center; padding: 9px 0; }
+  .ntn-sidebar[data-collapsed] .ntn-sidebar__item > span,
+  .ntn-sidebar[data-collapsed] .ntn-sidebar__label,
+  .ntn-sidebar[data-collapsed] .ntn-sidebar__item .ntn-badge,
+  .ntn-sidebar[data-collapsed] .ntn-sidebar__section,
+  .ntn-sidebar[data-collapsed] .ntn-sidebar__brand-text,
+  .ntn-sidebar[data-collapsed] .ntn-sidebar__sub,
+  .ntn-sidebar[data-collapsed] .ntn-sidebar__foot { display: none; }
+  .ntn-sidebar[data-collapsed] .ntn-sidebar__brand { justify-content: center; padding: var(--ntn-space-2); }
+}
+
+/* Drawer: at 720px and below the sidebar is off-canvas. data-open slides it in (nocturne.js sets it
+   from the same data-ntn-toggle); an optional .ntn-sidebar__scrim right after it dims the page. */
+.ntn-sidebar__scrim { display: none; }
+@media (max-width: 720px) {
+  .ntn-sidebar {
+    position: fixed; top: 0; bottom: 0; left: 0; z-index: var(--ntn-z-modal);
+    width: min(var(--ntn-sidebar-w), 86vw); height: 100dvh;
+    transform: translateX(-100%); visibility: hidden; box-shadow: var(--ntn-shadow-pop);
+    transition: transform var(--ntn-dur-base) var(--ntn-ease-out), visibility 0s linear var(--ntn-dur-base);
+  }
+  .ntn-sidebar[data-open] { transform: none; visibility: visible; transition: transform var(--ntn-dur-base) var(--ntn-ease-out); }
+  .ntn-sidebar__scrim {
+    display: block; position: fixed; inset: 0; z-index: calc(var(--ntn-z-modal) - 1);
+    background: var(--ntn-scrim); backdrop-filter: var(--ntn-blur-scrim);
+    opacity: 0; visibility: hidden;
+    transition: opacity var(--ntn-dur-base) var(--ntn-ease-out), visibility 0s linear var(--ntn-dur-base);
+  }
+  .ntn-sidebar[data-open] ~ .ntn-sidebar__scrim { opacity: 1; visibility: visible; transition: opacity var(--ntn-dur-base) var(--ntn-ease-out); }
+}
 
 /* ── Tabs ───────────────────────────────────────────────────────────────────
    Roving-tabindex tablist: one tab in the tab order, arrow keys move between

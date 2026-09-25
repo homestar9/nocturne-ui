@@ -181,6 +181,38 @@ console.log('Dropdown and popover (R1, R2)');
   check(events.join(',') === 'show,hide,show,hide,show,hide,show,hide', `show/hide events fire in pairs (${events.join(',')})`);
 }
 
+console.log('Sidebar drawer on a phone (R11)');
+{
+  const { document, window } = await page(
+    `<aside class="ntn-sidebar" id="sb"><nav class="ntn-sidebar__nav">
+       <a class="ntn-sidebar__item" href="#a">A</a><a class="ntn-sidebar__item" href="#b" aria-current="page">B</a>
+     </nav></aside>
+     <div class="ntn-sidebar__scrim"></div>
+     <button type="button" data-ntn-toggle=".ntn-sidebar" aria-expanded="false">Menu</button>`);
+  const sb = document.getElementById('sb');
+  const toggle = document.querySelector('[data-ntn-toggle]');
+  const key = (k) => document.activeElement.dispatchEvent(new window.KeyboardEvent('keydown', { key: k, bubbles: true }));
+  let phone = false;
+  globalThis.matchMedia = (q) => ({ matches: phone && q === '(max-width: 720px)', media: q, addEventListener() {}, removeEventListener() {} });
+
+  click(toggle);
+  check(sb.hasAttribute('data-collapsed') && !sb.hasAttribute('data-open'), 'wide screen: the toggle collapses to the rail, as before');
+  click(toggle);
+
+  phone = true;
+  toggle.focus();
+  click(toggle);
+  check(sb.hasAttribute('data-open') && !sb.hasAttribute('data-collapsed'), 'phone: the same toggle opens the drawer instead');
+  check(toggle.getAttribute('aria-expanded') === 'true', 'the toggle reports aria-expanded="true"');
+  check(document.activeElement === sb.querySelector('[aria-current="page"]'), 'focus moves to the current item');
+  key('Escape');
+  check(!sb.hasAttribute('data-open') && document.activeElement === toggle, 'Escape closes it and returns focus to the toggle');
+  click(toggle);
+  click(document.querySelector('.ntn-sidebar__scrim'));
+  check(!sb.hasAttribute('data-open') && toggle.getAttribute('aria-expanded') === 'false', 'a click on the scrim closes it');
+  delete globalThis.matchMedia;
+}
+
 console.log('Generated buttons never submit a form');
 {
   const rows = Array.from({ length: 12 }, (_, i) => `<tr><td>${i}</td></tr>`).join('');

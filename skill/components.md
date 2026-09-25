@@ -809,6 +809,12 @@ Elements: `__brand` `__mark` `__brand-text` `__name` `__meta` `__nav` `__group` 
 `data-collapsed` on the block — toggle it via `data-ntn-toggle=".ntn-sidebar"`.
 Wrap item text in `__label` so the rail can hide it (a bare direct-child `<span>` still works).
 
+At 720px and below the sidebar becomes an off-canvas **drawer**, and the rail is off. The same
+`data-ntn-toggle` then sets `data-open` to slide it in. Put an empty `<div class="ntn-sidebar__scrim">`
+straight after the `<aside>` to dim the page behind it. `nocturne.js` moves focus to the current
+item, sets `aria-expanded` on the toggle, and closes the drawer on Escape or a scrim click,
+returning focus to the toggle. Without the script, set `data-open` yourself.
+
 ```html
 <aside class="ntn-sidebar">
   <div class="ntn-sidebar__brand">
@@ -826,6 +832,7 @@ Wrap item text in `__label` so the rail can hide it (a bare direct-child `<span>
     </div>
   </nav>
 </aside>
+<div class="ntn-sidebar__scrim"></div>
 ```
 
 ## Tabs — `ntn-tabs`
@@ -1028,7 +1035,7 @@ table, so header, toolbar, filter form and pager can sit anywhere in that wrappe
 | `data-ntn-open="#id"` | `showModal()` on that dialog |
 | `data-ntn-close` | Closes the enclosing dialog |
 | `data-ntn-dismiss` | Removes the enclosing `.ntn-alert` |
-| `data-ntn-toggle="<selector>"` | Toggles `data-collapsed` (sidebar rail) |
+| `data-ntn-toggle="<selector>"` | Toggles `data-collapsed` (sidebar rail); on a sidebar at 720px and below, toggles `data-open` (drawer) |
 | `data-ntn-panel="#id"` on a tab | Tab switching; the tablist also gets keyboard nav and a sliding indicator, and fires `ntn:tabchange` |
 | `data-ntn-tree` on `.ntn-tree` | Selection, expand/collapse, keyboard nav and handle-gated drag; fires `ntn:treemove`, `ntn:treeselect`, `ntn:treetoggle` |
 | `data-ntn-nest` on `.ntn-tree` | Lets leaf rows accept a child on drop |

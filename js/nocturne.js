@@ -1133,6 +1133,29 @@ function stepsGoto(step) {
   root.dispatchEvent(new CustomEvent('ntn:stepchange', { bubbles: true, detail: { index: at, id: step.dataset.ntnId || null, total: steps.length } }));
 }
 
+/* ── Sidebar drawer ──────────────────────────────────────────────────────────
+   At 720px and below the sidebar is off-canvas: data-open slides it in over an optional
+   .ntn-sidebar__scrim sibling. The data-ntn-toggle that collapses it to a rail on wider screens
+   opens and closes it here instead. Focus moves into the drawer, and Escape or the scrim closes it
+   and returns focus to the toggle. */
+const DRAWER_QUERY = '(max-width: 720px)';
+const drawerMode = () => typeof matchMedia === 'function' && matchMedia(DRAWER_QUERY).matches;
+const drawerOpeners = new WeakMap();
+
+function drawerSet(sidebar, open, opener) {
+  sidebar.toggleAttribute('data-open', open);
+  const toggles = $$('[data-ntn-toggle]').filter((t) => target(t, 'data-ntn-toggle') === sidebar);
+  toggles.forEach((t) => t.setAttribute('aria-expanded', String(open)));
+  if (open) {
+    if (opener) drawerOpeners.set(sidebar, opener);
+    const first = sidebar.querySelector('.ntn-sidebar__item[aria-current="page"]') || sidebar.querySelector('.ntn-sidebar__item');
+    if (first) first.focus();
+  } else {
+    const back = drawerOpeners.get(sidebar) || toggles[0];
+    if (back && sidebar.contains(document.activeElement)) back.focus();
+  }
+}
+
 function onClick(e) {
   // Dropdown trigger: toggle. A chosen menu item, or a data-ntn-close inside an open panel
   // (a filter form's Apply), closes it; the item's own action still runs.
@@ -1200,9 +1223,17 @@ function onClick(e) {
   const dismiss = e.target.closest('[data-ntn-dismiss]');
   if (dismiss) { const box = dismiss.closest('.ntn-alert'); if (box) { box.remove(); return; } }
 
+  const scrim = e.target.closest('.ntn-sidebar__scrim');
+  if (scrim) { $$('.ntn-sidebar[data-open]').forEach((sb) => drawerSet(sb, false)); return; }
+
   const toggle = e.target.closest('[data-ntn-toggle]');
   if (toggle) {
     const el = target(toggle, 'data-ntn-toggle');
+    // On a phone the sidebar is an off-canvas drawer: the same toggle opens and closes it.
+    if (el && el.classList.contains('ntn-sidebar') && drawerMode()) {
+      drawerSet(el, !el.hasAttribute('data-open'), toggle);
+      return;
+    }
     if (el) {
       const collapsed = el.hasAttribute('data-collapsed');
       el.toggleAttribute('data-collapsed', !collapsed);
@@ -1274,6 +1305,8 @@ function onKeyDown(e) {
   if (mi) onSubmenuKey(mi, e);
 
   if (e.key !== 'Escape') return;
+  const openDrawer = $$('.ntn-sidebar[data-open]')[0];
+  if (openDrawer && !q('[data-ntn-dropdown][data-ntn-open]')) { e.preventDefault(); drawerSet(openDrawer, false); return; }
   // Innermost first: an open date picker, then an open submenu, then the dropdown around the focus.
   const openRanges = $$('[data-ntn-daterange]').filter((r) => drState(r).open);
   if (openRanges.length) { openRanges.forEach((r) => drClose(r, false)); e.preventDefault(); return; }
