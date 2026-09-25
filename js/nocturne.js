@@ -441,6 +441,38 @@ const comboOptions = (root) => $$('.ntn-combo__option', root);
 const comboChosen = (root) => comboOptions(root).filter((o) => o.getAttribute('aria-selected') === 'true');
 const comboLabel = (o) => o.dataset.label || (o.querySelector('.ntn-combo__option-title') || o).textContent.trim();
 const comboMulti = (root) => root.hasAttribute('data-ntn-multi');
+const comboValue = (o) => o.dataset.value || comboLabel(o);
+const comboDefaults = new WeakMap();
+
+/* Form association: data-ntn-name="x" keeps hidden <input name="x"> children in step with the
+   selection (one per value when multi; one, possibly "", when single, like a <select> with an
+   empty first option). The options stay the state; the inputs are derived from them. */
+function comboSync(root) {
+  if (!comboDefaults.has(root)) comboDefaults.set(root, comboChosen(root));
+  const name = root.dataset.ntnName;
+  if (!name) return;
+  const values = comboChosen(root).map(comboValue);
+  if (!comboMulti(root) && !values.length) values.push('');
+  const inputs = $$('input[data-ntn-combo-input]', root);
+  values.forEach((v, i) => {
+    let input = inputs[i];
+    if (!input) { input = make('input', { type: 'hidden', 'data-ntn-combo-input': '' }); root.append(input); }
+    input.name = name;
+    input.value = v;
+  });
+  inputs.slice(values.length).forEach((el) => el.remove());
+}
+
+/* A form reset puts each combo back to the selection it was first rendered with. */
+function comboOnReset(e) {
+  if (e.defaultPrevented) return;
+  $$('[data-ntn-combo]', e.target).forEach((root) => {
+    const initial = comboDefaults.get(root);
+    if (!initial) return;
+    comboOptions(root).forEach((o) => o.setAttribute('aria-selected', String(initial.includes(o))));
+    comboRender(root);
+  });
+}
 
 function comboRender(root) {
   const out = root.querySelector('[data-ntn-combo-value]');
@@ -459,7 +491,7 @@ function comboRender(root) {
           make('button', {
             type: 'button',
             class: 'ntn-combo__chip-x',
-            'data-ntn-combo-clear': o.dataset.value || comboLabel(o),
+            'data-ntn-combo-clear': comboValue(o),
             'aria-label': 'Remove ' + comboLabel(o),
           }, renderIcon('close'))));
         if (chosen.length > max) nodes.push(make('span', { class: 'ntn-combo__more' }, '+' + (chosen.length - max)));
@@ -469,19 +501,23 @@ function comboRender(root) {
   }
   const count = root.querySelector('[data-ntn-combo-count]');
   if (count) count.textContent = chosen.length + ' selected';
+  comboSync(root);
 }
 
+/* After a user change: ntn:combochange with the detail, then a plain bubbling change (from the
+   combo root) so form-level change listeners see it like any other control. */
 function comboFire(root) {
   const chosen = comboChosen(root);
   root.dispatchEvent(new CustomEvent('ntn:combochange', {
     bubbles: true,
     detail: {
-      value: chosen.length ? (chosen[0].dataset.value || comboLabel(chosen[0])) : null,
-      values: chosen.map((o) => o.dataset.value || comboLabel(o)),
+      value: chosen.length ? comboValue(chosen[0]) : null,
+      values: chosen.map(comboValue),
       labels: chosen.map(comboLabel),
       multiple: comboMulti(root),
     },
   }));
+  root.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
 function comboFilter(root) {
@@ -1176,7 +1212,7 @@ function onClick(e) {
     const clear = e.target.closest('[data-ntn-combo-clear]');
     if (clear) {
       const v = clear.getAttribute('data-ntn-combo-clear');
-      const hit = comboOptions(combo).find((o) => (o.dataset.value || comboLabel(o)) === v);
+      const hit = comboOptions(combo).find((o) => comboValue(o) === v);
       if (hit) { hit.setAttribute('aria-selected', 'false'); comboRender(combo); comboFire(combo); }
       return;
     }
@@ -1382,6 +1418,7 @@ export function start(options = {}) {
   document.addEventListener('click', onClick);
   document.addEventListener('input', onChange);
   document.addEventListener('change', onChange);
+  document.addEventListener('reset', comboOnReset);
   document.addEventListener('mouseover', drOnHover);
   document.addEventListener('mouseover', (e) => {
     const sub = e.target.closest && e.target.closest('.ntn-menu__sub');

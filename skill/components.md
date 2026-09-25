@@ -180,8 +180,18 @@ rendering; selection lives on each option's `aria-selected`, so the DOM is the s
 `data-ntn-max` chips before a `+N`), and a `__search` input with `data-ntn-combo-search` to
 filter. Fires `ntn:combochange` with `{ value, values, labels, multiple }`.
 
+**In a form**, give the root `data-ntn-name="field"`. `nocturne.js` then keeps hidden
+`<input name="field">` children in step with the selection, so it posts like a `<select>`:
+- **multi:** one input per chosen value, in option order, and nothing when none are chosen;
+- **single:** exactly one input, `""` when nothing is chosen.
+
+Each user change also fires a bubbling `change` from the combo root. `form.reset()` restores the
+selection the combo was first rendered with. If you change `aria-selected` yourself, call
+`refresh(root)` to re-sync the inputs. Without the script nothing posts, so server-render the
+hidden inputs too if the form must work without it.
+
 ```html
-<div class="ntn-combo" data-ntn-combo data-ntn-multi data-ntn-max="2">
+<div class="ntn-combo" data-ntn-combo data-ntn-multi data-ntn-max="2" data-ntn-name="channels">
   <span class="ntn-combo__label">Notify channels</span>
   <button type="button" class="ntn-combo__trigger" aria-haspopup="listbox" aria-expanded="false">
     <span class="ntn-combo__value" data-ntn-combo-value data-ntn-placeholder="No channels"></span>
@@ -1043,6 +1053,7 @@ table, so header, toolbar, filter form and pager can sit anywhere in that wrappe
 | `data-ntn-combo` on `.ntn-combo` | Owns the listbox: open/close, filtering, keyboard, chips; fires `ntn:combochange` |
 | `data-ntn-multi` / `data-ntn-max="2"` on `.ntn-combo` | Multi-select, and how many chips show before `+N` |
 | `data-ntn-combo-value` / `-search` / `-count` / `-none` | Trigger readout, filter input, "n selected", clear-all |
+| `data-ntn-name="field"` on `.ntn-combo` | Posts the selection with its form (hidden inputs), fires `change`, honours `form.reset()` |
 | `data-ntn-steps` on `.ntn-steps` | Clicking `__hit` walks the step states; fires `ntn:stepchange` |
 | `data-ntn-reveal="#id"` | Shows/hides that element (filter forms), keeps `aria-expanded` |
 | `data-ntn-select-all` on a checkbox | Select-all inside `.ntn-table` |

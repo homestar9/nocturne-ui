@@ -17,6 +17,12 @@ renamed or removed class names and tokens.
   - **`data-ntn-owner`** exempts a body-mounted picker from outside clicks.
   - **Events and API:** `ntn:dropdownshow` / `ntn:dropdownhide`, and exports `open()`,
     `close()`, `toggle()`.
+- **`ntn-combo` posts with its form.** Add `data-ntn-name="x"` and `nocturne.js` keeps hidden
+  `<input name="x">` children in step with the selection. Multi-select posts one per value.
+  Single-select posts exactly one, `""` when empty, like a `<select>` with an empty first option.
+  - Every user change also fires a bubbling native `change` after `ntn:combochange`.
+  - `form.reset()` restores the first-rendered selection.
+  - `refresh(root)` re-syncs after you set `aria-selected` yourself.
 - **Menus: `Home` / `End`** jump to the first / last item, and arrow keys skip disabled items.
 - **`ntn-rating`**: a star rating built on native radios (values 1…max plus a value-0 "Clear").
   A form always posts it, arrow keys work natively, and the stars are CSS-drawn (no icon set).

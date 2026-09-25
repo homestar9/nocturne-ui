@@ -292,12 +292,12 @@
           <header class="sink__head">
             <h2 class="sink__title">Dropdown · Multi-select</h2>
             <code class="sink__code">.ntn-combo</code>
-            <p class="sink__note">A listbox on the <code>.ntn-menu</code> surface: option descriptions, icons, type-to-filter and multi-select chips. Full keyboard support — <code>↑↓</code> to move, <code>↵</code> to pick, <code>esc</code> to close — and it fires <code>ntn:combochange</code>.</p>
+            <p class="sink__note">A listbox on the <code>.ntn-menu</code> surface: option descriptions, icons, type-to-filter and multi-select chips. Full keyboard support — <code>↑↓</code> to move, <code>↵</code> to pick, <code>esc</code> to close — and it fires <code>ntn:combochange</code>. Add <code>data-ntn-name</code> and it posts with its form, like a <code>&lt;select&gt;</code>.</p>
           </header>
           <div class="ntn-card"><div class="ntn-card__body ntn-stack">
             <div class="ntn-row" style="align-items:flex-start; gap:var(--ntn-space-5); flex-wrap:wrap">
 
-              <div class="ntn-combo" style="max-width:280px" data-ntn-combo>
+              <div class="ntn-combo" style="max-width:280px" data-ntn-combo data-ntn-name="region">
                 <span class="ntn-combo__label">Region</span>
                 <button type="button" class="ntn-combo__trigger" aria-haspopup="listbox" aria-expanded="false">
                   <span class="ntn-combo__value" data-ntn-combo-value data-ntn-placeholder="Choose a region"></span>
@@ -330,7 +330,7 @@
                 </div>
               </div>
 
-              <div class="ntn-combo" style="max-width:300px" data-ntn-combo data-ntn-multi data-ntn-max="2">
+              <div class="ntn-combo" style="max-width:300px" data-ntn-combo data-ntn-multi data-ntn-max="2" data-ntn-name="channels">
                 <span class="ntn-combo__label">Notify channels</span>
                 <button type="button" class="ntn-combo__trigger" aria-haspopup="listbox" aria-expanded="false">
                   <span class="ntn-combo__value" data-ntn-combo-value data-ntn-placeholder="No channels"></span>

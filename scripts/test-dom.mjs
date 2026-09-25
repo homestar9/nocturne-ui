@@ -181,6 +181,44 @@ console.log('Dropdown and popover (R1, R2)');
   check(events.join(',') === 'show,hide,show,hide,show,hide,show,hide', `show/hide events fire in pairs (${events.join(',')})`);
 }
 
+console.log('Combo form association (R7)');
+{
+  const opt = (v, label, sel = false) => `<li class="ntn-combo__option" role="option" data-value="${v}" aria-selected="${sel}">${label}</li>`;
+  const combo = (attrs, opts) => `<div class="ntn-combo" data-ntn-combo ${attrs}>
+       <button type="button" class="ntn-combo__trigger"><span class="ntn-combo__value" data-ntn-combo-value></span></button>
+       <div class="ntn-combo__panel" hidden><ul class="ntn-combo__list">${opts}</ul></div></div>`;
+  const { document, window, mod } = await page(
+    `<form id="f">
+       ${combo('id="tags" data-ntn-multi data-ntn-name="tags" data-ntn-max="5"', opt('a', 'Alpha', true) + opt('b', 'Beta') + opt('c', 'Gamma'))}
+       ${combo('id="status" data-ntn-name="status"', opt('open', 'Open') + opt('closed', 'Closed'))}
+       ${combo('id="loose"', opt('x', 'X', true))}
+     </form>`);
+  const form = document.getElementById('f');
+  const data = () => new window.FormData(form);
+  const pick = (id, v) => click(document.querySelector(`#${id} [data-value="${v}"]`));
+  const changes = [];
+  form.addEventListener('change', (e) => changes.push(e.target.id));
+
+  check(JSON.stringify(data().getAll('tags')) === '["a"]', 'a multi combo posts its initial selection');
+  check(data().has('status') && data().get('status') === '', 'a single combo with nothing chosen posts an empty value, like a <select>');
+  check(!document.querySelector('#loose input'), 'a combo without data-ntn-name adds no inputs');
+  pick('tags', 'c');
+  check(JSON.stringify(data().getAll('tags')) === '["a","c"]', `picking adds a value (${JSON.stringify(data().getAll('tags'))})`);
+  pick('status', 'closed');
+  check(data().get('status') === 'closed' && data().getAll('status').length === 1, 'a single combo posts exactly one value');
+  check(changes.join(',') === 'tags,status', `each pick fires a bubbling change the form hears (${changes.join(',')})`);
+  click(document.querySelector('#tags [data-ntn-combo-clear="a"]'));
+  check(JSON.stringify(data().getAll('tags')) === '["c"]', 'removing a chip drops its value');
+
+  document.querySelector('#tags [data-value="b"]').setAttribute('aria-selected', 'true');
+  mod.refresh(document.getElementById('tags'));
+  check(JSON.stringify(data().getAll('tags')) === '["b","c"]', 'an app that changes aria-selected and calls refresh() gets matching inputs');
+
+  form.reset();
+  check(JSON.stringify(data().getAll('tags')) === '["a"]' && data().get('status') === '', 'form.reset() restores the first-rendered selection');
+  check(document.querySelector('#tags [data-ntn-combo-value]').textContent.includes('Alpha'), '...and redraws the chips');
+}
+
 console.log('Sidebar drawer on a phone (R11)');
 {
   const { document, window } = await page(
