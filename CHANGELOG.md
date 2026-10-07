@@ -6,6 +6,27 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.7.0 — 2026-10-06
+
+### Added
+- **`ntn-btn--glow`**: with `--primary`, adds a halo in the button's colour (accent, or the
+  tone's). Use it for the one action on the page you want read first. Disabled drops the halo.
+- **`themes/amber.css`**: a warm gold accent with dark ink, next to emerald. It sits close to
+  the warning hue, so keep main actions on `--primary` rather than the `--warning` tone.
+- **Tokens:** `--ntn-accent-fill` and `--ntn-accent-fill-hover` (the top-lit gradient, derived
+  from the ramp), `--ntn-accent-halo`, and `--ntn-highlight-top` (the inset top edge).
+- **Kitchen sink:** an accent picker (violet, emerald, amber) in the top bar.
+- **`npm run sink`** serves the repo locally and prints the kitchen sink URL. Opened from a file,
+  the page now shows a notice: browsers block module scripts on `file://`, so `nocturne.js` never
+  loaded there and the theme toggle, tabs, dialogs and dropdowns did nothing.
+
+### Changed
+- **Filled accent buttons are lit from the top.** `ntn-btn--primary`, `ntn-icon-btn--primary` and
+  `ntn-fab` use a vertical gradient, a lighter hairline and an inset highlight in place of a
+  flat fill. Pressing drops to the flat `--ntn-accent-active`. Primary tone buttons
+  (`--primary --danger` and so on) get the same treatment in their tone. No class or token was
+  renamed, but primary buttons look different.
+
 ## 1.6.0 — 2026-09-25
 
 ### Added

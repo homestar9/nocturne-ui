@@ -14,6 +14,8 @@
 :root, [data-theme] {
   --ntn-glow-accent: 0 0 0 1px var(--ntn-accent-600), 0 6px 22px -8px var(--ntn-accent-glow);
   --ntn-ring-focus: 0 0 0 3px var(--ntn-focus-ring);
+  /* The lit top edge of a filled accent control */
+  --ntn-highlight-top: inset 0 1px 0 rgba(255,255,255,0.22);
 }
 
 :root {

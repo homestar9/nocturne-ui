@@ -26,8 +26,11 @@ component.
 
 Four flat surfaces stack: `--ntn-bg-sunken` (sidebar) → `--ntn-bg-app` (canvas) → `--ntn-surface-1` (cards)
 → `--ntn-surface-2` / `--ntn-surface-3` (inputs, menus, hovers). Elevation is a hairline border plus a
-wide soft drop (`--ntn-shadow-md`), never a bright glow or heavy blur. Gradients appear in exactly
-four places: the brand mark tile, avatar initials, slider/progress fill, chart area fills.
+wide soft drop (`--ntn-shadow-md`), never a bright glow or heavy blur. The only glows are
+`ntn-btn--glow` and `ntn-edge--glow`, each kept to the one element a page wants read first.
+Gradients appear in exactly five places: the brand mark tile, avatar initials, slider/progress
+fill, chart area fills, and filled accent buttons (primary button, primary icon button, FAB),
+which are lit from the top.
 
 Transparency and blur exist in two places only: the sticky top bar (72% app colour + 20px blur)
 and the modal scrim (72% black + 6px blur). Cards are always opaque. (`--ntn-surface-filter` and

@@ -92,6 +92,14 @@
   --ntn-accent-glow:        color-mix(in srgb, var(--ntn-accent-500) 35%, transparent);
   --ntn-accent-line:        color-mix(in srgb, var(--ntn-accent-500) 30%, transparent);
   --ntn-accent-line-strong: color-mix(in srgb, var(--ntn-accent-500) 40%, transparent);
+  /* Filled accent controls (primary button, primary icon button, FAB): lit from the top and
+     deepening toward the next stop down. Mixing toward the ramp, not black, keeps warm accents
+     from turning olive. */
+  --ntn-accent-fill:        linear-gradient(180deg, color-mix(in oklab, var(--ntn-accent-600) 88%, white),
+                                                    color-mix(in oklab, var(--ntn-accent-600) 75%, var(--ntn-accent-700)));
+  --ntn-accent-fill-hover:  linear-gradient(180deg, color-mix(in oklab, var(--ntn-accent-500) 88%, white),
+                                                    color-mix(in oklab, var(--ntn-accent-500) 75%, var(--ntn-accent-600)));
+  --ntn-accent-halo:        color-mix(in srgb, var(--ntn-accent-500) 55%, transparent);
 
   /* ── Semantic aliases: use these in components ─────────────────────────── */
   --ntn-bg-app:         var(--ntn-n-50);

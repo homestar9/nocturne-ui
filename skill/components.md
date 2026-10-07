@@ -60,10 +60,12 @@ Two axes, named for **meaning** — combine one of each:
 - Tone: accent unless one of `--success` `--warning` `--danger` `--info`
 
 Size: `--sm` `--lg` · `--block`
+Glow: `--glow`, with `--primary` only. Adds a halo in the button's colour.
 States: `disabled`, `data-loading` (spins the leading icon).
 
 ```html
 <button class="ntn-btn ntn-btn--primary"><i class="fa-light fa-plus"></i>Add item</button>
+<button class="ntn-btn ntn-btn--primary ntn-btn--glow"><i class="fa-light fa-plus"></i>Add site</button>
 <button class="ntn-btn">Cancel</button>
 <button class="ntn-btn ntn-btn--subtle ntn-btn--sm"><i class="fa-light fa-ellipsis"></i></button>
 <button class="ntn-btn ntn-btn--primary ntn-btn--danger" disabled>Delete workspace</button>
@@ -74,6 +76,10 @@ Default is the everyday button. One `--primary` per view. `--secondary` is for a
 non-destructive action inside a card. A tone says what the action means, not how loud it is:
 `--primary --danger` for an irreversible action, `--subtle --danger` for a reversible "Remove",
 `--danger` alone for an outlined destructive option.
+
+`--glow` is for the one action on the page you want read first, at most one per view, and it
+does nothing without `--primary`. `ntn-edge--glow` is different: it puts a lit outline on any
+element, including a default button, and leaves the fill alone.
 
 ## Icon button — `ntn-icon-btn`
 

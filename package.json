@@ -1,6 +1,6 @@
 {
   "name": "@homestar9/nocturne-ui",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Nocturne — a dark-first SaaS design system. CSS tokens, BEM component classes, and a bundled Claude Code skill.",
   "license": "MIT",
   "author": "David Levin",
@@ -38,6 +38,7 @@
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
+    "sink": "node scripts/serve.mjs",
     "test": "node scripts/test.mjs && node scripts/test-dom.mjs",
     "prepack": "node scripts/build.mjs && npm test"
   },

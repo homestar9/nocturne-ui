@@ -120,17 +120,23 @@ server-rendered HTML: `nocturne.js` starts itself as soon as it is imported and 
 
 ## Accent
 
-Accent is the only channel a product may override, and it applies to both themes. Load a theme
-after the stylesheet:
+Accent is the only channel a product may override, and it applies to both themes. Violet is the
+default. Two more ship in `themes/`: `emerald.css` and `amber.css` (a warm gold). Load one after
+the stylesheet:
 
 ```js
 import '@homestar9/nocturne-ui';
-import '@homestar9/nocturne-ui/themes/emerald.css';
+import '@homestar9/nocturne-ui/themes/amber.css';
 ```
+
+The kitchen sink (`examples/kitchen-sink.html`) has an accent picker in its top bar for comparing
+them. Amber sits close to the warning hue, so keep main actions on `ntn-btn--primary` and use the
+`--warning` tone only for real cautions.
 
 Or write your own: copy `themes/emerald.css` and change the hexes. A brand theme sets only the
 accent ramp (`--ntn-accent-100` to `-900`) and the ink that sits on it (`--ntn-accent-fg`). Every
-accent tint (soft fills, hairlines, glow, focus ring) derives from the ramp. Two details:
+accent tint (soft fills, hairlines, glow, focus ring) and the gradient on filled buttons derives
+from the ramp. Two details:
 
 - **Light mode:** it darkens the stops used as text (100–400). Declare yours in a
   `:root[data-theme="light"], :root [data-theme="light"]` block, and your dark ramp in
@@ -250,8 +256,12 @@ and the CSS in the same commit — the agent can never be briefed on a version y
 ```bash
 npm run build      # flattens src/ into dist/ — no dependencies
 npm test           # namespace checks: every token prefixed, every var() declared, prefix builds rename everything
-open examples/kitchen-sink.html
+npm run sink       # serves the repo and prints the kitchen sink URL
 ```
+
+Open the kitchen sink through `npm run sink`, not by double-clicking the file. Browsers block
+module scripts on `file://` pages, so `nocturne.js` never loads there: the CSS renders, but the
+theme toggle, tabs, dialogs and dropdowns do nothing.
 
 Edit files in `src/`, never in `dist/`. `dist/` is regenerated (and tested) on `prepack`.
 Always spell the namespace `ntn` in source — the prefix build renames exactly that spelling, so a

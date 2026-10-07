@@ -7,6 +7,9 @@
 
 <!-- Nocturne: one stylesheet, one optional script. -->
 <link rel="stylesheet" href="../dist/nocturne.css">
+<!-- Accent themes, switched by the picker in the top bar. A product loads at most one. -->
+<link rel="stylesheet" href="../themes/emerald.css" data-sink-accent="emerald" disabled>
+<link rel="stylesheet" href="../themes/amber.css" data-sink-accent="amber" disabled>
 <!-- Paint the stored theme before first paint, so light users never see a dark flash. -->
 <script>try{var p=localStorage.getItem('ntn-theme')||'dark';document.documentElement.setAttribute('data-theme',p==='auto'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):p)}catch(e){}</script>
 <script type="module" src="../js/nocturne.js"></script>
@@ -104,6 +107,11 @@
         </div>
       </div>
       <div class="ntn-navbar__right">
+        <div class="ntn-toggle-group ntn-toggle-group--sm" role="group" aria-label="Accent" id="accent-picker">
+          <button class="ntn-toggle-group__btn" aria-pressed="true" data-accent="">Violet</button>
+          <button class="ntn-toggle-group__btn" aria-pressed="false" data-accent="emerald">Emerald</button>
+          <button class="ntn-toggle-group__btn" aria-pressed="false" data-accent="amber">Amber</button>
+        </div>
         <button class="ntn-icon-btn" aria-label="Toggle light theme" data-ntn-theme-toggle><i class="fa-light fa-sun" data-ntn-theme-icon></i></button>
         <button class="ntn-icon-btn" aria-label="Notifications"><i class="fa-light fa-bell"></i></button>
         <span class="ntn-avatar ntn-avatar--sm">MR<span class="ntn-avatar__status ntn-avatar__status--online"></span></span>
@@ -124,12 +132,22 @@
           </div>
         </div>
 
+        <!-- Browsers block module scripts on file:// pages, so nocturne.js can't load here. -->
+        <div class="ntn-alert ntn-alert--warning" role="status" id="file-notice" hidden>
+          <i class="fa-light fa-triangle-exclamation"></i>
+          <div class="ntn-alert__body">
+            <div class="ntn-alert__title">Opened from a file, so nocturne.js didn't load</div>
+            <div class="ntn-alert__text">The styles work, but the theme toggle, tabs, dialogs and dropdowns don't. Run <code>npm run sink</code> and open the URL it prints.</div>
+          </div>
+        </div>
+        <script>if (location.protocol === 'file:') document.getElementById('file-notice').hidden = false;</script>
+
         <!-- ── Buttons ────────────────────────────────────────────────── -->
         <section class="sink" id="buttons">
           <header class="sink__head">
             <h2 class="sink__title">Buttons</h2>
             <code class="sink__code">.ntn-btn</code>
-            <p class="sink__note">Two axes named for meaning: emphasis (default, <code>--primary</code>, <code>--secondary</code>, <code>--subtle</code>) and tone (<code>--success</code>, <code>--warning</code>, <code>--danger</code>, <code>--info</code>). One primary per view.</p>
+            <p class="sink__note">Two axes named for meaning: emphasis (default, <code>--primary</code>, <code>--secondary</code>, <code>--subtle</code>) and tone (<code>--success</code>, <code>--warning</code>, <code>--danger</code>, <code>--info</code>). One primary per view. Add <code>--glow</code> to a primary for the one action you want read first.</p>
           </header>
           <div class="ntn-card"><div class="ntn-card__body ntn-stack">
             <span class="sink__label">Variants</span>
@@ -139,6 +157,14 @@
               <button class="ntn-btn ntn-btn--secondary"><i class="fa-light fa-wand-magic-sparkles"></i>Suggest</button>
               <button class="ntn-btn ntn-btn--primary ntn-btn--danger">Delete</button>
               <button class="ntn-btn ntn-btn--subtle">Subtle</button>
+            </div>
+            <hr class="ntn-divider">
+            <span class="sink__label">Glow</span>
+            <div class="ntn-row">
+              <button class="ntn-btn ntn-btn--primary ntn-btn--glow"><i class="fa-light fa-plus"></i>Add site</button>
+              <button class="ntn-btn ntn-btn--primary ntn-btn--glow ntn-btn--danger">Delete forever</button>
+              <button class="ntn-btn ntn-btn--primary ntn-btn--glow ntn-btn--sm">Upgrade</button>
+              <button class="ntn-btn ntn-btn--primary ntn-btn--glow" disabled>Disabled</button>
             </div>
             <hr class="ntn-divider">
             <span class="sink__label">Emphasis × tone</span>
@@ -1678,6 +1704,13 @@
   const readout = document.getElementById('daterange-readout');
   document.addEventListener('ntn:daterangechange', (e) => {
     readout.textContent = e.detail.start ? `${e.detail.start} → ${e.detail.end}` : 'cleared';
+  });
+
+  document.getElementById('accent-picker').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-accent]');
+    if (!btn) return;
+    document.querySelectorAll('link[data-sink-accent]').forEach((l) => { l.disabled = l.dataset.sinkAccent !== btn.dataset.accent; });
+    document.querySelectorAll('#accent-picker [data-accent]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
   });
 
   document.getElementById('index-search').addEventListener('input', (e) => {
