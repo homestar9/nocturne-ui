@@ -270,11 +270,17 @@ new class, token, hook or event written any other way would escape it.
 ## Release
 
 ```bash
-npm version minor          # bump + tag
-npm run build
-npm publish                # → npmjs.com (public)
+npm whoami                 # must print your npm user; on 401, run `npm login` first
+npm run build              # then commit any dist/ changes; npm version refuses a dirty tree
+npm version minor          # bump + commit + tag
+npm publish                # prepack rebuilds and tests, then → npmjs.com (public)
 git push --follow-tags
 ```
+
+Check the login first: `npm publish` without a valid session fails with a misleading
+`404 Not Found - PUT …/@homestar9%2fnocturne-ui`, not an auth error. Build and commit `dist/`
+before `npm version` so the tagged commit matches what ships. `prepack` rebuilds anyway, so a
+stale `dist/` is published fresh but left uncommitted.
 
 Semver is the contract: **patch** for fixes, **minor** for new components or tokens, **major**
 for any renamed or removed class or token. Record every change in `CHANGELOG.md` — consuming
