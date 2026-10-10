@@ -609,7 +609,8 @@ trigger's edge instead of its centre) · `--wrap` (a sentence, max 232px). The a
 from the bubble's own surface, so a theme change carries it.
 
 Never put anything interactive in a bubble — it is `pointer-events: none`. Give it
-`role="tooltip"`, and keep it out of an `overflow: hidden` ancestor (a plain `.ntn-card` clips).
+`role="tooltip"`, and keep it out of an `overflow: hidden` ancestor (a `.ntn-card--flush` clips;
+a plain card does not).
 
 ```html
 <span class="ntn-tooltip">
