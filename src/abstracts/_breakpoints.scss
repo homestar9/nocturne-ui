@@ -11,14 +11,17 @@ $breakpoints: (
   lg: 1100px,
 );
 
+// Range syntax, so below(md) and above(md) meet exactly: max-width/min-width pairs leave a gap
+// between 720px and 721px that a zoomed or fractional viewport can fall into.
+
 /// The media condition for viewports at or below breakpoint $bp.
 @function below($bp) {
-  @return "(max-width: #{map.get($breakpoints, $bp)})";
+  @return "(width <= #{map.get($breakpoints, $bp)})";
 }
 
 /// The media condition for viewports wider than breakpoint $bp.
 @function above($bp) {
-  @return "(min-width: #{map.get($breakpoints, $bp) + 1px})";
+  @return "(width > #{map.get($breakpoints, $bp)})";
 }
 
 @mixin below($bp) {

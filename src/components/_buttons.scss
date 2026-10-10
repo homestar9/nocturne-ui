@@ -3,6 +3,8 @@
 
 $-tones: modifiers(".ntn-btn", $statuses);
 $-emphases: modifiers(".ntn-btn", (primary, secondary, subtle));
+// A toggle group's end buttons round to fit inside its 1px border.
+$-inner-radius: calc(var(--ntn-radius-md) - 1px);
 
 .ntn-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: var(--ntn-space-2);
@@ -25,7 +27,6 @@ $-emphases: modifiers(".ntn-btn", (primary, secondary, subtle));
    .ntn-btn--primary.ntn-btn--danger is a strong destructive action; .ntn-btn--subtle.ntn-btn--danger a
    quiet "Remove". A tone modifier only sets the colour family below; emphasis decides how it's painted. */
 .ntn-btn {
-  --ntn-btn-solid: var(--ntn-accent);        --ntn-btn-solid-hover: var(--ntn-accent-hover);
   --ntn-btn-solid-active: var(--ntn-accent-active);
   --ntn-btn-fill: var(--ntn-accent-fill);    --ntn-btn-fill-hover: var(--ntn-accent-fill-hover);
   --ntn-btn-edge: color-mix(in oklab, var(--ntn-accent-500) 70%, white);
@@ -38,7 +39,6 @@ $-emphases: modifiers(".ntn-btn", (primary, secondary, subtle));
   --ntn-btn-ink: var(--ntn-accent-300);      --ntn-btn-ink-hover: var(--ntn-accent-200);
 }
 #{$-tones} {
-  --ntn-btn-solid: var(--ntn-btn-tone-500); --ntn-btn-solid-hover: var(--ntn-btn-tone-400);
   --ntn-btn-solid-active: var(--ntn-btn-tone-500);
   --ntn-btn-fill: linear-gradient(180deg, color-mix(in oklab, var(--ntn-btn-tone-500) 88%, white),
                                           color-mix(in oklab, var(--ntn-btn-tone-500) 88%, black));
@@ -125,7 +125,7 @@ $-emphases: modifiers(".ntn-btn", (primary, secondary, subtle));
   i { font-size: 16px; }
   &:hover { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); }
   &[aria-pressed="true"], &[data-active] { background: var(--ntn-surface-active); color: var(--ntn-text-primary); }
-  &:disabled { opacity: 0.45; cursor: not-allowed; }
+  &:disabled, &[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; }
   &--secondary {
     background: var(--ntn-surface-2); border-color: var(--ntn-border-default); color: var(--ntn-text-secondary);
 
@@ -188,8 +188,8 @@ $-emphases: modifiers(".ntn-btn", (primary, secondary, subtle));
     @include transition(background, color);
 
     i { font-size: 14px; }
-    &:first-child { border-left: 0; border-radius: 7px 0 0 7px; }
-    &:last-child { border-radius: 0 7px 7px 0; }
+    &:first-child { border-left: 0; border-radius: $-inner-radius 0 0 $-inner-radius; }
+    &:last-child { border-radius: 0 $-inner-radius $-inner-radius 0; }
     &:hover { background: var(--ntn-surface-hover); color: var(--ntn-text-secondary); }
     &[aria-pressed="true"] {
       background: var(--ntn-surface-3); color: var(--ntn-text-primary);

@@ -1,4 +1,4 @@
-/* Minimal global reset. Consumers link styles.css and get this for free. */
+/* Minimal global reset. Consumers link nocturne.css and get this for free. */
 *, *::before, *::after { box-sizing: border-box; }
 
 /* [hidden] has to beat component display rules (.ntn-card is a flex block). */

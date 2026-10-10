@@ -72,9 +72,7 @@ $-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBo
     }
   }
   &__star input, &__clear input { @include cover-input; }
-  &__star > span {
-    position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
-  }
+  &__star > span { @include visually-hidden; }
   &__star:has(input:checked)::before,
   &__star:has(~ .ntn-rating__star input:checked)::before,
   &__star[data-on]::before {
@@ -110,6 +108,9 @@ $-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBo
 /* Segmented: the same native radios, drawn like a toggle group, for a pick-one switch of two to
    four short options. Posting, arrow keys and screen-reader semantics stay those of a radio group.
    Write it as a <fieldset> with a <legend> (kept for assistive tech, hidden from view). */
+// The end segments round to fit inside the group's 1px border.
+$-inner-radius: calc(var(--ntn-radius-md) - 1px);
+
 .ntn-radio-group--segmented {
   display: inline-flex; flex-direction: row; gap: 0; width: auto; min-width: 0; margin: 0; padding: 0; align-self: flex-start;
   @include control-surface;
@@ -121,8 +122,8 @@ $-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBo
     border-left: 1px solid var(--ntn-border-subtle); color: var(--ntn-text-muted);
     @include transition(background, color);
 
-    &:first-of-type { border-left: 0; border-radius: 7px 0 0 7px; }
-    &:last-of-type { border-radius: 0 7px 7px 0; }
+    &:first-of-type { border-left: 0; border-radius: $-inner-radius 0 0 $-inner-radius; }
+    &:last-of-type { border-radius: 0 $-inner-radius $-inner-radius 0; }
     input { @include cover-input; }
   }
   .ntn-radio__label {

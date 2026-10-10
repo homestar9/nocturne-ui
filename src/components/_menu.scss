@@ -146,8 +146,6 @@
     position: absolute; z-index: var(--ntn-z-dropdown); top: 100%; left: 0; margin-top: 6px;
     width: 100%; min-width: 200px; max-width: min(360px, 90vw); padding: 4px;
     display: flex; flex-direction: column; gap: 2px;
-
-    &[hidden] { display: none; }
   }
   &[data-ntn-side="up"] &__panel { top: auto; bottom: 100%; margin: 0 0 6px; }
   &__search {
@@ -169,7 +167,6 @@
     border: 0; border-radius: var(--ntn-radius-sm); background: transparent; color: var(--ntn-text-secondary);
     font-family: var(--ntn-font-sans); font-size: var(--ntn-text-sm); text-align: left; cursor: pointer;
 
-    &[hidden] { display: none; }
     > i:first-child { flex: 0 0 auto; font-size: 14px; color: var(--ntn-text-muted); }
     &:hover, &[data-ntn-active] { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); }
     &[aria-selected="true"] { color: var(--ntn-text-primary); }
@@ -207,5 +204,5 @@
     .ntn-combo__label { white-space: nowrap; color: var(--ntn-text-muted); font-weight: var(--ntn-weight-regular); }
     .ntn-combo__trigger { width: auto; }
   }
-  &[data-invalid] &__trigger { @include invalid; }
+  &:is([data-invalid], :has([aria-invalid="true"])) &__trigger { @include invalid; }
 }

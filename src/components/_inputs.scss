@@ -85,7 +85,10 @@
   }
   &__hint { font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
   &__error { font-size: var(--ntn-text-xs); color: var(--ntn-danger-400); }
-  &:is([data-invalid], :has([aria-invalid="true"])) &__control select { @include invalid; }
+  &:is([data-invalid], :has([aria-invalid="true"])) {
+    .ntn-select__control select { @include invalid; }
+    .ntn-select__hint { color: var(--ntn-danger-400); }
+  }
   &--sm &__control select { height: var(--ntn-control-sm); font-size: var(--ntn-text-xs); padding: 0 28px 0 10px; }
   &--lg &__control select { height: var(--ntn-control-lg); font-size: var(--ntn-text-md); padding: 0 34px 0 14px; }
   &--inline {

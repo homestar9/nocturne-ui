@@ -9,7 +9,6 @@
   font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-medium); letter-spacing: var(--ntn-tracking-body); white-space: nowrap;
 
   i { font-size: 11px; }
-  &::before { content: none; }
   &--dot::before { content: ""; display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--ntn-n-600); flex: 0 0 auto; }
   // Tones: --neutral (the default, stated explicitly) · --primary · --success · --warning · --danger · --info
   @each $tone in list.join(primary, $statuses) {

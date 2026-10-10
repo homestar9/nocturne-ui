@@ -138,14 +138,13 @@
   &--single &__cals { /* Single date: one month, no range band to draw. */ padding-right: var(--ntn-space-5); }
 }
 
-/* A card clips its own content; let a picker inside it out while it is open. */
-.ntn-card:has(.ntn-daterange__panel:not([hidden])),
-.ntn-toolbar:has(.ntn-daterange__panel:not([hidden])) { overflow: visible; }
+/* A --flush card clips its content; let a picker inside it out while it is open. */
+.ntn-card:has(.ntn-daterange__panel:not([hidden])) { overflow: visible; }
 
 /* Narrow: presets become a chip row and the second month drops. nocturne.js adds
    --narrow when the panel cannot fit its clipping container, which is the case the
    viewport media query below cannot see (a narrow column in a wide window). */
-.ntn-daterange__panel--narrow {
+@mixin -narrow-panel {
   width: min(320px, calc(100vw - 32px));
 
   .ntn-daterange__row { flex-direction: column; }
@@ -156,11 +155,7 @@
   .ntn-daterange__cals { justify-content: center; }
   [data-ntn-cal="1"] { display: none; }
 }
-
+.ntn-daterange__panel--narrow { @include -narrow-panel; }
 @include below(md) {
-  .ntn-daterange__panel { width: min(320px, calc(100vw - 32px)); }
-  .ntn-daterange__row { flex-direction: column; }
-  .ntn-daterange__presets { width: 100%; flex-direction: row; flex-wrap: wrap; border-right: 0; border-bottom: 1px solid var(--ntn-border-subtle); }
-  .ntn-daterange__cals { justify-content: center; }
-  .ntn-daterange__cals [data-ntn-cal="1"] { display: none; }
+  .ntn-daterange__panel { @include -narrow-panel; }
 }

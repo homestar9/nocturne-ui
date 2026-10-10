@@ -111,7 +111,7 @@
   &__count { font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); white-space: nowrap; }
 
   &--sm {
-    --ntn-step-size: 24px; --ntn-step-line: 2px;
+    --ntn-step-size: 24px;
 
     .ntn-steps__marker {
       font-size: var(--ntn-text-2xs);
