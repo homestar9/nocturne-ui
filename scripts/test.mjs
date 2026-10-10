@@ -5,21 +5,34 @@
    2. Every var(--x) the CSS reads is declared somewhere (or set from JS).
    3. A prefixed build renames EVERYTHING: no trace of "ntn" survives, and the output equals the
       default build with the namespace swapped — so a kit built with --prefix cms styles cms-* markup.
-   4. Bad prefixes are rejected. */
+   4. Bad prefixes are rejected.
+   5. The committed dist/ is what src/ compiles to. */
 import { readFile, rm, mkdtemp } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join, relative } from 'node:path';
-import { build, applyPrefix, vocabularyVars } from './build.mjs';
+import { join, relative, resolve } from 'node:path';
+import { build, applyPrefix, vocabularyVars, stripBanner, root } from './build.mjs';
+import { compile } from './compile.mjs';
 
 let failures = 0;
 const check = (ok, msg) => { if (ok) { console.log('  ok   ' + msg); } else { failures++; console.error('  FAIL ' + msg); } };
 
 const tmp = await mkdtemp(join(tmpdir(), 'nocturne-test-'));
 try {
+  // Everything below checks a fresh compile of src/, not whatever dist/ happens to hold.
+  const cssDir = join(tmp, 'compiled');
+  const compiled = await compile({ outDir: cssDir });
   const base = join(tmp, 'ntn');
   const alt = join(tmp, 'zz');
-  const baseFiles = await build({ outDir: base });
-  await build({ prefix: 'zz', outDir: alt });
+  const baseFiles = await build({ cssDir, outDir: base });
+  await build({ cssDir, prefix: 'zz', outDir: alt });
+
+  console.log('dist/ is up to date');
+  for (const file of compiled) {
+    const rel = relative(cssDir, file);
+    const fresh = stripBanner(await readFile(file, 'utf8'));
+    const committed = stripBanner(await readFile(resolve(root, 'dist', rel), 'utf8').catch(() => ''));
+    check(fresh === committed, `dist/${rel} matches src/ (run npm run build)`);
+  }
 
   console.log('Tokens');
   const css = await readFile(join(base, 'nocturne.css'), 'utf8');
@@ -58,8 +71,9 @@ try {
     decls: [...m[2].matchAll(/(--ntn-[a-z0-9-]+)\s*:([^;]*);/g)].map((d) => [d[1], d[2]]),
   }));
   const namesIn = (pred) => new Set(blocks.filter((b) => pred(b.sel)).flatMap((b) => b.decls.map(([n]) => n)));
-  const lightNames = namesIn((s) => s === '[data-theme="light"]');
-  const darkNames = namesIn((s) => /\[data-theme="dark"\]|\[data-theme\](?!=)/.test(s));
+  // Sass drops the quotes around an attribute value that is a plain identifier.
+  const lightNames = namesIn((s) => /^\[data-theme="?light"?\]$/.test(s));
+  const darkNames = namesIn((s) => /\[data-theme="?dark"?\]|\[data-theme\](?!=)/.test(s));
   const missingDark = [...lightNames].filter((n) => !darkNames.has(n));
   check(lightNames.size > 30 && missingDark.length === 0,
     `each of the ${lightNames.size} tokens the light theme remaps also has a value on dark subtrees` + (missingDark.length ? ': ' + missingDark.join(' ') : ''));
@@ -74,15 +88,14 @@ try {
     const b = await readFile(join(alt, rel), 'utf8');
     check(!/ntn/i.test(b), `${rel}: no "ntn" left in the --prefix zz build`);
     // Banners differ by design (they name the prefix); compare everything after them.
-    const body = (s) => s.replace(/^\/\*![\s\S]*?\*\/\n\n/, '');
-    check(body(b) === body(applyPrefix(a, 'zz')), `${rel}: equals the default build with the namespace swapped`);
+    check(stripBanner(b) === stripBanner(applyPrefix(a, 'zz')), `${rel}: equals the default build with the namespace swapped`);
   }
   const altJs = await readFile(join(alt, 'nocturne.js'), 'utf8');
   check(/dataset\.zz[A-Z]/.test(altJs) && /data-zz-/.test(altJs), 'camelCase dataset keys follow the prefix (data-zz-x ↔ dataset.zzX)');
 
   console.log('Split prefixes (classes "zz", tokens stay "ntn")');
   const split = join(tmp, 'split');
-  await build({ prefix: 'zz', tokenPrefix: 'ntn', outDir: split });
+  await build({ cssDir, prefix: 'zz', tokenPrefix: 'ntn', outDir: split });
   const vocab = await vocabularyVars();
   check(['slider-pct', 'progress', 'tab-x', 'tab-w', 'tree-indent'].every((n) => vocab.has(n)),
     `vocabulary vars discovered: ${[...vocab].join(' ')}`);
@@ -100,10 +113,10 @@ try {
   console.log('Prefix validation');
   for (const bad of ['', 'Cms', 'my-ui', '1x', 'a_b', 'c s']) {
     let threwToken = false;
-    try { await build({ prefix: 'ok', tokenPrefix: bad, outDir: join(tmp, 'bad') }); } catch { threwToken = true; }
+    try { await build({ cssDir, prefix: 'ok', tokenPrefix: bad, outDir: join(tmp, 'bad') }); } catch { threwToken = true; }
     check(threwToken, `rejects tokenPrefix ${JSON.stringify(bad)}`);
     let threw = false;
-    try { await build({ prefix: bad, outDir: join(tmp, 'bad') }); } catch { threw = true; }
+    try { await build({ cssDir, prefix: bad, outDir: join(tmp, 'bad') }); } catch { threw = true; }
     check(threw, `rejects prefix ${JSON.stringify(bad)}`);
   }
 } finally {
