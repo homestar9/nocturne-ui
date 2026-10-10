@@ -1,6 +1,7 @@
 /* ── Nocturne color primitives ───────────────────────────────────────────────
    Neutrals carry the interface. Accents are a thin layer on top and are the
-   only thing a client theme needs to override.
+   only thing a client theme needs to override. A theme may also retint the
+   neutral ramp, as themes/amber.css does.
 
    Dark is the default. The light theme lives in theme-light.css and remaps
    these same names — components never branch on theme.

@@ -3,7 +3,8 @@
 ## Palette
 
 Eleven cool greys (`--ntn-n-0` … `--ntn-n-1000`) do about 90% of the work. One violet ramp
-(`--ntn-accent-100` … `--ntn-accent-900`) is the accent and the only themeable channel. Magenta
+(`--ntn-accent-100` … `--ntn-accent-900`) is the accent and the main themeable channel; a theme may
+also retint the greys, as `themes/amber.css` does with warmer, less blue ones. Magenta
 (`--ntn-magenta-*`) and cyan (`--ntn-cyan-*`) exist **only** as chart series two and three — never in
 chrome. Semantic hues are green / amber / red / blue, each with a 14–15% alpha tint for
 surfaces (`--ntn-success-soft`, `--ntn-warning-soft`, `--ntn-danger-soft`, `--ntn-info-soft`).

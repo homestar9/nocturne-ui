@@ -1,10 +1,24 @@
-/* Amber brand theme: a warm gold accent. Same structure as emerald.css: the ramp and its ink in
-   the dark block, the darkened text stops (100–400) in the light block. Every accent tint, fill,
-   halo and focus ring derives from the ramp.
+/* Amber brand theme: a warm gold accent on DeployBot's greys.
+
+   Two layers, both in each block below:
+   1. Accent: the ramp and the dark ink that sits on it.
+   2. Neutrals: Nocturne's graphite leans blue, which fights gold. Amber swaps in DeployBot's
+      greys: near-neutral graphite in dark mode, warm paper with slate ink in light mode. Where
+      DeployBot has a matching colour it is used exactly ("DB" below); the other steps are filled
+      at DeployBot's hue and chroma, between their neighbours' lightness.
+
+   The faint step (n-600, --ntn-text-disabled) is DeployBot's, which is softer than Nocturne's:
+   eyebrows, section labels and placeholders read lighter, about 2.2:1 in light mode.
+
+   Every token the dark block sets is set again in the light block. Otherwise this file's
+   :root value would beat Nocturne's light theme on load order.
 
    Amber sits next to the warning hue. Keep main actions on ntn-btn--primary and save the
    --warning tone for actions that really are cautions, or the two read as the same button. */
+
+/* ── Dark (default) ─────────────────────────────────────────────────────── */
 :root, :root [data-theme="dark"] {
+  /* Accent */
   --ntn-accent-100: #FFF5DB;
   --ntn-accent-200: #FEE6A6;
   --ntn-accent-300: #FDD978;
@@ -18,11 +32,54 @@
   --ntn-accent-fg: #1D1506;
   --ntn-check-mark: var(--ntn-check-mark-ink);
   --ntn-check-dash: var(--ntn-check-dash-ink);
+
+  /* Neutrals: surfaces 0–300, lines 400–500, text 600–900 */
+  --ntn-n-0:   #050608;
+  --ntn-n-50:  #090A0D; /* DB bg */
+  --ntn-n-100: #121417; /* DB surface */
+  --ntn-n-200: #1B1D21; /* DB raised */
+  --ntn-n-300: #212429;
+  --ntn-n-400: #292E35; /* DB border */
+  --ntn-n-500: #3D434B;
+  --ntn-n-600: #585E67; /* DB faint */
+  --ntn-n-700: #9299A2; /* DB muted */
+  --ntn-n-800: #BCC1C9;
+  --ntn-n-900: #E8EBF1; /* DB text */
+
+  /* Nocturne hard-codes these two in blue graphite */
+  --ntn-border-subtle: #1E2125;
+  --ntn-bg-blur: rgba(9,10,13,0.72);
 }
 
+/* ── Light ──────────────────────────────────────────────────────────────── */
 :root[data-theme="light"], :root [data-theme="light"] {
+  /* Accent: the text stops (100–400) darken to a burnt amber, built around DeployBot's
+     accent-text. It reads warmer than olive-brown and sits further from the warning tone. */
   --ntn-accent-100: #FFF6E0;
-  --ntn-accent-200: #6E4A02;
-  --ntn-accent-300: #7F5604;
-  --ntn-accent-400: #96670A;
+  --ntn-accent-200: #863900;
+  --ntn-accent-300: #9B4900; /* DB accent-text */
+  --ntn-accent-400: #B05B00;
+
+  /* Neutrals: warm paper 0–500, cool slate ink 600–900 */
+  --ntn-n-0:   #FFFFFF;
+  --ntn-n-50:  #FEFDFC; /* DB surface */
+  --ntn-n-100: #FAF8F5;
+  --ntn-n-200: #F5F3EF; /* DB bg */
+  --ntn-n-300: #F2F0EC; /* DB raised */
+  --ntn-n-400: #DDDAD5; /* DB border */
+  --ntn-n-500: #C1BDB7;
+  --ntn-n-600: #A0A5AC; /* DB faint */
+  --ntn-n-700: #5E646B; /* DB muted */
+  --ntn-n-800: #363B42;
+  --ntn-n-900: #14191F; /* DB text */
+
+  /* Surfaces and lines, which Nocturne's light theme sets outright */
+  --ntn-bg-app:         #F5F3EF; /* DB bg */
+  --ntn-surface-1:      #FEFDFC; /* DB surface */
+  --ntn-surface-2:      #FEFDFC;
+  --ntn-surface-3:      #F2F0EC; /* DB raised */
+  --ntn-bg-blur:        rgba(254,253,252,0.78);
+  --ntn-border-subtle:  #EAE8E3;
+  --ntn-border-default: #DDDAD5; /* DB border */
+  --ntn-border-strong:  #CAC7C0;
 }

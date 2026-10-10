@@ -120,9 +120,10 @@ server-rendered HTML: `nocturne.js` starts itself as soon as it is imported and 
 
 ## Accent
 
-Accent is the only channel a product may override, and it applies to both themes. Violet is the
-default. Two more ship in `themes/`: `emerald.css` and `amber.css` (a warm gold). Load one after
-the stylesheet:
+Accent is the main channel a product may override, and it applies to both themes. Violet is the
+default. Two more ship in `themes/`: `emerald.css` and `amber.css` (a warm gold). Amber also
+swaps the blue-leaning greys for warmer ones: near-neutral graphite in dark mode, warm paper with
+slate text in light mode. Load one after the stylesheet:
 
 ```js
 import '@homestar9/nocturne-ui';
@@ -133,10 +134,10 @@ The kitchen sink (`examples/kitchen-sink.html`) has an accent picker in its top 
 them. Amber sits close to the warning hue, so keep main actions on `ntn-btn--primary` and use the
 `--warning` tone only for real cautions.
 
-Or write your own: copy `themes/emerald.css` and change the hexes. A brand theme sets only the
+Or write your own: copy `themes/emerald.css` and change the hexes. A brand theme needs only the
 accent ramp (`--ntn-accent-100` to `-900`) and the ink that sits on it (`--ntn-accent-fg`). Every
 accent tint (soft fills, hairlines, glow, focus ring) and the gradient on filled buttons derives
-from the ramp. Two details:
+from the ramp. Three details:
 
 - **Light mode:** it darkens the stops used as text (100–400). Declare yours in a
   `:root[data-theme="light"], :root [data-theme="light"]` block, and your dark ramp in
@@ -144,8 +145,12 @@ from the ramp. Two details:
   load order, and the brand follows into `data-theme` subtrees.
 - **Dark ink:** if your accent needs dark ink, point the checkbox art at it too:
   `--ntn-check-mark: var(--ntn-check-mark-ink); --ntn-check-dash: var(--ntn-check-dash-ink);`
+- **Greys (optional):** a theme may also retint the neutral ramp (`--ntn-n-0` to `-900`) and the
+  surfaces and borders the light theme sets outright, as `amber.css` does. Set every one you
+  change in both blocks, or the dark value leaks into light mode. Check text contrast:
+  `--ntn-n-600` is also `--ntn-text-disabled`, which labels and placeholders use.
 
-Neutrals, semantics, spacing, and type are shared across every product and are not forkable.
+Semantics, spacing, and type are shared across every product and are not forkable.
 
 ### Glass hooks
 
