@@ -1384,7 +1384,7 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
   transform: translateY(-2px) rotate(45deg); transition: transform var(--ntn-dur-base) var(--ntn-ease-standard);
 }
 .ntn-accordion__item[open] > summary::after { transform: translateY(2px) rotate(225deg); }
-.ntn-accordion__panel { padding: 0 var(--ntn-space-4) var(--ntn-space-4); font-size: var(--ntn-text-sm); color: var(--ntn-text-secondary); line-height: var(--ntn-leading-normal); animation: ntn-rise var(--ntn-dur-base) var(--ntn-ease-out); }
+.ntn-accordion__panel { padding: var(--ntn-space-3) var(--ntn-space-4) var(--ntn-space-4); font-size: var(--ntn-text-sm); color: var(--ntn-text-secondary); line-height: var(--ntn-leading-normal); animation: ntn-rise var(--ntn-dur-base) var(--ntn-ease-out); }
 
 .ntn-divider { border: 0; height: 1px; background: var(--ntn-border-default); margin: var(--ntn-space-4) 0; }
 .ntn-divider--subtle { background: var(--ntn-border-subtle); }

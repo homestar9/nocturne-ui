@@ -32,6 +32,10 @@ renamed or removed class names and tokens.
   `--ntn-shadow-md`. No token was added or renamed. Other themes are unchanged.
 - **Docs:** a theme may now retint the neutral ramp as well as the accent (README "Accent").
 
+### Fixed
+- **Accordion:** an open panel's text sat right against the summary. `ntn-accordion__panel` now
+  has 12px (`--ntn-space-3`) of top padding.
+
 ## 1.7.0 — 2026-10-06
 
 ### Added
