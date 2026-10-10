@@ -969,7 +969,8 @@ Drop `__start` for a bare stepper, or drop `__pages` for Previous/Next only. Wit
 
 A hierarchy list in the VS Code / Figma-layers idiom. Elements: `__item` `__row` `__grip`
 `__twisty` (`--leaf` keeps the slot without a chevron) `__icon` `__label` `__meta` `__group`
-`__actions`. Modifiers: `--sm` `--flush` (edge-to-edge inside a `ntn-card--flush`).
+`__actions`. Modifiers: `--sm` `--flush` (edge-to-edge inside a `ntn-card--flush`; rows indent
+by depth through 12 levels).
 
 Depth is real DOM nesting: an `__item` holds its `__row` and, when it has children, a
 `__group` of further items. The item carries the state — `role="treeitem"`, `aria-expanded`,

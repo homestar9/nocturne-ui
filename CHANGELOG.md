@@ -78,6 +78,10 @@ renamed or removed class names and tokens.
   filters) fades in place, interactive cards and the FAB no longer lift on hover, the sidebar rail
   and phone drawer change without sliding, and the indeterminate progress bar pulses instead of
   sweeping. Spinners still turn.
+- **Flush tree depth (NTN-5).** In `ntn-tree--flush`, rows below the second level kept the
+  second level's indent, so deep branches flattened. Each row now indents by its own depth,
+  through 12 levels. The depth guide in a default tree also follows `--ntn-tree-indent` instead
+  of sitting at a fixed 10px; no change at the default indent.
 - **`ntn-icon-btn`** dims for `aria-disabled="true"` as well as `disabled`, like `ntn-btn`.
 - **Combobox:** `aria-invalid="true"` on the trigger shows the invalid state, as it does on a
   field or select (`data-invalid` on the block still works).

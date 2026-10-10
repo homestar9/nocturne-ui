@@ -3852,7 +3852,8 @@ i:is([class*=fa-], [data-icon], :empty) {
 /* ── Tree view ─────────────────────────────────────────────────────────────
    A hierarchy list in the VS Code / Figma-layers idiom: twisty, icon, label,
    trailing meta, and a drag grip. Nesting is real DOM nesting, so depth is
-   unbounded and a collapsed branch hides its subtree with one rule.
+   unbounded and a collapsed branch hides its subtree with one rule. A --flush
+   tree indents each row by its depth, through 12 levels.
 
    <div class="ntn-tree" role="tree" data-ntn-tree>
      <div class="ntn-tree__item" role="treeitem" aria-expanded="true"> …row… <div class="ntn-tree__group" role="group">…</div> </div>
@@ -3889,7 +3890,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 10px;
+  left: calc(var(--ntn-tree-indent) / 2 - 1px);
   width: 1px;
   background: var(--ntn-border-default);
 }
@@ -4094,10 +4095,40 @@ i:is([class*=fa-], [data-icon], :empty) {
   display: none;
 }
 .ntn-tree--flush .ntn-tree__group .ntn-tree__row {
-  padding-left: calc(8px + var(--ntn-tree-indent));
+  padding-left: calc(8px + var(--ntn-tree-indent) * 1);
 }
 .ntn-tree--flush .ntn-tree__group .ntn-tree__group .ntn-tree__row {
   padding-left: calc(8px + var(--ntn-tree-indent) * 2);
+}
+.ntn-tree--flush .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__row {
+  padding-left: calc(8px + var(--ntn-tree-indent) * 3);
+}
+.ntn-tree--flush .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__row {
+  padding-left: calc(8px + var(--ntn-tree-indent) * 4);
+}
+.ntn-tree--flush .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__row {
+  padding-left: calc(8px + var(--ntn-tree-indent) * 5);
+}
+.ntn-tree--flush .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__row {
+  padding-left: calc(8px + var(--ntn-tree-indent) * 6);
+}
+.ntn-tree--flush .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__row {
+  padding-left: calc(8px + var(--ntn-tree-indent) * 7);
+}
+.ntn-tree--flush .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__row {
+  padding-left: calc(8px + var(--ntn-tree-indent) * 8);
+}
+.ntn-tree--flush .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__row {
+  padding-left: calc(8px + var(--ntn-tree-indent) * 9);
+}
+.ntn-tree--flush .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__row {
+  padding-left: calc(8px + var(--ntn-tree-indent) * 10);
+}
+.ntn-tree--flush .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__row {
+  padding-left: calc(8px + var(--ntn-tree-indent) * 11);
+}
+.ntn-tree--flush .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__group .ntn-tree__row {
+  padding-left: calc(8px + var(--ntn-tree-indent) * 12);
 }
 
 /* ── Navbar, sidebar, tabs, breadcrumbs, pagination ───────────────────────── */

@@ -1,7 +1,8 @@
 /* ── Tree view ─────────────────────────────────────────────────────────────
    A hierarchy list in the VS Code / Figma-layers idiom: twisty, icon, label,
    trailing meta, and a drag grip. Nesting is real DOM nesting, so depth is
-   unbounded and a collapsed branch hides its subtree with one rule.
+   unbounded and a collapsed branch hides its subtree with one rule. A --flush
+   tree indents each row by its depth, through 12 levels.
 
    <div class="ntn-tree" role="tree" data-ntn-tree>
      <div class="ntn-tree__item" role="treeitem" aria-expanded="true"> …row… <div class="ntn-tree__group" role="group">…</div> </div>
@@ -10,6 +11,17 @@
    Drag-and-drop is driven by nocturne.js: grab the grip, and the row paints a
    line for "drop above/below" or fills for "drop inside". */
 @use "../abstracts" as *;
+
+// How many nesting levels a --flush tree indents. CSS can't count depth, so each level gets its
+// own rule; deeper levels keep the last level's indent.
+$-flush-depth: 12;
+
+/// $text written $times times over.
+@function -repeat($text, $times) {
+  $out: "";
+  @for $i from 1 through $times { $out: $out + $text; }
+  @return $out;
+}
 
 .ntn-tree {
   --ntn-tree-indent: 22px;
@@ -22,7 +34,7 @@
 
     &::before {
       /* Depth guide — one hairline per level, so a deep branch stays readable. */
-      content: ""; position: absolute; top: 0; bottom: 0; left: 10px; width: 1px; background: var(--ntn-border-default);
+      content: ""; position: absolute; top: 0; bottom: 0; left: calc(var(--ntn-tree-indent) / 2 - 1px); width: 1px; background: var(--ntn-border-default);
     }
   }
   &__item[aria-expanded="false"] > &__group { display: none; }
@@ -119,7 +131,12 @@
     padding-left: 0;
 
     &::before { display: none; }
-    .ntn-tree__row { padding-left: calc(8px + var(--ntn-tree-indent)); }
-    .ntn-tree__group .ntn-tree__row { padding-left: calc(8px + var(--ntn-tree-indent) * 2); }
+  }
+  // Groups no longer pad, so each row indents itself by its depth. A row n groups deep matches
+  // the level-n rule and every shallower one; the deeper rule is more specific and wins.
+  @for $depth from 1 through $-flush-depth {
+    #{-repeat(".ntn-tree__group ", $depth)}.ntn-tree__row {
+      padding-left: calc(8px + var(--ntn-tree-indent) * #{$depth});
+    }
   }
 }
