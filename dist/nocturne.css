@@ -2559,7 +2559,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   font-weight: var(--ntn-weight-medium);
   color: inherit;
 }
-.ntn-radio-group--segmented .ntn-radio:hover {
+.ntn-radio-group--segmented .ntn-radio:hover:where(:not(:has(input:disabled))) {
   background: var(--ntn-surface-hover);
   color: var(--ntn-text-secondary);
 }

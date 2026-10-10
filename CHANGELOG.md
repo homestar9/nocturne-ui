@@ -91,7 +91,8 @@ renamed or removed class names and tokens.
   `not-allowed` cursor. Tabs and pager steps, which greyed their text instead, fade the same way.
   The FAB and toggle-group buttons gain a disabled style (`aria-disabled` too). Disabled controls
   no longer react to hover: buttons, icon buttons, the FAB, toggle groups, tabs, pager steps, menu
-  items, combobox triggers and options, date-range edges and clickable steps.
+  items, combobox triggers and options, date-range edges, clickable steps and segmented radio
+  options.
 - **Flush tree depth (NTN-5).** In `ntn-tree--flush`, rows below the second level kept the
   second level's indent, so deep branches flattened. Each row now indents by its own depth,
   through 12 levels. The depth guide in a default tree also follows `--ntn-tree-indent` instead

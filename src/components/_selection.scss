@@ -121,7 +121,7 @@ $-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBo
   }
   .ntn-radio__label { flex-direction: row; align-items: center; gap: 6px; font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-medium); color: inherit; }
   .ntn-radio {
-    &:hover { @include segment-hover; }
+    &:hover:where(:not(:has(input:disabled))) { @include segment-hover; }
     &:has(input:checked) { @include segment-selected; }
     &:has(input:focus-visible) { @include focus-ring; z-index: 1; }
   }
