@@ -151,7 +151,7 @@ $-inner-radius: calc(var(--ntn-radius-md) - 1px);
     background-color: var(--ntn-n-400); border: 1px solid var(--ntn-border-strong); cursor: inherit;
     background-image: radial-gradient(circle closest-side, var(--ntn-control-knob) 97%, transparent 100%);
     background-size: 17px 17px; background-position: 2px 50%; background-repeat: no-repeat;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.4);
+    box-shadow: var(--ntn-shadow-inset);
     transition: tr(background-color, base), tr(background-position, base, out), tr(box-shadow, base), tr(border-color, base);
 
     &:checked {

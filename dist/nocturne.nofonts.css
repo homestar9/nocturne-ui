@@ -216,6 +216,12 @@
   --ntn-shadow-md: 0 8px 24px -12px rgba(0,0,0,0.70);
   --ntn-shadow-lg: 0 24px 60px -24px rgba(0,0,0,0.85);
   --ntn-shadow-pop: 0 12px 32px -8px rgba(0,0,0,0.75);
+  /* Small control depth: under a filled button, a dark hairline round a glowing one, under the
+     floating action button, and pressed into a switch track */
+  --ntn-shadow-control: 0 1px 2px rgba(0,0,0,0.45);
+  --ntn-shadow-hairline: 0 0 0 1px rgba(0,0,0,0.2);
+  --ntn-shadow-float: 0 2px 6px rgba(0,0,0,0.5);
+  --ntn-shadow-inset: inset 0 1px 2px rgba(0,0,0,0.4);
   /* Glass (glass.css): a lit top edge and a wide soft drop; the strength of an app's
      ambient image */
   --ntn-glass-highlight: inset 0px 10px 10px -10px rgba(255,255,255,0.3);
@@ -331,6 +337,10 @@
   --ntn-shadow-md: 0 8px 24px -14px rgba(16,20,27,0.20), 0 1px 2px rgba(16,20,27,0.04);
   --ntn-shadow-lg: 0 24px 60px -24px rgba(16,20,27,0.28), 0 1px 3px rgba(16,20,27,0.06);
   --ntn-shadow-pop: 0 12px 32px -10px rgba(16,20,27,0.22);
+  --ntn-shadow-control: 0 1px 2px rgba(16,20,27,0.12);
+  --ntn-shadow-hairline: 0 0 0 1px rgba(16,20,27,0.06);
+  --ntn-shadow-float: 0 2px 6px rgba(16,20,27,0.16);
+  --ntn-shadow-inset: inset 0 1px 2px rgba(16,20,27,0.12);
   /* Glass: a bright lit edge, and the ambient image kept faint on a light page */
   --ntn-glass-highlight: inset 0px 10px 10px -10px rgba(255,255,255,0.3);
   --ntn-glass-shadow: 0 1px 2px rgba(16,20,27,0.05), 0 18px 40px -24px rgba(16,20,27,0.25);
@@ -655,7 +665,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   --ntn-btn-edge: color-mix(in oklab, var(--ntn-accent-500) 70%, white);
   --ntn-btn-edge-hover: color-mix(in oklab, var(--ntn-accent-500) 55%, white);
   --ntn-btn-on-solid: var(--ntn-accent-fg);
-  --ntn-btn-shadow: 0 1px 2px rgba(0,0,0,0.45), 0 8px 20px -14px var(--ntn-accent-glow);
+  --ntn-btn-shadow: var(--ntn-shadow-control), 0 8px 20px -14px var(--ntn-accent-glow);
   --ntn-btn-halo: var(--ntn-accent-halo);
   --ntn-btn-soft: var(--ntn-accent-soft);
   --ntn-btn-soft-hover: var(--ntn-accent-soft-hover);
@@ -739,7 +749,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 }
 .ntn-btn--primary.ntn-btn--glow {
   /* Glow: a halo for the one action on the page you want read first. Pairs with --primary. */
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2), 0 6px 20px -6px var(--ntn-btn-halo), 0 0 24px -10px var(--ntn-btn-halo), var(--ntn-highlight-top);
+  box-shadow: var(--ntn-shadow-hairline), 0 6px 20px -6px var(--ntn-btn-halo), 0 0 24px -10px var(--ntn-btn-halo), var(--ntn-highlight-top);
 }
 .ntn-btn--primary.ntn-btn--glow:is(:disabled, [aria-disabled=true]) {
   box-shadow: var(--ntn-btn-shadow);
@@ -888,7 +898,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   font-size: var(--ntn-text-sm);
   font-weight: var(--ntn-weight-medium);
   white-space: nowrap;
-  box-shadow: 0 10px 30px -10px var(--ntn-accent-glow), 0 2px 6px rgba(0, 0, 0, 0.5), var(--ntn-highlight-top);
+  box-shadow: 0 10px 30px -10px var(--ntn-accent-glow), var(--ntn-shadow-float), var(--ntn-highlight-top);
   cursor: pointer;
   transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), transform var(--ntn-dur-fast) var(--ntn-ease-out);
 }
@@ -2554,7 +2564,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   background-size: 17px 17px;
   background-position: 2px 50%;
   background-repeat: no-repeat;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--ntn-shadow-inset);
   transition: background-color var(--ntn-dur-base) var(--ntn-ease-standard), background-position var(--ntn-dur-base) var(--ntn-ease-out), box-shadow var(--ntn-dur-base) var(--ntn-ease-standard), border-color var(--ntn-dur-base) var(--ntn-ease-standard);
 }
 .ntn-switch input:checked {

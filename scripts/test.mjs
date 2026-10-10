@@ -7,7 +7,7 @@
       default build with the namespace swapped — so a kit built with --prefix cms styles cms-* markup.
    4. Bad prefixes are rejected.
    5. The committed dist/ is what src/ compiles to. */
-import { readFile, rm, mkdtemp } from 'node:fs/promises';
+import { readFile, readdir, rm, mkdtemp } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, relative, resolve } from 'node:path';
 import { build, applyPrefix, vocabularyVars, stripBanner, root } from './build.mjs';
@@ -80,6 +80,18 @@ try {
     && !RING_ELSEWHERE.some((re) => re.test(r.sel)));
   check(ringless.length === 0, 'no :focus-visible rule removes the outline without drawing a ring'
     + (ringless.length ? ': ' + ringless.map((r) => r.sel).join(' | ') : ''));
+
+  console.log('Component shadows follow the theme');
+  // A raw black shadow never softens in the light theme; components read the --ntn-shadow-* tokens.
+  const componentsDir = resolve(root, 'src', 'components');
+  const blackShadows = [];
+  for (const name of await readdir(componentsDir)) {
+    const lines = (await readFile(join(componentsDir, name), 'utf8')).split('\n');
+    lines.forEach((line, i) => {
+      if (/(box-shadow|-shadow)\s*:/.test(line) && /rgba?\(\s*0[\s,]+0[\s,]+0\b|\bblack\b/.test(line)) blackShadows.push(`${name}:${i + 1}`);
+    });
+  }
+  check(blackShadows.length === 0, 'no component shadow is a raw black' + (blackShadows.length ? ': ' + blackShadows.join(' ') : ''));
 
   console.log('data-theme works on a subtree');
   // Group the token file's declarations by rule selector.

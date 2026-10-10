@@ -28,6 +28,9 @@ renamed or removed class names and tokens.
   image, and over the photo as the background image (`examples/images/background.avif`), and a
   droplet button in the top bar that turns glass and the ambient band on for the whole page.
 - **Token:** `--ntn-focus-outline`, the keyboard focus ring as an outline value.
+- **Tokens:** `--ntn-shadow-control`, `-hairline`, `-float` and `-inset`, the small depths of
+  filled buttons, glowing buttons, the FAB and the switch track. Mode tokens: the light theme
+  softens them.
 
 ### Changed
 - **Container frames are `--ntn-border-default`** in every theme, as in DeployBot: `ntn-card`,
@@ -67,6 +70,9 @@ renamed or removed class names and tokens.
   survives Windows forced-colours mode, where field-style controls now draw a system outline too.
   The date trigger rings on focus, not only while open, and the combobox search no longer shows a
   second ring inside its group.
+- **Light-theme shadows (NTN-7).** The primary and glow buttons, the FAB and the switch track
+  used raw black shadows, which stayed black on a light page. They now read the new
+  `--ntn-shadow-*` tokens: soft grey in light, unchanged in dark.
 - **`ntn-icon-btn`** dims for `aria-disabled="true"` as well as `disabled`, like `ntn-btn`.
 - **Combobox:** `aria-invalid="true"` on the trigger shows the invalid state, as it does on a
   field or select (`data-invalid` on the block still works).
