@@ -46,6 +46,20 @@ import '@homestar9/nocturne-ui/js';     // optional behaviours
 
 Tokens without the reset or the components: `import '@homestar9/nocturne-ui/tokens'`.
 
+**Cascade layers.** The stylesheet is unlayered, so it sits in the cascade like any other CSS:
+specificity and order decide. If your app organises its CSS in `@layer`s, put Nocturne in one
+when you import it. Then any rule of yours in a later layer, or outside layers, wins without
+fighting Nocturne's selectors:
+
+```css
+@layer reset, ntn, app;
+@import url("/node_modules/@homestar9/nocturne-ui/dist/nocturne.css") layer(ntn);
+```
+
+Nocturne doesn't layer itself. Unlayered CSS beats every layer, so an app with an unlayered reset
+(`button { border: 0; background: none }`, Tailwind's preflight, normalize) would silently
+restyle every Nocturne control. Opting in at the import keeps that choice with the app.
+
 Icons are **Font Awesome**, Light weight — Nocturne does not bundle them. Load your kit before
 the stylesheet and write icons as bare `<i>` elements; components size them.
 

@@ -1544,8 +1544,11 @@ i:is([class*=fa-], [data-icon], :empty) {
    traversal (→ opens, ← closes) and flips the panel when the edge is close. */
 .ntn-menu__caret {
   flex: 0 0 auto;
-  font-size: 11px !important;
   color: var(--ntn-text-disabled);
+}
+
+.ntn-menu__item .ntn-menu__caret {
+  font-size: 11px;
 }
 
 .ntn-menu__sub {
@@ -1954,7 +1957,9 @@ i:is([class*=fa-], [data-icon], :empty) {
 }
 .ntn-daterange__caret {
   margin-left: auto;
-  font-size: 12px !important;
+}
+.ntn-daterange__trigger .ntn-daterange__caret {
+  font-size: 12px;
 }
 .ntn-daterange--sm .ntn-daterange__trigger {
   height: var(--ntn-control-sm);

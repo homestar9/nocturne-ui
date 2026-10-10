@@ -81,6 +81,11 @@ renamed or removed class names and tokens.
 - `--ntn-shadow-none` (it was `none`), `--ntn-border-accent` (the same value as `--ntn-accent`) and
   `--ntn-glow-accent` (unread; the halo tokens replaced it) (NTN-13).
 
+### Cascade (NTN-12)
+- Nocturne stays unlayered; the README shows how an app puts it in a cascade layer at import
+  (`@import … layer(ntn)`). The menu and date-range carets drop their `!important` for a
+  two-class selector; `[hidden]` in the reset is the only `!important` left.
+
 ### Tokens tidied (NTN-13)
 - `--ntn-accent-800` fills the gap in the accent ramp, derived from 700 and 900, so every theme
   has it without setting it.

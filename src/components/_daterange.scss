@@ -26,7 +26,9 @@
 
     &[data-empty] { color: var(--ntn-text-disabled); }
   }
-  &__caret { margin-left: auto; font-size: 12px !important; }
+  &__caret { margin-left: auto; }
+  // Two classes, so the caret's size beats the trigger's own icon size (&__trigger i).
+  &__trigger &__caret { font-size: 12px; }
   &--sm &__trigger { height: var(--ntn-control-sm); font-size: var(--ntn-font-size-xs); min-width: 200px; }
   &--block, &--block &__trigger { display: flex; width: 100%; }
 

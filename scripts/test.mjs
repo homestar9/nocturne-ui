@@ -119,6 +119,12 @@ try {
     check(missing.length === 0, `.${block} offers every tone` + (missing.length ? ': missing ' + missing.join(' ') : ''));
   }
 
+  console.log('Cascade');
+  // Specificity and source order settle every conflict; the reset's [hidden] is the one exception.
+  const importantRules = rules.filter((r) => /!important/.test(r.body) && r.sel !== '[hidden]').map((r) => r.sel);
+  check(importantRules.length === 0, 'no !important outside the [hidden] reset' + (importantRules.length ? ': ' + importantRules.join(' | ') : ''));
+  check(!/@layer\b/.test(css), 'the stylesheet is unlayered (apps opt in with @import … layer())');
+
   console.log('Breakpoints');
   const drawerPx = (js.match(/DRAWER_QUERY\s*=\s*'\(max-width:\s*(\d+)px\)'/) || [])[1];
   const drawerCss = css.match(/@media \(width <= (\d+)px\) \{\s*\.ntn-sidebar \{[^}]*position: fixed/);
