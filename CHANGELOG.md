@@ -55,11 +55,10 @@ renamed or removed class names and tokens.
   placeholders read lighter under amber. Inner hairlines (`--ntn-border-subtle`: table rows,
   dividers) are a touch brighter. No token was added or renamed. Other themes are unchanged.
 - **Docs:** a theme may now retint the neutral ramp as well as the accent (README "Accent").
-- **Breaking: `src/` is SCSS.** The source is now Sass partials (`src/nocturne.scss`,
+- **`src/` is SCSS (NTN-2).** The source is Sass partials (`src/nocturne.scss`,
   `src/tokens.scss`, `src/tokens/_*.scss`, `src/components/_*.scss`, plus `src/abstracts/` for
-  mixins, tone maps and breakpoints). Anything that imported `@homestar9/nocturne-ui/src/*.css`
-  must load `dist/` instead. `dist/` keeps the same files and the same CSS, and needs no build
-  step. `npm run build` compiles with Sass, a devDependency.
+  mixins, tone maps and breakpoints). `dist/` keeps the same files and needs no build step;
+  `npm run build` compiles with Sass, a devDependency.
 - **`nocturne-build` requires `--out`.** It renames the compiled `dist/` stylesheets instead of
   reading `src/`, so a prefix build still needs no dependencies. The output is unchanged.
 - **Breakpoints use range syntax** (`width <= 720px` / `width > 720px`), so the phone and
