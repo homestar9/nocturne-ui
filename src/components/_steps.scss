@@ -65,7 +65,7 @@
     .ntn-steps__title { color: var(--ntn-text-primary); }
     .ntn-steps__desc { color: var(--ntn-text-muted); }
   }
-  &__hit:hover &__title { color: var(--ntn-text-primary); }
+  &__hit#{$enabled-hover} &__title { color: var(--ntn-text-primary); }
 
   &--inline {
     gap: var(--ntn-space-5);

@@ -49,6 +49,20 @@
   @media (forced-colors: active) { outline: 2px solid Highlight; }
 }
 
+/// A disabled control: one fade and a not-allowed cursor everywhere.
+@mixin disabled {
+  opacity: var(--ntn-disabled-opacity);
+  cursor: not-allowed;
+}
+
+/// Hover styles that a disabled control skips. :where() adds no specificity, so the rule cascades
+/// exactly like a plain :hover would.
+$enabled-hover: ':hover:where(:not(:disabled, [aria-disabled="true"]))';
+
+@mixin hover {
+  &#{$enabled-hover} { @content; }
+}
+
 /// A control whose value is invalid.
 @mixin invalid {
   border-color: var(--ntn-danger-500);

@@ -93,7 +93,7 @@
         border-radius: var(--ntn-radius-full); background: var(--ntn-accent-400);
       }
     }
-    &:disabled { color: var(--ntn-text-disabled); opacity: 0.4; cursor: not-allowed; }
+    &:disabled { color: var(--ntn-text-disabled); @include disabled; }
 
     &[data-range] { background: var(--ntn-accent-soft); color: var(--ntn-text-primary); }
     &[data-range="start"] { border-top-left-radius: var(--ntn-radius-full); border-bottom-left-radius: var(--ntn-radius-full); }
@@ -103,7 +103,7 @@
       color: var(--ntn-accent-fg); font-weight: var(--ntn-weight-semibold);
 
       &::before { background: var(--ntn-accent); }
-      &:hover::before { background: var(--ntn-accent-hover); }
+      &#{$enabled-hover}::before { background: var(--ntn-accent-hover); }
       &[aria-current="date"]::after { background: var(--ntn-accent-fg); }
     }
   }

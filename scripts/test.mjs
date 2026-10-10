@@ -85,6 +85,19 @@ try {
   const calmRise = css.match(/@media \(prefers-reduced-motion: reduce\) \{\s*@keyframes ntn-rise \{((?:[^{}]*\{[^{}]*\})*)[^{}]*\}/);
   check(calmRise && !/transform/.test(calmRise[1]), 'under reduced motion, entrances (ntn-rise) fade without moving');
 
+  console.log('One disabled treatment');
+  const disabledRules = rules.filter((r) => /:disabled|\[aria-disabled=("?)true\1\]/.test(r.sel) && /(?:^|[;\s])opacity:/.test(r.body));
+  const oddFades = disabledRules.filter((r) => !/(?:^|[;\s])opacity:\s*var\(--ntn-disabled-opacity\)/.test(r.body));
+  check(oddFades.length === 0, `every disabled rule fades by --ntn-disabled-opacity (${disabledRules.length} rules)` + (oddFades.length ? ': ' + oddFades.map((r) => r.sel).join(' | ') : ''));
+  // Blocks with a disabled state must not change on hover while disabled.
+  const disableable = new Set([...css.matchAll(/\.(ntn-[\w-]+?)(?:--[\w-]+)?(?::disabled|\[aria-disabled=("?)true\2\])/g)].map((m) => m[1]));
+  const hoverWhileDisabled = rules.flatMap((r) => r.sel.split(/\s*,\s*/)).filter((sel) => {
+    const compound = sel.split(/\s+|>|~|\+/).find((part) => part.includes(':hover'));
+    const block = compound && (compound.match(/^\.(ntn-[\w-]+?)(?:--[\w-]+)?(?=[.:[]|$)/) || [])[1];
+    return block && disableable.has(block) && !/:hover:(where\(:not\(:disabled|not\(:disabled)/.test(compound);
+  });
+  check(hoverWhileDisabled.length === 0, 'hover styles skip disabled controls' + (hoverWhileDisabled.length ? ': ' + hoverWhileDisabled.join(' | ') : ''));
+
   console.log('Layout follows its tokens');
   const pageRule = css.match(/(?:^|\n)\.ntn-page \{([^}]*)\}/);
   check(pageRule && /max-width:\s*var\(--ntn-page-max\)/.test(pageRule[1]), '.ntn-page is as wide as --ntn-page-max');

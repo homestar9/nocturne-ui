@@ -31,6 +31,7 @@ renamed or removed class names and tokens.
 - **Tokens:** `--ntn-shadow-control`, `-hairline`, `-float` and `-inset`, the small depths of
   filled buttons, glowing buttons, the FAB and the switch track. Mode tokens: the light theme
   softens them.
+- **Token:** `--ntn-disabled-opacity` (0.45), the one fade every disabled control uses.
 
 ### Changed
 - **Container frames are `--ntn-border-default`** in every theme, as in DeployBot: `ntn-card`,
@@ -82,6 +83,12 @@ renamed or removed class names and tokens.
   filters) fades in place, interactive cards and the FAB no longer lift on hover, the sidebar rail
   and phone drawer change without sliding, and the indeterminate progress bar pulses instead of
   sweeping. Spinners still turn.
+- **One disabled treatment (NTN-9).** Disabled controls faded by 0.4, 0.45, 0.5 or 0.55 depending
+  on the block. All now fade by `--ntn-disabled-opacity` (0.45, as `brand.md` always said) with a
+  `not-allowed` cursor. Tabs and pager steps, which greyed their text instead, fade the same way.
+  The FAB and toggle-group buttons gain a disabled style (`aria-disabled` too). Disabled controls
+  no longer react to hover: buttons, icon buttons, the FAB, toggle groups, tabs, pager steps, menu
+  items, combobox triggers and options, date-range edges and clickable steps.
 - **Flush tree depth (NTN-5).** In `ntn-tree--flush`, rows below the second level kept the
   second level's indent, so deep branches flattened. Each row now indents by its own depth,
   through 12 levels. The depth guide in a default tree also follows `--ntn-tree-indent` instead

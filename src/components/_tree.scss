@@ -56,7 +56,7 @@ $-flush-depth: 12;
 
     .ntn-tree__icon { color: var(--ntn-accent-300); }
   }
-  &__item[aria-disabled="true"] > &__row { opacity: 0.45; pointer-events: none; }
+  &__item[aria-disabled="true"] > &__row { opacity: var(--ntn-disabled-opacity); pointer-events: none; }
 
   &__grip {
     /* Grip stays in the layout at all times — revealing it must not shift the row. */

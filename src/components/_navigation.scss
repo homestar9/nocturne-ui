@@ -118,11 +118,10 @@
     @include transition(color, border-color);
 
     i { font-size: 14px; }
-    &:hover { color: var(--ntn-text-secondary); }
+    @include hover { color: var(--ntn-text-secondary); }
     &:focus-visible { border-radius: var(--ntn-radius-xs); @include focus-ring; }
     &[aria-selected="true"] { color: var(--ntn-text-primary); border-bottom-color: var(--ntn-accent-500); }
-    &:disabled, &[aria-disabled="true"] { color: var(--ntn-text-disabled); cursor: not-allowed; }
-    &:disabled:hover { color: var(--ntn-text-disabled); }
+    &:disabled, &[aria-disabled="true"] { @include disabled; }
   }
 
   &[data-ntn-ink] {
@@ -213,8 +212,8 @@
     color: var(--ntn-text-secondary); font-family: var(--ntn-font-sans); font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-medium); cursor: pointer;
 
     i { font-size: 13px; }
-    &:hover { background: var(--ntn-surface-hover); border-color: var(--ntn-border-default); }
-    &:disabled { color: var(--ntn-text-disabled); cursor: not-allowed; background: transparent; }
+    @include hover { background: var(--ntn-surface-hover); border-color: var(--ntn-border-default); }
+    &:disabled, &[aria-disabled="true"] { @include disabled; }
   }
   &__pages { display: flex; align-items: center; gap: 2px; }
   &__page {

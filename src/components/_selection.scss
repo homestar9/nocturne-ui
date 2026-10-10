@@ -7,7 +7,7 @@
 .ntn-check:has(.ntn-check__desc), .ntn-radio:has(.ntn-radio__desc), .ntn-switch:has(.ntn-switch__desc) { align-items: flex-start; }
 .ntn-check:has(.ntn-check__desc) input, .ntn-radio:has(.ntn-radio__desc) input { margin-top: 1px; }
 .ntn-switch:has(.ntn-switch__desc) input { margin-top: 0; }
-.ntn-check:has(input:disabled), .ntn-radio:has(input:disabled), .ntn-switch:has(input:disabled) { opacity: 0.5; cursor: not-allowed; }
+.ntn-check:has(input:disabled), .ntn-radio:has(input:disabled), .ntn-switch:has(input:disabled) { @include disabled; }
 
 /* The tick and dash art are tokens (--ntn-check-mark / --ntn-check-dash, tokens/_colors.scss), so a
    theme with a dark --ntn-accent-fg swaps them at :root. */
@@ -89,7 +89,7 @@ $-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBo
   }
   &__star:has(input:focus-visible), &__clear:has(input:focus-visible) { @include focus-ring; }
   &:has(input:disabled) {
-    opacity: 0.5;
+    opacity: var(--ntn-disabled-opacity);
 
     .ntn-rating__star, .ntn-rating__clear { cursor: not-allowed; }
   }

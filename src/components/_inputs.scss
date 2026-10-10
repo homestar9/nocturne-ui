@@ -56,7 +56,7 @@
     .ntn-field__control { @include invalid; }
     .ntn-field__hint { color: var(--ntn-danger-400); }
   }
-  &:has(input:disabled, textarea:disabled) .ntn-field__control { background: var(--ntn-surface-1); opacity: 0.55; }
+  &:has(input:disabled, textarea:disabled) .ntn-field__control { background: var(--ntn-surface-1); @include disabled; }
 }
 
 .ntn-select {
@@ -79,7 +79,7 @@
       @include transition(border-color, box-shadow);
 
       &:focus-visible { outline: 0; @include focus-accent; }
-      &:disabled { opacity: 0.5; cursor: not-allowed; }
+      &:disabled { @include disabled; }
     }
     option { background: var(--ntn-surface-2); color: var(--ntn-text-primary); }
   }
@@ -132,7 +132,7 @@
       width: 14px; height: 14px; border-radius: var(--ntn-radius-full); background: var(--ntn-accent-fg); border: 3px solid var(--ntn-accent-500);
       box-shadow: 0 0 0 4px var(--ntn-accent-softer), var(--ntn-shadow-xs);
     }
-    &:disabled { opacity: 0.5; cursor: not-allowed; }
+    &:disabled { @include disabled; }
   }
 }
 

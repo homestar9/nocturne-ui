@@ -16,9 +16,9 @@ $-inner-radius: calc(var(--ntn-radius-md) - 1px);
   transition: tr(background), tr(color), tr(border-color), tr(transform, instant);
 
   i { font-size: 16px; line-height: 1; }
-  &:hover { background: var(--ntn-surface-3); border-color: var(--ntn-border-strong); color: var(--ntn-text-primary); }
+  @include hover { background: var(--ntn-surface-3); border-color: var(--ntn-border-strong); color: var(--ntn-text-primary); }
   &:active { transform: translateY(0.5px); }
-  &:disabled, &[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; transform: none; }
+  &:disabled, &[aria-disabled="true"] { @include disabled; transform: none; }
 }
 
 /* Two independent axes, both named for MEANING. Combine one of each:
@@ -63,14 +63,14 @@ $-inner-radius: calc(var(--ntn-radius-md) - 1px);
     /* Default emphasis + a tone: outlined in that tone. */
     color: var(--ntn-btn-ink); border-color: var(--ntn-btn-line);
 
-    &:hover { color: var(--ntn-btn-ink-hover); border-color: var(--ntn-btn-line-strong); }
+    @include hover { color: var(--ntn-btn-ink-hover); border-color: var(--ntn-btn-line-strong); }
   }
 
   &--primary {
     /* Primary is lit from the top. Pressed drops to a flat fill, losing the highlight. */
     background: var(--ntn-btn-fill); color: var(--ntn-btn-on-solid); border-color: var(--ntn-btn-edge); box-shadow: var(--ntn-btn-shadow), var(--ntn-highlight-top);
 
-    &:hover { background: var(--ntn-btn-fill-hover); border-color: var(--ntn-btn-edge-hover); color: var(--ntn-btn-on-solid); }
+    @include hover { background: var(--ntn-btn-fill-hover); border-color: var(--ntn-btn-edge-hover); color: var(--ntn-btn-on-solid); }
     &:active { background: var(--ntn-btn-solid-active); }
 
     &.ntn-btn--glow {
@@ -84,18 +84,18 @@ $-inner-radius: calc(var(--ntn-radius-md) - 1px);
   &--secondary {
     background: var(--ntn-btn-soft); border-color: var(--ntn-btn-line); color: var(--ntn-btn-ink); box-shadow: none;
 
-    &:hover { background: var(--ntn-btn-soft-hover); border-color: var(--ntn-btn-line-strong); color: var(--ntn-btn-ink-hover); }
+    @include hover { background: var(--ntn-btn-soft-hover); border-color: var(--ntn-btn-line-strong); color: var(--ntn-btn-ink-hover); }
   }
 
   &--subtle {
     background: transparent; border-color: transparent; color: var(--ntn-text-secondary); box-shadow: none;
 
-    &:hover { background: var(--ntn-surface-hover); border-color: transparent; }
+    @include hover { background: var(--ntn-surface-hover); border-color: transparent; }
     &:active { background: var(--ntn-surface-active); }
     &:is(#{$-tones}) {
       color: var(--ntn-btn-ink);
 
-      &:hover { background: var(--ntn-btn-soft); color: var(--ntn-btn-ink-hover); }
+      @include hover { background: var(--ntn-btn-soft); color: var(--ntn-btn-ink-hover); }
     }
   }
 
@@ -123,19 +123,19 @@ $-inner-radius: calc(var(--ntn-radius-md) - 1px);
   @include transition(background, color, border-color);
 
   i { font-size: 16px; }
-  &:hover { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); }
+  @include hover { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); }
   &[aria-pressed="true"], &[data-active] { background: var(--ntn-surface-active); color: var(--ntn-text-primary); }
-  &:disabled, &[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; }
+  &:disabled, &[aria-disabled="true"] { @include disabled; }
   &--secondary {
     background: var(--ntn-surface-2); border-color: var(--ntn-border-default); color: var(--ntn-text-secondary);
 
-    &:hover { background: var(--ntn-surface-3); border-color: var(--ntn-border-strong); }
+    @include hover { background: var(--ntn-surface-3); border-color: var(--ntn-border-strong); }
   }
   &--primary {
     background: var(--ntn-accent-fill); border-color: color-mix(in oklab, var(--ntn-accent-500) 70%, white); color: var(--ntn-accent-fg);
     box-shadow: var(--ntn-shadow-xs), var(--ntn-highlight-top);
 
-    &:hover { background: var(--ntn-accent-fill-hover); color: var(--ntn-accent-fg); }
+    @include hover { background: var(--ntn-accent-fill-hover); color: var(--ntn-accent-fg); }
     &:active { background: var(--ntn-accent-active); }
   }
   &--sm {
@@ -160,11 +160,12 @@ $-inner-radius: calc(var(--ntn-radius-md) - 1px);
   transition: tr(background), tr(transform, fast, out);
 
   i { font-size: 18px; }
-  &:hover {
+  @include hover {
     background: var(--ntn-accent-fill-hover); transform: translateY(-1px);
 
     @include reduced-motion { transform: none; }
   }
+  &:disabled, &[aria-disabled="true"] { @include disabled; transform: none; }
   &--extended { padding: 0 20px 0 16px; }
 }
 
@@ -194,13 +195,13 @@ $-inner-radius: calc(var(--ntn-radius-md) - 1px);
     i { font-size: 14px; }
     &:first-child { border-left: 0; border-radius: $-inner-radius 0 0 $-inner-radius; }
     &:last-child { border-radius: 0 $-inner-radius $-inner-radius 0; }
-    &:hover { background: var(--ntn-surface-hover); color: var(--ntn-text-secondary); }
+    @include hover { background: var(--ntn-surface-hover); color: var(--ntn-text-secondary); }
     &[aria-pressed="true"] {
       background: var(--ntn-surface-3); color: var(--ntn-text-primary);
 
       i { color: var(--ntn-accent-300); }
     }
-    &:disabled { opacity: 0.45; cursor: not-allowed; }
+    &:disabled, &[aria-disabled="true"] { @include disabled; }
     .ntn-badge { margin-left: 2px; }
   }
   &--sm &__btn { height: calc(var(--ntn-control-sm) - 2px); padding: 0 10px; font-size: var(--ntn-text-xs); }
