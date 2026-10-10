@@ -50,9 +50,10 @@ IDs, page numbers. Use `.ntn-num` on a numeric cell or span. Display sizes are s
 ## Shape and border
 
 Radii climb with the size of the thing: 4px checkbox, 6px chip, 8px control, 10px menu, 14px
-card, 18px dialog, full for pills and avatars. Borders are always 1px: `--ntn-border-subtle`
-separates structure, `--ntn-border-default` outlines interactive surfaces, `--ntn-border-strong` marks
-hover. There is no coloured-left-border pattern anywhere in this system.
+card, 18px dialog, full for pills and avatars. Borders are always 1px: `--ntn-border-default`
+frames containers (cards, stats, accordions, modals) and outlines interactive surfaces,
+`--ntn-border-subtle` draws the rules inside them (table rows, card feet, dividers),
+`--ntn-border-strong` marks hover. Depth never comes from an inset ring. There is no coloured-left-border pattern anywhere in this system.
 
 ## Motion
 

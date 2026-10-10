@@ -9,8 +9,8 @@
 @property --ntn-spin { syntax: "<angle>"; initial-value: 0deg; inherits: true; }
 @keyframes ntn-border-spin { to { --ntn-spin: 360deg; } }
 
-.ntn-edge { position: relative; border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-xl); }
-.ntn-edge--strong { border-color: var(--ntn-border-default); }
+.ntn-edge { position: relative; border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-xl); }
+.ntn-edge--strong { border-color: var(--ntn-border-strong); }
 
 /* Glow — the one element on the page you want read first. Accent hairline, a
    halo, and a faint colour bleed from the top edge. */

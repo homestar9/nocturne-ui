@@ -22,14 +22,19 @@ renamed or removed class names and tokens.
   droplet button in the top bar that turns glass and the ambient band on for the whole page.
 
 ### Changed
+- **Container frames are `--ntn-border-default`** in every theme, as in DeployBot: `ntn-card`,
+  `ntn-stat`, `ntn-accordion` and `ntn-edge` (modals already were). The rules inside them (table
+  rows, card feet, divided heads, accordion items) stay on `--ntn-border-subtle`, so the frame
+  reads first. `ntn-edge--strong` moves up to `--ntn-border-strong` to stay a step above.
+- **No inset ring in dark shadows.** `--ntn-shadow-sm`, `-md` and `-lg` drop the faint 2–3% white
+  inner ring; depth is the border and the drop alone.
 - **Brand:** cards are opaque except under `ntn-glass` (`skill/brand.md`).
 - **`themes/amber.css` uses DeployBot's greys.** Dark mode drops the blue tint for near-neutral
   graphite. Light mode gets a warm paper canvas and off-white cards with slate text, and the
   accent text stops become a burnt amber (`--ntn-accent-300` is `#9B4900`). The faint step
   (`--ntn-n-600`, also `--ntn-text-disabled`) is softer than Nocturne's, so labels and
-  placeholders read lighter under amber. Hairlines (`--ntn-border-subtle`: card outlines, table
-  rows, dividers) are a touch brighter, and cards get DeployBot's lit top edge through
-  `--ntn-shadow-md`. No token was added or renamed. Other themes are unchanged.
+  placeholders read lighter under amber. Inner hairlines (`--ntn-border-subtle`: table rows,
+  dividers) are a touch brighter. No token was added or renamed. Other themes are unchanged.
 - **Docs:** a theme may now retint the neutral ramp as well as the accent (README "Accent").
 
 ### Fixed

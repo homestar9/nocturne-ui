@@ -501,7 +501,7 @@ the effect. Set your own `border-radius` and the effect follows it.
 
 | Class | Effect |
 | --- | --- |
-| `ntn-edge` | Default hairline, `--ntn-radius-xl`. `--strong` for `--ntn-border-default` |
+| `ntn-edge` | Default hairline (`--ntn-border-default`, as on cards), `--ntn-radius-xl`. `--strong` for `--ntn-border-strong` |
 | `ntn-edge--glow` | Accent hairline, halo, and a colour bleed from the top edge. The one element on the page you want read first |
 | `ntn-edge--processing` | A light travels the edge and an exterior glow orbits with it. Pair with a `ntn-spinner` or an indeterminate `ntn-progress`; remove the class when the job lands |
 

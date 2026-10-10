@@ -3,11 +3,15 @@
 /* A card does NOT clip its content, so a combobox panel, tooltip or date picker opened inside
    it can spill out. Children that paint a background at the card's edge round their own corners
    (__foot below). A --flush card is the exception: it holds edge-to-edge tables and media, so it
-   clips; menus and popovers inside one render in the top layer and are not affected. */
+   clips; menus and popovers inside one render in the top layer and are not affected.
+
+   Containers (card, stat, accordion, modal) frame themselves in --ntn-border-default; the rules
+   inside them (foot, divided head, accordion items) stay on --ntn-border-subtle, so the frame
+   reads first. */
 .ntn-card {
   position: relative;
   display: flex; flex-direction: column;
-  background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-xl);
+  background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-xl);
   box-shadow: var(--ntn-shadow-md); backdrop-filter: var(--ntn-surface-filter);
   transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), transform var(--ntn-dur-fast) var(--ntn-ease-out);
 }
@@ -30,7 +34,7 @@
 /* Border effects (--glow, --processing) live in effects.css as the ntn-edge block;
    the ntn-card-- aliases are defined there too. */
 
-.ntn-stat { display: flex; flex-direction: column; gap: 6px; padding: var(--ntn-space-4) 18px; background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-lg); }
+.ntn-stat { display: flex; flex-direction: column; gap: 6px; padding: var(--ntn-space-4) 18px; background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg); }
 .ntn-stat__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .ntn-stat__label { font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
 .ntn-stat__figure { display: flex; align-items: baseline; gap: var(--ntn-space-2); flex-wrap: wrap; }
@@ -67,7 +71,7 @@
 .ntn-modal--lg { max-width: 720px; }
 
 /* Accordion — native <details>. */
-.ntn-accordion { display: flex; flex-direction: column; background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-lg); overflow: hidden; }
+.ntn-accordion { display: flex; flex-direction: column; background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg); overflow: hidden; }
 .ntn-accordion__item { border-top: 1px solid var(--ntn-border-subtle); }
 .ntn-accordion__item:first-child { border-top: 0; }
 .ntn-accordion__item[open] > summary { background: var(--ntn-alpha-ink-04); }
