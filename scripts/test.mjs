@@ -47,6 +47,13 @@ try {
   const undeclared = [...read].filter((n) => !declared.has(n) && !setFromJs.has(n));
   check(undeclared.length === 0, `every var() the CSS reads is declared (${read.size} names)` + (undeclared.length ? ': ' + undeclared.join(' ') : ''));
 
+  // A token nothing reads must be a step of a public scale apps build with; anything else is dead.
+  const themesText = (await Promise.all((await readdir(resolve(root, 'themes'))).map((f) => readFile(resolve(root, 'themes', f), 'utf8')))).join('\n');
+  const readsToken = (n) => new RegExp(`var\\(\\s*${n}(?![\\w-])`).test(css + js + themesText);
+  const PUBLIC_SCALE = /^--ntn-(n|accent|magenta|cyan|space|font-size|leading|weight|tracking|z|ease|dur|shadow|chart|text|surface)-/;
+  const dead = [...declared].filter((n) => !readsToken(n) && !setFromJs.has(n) && !PUBLIC_SCALE.test(n));
+  check(dead.length === 0, 'every token is read, or is a step of a public scale' + (dead.length ? ': ' + dead.join(' ') : ''));
+
   // One meaning per family: --ntn-text-* are colours and --ntn-control-* are heights.
   const decls = [...css.matchAll(/(--ntn-(?:text|control)-[a-z0-9-]+)\s*:\s*([^;]+);/g)];
   const mixed = decls.filter(([, n, v]) => (n.startsWith('--ntn-text-') ? /^\d/.test(v.trim()) : !/^\d+px$/.test(v.trim()))).map(([, n]) => n);

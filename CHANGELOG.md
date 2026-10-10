@@ -78,6 +78,16 @@ renamed or removed class names and tokens.
 
 ### Removed
 - `--ntn-btn-solid` and `--ntn-btn-solid-hover`. No rule read them.
+- `--ntn-shadow-none` (it was `none`), `--ntn-border-accent` (the same value as `--ntn-accent`) and
+  `--ntn-glow-accent` (unread; the halo tokens replaced it) (NTN-13).
+
+### Tokens tidied (NTN-13)
+- `--ntn-accent-800` fills the gap in the accent ramp, derived from 700 and 900, so every theme
+  has it without setting it.
+- The dark `--ntn-bg-blur`, `--ntn-scrim` and `--ntn-border-subtle` derive from the neutral ramp
+  instead of hard-coded colours (same values), so a theme that retints the greys carries them.
+- Spacing written in pixels that sit on the space scale reads the `--ntn-space-*` tokens (same
+  values); off-scale geometry stays literal.
 
 ### Fixed
 - **Keyboard focus ring (NTN-3).** Buttons, the primary icon button, the FAB, the switch, the date

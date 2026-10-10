@@ -18,7 +18,7 @@
    only thing a client theme needs to override. A theme may also retint the
    neutral ramp, as themes/amber.css does.
 
-   Dark is the default. The light theme lives in theme-light.css and remaps
+   Dark is the default. The light theme lives in _theme-light.scss and remaps
    these same names — components never branch on theme.
 
    Three blocks, so data-theme works on a subtree as well as on <html>:
@@ -115,6 +115,8 @@
   --ntn-accent-fill-hover: linear-gradient(180deg, color-mix(in oklab, var(--ntn-accent-500) 88%, white),
                                                     color-mix(in oklab, var(--ntn-accent-500) 75%, var(--ntn-accent-600)));
   --ntn-accent-halo: color-mix(in srgb, var(--ntn-accent-500) 55%, transparent);
+  /* The ramp's 800 stop sits between its neighbours, so a theme that sets 700 and 900 gets it. */
+  --ntn-accent-800: color-mix(in oklab, var(--ntn-accent-700), var(--ntn-accent-900));
   /* ── Semantic aliases: use these in components ─────────────────────────── */
   --ntn-bg-app: var(--ntn-n-50);
   --ntn-bg-sunken: var(--ntn-n-0);
@@ -124,15 +126,15 @@
   --ntn-surface-hover: var(--ntn-alpha-ink-04);
   --ntn-surface-active: var(--ntn-alpha-ink-06);
   --ntn-surface-inset: rgba(0,0,0,0.25);
-  /* Translucent bar behind the sticky top bar's blur */
-  --ntn-bg-blur: rgba(10,12,16,0.72);
-  /* Glass surfaces (glass.css): a translucent card colour and a hairline drawn in the ink */
+  /* Translucent bar behind the sticky top bar's blur: the canvas at 72% */
+  --ntn-bg-blur: color-mix(in srgb, var(--ntn-n-50) 72%, transparent);
+  /* Glass surfaces (_glass.scss): a translucent card colour and a hairline drawn in the ink */
   --ntn-glass-bg: color-mix(in srgb, var(--ntn-n-100) 72%, transparent);
   --ntn-glass-border: color-mix(in srgb, var(--ntn-n-900) 8%, transparent);
-  --ntn-border-subtle: #171C24;
+  /* Inner hairlines sit halfway between the raised surfaces */
+  --ntn-border-subtle: color-mix(in srgb, var(--ntn-n-200), var(--ntn-n-300));
   --ntn-border-default: var(--ntn-n-400);
   --ntn-border-strong: var(--ntn-n-500);
-  --ntn-border-accent: var(--ntn-accent-600);
   --ntn-text-primary: var(--ntn-n-900);
   --ntn-text-secondary: var(--ntn-n-800);
   --ntn-text-muted: var(--ntn-n-700);
@@ -145,7 +147,8 @@
   /* Off-state knob of a switch */
   --ntn-switch-knob: var(--ntn-n-700);
   --ntn-focus-ring: color-mix(in srgb, var(--ntn-accent-500) 55%, transparent);
-  --ntn-scrim: rgba(5,6,9,0.72);
+  /* Behind modals and the phone drawer: the deepest neutral at 72% */
+  --ntn-scrim: color-mix(in srgb, var(--ntn-n-0) 72%, transparent);
   --ntn-chart-1: var(--ntn-accent-500);
   --ntn-chart-2: var(--ntn-magenta-500);
   --ntn-chart-3: var(--ntn-cyan-500);
@@ -209,12 +212,11 @@
   --ntn-page-max: 1440px;
 }
 
-/* Shadows are mode primitives (theme-light.css softens them), the accent glow and focus ring are
-   aliases re-resolved on every [data-theme] element, and the blurs are constants. Same three-block
-   split as colors.css, so a data-theme subtree gets its own depth. */
+/* Shadows are mode primitives (_theme-light.scss softens them), the focus ring and the lit top edge
+   are aliases re-resolved on every [data-theme] element, and the blurs are constants. Same three-block
+   split as _colors.scss, so a data-theme subtree gets its own depth. */
 :root, [data-theme=dark] {
   /* Dark UI depth comes from a hairline + a soft drop, never from heavy blur */
-  --ntn-shadow-none: none;
   --ntn-shadow-xs: 0 1px 2px rgba(0,0,0,0.35);
   --ntn-shadow-sm: 0 1px 2px rgba(0,0,0,0.40);
   --ntn-shadow-md: 0 8px 24px -12px rgba(0,0,0,0.70);
@@ -226,18 +228,17 @@
   --ntn-shadow-hairline: 0 0 0 1px rgba(0,0,0,0.2);
   --ntn-shadow-float: 0 2px 6px rgba(0,0,0,0.5);
   --ntn-shadow-inset: inset 0 1px 2px rgba(0,0,0,0.4);
-  /* Glass (glass.css): a lit top edge and a wide soft drop; the strength of an app's
+  /* Glass (_glass.scss): a lit top edge and a wide soft drop; the strength of an app's
      ambient image */
   --ntn-glass-highlight: inset 0px 10px 10px -10px rgba(255,255,255,0.3);
   --ntn-glass-shadow: 0 24px 60px -24px rgba(0,0,0,0.70);
   --ntn-ambient-opacity: 0.5;
-  /* Shine edge (effects.css): the bright head of each light, and its halo's strength */
+  /* Shine edge (_effects.scss): the bright head of each light, and its halo's strength */
   --ntn-shine-head: #FFFFFF;
   --ntn-shine-glow: 0.3;
 }
 
 :root, [data-theme] {
-  --ntn-glow-accent: 0 0 0 1px var(--ntn-accent-600), 0 6px 22px -8px var(--ntn-accent-glow);
   /* Keyboard focus. The outline is the default ring: it never competes with a control's own
      box-shadow and survives forced-colours mode. Field-style controls pair the box-shadow ring
      with an accent border instead. */
@@ -256,14 +257,14 @@
      block or stacking context, so the default costs nothing. */
   --ntn-surface-filter: none;
   --ntn-pop-filter: none;
-  /* ntn-glass and ntn-ambient (glass.css). An app points these at its own artwork with a
+  /* ntn-glass and ntn-ambient (_glass.scss). An app points these at its own artwork with a
      root-relative url(...) or a gradient: --ntn-background-image at full strength, or
      --ntn-ambient-image as a dimmed band that fades out. */
   --ntn-glass-blur: blur(20px) saturate(140%);
   --ntn-background-image: none;
   --ntn-ambient-image: none;
   --ntn-ambient-height: 760px;
-  /* ntn-edge--shine (effects.css): one lap per --ntn-shine-speed; --ntn-shine-length is the
+  /* ntn-edge--shine (_effects.scss): one lap per --ntn-shine-speed; --ntn-shine-length is the
      light's trail, of which only the ring shows */
   --ntn-shine-speed: 20s;
   --ntn-shine-thickness: 1px;
@@ -523,7 +524,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   color: var(--ntn-text-primary);
 }
 .ntn-page__sub {
-  margin: 4px 0 0;
+  margin: var(--ntn-space-1) 0 0;
   font-size: var(--ntn-font-size-sm);
   color: var(--ntn-text-muted);
 }
@@ -937,7 +938,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   transform: none;
 }
 .ntn-fab--extended {
-  padding: 0 20px 0 16px;
+  padding: 0 var(--ntn-space-5) 0 var(--ntn-space-4);
 }
 
 /* Standalone icon. Inside a block, size icons from the block instead. */
@@ -989,7 +990,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   align-items: center;
   gap: 6px;
   height: calc(var(--ntn-control-md) - 2px);
-  padding: 0 12px;
+  padding: 0 var(--ntn-space-3);
   border-left: 1px solid var(--ntn-border-subtle);
   color: var(--ntn-text-muted);
   transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard);
@@ -1130,14 +1131,14 @@ i:is([class*=fa-], [data-icon], :empty) {
 }
 .ntn-field--sm .ntn-field__control {
   height: var(--ntn-control-sm);
-  padding: 0 8px;
+  padding: 0 var(--ntn-space-2);
 }
 .ntn-field--sm .ntn-field__control input {
   font-size: var(--ntn-font-size-xs);
 }
 .ntn-field--lg .ntn-field__control {
   height: var(--ntn-control-lg);
-  padding: 0 12px;
+  padding: 0 var(--ntn-space-3);
 }
 .ntn-field--lg .ntn-field__control input {
   font-size: var(--ntn-font-size-md);
@@ -1197,7 +1198,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   -webkit-appearance: none;
   width: 100%;
   height: var(--ntn-control-md);
-  padding: 0 32px 0 12px;
+  padding: 0 var(--ntn-space-8) 0 var(--ntn-space-3);
   color: var(--ntn-text-primary);
   background: var(--ntn-surface-2);
   border: 1px solid var(--ntn-border-default);
@@ -1351,7 +1352,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   gap: 9px;
   width: 100%;
   height: var(--ntn-control-md);
-  padding: 0 12px;
+  padding: 0 var(--ntn-space-3);
   background: var(--ntn-surface-2);
   border: 1px solid var(--ntn-border-subtle);
   border-radius: var(--ntn-radius-md);
@@ -1459,7 +1460,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 
 .ntn-menu {
   min-width: 180px;
-  padding: 4px;
+  padding: var(--ntn-space-1);
   background: var(--ntn-surface-2);
   border: 1px solid var(--ntn-border-default);
   border-radius: var(--ntn-radius-lg);
@@ -1531,7 +1532,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   color: var(--ntn-text-disabled);
 }
 .ntn-menu .ntn-divider {
-  margin: 4px 0;
+  margin: var(--ntn-space-1) 0;
 }
 
 /* ── Nested menus ────────────────────────────────────────────────────────────
@@ -1555,7 +1556,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   z-index: var(--ntn-z-dropdown);
   top: -5px;
   left: 100%;
-  margin-left: 4px;
+  margin-left: var(--ntn-space-1);
   display: none;
   min-width: 172px;
 }
@@ -1574,7 +1575,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   left: auto;
   right: 100%;
   margin-left: 0;
-  margin-right: 4px;
+  margin-right: var(--ntn-space-1);
 }
 
 /* ── Combobox — the select replacement ───────────────────────────────────────
@@ -1714,7 +1715,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   width: 100%;
   min-width: 200px;
   max-width: min(360px, 90vw);
-  padding: 4px;
+  padding: var(--ntn-space-1);
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -1729,7 +1730,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   align-items: center;
   gap: 7px;
   margin: 2px 2px 4px;
-  padding: 0 8px;
+  padding: 0 var(--ntn-space-2);
   height: var(--ntn-control-sm);
   background: var(--ntn-surface-1);
   border: 1px solid var(--ntn-border-default);
@@ -2192,7 +2193,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 }
 .ntn-daterange__time input {
   height: var(--ntn-control-sm);
-  padding: 0 8px;
+  padding: 0 var(--ntn-space-2);
   background: var(--ntn-surface-1);
   border: 1px solid var(--ntn-border-default);
   border-radius: var(--ntn-radius-sm);
@@ -2527,7 +2528,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   align-items: center;
   gap: 6px;
   height: calc(var(--ntn-control-md) - 2px);
-  padding: 0 12px;
+  padding: 0 var(--ntn-space-3);
   border-left: 1px solid var(--ntn-border-subtle);
   color: var(--ntn-text-muted);
   transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard);
@@ -2577,7 +2578,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 }
 
 .ntn-switch {
-  gap: 12px;
+  gap: var(--ntn-space-3);
 }
 .ntn-switch input {
   appearance: none;
@@ -2785,7 +2786,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   border-radius: 0;
   border-left: 0;
   border-right: 0;
-  padding: 12px var(--ntn-space-4);
+  padding: var(--ntn-space-3) var(--ntn-space-4);
 }
 
 /* Tooltip — CSS only. Wrap the trigger, add the bubble as a sibling.
@@ -3695,7 +3696,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-table th i {
   font-size: 12px;
   color: var(--ntn-text-disabled);
-  margin-left: 4px;
+  margin-left: var(--ntn-space-1);
 }
 .ntn-table th[aria-sort] {
   cursor: pointer;
@@ -3843,7 +3844,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-filter-tag {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--ntn-space-1);
   height: 24px;
   padding: 0 4px 0 10px;
   border: 1px solid var(--ntn-accent-line);
@@ -3921,7 +3922,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--ntn-space-1);
   min-height: 30px;
   padding: 0 8px 0 2px;
   border: 1px solid transparent;
@@ -4106,7 +4107,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   border-radius: 0;
   border-left: 0;
   border-right: 0;
-  padding-left: 8px;
+  padding-left: var(--ntn-space-2);
 }
 .ntn-tree--flush .ntn-tree__group {
   padding-left: 0;
@@ -4205,7 +4206,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--ntn-space-1);
   flex: 0 0 auto;
   width: var(--ntn-sidebar-w);
   height: 100vh;
@@ -4330,7 +4331,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   display: flex;
   flex-direction: column;
   gap: 1px;
-  margin-left: 20px;
+  margin-left: var(--ntn-space-5);
   border-left: 1px solid var(--ntn-border-subtle);
 }
 .ntn-sidebar__sub .ntn-sidebar__item {
@@ -4422,7 +4423,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--ntn-space-1);
   max-width: 100%;
   border-bottom: 1px solid var(--ntn-border-default);
   overflow-x: auto;
@@ -4541,7 +4542,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 }
 :is(.ntn-tabs--vertical, .ntn-tabs[aria-orientation=vertical]) .ntn-tabs__tab {
   margin: 0 -1px 0 0;
-  padding: 8px 12px;
+  padding: var(--ntn-space-2) var(--ntn-space-3);
   border-bottom: 0;
   border-right: 2px solid transparent;
   justify-content: flex-start;

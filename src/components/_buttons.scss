@@ -164,7 +164,7 @@ $-emphases: modifiers(".ntn-btn", (primary, secondary, subtle));
     @include reduced-motion { transform: none; }
   }
   &:disabled, &[aria-disabled="true"] { @include disabled; transform: none; }
-  &--extended { padding: 0 20px 0 16px; }
+  &--extended { padding: 0 var(--ntn-space-5) 0 var(--ntn-space-4); }
 }
 
 /* Standalone icon. Inside a block, size icons from the block instead. */

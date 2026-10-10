@@ -23,7 +23,7 @@
 @mixin segment($first: ":first-child", $last: ":last-child") {
   $inner-radius: calc(var(--ntn-radius-md) - 1px);
   align-items: center; gap: 6px;
-  height: calc(var(--ntn-control-md) - 2px); padding: 0 12px;
+  height: calc(var(--ntn-control-md) - 2px); padding: 0 var(--ntn-space-3);
   border-left: 1px solid var(--ntn-border-subtle); color: var(--ntn-text-muted);
   @include transition(background, color);
 

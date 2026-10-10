@@ -126,7 +126,7 @@
 
     > span { font-size: var(--ntn-font-size-xs); color: var(--ntn-text-muted); }
     input {
-      height: var(--ntn-control-sm); padding: 0 8px;
+      height: var(--ntn-control-sm); padding: 0 var(--ntn-space-2);
       background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-sm);
       color: var(--ntn-text-primary); font-family: var(--ntn-font-mono); font-size: var(--ntn-font-size-xs);
       color-scheme: inherit;

@@ -15,7 +15,7 @@
     border-bottom: 1px solid var(--ntn-border-default);
     font-size: var(--ntn-font-size-xs); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-muted);
 
-    i { font-size: 12px; color: var(--ntn-text-disabled); margin-left: 4px; }
+    i { font-size: 12px; color: var(--ntn-text-disabled); margin-left: var(--ntn-space-1); }
     &[aria-sort] { cursor: pointer; color: var(--ntn-text-secondary); }
     &[aria-sort="ascending"] i, &[aria-sort="descending"] i { color: var(--ntn-accent-300); }
   }
@@ -80,7 +80,7 @@
   &__applied { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; width: 100%; }
 }
 .ntn-filter-tag {
-  display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 4px 0 10px;
+  display: inline-flex; align-items: center; gap: var(--ntn-space-1); height: 24px; padding: 0 4px 0 10px;
   border: 1px solid var(--ntn-accent-line); border-radius: var(--ntn-radius-full);
   background: var(--ntn-accent-soft); color: var(--ntn-accent-200); font-size: var(--ntn-font-size-xs);
 

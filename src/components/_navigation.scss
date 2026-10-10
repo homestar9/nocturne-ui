@@ -15,7 +15,7 @@
 }
 
 .ntn-sidebar {
-  display: flex; flex-direction: column; gap: 4px; flex: 0 0 auto;
+  display: flex; flex-direction: column; gap: var(--ntn-space-1); flex: 0 0 auto;
   width: var(--ntn-sidebar-w); height: 100vh; position: sticky; top: 0; padding: var(--ntn-space-3);
   background: var(--ntn-bg-sunken); border-right: 1px solid var(--ntn-border-subtle);
   transition: tr(width, base, out); overflow: hidden; backdrop-filter: var(--ntn-surface-filter);
@@ -48,7 +48,7 @@
     }
   }
   &__sub {
-    display: flex; flex-direction: column; gap: 1px; margin-left: 20px; border-left: 1px solid var(--ntn-border-subtle);
+    display: flex; flex-direction: column; gap: 1px; margin-left: var(--ntn-space-5); border-left: 1px solid var(--ntn-border-subtle);
 
     .ntn-sidebar__item { padding: 7px 10px 7px 20px; }
   }
@@ -104,7 +104,7 @@
    per-tab underline (the no-script fallback) steps aside. */
 
 .ntn-tabs {
-  position: relative; display: flex; align-items: center; gap: 4px; max-width: 100%;
+  position: relative; display: flex; align-items: center; gap: var(--ntn-space-1); max-width: 100%;
   border-bottom: 1px solid var(--ntn-border-default);
   overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none;
   scroll-behavior: smooth;
@@ -165,7 +165,7 @@
   flex-direction: column; align-items: stretch; gap: 2px; border-bottom: 0; border-right: 1px solid var(--ntn-border-default); overflow: visible;
 
   .ntn-tabs__tab {
-    margin: 0 -1px 0 0; padding: 8px 12px; border-bottom: 0; border-right: 2px solid transparent; justify-content: flex-start; text-align: left;
+    margin: 0 -1px 0 0; padding: var(--ntn-space-2) var(--ntn-space-3); border-bottom: 0; border-right: 2px solid transparent; justify-content: flex-start; text-align: left;
 
     &[aria-selected="true"] { border-right-color: var(--ntn-accent-500); background: var(--ntn-surface-hover); border-radius: var(--ntn-radius-md) 0 0 var(--ntn-radius-md); }
   }

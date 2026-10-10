@@ -27,7 +27,7 @@
 }
 
 .ntn-menu {
-  min-width: 180px; padding: 4px;
+  min-width: 180px; padding: var(--ntn-space-1);
   @include popover-surface;
 
   &__item {
@@ -53,7 +53,7 @@
   }
   &__label { /* Section heading inside a long menu. */ margin: 0; padding: 7px 10px 4px; @include caps-label; }
   &__shortcut { flex: 0 0 auto; font-family: var(--ntn-font-mono); font-size: var(--ntn-font-size-2xs); color: var(--ntn-text-disabled); }
-  .ntn-divider { margin: 4px 0; }
+  .ntn-divider { margin: var(--ntn-space-1) 0; }
 }
 
 /* ── Nested menus ────────────────────────────────────────────────────────────
@@ -69,7 +69,7 @@
   position: relative;
 
   > .ntn-menu {
-    position: absolute; z-index: var(--ntn-z-dropdown); top: -5px; left: 100%; margin-left: 4px;
+    position: absolute; z-index: var(--ntn-z-dropdown); top: -5px; left: 100%; margin-left: var(--ntn-space-1);
     display: none; min-width: 172px;
   }
   &:hover, &:focus-within, &[data-ntn-open] {
@@ -84,7 +84,7 @@
   }
   &[data-ntn-side="left"] > .ntn-menu {
     /* Set by nocturne.js when the flyout would leave the viewport. */
-    left: auto; right: 100%; margin-left: 0; margin-right: 4px;
+    left: auto; right: 100%; margin-left: 0; margin-right: var(--ntn-space-1);
   }
 }
 
@@ -144,12 +144,12 @@
 
   &__panel {
     position: absolute; z-index: var(--ntn-z-dropdown); top: 100%; left: 0; margin-top: 6px;
-    width: 100%; min-width: 200px; max-width: min(360px, 90vw); padding: 4px;
+    width: 100%; min-width: 200px; max-width: min(360px, 90vw); padding: var(--ntn-space-1);
     display: flex; flex-direction: column; gap: 2px;
   }
   &[data-ntn-side="up"] &__panel { top: auto; bottom: 100%; margin: 0 0 6px; }
   &__search {
-    display: flex; align-items: center; gap: 7px; margin: 2px 2px 4px; padding: 0 8px; height: var(--ntn-control-sm);
+    display: flex; align-items: center; gap: 7px; margin: 2px 2px 4px; padding: 0 var(--ntn-space-2); height: var(--ntn-control-sm);
     background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-sm);
 
     i { font-size: 12px; color: var(--ntn-text-muted); flex: 0 0 auto; }

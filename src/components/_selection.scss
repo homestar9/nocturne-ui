@@ -128,7 +128,7 @@ $-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBo
 }
 
 .ntn-switch {
-  gap: 12px;
+  gap: var(--ntn-space-3);
 
   input {
     appearance: none; -webkit-appearance: none; flex: 0 0 auto; margin: 0;

@@ -1,9 +1,8 @@
-/* Shadows are mode primitives (theme-light.css softens them), the accent glow and focus ring are
-   aliases re-resolved on every [data-theme] element, and the blurs are constants. Same three-block
-   split as colors.css, so a data-theme subtree gets its own depth. */
+/* Shadows are mode primitives (_theme-light.scss softens them), the focus ring and the lit top edge
+   are aliases re-resolved on every [data-theme] element, and the blurs are constants. Same three-block
+   split as _colors.scss, so a data-theme subtree gets its own depth. */
 :root, [data-theme="dark"] {
   /* Dark UI depth comes from a hairline + a soft drop, never from heavy blur */
-  --ntn-shadow-none: none;
   --ntn-shadow-xs: 0 1px 2px rgba(0,0,0,0.35);
   --ntn-shadow-sm: 0 1px 2px rgba(0,0,0,0.40);
   --ntn-shadow-md: 0 8px 24px -12px rgba(0,0,0,0.70);
@@ -16,19 +15,18 @@
   --ntn-shadow-float:    0 2px 6px rgba(0,0,0,0.5);
   --ntn-shadow-inset:    inset 0 1px 2px rgba(0,0,0,0.4);
 
-  /* Glass (glass.css): a lit top edge and a wide soft drop; the strength of an app's
+  /* Glass (_glass.scss): a lit top edge and a wide soft drop; the strength of an app's
      ambient image */
   --ntn-glass-highlight: inset 0px 10px 10px -10px rgba(255,255,255,0.3);
   --ntn-glass-shadow:    0 24px 60px -24px rgba(0,0,0,0.70);
   --ntn-ambient-opacity: 0.5;
 
-  /* Shine edge (effects.css): the bright head of each light, and its halo's strength */
+  /* Shine edge (_effects.scss): the bright head of each light, and its halo's strength */
   --ntn-shine-head: #FFFFFF;
   --ntn-shine-glow: 0.3;
 }
 
 :root, [data-theme] {
-  --ntn-glow-accent: 0 0 0 1px var(--ntn-accent-600), 0 6px 22px -8px var(--ntn-accent-glow);
   /* Keyboard focus. The outline is the default ring: it never competes with a control's own
      box-shadow and survives forced-colours mode. Field-style controls pair the box-shadow ring
      with an accent border instead. */
@@ -47,14 +45,14 @@
      block or stacking context, so the default costs nothing. */
   --ntn-surface-filter: none;
   --ntn-pop-filter: none;
-  /* ntn-glass and ntn-ambient (glass.css). An app points these at its own artwork with a
+  /* ntn-glass and ntn-ambient (_glass.scss). An app points these at its own artwork with a
      root-relative url(...) or a gradient: --ntn-background-image at full strength, or
      --ntn-ambient-image as a dimmed band that fades out. */
   --ntn-glass-blur: blur(20px) saturate(140%);
   --ntn-background-image: none;
   --ntn-ambient-image: none;
   --ntn-ambient-height: 760px;
-  /* ntn-edge--shine (effects.css): one lap per --ntn-shine-speed; --ntn-shine-length is the
+  /* ntn-edge--shine (_effects.scss): one lap per --ntn-shine-speed; --ntn-shine-length is the
      light's trail, of which only the ring shows */
   --ntn-shine-speed: 20s;
   --ntn-shine-thickness: 1px;

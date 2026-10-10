@@ -40,7 +40,7 @@ $-flush-depth: 12;
   &__item[aria-expanded="false"] > &__group { display: none; }
 
   &__row {
-    position: relative; display: flex; align-items: center; gap: 4px;
+    position: relative; display: flex; align-items: center; gap: var(--ntn-space-1);
     min-height: 30px; padding: 0 8px 0 2px;
     border: 1px solid transparent; border-radius: var(--ntn-radius-sm);
     background: transparent; color: inherit; text-align: left; cursor: pointer;
@@ -126,7 +126,7 @@ $-flush-depth: 12;
   /* Full-bleed inside a flush card: rows run edge to edge, no rounding. */
   gap: 0;
 
-  .ntn-tree__row { border-radius: 0; border-left: 0; border-right: 0; padding-left: 8px; }
+  .ntn-tree__row { border-radius: 0; border-left: 0; border-right: 0; padding-left: var(--ntn-space-2); }
   .ntn-tree__group {
     padding-left: 0;
 
