@@ -12,6 +12,8 @@
    ntn-glass    Translucent, blurred surfaces. On a card, stat, accordion or sidebar it makes
                 that surface glass; on any other element it makes every such surface inside it
                 glass. Inputs, buttons, badges and menus stay solid so they stay readable.
+                --flat drops the lit top edge: cleaner over the plain glow, while the edge
+                helps a surface stand off busy artwork.
 
    The surface rules sit right after the components they restyle and match their specificity,
    so they beat the base background while state modifiers (an interactive card's hover, the
@@ -49,6 +51,10 @@
   border-color: var(--ntn-glass-border);
   backdrop-filter: var(--ntn-glass-blur);
 }
+
+/* Flat: no lit top edge, for this element and everything inside it. Re-declared on data-theme
+   subtrees, which set their own highlight. */
+.ntn-glass--flat, .ntn-glass--flat [data-theme] { --ntn-glass-highlight: 0 0 #0000; }
 
 /* Nested surfaces stay quiet: no second blur, no second drop. */
 .ntn-glass:is(.ntn-card, .ntn-stat, .ntn-accordion) :is(.ntn-card, .ntn-stat, .ntn-accordion),

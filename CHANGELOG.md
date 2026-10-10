@@ -11,6 +11,7 @@ renamed or removed class names and tokens.
   for pages over artwork or a gradient. Put it on one surface, or on a wrapper (up to
   `.ntn-app`) to glaze every surface inside. Controls, menus and modals stay solid. Falls back to
   solid under `prefers-reduced-transparency` and for the phone sidebar drawer.
+  `ntn-glass--flat` drops the lit top edge, for glass over the plain ambient glow.
 - **`ntn-ambient`**: the backdrop to sit glass on, a static accent glow behind the top of the app
   that fades into the canvas. An app adds its artwork at full strength with
   `--ntn-background-image`, or dimmed and fading with `--ntn-ambient-image`.

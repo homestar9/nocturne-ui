@@ -227,14 +227,14 @@
   /* Dark UI depth comes from a hairline + a soft drop, never from heavy blur */
   --ntn-shadow-none: none;
   --ntn-shadow-xs: 0 1px 2px rgba(0,0,0,0.35);
-  --ntn-shadow-sm: 0 1px 2px rgba(0,0,0,0.40), 0 0 0 1px rgba(255,255,255,0.02) inset;
-  --ntn-shadow-md: 0 8px 24px -12px rgba(0,0,0,0.70), 0 0 0 1px rgba(255,255,255,0.02) inset;
-  --ntn-shadow-lg: 0 24px 60px -24px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.03) inset;
+  --ntn-shadow-sm: 0 1px 2px rgba(0,0,0,0.40);
+  --ntn-shadow-md: 0 8px 24px -12px rgba(0,0,0,0.70);
+  --ntn-shadow-lg: 0 24px 60px -24px rgba(0,0,0,0.85);
   --ntn-shadow-pop: 0 12px 32px -8px rgba(0,0,0,0.75);
 
   /* Glass (glass.css): a lit top edge and a wide soft drop; the strength of an app's
      ambient image */
-  --ntn-glass-highlight: inset 0 1px 0 rgba(255,255,255,0.06);
+  --ntn-glass-highlight: inset 0px 10px 10px -10px rgba(255,255,255,0.3);
   --ntn-glass-shadow:    0 24px 60px -24px rgba(0,0,0,0.70);
   --ntn-ambient-opacity: 0.5;
 }
@@ -347,7 +347,7 @@
   --ntn-shadow-pop: 0 12px 32px -10px rgba(16,20,27,0.22);
 
   /* Glass: a bright lit edge, and the ambient image kept faint on a light page */
-  --ntn-glass-highlight: inset 0 1px 0 rgba(255,255,255,0.6);
+  --ntn-glass-highlight: inset 0px 10px 10px -10px rgba(255,255,255,0.3);
   --ntn-glass-shadow:    0 1px 2px rgba(16,20,27,0.05), 0 18px 40px -24px rgba(16,20,27,0.25);
   --ntn-ambient-opacity: 0.22;
 
@@ -1300,11 +1300,15 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
 /* A card does NOT clip its content, so a combobox panel, tooltip or date picker opened inside
    it can spill out. Children that paint a background at the card's edge round their own corners
    (__foot below). A --flush card is the exception: it holds edge-to-edge tables and media, so it
-   clips; menus and popovers inside one render in the top layer and are not affected. */
+   clips; menus and popovers inside one render in the top layer and are not affected.
+
+   Containers (card, stat, accordion, modal) frame themselves in --ntn-border-default; the rules
+   inside them (foot, divided head, accordion items) stay on --ntn-border-subtle, so the frame
+   reads first. */
 .ntn-card {
   position: relative;
   display: flex; flex-direction: column;
-  background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-xl);
+  background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-xl);
   box-shadow: var(--ntn-shadow-md); backdrop-filter: var(--ntn-surface-filter);
   transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), transform var(--ntn-dur-fast) var(--ntn-ease-out);
 }
@@ -1327,7 +1331,7 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
 /* Border effects (--glow, --processing) live in effects.css as the ntn-edge block;
    the ntn-card-- aliases are defined there too. */
 
-.ntn-stat { display: flex; flex-direction: column; gap: 6px; padding: var(--ntn-space-4) 18px; background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-lg); }
+.ntn-stat { display: flex; flex-direction: column; gap: 6px; padding: var(--ntn-space-4) 18px; background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg); }
 .ntn-stat__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .ntn-stat__label { font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
 .ntn-stat__figure { display: flex; align-items: baseline; gap: var(--ntn-space-2); flex-wrap: wrap; }
@@ -1364,7 +1368,7 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
 .ntn-modal--lg { max-width: 720px; }
 
 /* Accordion — native <details>. */
-.ntn-accordion { display: flex; flex-direction: column; background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-lg); overflow: hidden; }
+.ntn-accordion { display: flex; flex-direction: column; background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg); overflow: hidden; }
 .ntn-accordion__item { border-top: 1px solid var(--ntn-border-subtle); }
 .ntn-accordion__item:first-child { border-top: 0; }
 .ntn-accordion__item[open] > summary { background: var(--ntn-alpha-ink-04); }
@@ -1404,6 +1408,8 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
    ntn-glass    Translucent, blurred surfaces. On a card, stat, accordion or sidebar it makes
                 that surface glass; on any other element it makes every such surface inside it
                 glass. Inputs, buttons, badges and menus stay solid so they stay readable.
+                --flat drops the lit top edge: cleaner over the plain glow, while the edge
+                helps a surface stand off busy artwork.
 
    The surface rules sit right after the components they restyle and match their specificity,
    so they beat the base background while state modifiers (an interactive card's hover, the
@@ -1442,6 +1448,10 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
   backdrop-filter: var(--ntn-glass-blur);
 }
 
+/* Flat: no lit top edge, for this element and everything inside it. Re-declared on data-theme
+   subtrees, which set their own highlight. */
+.ntn-glass--flat, .ntn-glass--flat [data-theme] { --ntn-glass-highlight: 0 0 #0000; }
+
 /* Nested surfaces stay quiet: no second blur, no second drop. */
 .ntn-glass:is(.ntn-card, .ntn-stat, .ntn-accordion) :is(.ntn-card, .ntn-stat, .ntn-accordion),
 .ntn-glass :is(.ntn-card, .ntn-stat, .ntn-accordion) :is(.ntn-card, .ntn-stat, .ntn-accordion) {
@@ -1473,8 +1483,8 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
 @property --ntn-spin { syntax: "<angle>"; initial-value: 0deg; inherits: true; }
 @keyframes ntn-border-spin { to { --ntn-spin: 360deg; } }
 
-.ntn-edge { position: relative; border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-xl); }
-.ntn-edge--strong { border-color: var(--ntn-border-default); }
+.ntn-edge { position: relative; border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-xl); }
+.ntn-edge--strong { border-color: var(--ntn-border-strong); }
 
 /* Glow — the one element on the page you want read first. Accent hairline, a
    halo, and a faint colour bleed from the top edge. */

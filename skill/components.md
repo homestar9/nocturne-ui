@@ -524,6 +524,7 @@ backdrop.
 | Class | Effect |
 | --- | --- |
 | `ntn-glass` | On a `ntn-card`, `ntn-stat`, `ntn-accordion` or `ntn-sidebar`: that surface turns translucent and blurred, with a lit top edge. On any other element: every such surface inside it does. Table heads and the sidebar brand inside turn to a faint tint. Nested surfaces keep the tint but drop the second blur and shadow |
+| `ntn-glass--flat` | With `ntn-glass`: no lit top edge, for that element and everything inside. Use it over the plain `ntn-ambient` glow; keep the edge over a photo |
 | `ntn-ambient` | The backdrop: a static accent glow behind the top of the app that fades into the canvas. First child of `.ntn-app`, or of a panel with `position: relative; isolation: isolate; overflow: hidden`. Add artwork with a root-relative URL: `--ntn-background-image` at full strength (when everything on it is glass), or `--ntn-ambient-image` dimmed and faded (when text also sits on it) |
 
 ```html

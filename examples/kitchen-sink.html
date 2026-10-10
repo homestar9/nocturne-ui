@@ -1386,14 +1386,15 @@
           <header class="sink__head">
             <h2 class="sink__title">Glass</h2>
             <code class="sink__code">.ntn-glass</code>
+            <code class="sink__code">.ntn-glass--flat</code>
             <code class="sink__code">.ntn-ambient</code>
-            <p class="sink__note">Translucent, blurred surfaces for a page that sits over artwork or a gradient. On a card, stat, accordion or sidebar it glazes that surface; on a wrapper it glazes every surface inside. <code>ntn-ambient</code>, first inside <code>.ntn-app</code>, is a static accent glow to sit them on; point <code>--ntn-ambient-image</code> at your own artwork. Below, glass over the glow alone, over a photo as <code>--ntn-ambient-image</code> (dimmed and faded, for a page where text also sits on the backdrop), and over the same photo as <code>--ntn-background-image</code> (full strength). The droplet in the top bar turns glass on for this whole page, with the photo as the ambient image.</p>
+            <p class="sink__note">Translucent, blurred surfaces for a page that sits over artwork or a gradient. On a card, stat, accordion or sidebar it glazes that surface; on a wrapper it glazes every surface inside. <code>ntn-ambient</code>, first inside <code>.ntn-app</code>, is a static accent glow to sit them on; point <code>--ntn-ambient-image</code> at your own artwork. <code>ntn-glass--flat</code> drops the lit top edge, which suits the plain glow. Below, flat glass over the glow alone, then glass over a photo as <code>--ntn-ambient-image</code> (dimmed and faded, for a page where text also sits on the backdrop), and over the same photo as <code>--ntn-background-image</code> (full strength). The droplet in the top bar turns glass on for this whole page, with the photo as the ambient image.</p>
           </header>
           <!-- Three stages, each with its own ntn-ambient and ntn-glass on the wrapper, so every surface
                inside is glazed. The second sets --ntn-ambient-image, the third --ntn-background-image. -->
           <div class="ntn-stack">
-            <p class="sink__label">Over the ambient glow · <code>ntn-ambient</code></p>
-            <div class="ntn-glass ntn-grid ntn-grid--3 sink__glass-stage">
+            <p class="sink__label">Flat glass over the ambient glow · <code>ntn-glass--flat</code> + <code>ntn-ambient</code></p>
+            <div class="ntn-glass ntn-glass--flat ntn-grid ntn-grid--3 sink__glass-stage">
               <div class="ntn-ambient"></div>
               <section class="ntn-card">
                 <header class="ntn-card__head">
@@ -1403,7 +1404,7 @@
                   </div>
                 </header>
                 <div class="ntn-card__body">The backdrop shows through, softened by the blur. Inputs and buttons inside stay solid.</div>
-                <footer class="ntn-card__foot">Lit top edge, hairline in the ink</footer>
+                <footer class="ntn-card__foot">Flat: no lit top edge, just the tint and the hairline</footer>
               </section>
               <div class="ntn-stack">
                 <div class="ntn-stat">

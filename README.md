@@ -158,7 +158,9 @@ For a page that sits over artwork or a gradient, two opt-in classes:
 
 - **`ntn-glass`** makes a `ntn-card`, `ntn-stat`, `ntn-accordion` or `ntn-sidebar` translucent
   and blurred, with a lit top edge. Put it on the surface itself, or on any wrapper (up to
-  `.ntn-app`) to glaze every surface inside. Controls, menus and modals stay solid.
+  `.ntn-app`) to glaze every surface inside. Controls, menus and modals stay solid. Add
+  **`ntn-glass--flat`** to drop the lit top edge: it looks cleaner over the plain glow, while the
+  edge helps surfaces stand off a photo.
 - **`ntn-ambient`**, the first child of `.ntn-app`, is the backdrop: a static accent glow behind
   the top of the page that fades into the canvas. Add your own artwork one of two ways:
   - `--ntn-background-image` draws it at full strength, filling the app. Best when the content
