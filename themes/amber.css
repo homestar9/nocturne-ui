@@ -1,11 +1,13 @@
 /* Amber brand theme: a warm gold accent on DeployBot's greys.
 
-   Two layers, both in each block below:
+   Three layers, each in both blocks below:
    1. Accent: the ramp and the dark ink that sits on it.
    2. Neutrals: Nocturne's graphite leans blue, which fights gold. Amber swaps in DeployBot's
       greys: near-neutral graphite in dark mode, warm paper with slate ink in light mode. Where
       DeployBot has a matching colour it is used exactly ("DB" below); the other steps are filled
       at DeployBot's hue and chroma, between their neighbours' lightness.
+   3. Edges: crisper hairlines (border-subtle is DeployBot's card outline, which also draws
+      table rows and dividers) and DeployBot's lit top edge on cards (shadow-md).
 
    The faint step (n-600, --ntn-text-disabled) is DeployBot's, which is softer than Nocturne's:
    eyebrows, section labels and placeholders read lighter, about 2.2:1 in light mode.
@@ -47,8 +49,11 @@
   --ntn-n-900: #E8EBF1; /* DB text */
 
   /* Nocturne hard-codes these two in blue graphite */
-  --ntn-border-subtle: #1E2125;
+  --ntn-border-subtle: #252629; /* DB card outline (text at 8%) */
   --ntn-bg-blur: rgba(9,10,13,0.72);
+
+  /* Cards: DeployBot's lit top edge in place of Nocturne's faint all-round ring */
+  --ntn-shadow-md: 0 8px 24px -12px rgba(0,0,0,0.70), inset 0 1px 0 rgba(255,255,255,0.06);
 }
 
 /* ── Light ──────────────────────────────────────────────────────────────── */
@@ -79,7 +84,11 @@
   --ntn-surface-2:      #FEFDFC;
   --ntn-surface-3:      #F2F0EC; /* DB raised */
   --ntn-bg-blur:        rgba(254,253,252,0.78);
-  --ntn-border-subtle:  #EAE8E3;
+  --ntn-border-subtle:  #E6E6E4; /* DB card outline (text at 9%) */
   --ntn-border-default: #DDDAD5; /* DB border */
   --ntn-border-strong:  #CAC7C0;
+
+  /* Cards: DeployBot's lit top edge */
+  --ntn-shadow-md: 0 8px 24px -14px rgba(16,20,27,0.20), 0 1px 2px rgba(16,20,27,0.04),
+                   inset 0 1px 0 rgba(255,255,255,0.6);
 }

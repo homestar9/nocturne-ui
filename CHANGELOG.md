@@ -11,8 +11,9 @@ renamed or removed class names and tokens.
   graphite. Light mode gets a warm paper canvas and off-white cards with slate text, and the
   accent text stops become a burnt amber (`--ntn-accent-300` is `#9B4900`). The faint step
   (`--ntn-n-600`, also `--ntn-text-disabled`) is softer than Nocturne's, so labels and
-  placeholders read lighter under amber. No token was added or renamed. Other themes are
-  unchanged.
+  placeholders read lighter under amber. Hairlines (`--ntn-border-subtle`: card outlines, table
+  rows, dividers) are a touch brighter, and cards get DeployBot's lit top edge through
+  `--ntn-shadow-md`. No token was added or renamed. Other themes are unchanged.
 - **Docs:** a theme may now retint the neutral ramp as well as the accent (README "Accent").
 
 ## 1.7.0 — 2026-10-06
