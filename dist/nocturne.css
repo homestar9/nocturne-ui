@@ -465,6 +465,19 @@ i:is([class*=fa-], [data-icon], :empty) {
     background-position: 200% 0;
   }
 }
+/* Reduced motion: every entrance (menus, popovers, the date panel, tooltips, modals, accordion
+   panels, filters) fades in place instead of rising. A later @keyframes of the same name wins
+   while its media query matches. */
+@media (prefers-reduced-motion: reduce) {
+  @keyframes ntn-rise {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
 /* ── Layout: app shell, page, grid, text primitives ───────────────────────── */
 .ntn-app {
   display: flex;
@@ -910,6 +923,11 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-fab:hover {
   background: var(--ntn-accent-fill-hover);
   transform: translateY(-1px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ntn-fab:hover {
+    transform: none;
+  }
 }
 .ntn-fab--extended {
   padding: 0 20px 0 16px;
@@ -2943,6 +2961,13 @@ i:is([class*=fa-], [data-icon], :empty) {
   background-size: 200% 100%;
   animation: ntn-shimmer 1.4s linear infinite;
 }
+@media (prefers-reduced-motion: reduce) {
+  .ntn-progress--indeterminate .ntn-progress__fill {
+    /* Reduced motion: the bar pulses in place instead of sweeping. */
+    background: var(--ntn-accent-500);
+    animation: ntn-pulse 1.4s ease-in-out infinite;
+  }
+}
 
 .ntn-spinner {
   display: inline-block;
@@ -3151,6 +3176,11 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-card--interactive:hover {
   border-color: var(--ntn-border-strong);
   transform: translateY(-1px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ntn-card--interactive:hover {
+    transform: none;
+  }
 }
 
 .ntn-stat {
@@ -4323,6 +4353,12 @@ i:is([class*=fa-], [data-icon], :empty) {
     opacity: 1;
     visibility: visible;
     transition: opacity var(--ntn-dur-base) var(--ntn-ease-out);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* The rail and the drawer change at once instead of sliding; the scrim still fades. */
+  .ntn-sidebar, .ntn-sidebar[data-open] {
+    transition: none;
   }
 }
 /* ── Tabs ───────────────────────────────────────────────────────────────────

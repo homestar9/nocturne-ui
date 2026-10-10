@@ -160,7 +160,11 @@ $-inner-radius: calc(var(--ntn-radius-md) - 1px);
   transition: tr(background), tr(transform, fast, out);
 
   i { font-size: 18px; }
-  &:hover { background: var(--ntn-accent-fill-hover); transform: translateY(-1px); }
+  &:hover {
+    background: var(--ntn-accent-fill-hover); transform: translateY(-1px);
+
+    @include reduced-motion { transform: none; }
+  }
   &--extended { padding: 0 20px 0 16px; }
 }
 

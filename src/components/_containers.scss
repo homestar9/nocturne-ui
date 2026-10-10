@@ -41,7 +41,11 @@
   &--interactive {
     cursor: pointer;
 
-    &:hover { border-color: var(--ntn-border-strong); transform: translateY(-1px); }
+    &:hover {
+      border-color: var(--ntn-border-strong); transform: translateY(-1px);
+
+      @include reduced-motion { transform: none; }
+    }
   }
   // Border effects (--glow, --processing) live in _effects.scss as the ntn-edge block;
   // the ntn-card-- aliases are defined there too.

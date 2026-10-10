@@ -81,6 +81,10 @@ try {
   check(ringless.length === 0, 'no :focus-visible rule removes the outline without drawing a ring'
     + (ringless.length ? ': ' + ringless.map((r) => r.sel).join(' | ') : ''));
 
+  console.log('Reduced motion');
+  const calmRise = css.match(/@media \(prefers-reduced-motion: reduce\) \{\s*@keyframes ntn-rise \{((?:[^{}]*\{[^{}]*\})*)[^{}]*\}/);
+  check(calmRise && !/transform/.test(calmRise[1]), 'under reduced motion, entrances (ntn-rise) fade without moving');
+
   console.log('Component shadows follow the theme');
   // A raw black shadow never softens in the light theme; components read the --ntn-shadow-* tokens.
   const componentsDir = resolve(root, 'src', 'components');

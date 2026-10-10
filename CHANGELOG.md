@@ -73,6 +73,11 @@ renamed or removed class names and tokens.
 - **Light-theme shadows (NTN-7).** The primary and glow buttons, the FAB and the switch track
   used raw black shadows, which stayed black on a light page. They now read the new
   `--ntn-shadow-*` tokens: soft grey in light, unchanged in dark.
+- **Reduced motion (NTN-4).** `prefers-reduced-motion` covered only the edge effects and tabs. Now
+  every entrance (`ntn-rise`: menus, popovers, the date panel, tooltips, modals, accordion panels,
+  filters) fades in place, interactive cards and the FAB no longer lift on hover, the sidebar rail
+  and phone drawer change without sliding, and the indeterminate progress bar pulses instead of
+  sweeping. Spinners still turn.
 - **`ntn-icon-btn`** dims for `aria-disabled="true"` as well as `disabled`, like `ntn-btn`.
 - **Combobox:** `aria-invalid="true"` on the trigger shows the invalid state, as it does on a
   field or select (`data-invalid` on the block still works).

@@ -91,6 +91,10 @@
   }
   .ntn-sidebar[data-open] ~ .ntn-sidebar__scrim { opacity: 1; visibility: visible; transition: tr(opacity, base, out); }
 }
+@include reduced-motion {
+  /* The rail and the drawer change at once instead of sliding; the scrim still fades. */
+  .ntn-sidebar, .ntn-sidebar[data-open] { transition: none; }
+}
 
 /* ── Tabs ───────────────────────────────────────────────────────────────────
    Roving-tabindex tablist: one tab in the tab order, arrow keys move between
@@ -179,7 +183,7 @@
 .ntn-tabs--sm .ntn-tabs__tab { font-size: var(--ntn-text-xs); }
 .ntn-tabs__panel:focus-visible { @include focus-ring; border-radius: var(--ntn-radius-lg); }
 
-@media (prefers-reduced-motion: reduce) {
+@include reduced-motion {
   .ntn-tabs { scroll-behavior: auto; }
   .ntn-tabs[data-ntn-ink]::after { transition: none; }
 }

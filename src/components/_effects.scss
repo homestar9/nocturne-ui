@@ -96,7 +96,7 @@ $-shine-parts: ".ntn-edge__shine::before, .ntn-edge__shine::after, .ntn-edge--sh
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+@include reduced-motion {
   #{$-processing} {
     animation: none;
     box-shadow: 0 0 24px -12px var(--ntn-accent-glow), var(--ntn-shadow-md);

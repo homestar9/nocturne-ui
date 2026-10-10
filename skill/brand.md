@@ -59,7 +59,9 @@ frames containers (cards, stats, accordions, modals) and outlines interactive su
 
 80ms press, 140ms hover/focus/tooltip, 200ms switch/accordion/menu, 320ms progress. Entrances
 use `--ntn-ease-out` with a 6px rise and a fade (`ntn-rise`). Nothing bounces, nothing
-overshoots, nothing spins except spinners.
+overshoots, nothing spins except spinners. Under `prefers-reduced-motion` nothing travels:
+entrances fade in place, hover lifts stay put, the sidebar rail and phone drawer change at once,
+and the indeterminate bar pulses instead of sweeping. Fades and spinners remain.
 
 ## States
 

@@ -522,7 +522,9 @@ its ring, so the light and the glow never drift apart. Shine's lights follow the
 (`offset-path`), so they keep an even pace on any shape; tune them with `--ntn-shine-speed`,
 `-length`, `-thickness`, `-head`, `-color` and `-glow`. Where `offset-path` is unsupported,
 shine falls back to the plain hairline. Under `prefers-reduced-motion` processing settles to a
-static halo and the shine lights stop where they are.
+static halo and the shine lights stop where they are. The same setting makes every block's
+entrance (menus, popovers, tooltips, modals, accordion panels) fade without rising; see
+`brand.md` "Motion".
 
 ## Glass — `ntn-glass` · Ambient — `ntn-ambient`
 

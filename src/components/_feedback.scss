@@ -114,7 +114,14 @@
     &--#{$tone} &__fill { background: tone($tone, solid); }
   }
   &--neutral &__fill { background: var(--ntn-n-600); }
-  &--indeterminate &__fill { width: 100%; background: linear-gradient(90deg, transparent, var(--ntn-accent-500), transparent); background-size: 200% 100%; animation: ntn-shimmer 1.4s linear infinite; }
+  &--indeterminate &__fill {
+    width: 100%; background: linear-gradient(90deg, transparent, var(--ntn-accent-500), transparent); background-size: 200% 100%; animation: ntn-shimmer 1.4s linear infinite;
+
+    @include reduced-motion {
+      /* Reduced motion: the bar pulses in place instead of sweeping. */
+      background: var(--ntn-accent-500); animation: ntn-pulse 1.4s ease-in-out infinite;
+    }
+  }
 }
 
 .ntn-spinner {

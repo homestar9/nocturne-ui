@@ -136,6 +136,13 @@
   font-size: $icon-size;
 }
 
+/// Rules for users who ask for less motion. The policy: under reduced motion nothing translates,
+/// slides or resizes the layout; fades stay. Spinners keep turning (they convey state), and small
+/// in-control indicators (a switch knob, a chevron turning) stay.
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) { @content; }
+}
+
 /// Paint only the padding box: a ring as thick as the element's padding.
 @mixin ring-mask {
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
