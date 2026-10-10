@@ -238,6 +238,9 @@ import { build } from '@homestar9/nocturne-ui/build';
 await build({ prefix: 'app', outDir: 'vendor/nocturne' });  // nocturne.css, tokens.css, nocturne.js, themes/
 ```
 
+The build renames the compiled stylesheets the package ships in `dist/`, so it needs no Sass and
+no other dependency.
+
 A prefix is lowercase letters and digits, starting with a letter, because `data-app-open` has to map
 to `dataset.appOpen` in the script. This is how an app can own its markup vocabulary and still
 swap in a different UI kit later: any kit that can be built to the same prefix and block names
@@ -301,18 +304,41 @@ and the CSS in the same commit — the agent can never be briefed on a version y
 ## Develop
 
 ```bash
-npm run build      # flattens src/ into dist/ — no dependencies
-npm test           # namespace checks: every token prefixed, every var() declared, prefix builds rename everything
+npm run build      # compiles src/*.scss into dist/ (Sass, a devDependency)
+npm run watch      # the same, again on every change under src/
+npm test           # compiles src/ fresh, then: every token prefixed, every var() declared, prefix builds
+                   # rename everything, and the committed dist/ matches src/
 npm run sink       # serves the repo and prints the kitchen sink URL
 ```
 
 Open the kitchen sink through `npm run sink`, not by double-clicking the file. Browsers block
 module scripts on `file://` pages, so `nocturne.js` never loads there: the CSS renders, but the
-theme toggle, tabs, dialogs and dropdowns do nothing.
+theme toggle, tabs, dialogs and dropdowns do nothing. It loads `dist/`, so keep `npm run watch`
+running while you edit.
 
-Edit files in `src/`, never in `dist/`. `dist/` is regenerated (and tested) on `prepack`.
-Always spell the namespace `ntn` in source — the prefix build renames exactly that spelling, so a
-new class, token, hook or event written any other way would escape it.
+Edit files in `src/`, never in `dist/`. Commit the rebuilt `dist/` with the source change: the
+tests fail when the two disagree. Always spell the namespace `ntn` in source — the prefix build
+renames exactly that spelling, so a new class, token, hook or event written any other way would
+escape it. Sass-only names (`$variables`, mixins, functions) never reach the CSS and need no prefix.
+
+### Authoring SCSS
+
+- **Tokens stay custom properties.** `src/tokens/` declares `--ntn-*` properties, never Sass
+  variables, because themes and apps override them at runtime.
+- **One block per partial.** Nest elements, modifiers and states under the block (`&__item`,
+  `&--sm`, `&:hover`), and keep a block's rules in cascade order. Never let a nested rule jump past
+  another block's rule that it has to beat or lose to.
+- **Shared declarations are mixins** in `src/abstracts/`: control and popover surfaces,
+  `focus-accent`, `invalid`, `field-label`, `caps-label`, `truncate`, `visually-hidden` and more.
+  `tr(color)` writes one transition entry on the motion tokens. Never `@extend`: it merges unrelated
+  blocks into one selector list.
+- **Tones and breakpoints are maps.** Loop over `$statuses` / `tone($name, $part)` for tone
+  modifiers. Media queries use `@include below(md)` / `above(md)`, because a media query can't read
+  a custom property.
+- **Comments:** `/* */` comments ship in `dist/` and explain the CSS to whoever reads it there;
+  `//` comments are for Sass authors. Put a `/* */` comment inside the rule it describes. Sass
+  turns one that sits between nested rules into an empty rule.
+- The order of the `@use` list in `src/nocturne.scss` is the cascade order.
 
 ## Release
 
@@ -336,13 +362,14 @@ agents read it to know what moved.
 ## Layout
 
 ```
-dist/            built CSS — what apps load
-src/             authored CSS: tokens/ + components/
+dist/            compiled CSS — what apps load
+src/             authored SCSS: nocturne.scss and tokens.scss (entries), tokens/, base/,
+                 components/, abstracts/ (mixins, tones, breakpoints; no CSS of their own)
 js/              optional behaviours
-themes/          accent overrides
+themes/          accent overrides (plain CSS)
 skill/           Claude Code skill: rules, component reference, patterns
 examples/        kitchen sink — every block, inside the console shell
-scripts/build.mjs
+scripts/         compile.mjs (src → dist), build.mjs (prefix build, shipped), tests
 ```
 
 ## License

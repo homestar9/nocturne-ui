@@ -36,7 +36,7 @@ page-level recipes.
    component is a bug — it will not flip.
 6. **Never branch on theme.** No `[data-theme="light"]` selectors in product code, no
    `prefers-color-scheme` media queries, no light-only classes. If something reads wrong in
-   one theme, the fix is a token value in `src/tokens/theme-light.css`, not a component rule.
+   one theme, the fix is a token value in `src/tokens/_theme-light.scss`, not a component rule.
 
 ## Quick orientation
 
@@ -54,6 +54,7 @@ page-level recipes.
 
 1. Pick the shell from `patterns.md` (sidebar console, centred page, settings list).
 2. Compose from existing blocks. If a block does not exist, say so before inventing one — new
-   blocks belong in `src/components/`, named and documented like the rest, in their own release.
+   blocks belong in `src/components/` (an SCSS partial per block family), named and documented
+   like the rest, in their own release.
 3. Write the copy to `brand.md`'s voice: plain, factual, specific. Buttons are verbs. No emoji.
 4. Check contrast and the 44px hit-target minimum on anything touch-reachable.

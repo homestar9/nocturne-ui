@@ -43,8 +43,28 @@ renamed or removed class names and tokens.
   placeholders read lighter under amber. Inner hairlines (`--ntn-border-subtle`: table rows,
   dividers) are a touch brighter. No token was added or renamed. Other themes are unchanged.
 - **Docs:** a theme may now retint the neutral ramp as well as the accent (README "Accent").
+- **Breaking: `src/` is SCSS.** The source is now Sass partials (`src/nocturne.scss`,
+  `src/tokens.scss`, `src/tokens/_*.scss`, `src/components/_*.scss`, plus `src/abstracts/` for
+  mixins, tone maps and breakpoints). Anything that imported `@homestar9/nocturne-ui/src/*.css`
+  must load `dist/` instead. `dist/` keeps the same files and the same CSS, and needs no build
+  step. `npm run build` compiles with Sass, a devDependency.
+- **`nocturne-build` requires `--out`.** It renames the compiled `dist/` stylesheets instead of
+  reading `src/`, so a prefix build still needs no dependencies. The output is unchanged.
+- **Breakpoints use range syntax** (`width <= 720px` / `width > 720px`), so the phone and
+  wide-screen rules meet exactly. With `max-width: 720px` and `min-width: 721px`, a fractional
+  width between the two matched neither.
+- **Toggle-group and segmented end corners** follow `--ntn-radius-md` (minus the 1px border)
+  instead of a fixed 7px. No change at the default radius.
+
+### Removed
+- `--ntn-btn-solid` and `--ntn-btn-solid-hover`. No rule read them.
 
 ### Fixed
+- **`ntn-icon-btn`** dims for `aria-disabled="true"` as well as `disabled`, like `ntn-btn`.
+- **Combobox:** `aria-invalid="true"` on the trigger shows the invalid state, as it does on a
+  field or select (`data-invalid` on the block still works).
+- **Select:** the hint turns red when the select is invalid, as a field's does.
+- **Rating:** the read-only star's hidden label uses the full visually-hidden pattern.
 - **Accordion:** an open panel's text sat right against the summary. `ntn-accordion__panel` now
   has 12px (`--ntn-space-3`) of top padding.
 

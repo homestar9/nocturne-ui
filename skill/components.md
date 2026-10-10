@@ -178,7 +178,8 @@ or multi-select.
 A listbox on the `ntn-menu` surface — the select replacement. Elements: `__label` `__trigger`
 `__value` `__caret` `__chip` `__chip-x` `__more` `__panel` `__search` `__list` `__option`
 `__text` `__option-title` `__option-desc` `__tick` `__box` `__empty` `__foot` `__hint`.
-Modifiers: `--sm` `--lg` `--inline`. Invalid: `data-invalid` on the root.
+Modifiers: `--sm` `--lg` `--inline`. Invalid: `aria-invalid="true"` on the trigger (or
+`data-invalid` on the root).
 
 `nocturne.js` owns open/close, filtering, keyboard (`↑↓` `↵` `esc` `home/end`) and chip
 rendering; selection lives on each option's `aria-selected`, so the DOM is the state. Add
