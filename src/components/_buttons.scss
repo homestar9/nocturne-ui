@@ -3,8 +3,6 @@
 
 $-tones: modifiers(".ntn-btn", $statuses);
 $-emphases: modifiers(".ntn-btn", (primary, secondary, subtle));
-// A toggle group's end buttons round to fit inside its 1px border.
-$-inner-radius: calc(var(--ntn-radius-md) - 1px);
 
 .ntn-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: var(--ntn-space-2);
@@ -179,28 +177,21 @@ $-inner-radius: calc(var(--ntn-radius-md) - 1px);
   &--muted { color: var(--ntn-text-muted); }
 }
 
-/* Toggle group — segmented filter control. Each button carries aria-pressed. */
+/* Toggle group — segmented filter control. Each button carries aria-pressed. Its pick-one form
+   twin is the segmented radio group (_selection.scss); both draw their segments with the same
+   mixins. */
 .ntn-toggle-group {
   display: inline-flex; align-items: center; flex: 0 0 auto;
   @include control-surface;
 
   &__btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    height: calc(var(--ntn-control-md) - 2px); padding: 0 12px;
-    border: 0; border-left: 1px solid var(--ntn-border-subtle); border-radius: 0;
-    background: transparent; color: var(--ntn-text-muted); cursor: pointer; white-space: nowrap;
+    display: inline-flex; border: 0; border-radius: 0;
+    background: transparent; cursor: pointer; white-space: nowrap;
     font-family: var(--ntn-font-sans); font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-medium); line-height: 1;
-    @include transition(background, color);
+    @include segment;
 
-    i { font-size: 14px; }
-    &:first-child { border-left: 0; border-radius: $-inner-radius 0 0 $-inner-radius; }
-    &:last-child { border-radius: 0 $-inner-radius $-inner-radius 0; }
-    @include hover { background: var(--ntn-surface-hover); color: var(--ntn-text-secondary); }
-    &[aria-pressed="true"] {
-      background: var(--ntn-surface-3); color: var(--ntn-text-primary);
-
-      i { color: var(--ntn-accent-300); }
-    }
+    @include hover { @include segment-hover; }
+    &[aria-pressed="true"] { @include segment-selected; }
     &:disabled, &[aria-disabled="true"] { @include disabled; }
     .ntn-badge { margin-left: 2px; }
   }

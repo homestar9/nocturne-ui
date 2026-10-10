@@ -16,6 +16,34 @@
   transition: $list;
 }
 
+/// One segment of a segmented control (a toggle-group button, a segmented radio). The group is a
+/// control-surface; segments sit inside its 1px border, divided by a hairline, and the end segments
+/// round to fit. $first / $last select the end segments among their siblings. Include it after the
+/// segment's own declarations: its nested rules follow them.
+@mixin segment($first: ":first-child", $last: ":last-child") {
+  $inner-radius: calc(var(--ntn-radius-md) - 1px);
+  align-items: center; gap: 6px;
+  height: calc(var(--ntn-control-md) - 2px); padding: 0 12px;
+  border-left: 1px solid var(--ntn-border-subtle); color: var(--ntn-text-muted);
+  @include transition(background, color);
+
+  i { font-size: 14px; }
+  &#{$first} { border-left: 0; border-radius: $inner-radius 0 0 $inner-radius; }
+  &#{$last} { border-radius: 0 $inner-radius $inner-radius 0; }
+}
+
+/// A segment under the pointer.
+@mixin segment-hover {
+  background: var(--ntn-surface-hover); color: var(--ntn-text-secondary);
+}
+
+/// The chosen segment: raised to surface-3, its icon in the accent.
+@mixin segment-selected {
+  background: var(--ntn-surface-3); color: var(--ntn-text-primary);
+
+  i { color: var(--ntn-accent-300); }
+}
+
 /// The bordered, raised face of a form control: field, select, combobox, date trigger, toggle group.
 @mixin control-surface {
   background: var(--ntn-surface-2);
