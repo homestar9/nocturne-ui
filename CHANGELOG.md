@@ -27,6 +27,10 @@ renamed or removed class names and tokens.
 - **Kitchen sink:** a Glass section showing glass over the glow, over a photo as the ambient
   image, and over the photo as the background image (`examples/images/background.avif`), and a
   droplet button in the top bar that turns glass and the ambient band on for the whole page.
+- **Kitchen sink code view (NTN-1).** Every section has a Code button that shows each example's
+  markup, coloured, with a Copy button. A code button in the top bar opens or closes every
+  section at once. Code starts hidden. The snippets are read from the demos themselves
+  (`examples/sink-code.js`), so they can't drift. The invite dialog now lives in the Modal section.
 - **Token:** `--ntn-focus-outline`, the keyboard focus ring as an outline value.
 - **Tokens:** `--ntn-shadow-control`, `-hairline`, `-float` and `-inset`, the small depths of
   filled buttons, glowing buttons, the FAB and the switch track. Mode tokens: the light theme

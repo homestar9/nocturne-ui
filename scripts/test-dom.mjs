@@ -261,6 +261,53 @@ console.log('Generated buttons never submit a form');
   check(pages.length > 0 && pages.every((b) => b.type === 'button'), `pager buttons are type="button" (${pages.length} rendered)`);
 }
 
+console.log('Kitchen sink code view (NTN-1)');
+{
+  const raw = await readFile(resolve(root, 'examples/kitchen-sink.html'), 'utf8');
+  check(/<script src="sink-code\.js"><\/script>\s*<\/body>/.test(raw),
+    'sink-code.js is a plain classic script at the end of <body>, so it reads the markup before nocturne.js runs');
+  // The page's own scripts are stripped: none of them is under test, and nocturne.js never loads here.
+  const dom = new JSDOM(raw.replace(/<script\b[\s\S]*?<\/script>/g, ''),
+    { runScripts: 'outside-only', url: 'http://localhost/examples/kitchen-sink.html' });
+  const { window } = dom;
+  const document = window.document;
+  let copied = null;
+  Object.defineProperty(window.navigator, 'clipboard', { value: { writeText: async (t) => { copied = t; } } });
+  window.eval(await readFile(resolve(root, 'examples/sink-code.js'), 'utf8'));
+
+  const sections = [...document.querySelectorAll('.sink')];
+  const bare = sections.filter((s) => !s.querySelector('[data-sink-example]')).map((s) => s.id);
+  check(sections.length > 0 && !bare.length, `every section marks at least one example${bare.length ? ' (missing: ' + bare.join(', ') + ')' : ''}`);
+  const toggles = sections.map((s) => s.querySelectorAll('.sink__head .sink__codetoggle'));
+  check(toggles.every((t) => t.length === 1), 'every section head gets exactly one Code button');
+  const pairs = toggles.map((t) => [t[0], document.getElementById(t[0]?.getAttribute('aria-controls'))]);
+  check(pairs.every(([b, p]) => p && b.getAttribute('aria-expanded') === 'false' && p.hidden), 'code is off by default: every panel starts hidden');
+
+  const code = [...document.querySelectorAll('.sink__pre')].map((p) => p.textContent);
+  const dirty = code.filter((c) => !c.trim() || /sink__|data-sink|=""/.test(c));
+  check(code.length >= sections.length && !dirty.length,
+    `${code.length} snippets, none empty or carrying page chrome${dirty.length ? ': ' + dirty[0].slice(0, 80) : ''}`);
+  check(document.querySelector('.sink__pre .sink__tok-tag') && document.querySelector('.sink__pre .sink__tok-attr'), 'snippets are coloured');
+
+  const [button, panel] = pairs[0];
+  button.click();
+  check(!panel.hidden && button.getAttribute('aria-expanded') === 'true', 'a Code button opens its own panel');
+  check(pairs.slice(1).every(([, p]) => p.hidden), '...and no other');
+  button.click();
+  const all = document.getElementById('code-toggle');
+  all.click();
+  check(pairs.every(([b, p]) => !p.hidden && b.getAttribute('aria-expanded') === 'true') && all.getAttribute('aria-pressed') === 'true',
+    'the top-bar button opens every panel');
+  all.click();
+  check(pairs.every(([, p]) => p.hidden) && all.getAttribute('aria-pressed') === 'false', '...and closes them again');
+
+  const pre = panel.querySelector('.sink__pre');
+  panel.querySelector('.sink__snippet-head button').click();
+  await new Promise((r) => setTimeout(r, 0));
+  check(copied === pre.textContent, 'Copy puts the snippet text on the clipboard');
+  window.close();
+}
+
 console.log('Source guard');
 {
   const src = await readFile(resolve(root, 'js/nocturne.js'), 'utf8');

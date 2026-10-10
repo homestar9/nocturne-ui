@@ -330,6 +330,14 @@ module scripts on `file://` pages, so `nocturne.js` never loads there: the CSS r
 theme toggle, tabs, dialogs and dropdowns do nothing. It loads `dist/`, so keep `npm run watch`
 running while you edit.
 
+Each kitchen-sink section has a **Code** button that shows the markup of its examples, with a
+Copy button per snippet; the code button in the top bar opens every section at once. Code is off
+on every load. `examples/sink-code.js` reads the snippets from the page's own markup before
+`nocturne.js` runs, so they always match the demos. To add one, put `data-sink-example="Label"`
+on the element a developer would copy (an empty label is fine for a section's only example).
+Elements in one section with the same label show as one snippet. Page chrome is named `sink__*`
+and never appears in a snippet; nor do `data-sink-*` attributes.
+
 Edit files in `src/`, never in `dist/`. Commit the rebuilt `dist/` with the source change: the
 tests fail when the two disagree. Always spell the namespace `ntn` in source — the prefix build
 renames exactly that spelling, so a new class, token, hook or event written any other way would
