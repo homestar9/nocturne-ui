@@ -47,6 +47,11 @@ try {
   const undeclared = [...read].filter((n) => !declared.has(n) && !setFromJs.has(n));
   check(undeclared.length === 0, `every var() the CSS reads is declared (${read.size} names)` + (undeclared.length ? ': ' + undeclared.join(' ') : ''));
 
+  // One meaning per family: --ntn-text-* are colours and --ntn-control-* are heights.
+  const decls = [...css.matchAll(/(--ntn-(?:text|control)-[a-z0-9-]+)\s*:\s*([^;]+);/g)];
+  const mixed = decls.filter(([, n, v]) => (n.startsWith('--ntn-text-') ? /^\d/.test(v.trim()) : !/^\d+px$/.test(v.trim()))).map(([, n]) => n);
+  check(mixed.length === 0, '--ntn-text-* are all colours and --ntn-control-* all heights' + (mixed.length ? ': ' + [...new Set(mixed)].join(' ') : ''));
+
   console.log('Font-free stylesheet');
   const nofonts = await readFile(join(base, 'nocturne.nofonts.css'), 'utf8');
   check(/@import\s+url\(["']https:\/\/fonts\.googleapis/.test(css), 'nocturne.css still loads Geist from Google Fonts');

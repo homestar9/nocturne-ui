@@ -37,6 +37,10 @@ renamed or removed class names and tokens.
   `ntn-progress--info`.
 
 ### Changed
+- **Token names (NTN-10).** Font sizes are `--ntn-font-size-2xs … -5xl` (were `--ntn-text-*`, which
+  also named the text colours), and the switch's off-state knob is `--ntn-switch-knob` (was
+  `--ntn-control-knob`, among the control heights). `--ntn-text-*` is now colours only and
+  `--ntn-control-*` heights only.
 - **Container frames are `--ntn-border-default`** in every theme, as in DeployBot: `ntn-card`,
   `ntn-stat`, `ntn-accordion` and `ntn-edge` (modals already were). The rules inside them (table
   rows, card feet, divided heads, accordion items) stay on `--ntn-border-subtle`, so the frame

@@ -12,8 +12,8 @@
   width: 100%; max-width: var(--ntn-page-max); margin: 0 auto; padding: var(--ntn-space-6); display: flex; flex-direction: column; gap: 14px;
 
   &__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ntn-space-4); flex-wrap: wrap; }
-  &__title { margin: 0; font-size: var(--ntn-text-2xl); font-weight: var(--ntn-weight-semibold); letter-spacing: var(--ntn-tracking-display); line-height: var(--ntn-leading-tight); color: var(--ntn-text-primary); }
-  &__sub { margin: 4px 0 0; font-size: var(--ntn-text-sm); color: var(--ntn-text-muted); }
+  &__title { margin: 0; font-size: var(--ntn-font-size-2xl); font-weight: var(--ntn-weight-semibold); letter-spacing: var(--ntn-tracking-display); line-height: var(--ntn-leading-tight); color: var(--ntn-text-primary); }
+  &__sub { margin: 4px 0 0; font-size: var(--ntn-font-size-sm); color: var(--ntn-text-muted); }
   &__actions { display: flex; align-items: center; gap: var(--ntn-space-2); flex: 0 0 auto; }
 }
 
@@ -47,8 +47,8 @@
 .ntn-kbd { @include keycap; }
 
 .ntn-empty {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--ntn-space-3); padding: var(--ntn-space-12) var(--ntn-space-6); text-align: center; color: var(--ntn-text-muted); font-size: var(--ntn-text-sm);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--ntn-space-3); padding: var(--ntn-space-12) var(--ntn-space-6); text-align: center; color: var(--ntn-text-muted); font-size: var(--ntn-font-size-sm);
 
   i { font-size: 20px; color: var(--ntn-text-disabled); }
-  &__title { font-size: var(--ntn-text-md); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-primary); }
+  &__title { font-size: var(--ntn-font-size-md); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-primary); }
 }

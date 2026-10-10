@@ -99,14 +99,14 @@ $enabled-hover: ':hover:where(:not(:disabled, [aria-disabled="true"]))';
 
 /// The small label above a form control.
 @mixin field-label {
-  font-size: var(--ntn-text-xs);
+  font-size: var(--ntn-font-size-xs);
   font-weight: var(--ntn-weight-medium);
   color: var(--ntn-text-secondary);
 }
 
 /// Small uppercase heading: eyebrow, menu and sidebar sections, divider labels, weekday names.
 @mixin caps-label {
-  font-size: var(--ntn-text-2xs);
+  font-size: var(--ntn-font-size-2xs);
   font-weight: var(--ntn-weight-medium);
   letter-spacing: var(--ntn-tracking-caps);
   text-transform: uppercase;
@@ -121,7 +121,7 @@ $enabled-hover: ':hover:where(:not(:disabled, [aria-disabled="true"]))';
   background: var(--ntn-surface-3);
   color: var(--ntn-text-muted);
   font-family: var(--ntn-font-mono);
-  font-size: var(--ntn-text-2xs);
+  font-size: var(--ntn-font-size-2xs);
 }
 
 /// One line, cut with an ellipsis.

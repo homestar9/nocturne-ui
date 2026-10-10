@@ -49,7 +49,7 @@ $-desc-min: 640px;
     position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
     width: var(--ntn-step-size); height: var(--ntn-step-size); border-radius: var(--ntn-radius-full);
     background: var(--ntn-surface-2); border: 2px solid var(--ntn-border-default); color: var(--ntn-text-disabled);
-    font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-medium);
+    font-family: var(--ntn-font-mono); font-size: var(--ntn-font-size-xs); font-weight: var(--ntn-weight-medium);
     transition: tr(background, base), tr(border-color, base), tr(color, base), tr(box-shadow, base);
 
     i { font-size: 13px; }
@@ -61,8 +61,8 @@ $-desc-min: 640px;
   }
 
   &__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  &__title { font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-muted); text-wrap: pretty; }
-  &__desc { font-size: var(--ntn-text-xs); color: var(--ntn-text-disabled); text-wrap: pretty; }
+  &__title { font-size: var(--ntn-font-size-sm); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-muted); text-wrap: pretty; }
+  &__desc { font-size: var(--ntn-font-size-xs); color: var(--ntn-text-disabled); text-wrap: pretty; }
   &__step[data-state="complete"] &__title { color: var(--ntn-text-secondary); }
   &__step[data-state="current"] {
     .ntn-steps__title { color: var(--ntn-text-primary); }
@@ -111,17 +111,17 @@ $-desc-min: 640px;
     .ntn-steps__step[data-state="current"] .ntn-steps__marker { background: var(--ntn-accent-400); box-shadow: none; }
     .ntn-steps__text { display: none; }
   }
-  &__count { font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); white-space: nowrap; }
+  &__count { font-size: var(--ntn-font-size-xs); color: var(--ntn-text-muted); white-space: nowrap; }
 
   &--sm {
     --ntn-step-size: 24px;
 
     .ntn-steps__marker {
-      font-size: var(--ntn-text-2xs);
+      font-size: var(--ntn-font-size-2xs);
 
       i { font-size: 11px; }
     }
-    .ntn-steps__title { font-size: var(--ntn-text-xs); }
+    .ntn-steps__title { font-size: var(--ntn-font-size-xs); }
     .ntn-steps__desc { display: none; }
   }
 }

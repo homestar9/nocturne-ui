@@ -34,7 +34,7 @@
     display: flex; align-items: center; justify-content: space-between; gap: var(--ntn-space-2);
     width: 100%; padding: 7px 10px; border: 0; border-radius: var(--ntn-radius-sm);
     background: transparent; color: var(--ntn-text-secondary);
-    font-family: var(--ntn-font-sans); font-size: var(--ntn-text-sm); text-align: left; cursor: pointer;
+    font-family: var(--ntn-font-sans); font-size: var(--ntn-font-size-sm); text-align: left; cursor: pointer;
 
     i { font-size: 14px; }
     &#{$enabled-hover}, &[data-ntn-active] { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); }
@@ -52,7 +52,7 @@
     }
   }
   &__label { /* Section heading inside a long menu. */ margin: 0; padding: 7px 10px 4px; @include caps-label; }
-  &__shortcut { flex: 0 0 auto; font-family: var(--ntn-font-mono); font-size: var(--ntn-text-2xs); color: var(--ntn-text-disabled); }
+  &__shortcut { flex: 0 0 auto; font-family: var(--ntn-font-mono); font-size: var(--ntn-font-size-2xs); color: var(--ntn-text-disabled); }
   .ntn-divider { margin: 4px 0; }
 }
 
@@ -105,7 +105,7 @@
     min-height: var(--ntn-control-md); padding: 5px 10px 5px 12px;
     @include control-surface;
     color: var(--ntn-text-primary);
-    font-family: var(--ntn-font-sans); font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-medium); text-align: left; cursor: pointer;
+    font-family: var(--ntn-font-sans); font-size: var(--ntn-font-size-sm); font-weight: var(--ntn-weight-medium); text-align: left; cursor: pointer;
     @include transition(border-color, box-shadow);
 
     @include hover { border-color: var(--ntn-border-strong); }
@@ -128,7 +128,7 @@
     /* Selected values as chips, for the multi variant. */
     display: inline-flex; align-items: center; gap: 5px; max-width: 100%; padding: 2px 4px 2px 8px;
     background: var(--ntn-surface-3); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-sm);
-    font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-regular); color: var(--ntn-text-primary);
+    font-size: var(--ntn-font-size-xs); font-weight: var(--ntn-weight-regular); color: var(--ntn-text-primary);
 
     > span { @include truncate; }
   }
@@ -140,7 +140,7 @@
     i { font-size: 10px; }
     &:hover { background: var(--ntn-surface-active); color: var(--ntn-text-primary); }
   }
-  &__more { flex: 0 0 auto; font-family: var(--ntn-font-mono); font-size: var(--ntn-text-2xs); color: var(--ntn-text-muted); }
+  &__more { flex: 0 0 auto; font-family: var(--ntn-font-mono); font-size: var(--ntn-font-size-2xs); color: var(--ntn-text-muted); }
 
   &__panel {
     position: absolute; z-index: var(--ntn-z-dropdown); top: 100%; left: 0; margin-top: 6px;
@@ -154,7 +154,7 @@
 
     i { font-size: 12px; color: var(--ntn-text-muted); flex: 0 0 auto; }
     input {
-      flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ntn-text-primary); font-family: var(--ntn-font-sans); font-size: var(--ntn-text-xs);
+      flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ntn-text-primary); font-family: var(--ntn-font-sans); font-size: var(--ntn-font-size-xs);
 
       &::placeholder { color: var(--ntn-text-disabled); }
     }
@@ -165,7 +165,7 @@
   &__option {
     display: flex; align-items: center; gap: var(--ntn-space-2); width: 100%; padding: 7px 9px;
     border: 0; border-radius: var(--ntn-radius-sm); background: transparent; color: var(--ntn-text-secondary);
-    font-family: var(--ntn-font-sans); font-size: var(--ntn-text-sm); text-align: left; cursor: pointer;
+    font-family: var(--ntn-font-sans); font-size: var(--ntn-font-size-sm); text-align: left; cursor: pointer;
 
     > i:first-child { flex: 0 0 auto; font-size: 14px; color: var(--ntn-text-muted); }
     &#{$enabled-hover}, &[data-ntn-active] { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); }
@@ -174,7 +174,7 @@
   }
   &__text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
   &__option-title { @include truncate; }
-  &__option-desc { font-size: var(--ntn-text-xs); color: var(--ntn-text-disabled); @include truncate; }
+  &__option-desc { font-size: var(--ntn-font-size-xs); color: var(--ntn-text-disabled); @include truncate; }
   &__tick {
     flex: 0 0 auto; font-size: 13px; color: var(--ntn-accent-300); opacity: 0;
 
@@ -192,12 +192,12 @@
       background-image: var(--ntn-check-mark);
     }
   }
-  &__empty { margin: 0; padding: 14px 10px; text-align: center; font-size: var(--ntn-text-xs); color: var(--ntn-text-disabled); }
+  &__empty { margin: 0; padding: 14px 10px; text-align: center; font-size: var(--ntn-font-size-xs); color: var(--ntn-text-disabled); }
   &__foot { display: flex; align-items: center; justify-content: space-between; gap: var(--ntn-space-2); margin-top: 2px; padding: 6px 4px 2px; border-top: 1px solid var(--ntn-border-subtle); }
-  &__hint { font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
+  &__hint { font-size: var(--ntn-font-size-xs); color: var(--ntn-text-muted); }
 
-  &--sm &__trigger { min-height: var(--ntn-control-sm); font-size: var(--ntn-text-xs); padding: 4px 8px 4px 10px; }
-  &--lg &__trigger { min-height: var(--ntn-control-lg); font-size: var(--ntn-text-md); }
+  &--sm &__trigger { min-height: var(--ntn-control-sm); font-size: var(--ntn-font-size-xs); padding: 4px 8px 4px 10px; }
+  &--lg &__trigger { min-height: var(--ntn-control-lg); font-size: var(--ntn-font-size-md); }
   &--inline {
     flex-direction: row; align-items: center; gap: var(--ntn-space-2); width: auto;
 

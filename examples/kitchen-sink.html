@@ -28,9 +28,9 @@
     padding-top: var(--ntn-space-6); border-top: 1px solid var(--ntn-border-subtle);
   }
   .sink:first-of-type .sink__head { border-top: 0; padding-top: 0; }
-  .sink__title { margin: 0; font-size: var(--ntn-text-xl); font-weight: var(--ntn-weight-semibold); letter-spacing: var(--ntn-tracking-heading); color: var(--ntn-text-primary); }
-  .sink__code { font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); color: var(--ntn-accent-300); background: var(--ntn-accent-soft); border: 1px solid var(--ntn-accent-line); padding: 2px 7px; border-radius: var(--ntn-radius-xs); }
-  .sink__note { margin: 0; flex: 1 1 280px; font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
+  .sink__title { margin: 0; font-size: var(--ntn-font-size-xl); font-weight: var(--ntn-weight-semibold); letter-spacing: var(--ntn-tracking-heading); color: var(--ntn-text-primary); }
+  .sink__code { font-family: var(--ntn-font-mono); font-size: var(--ntn-font-size-xs); color: var(--ntn-accent-300); background: var(--ntn-accent-soft); border: 1px solid var(--ntn-accent-line); padding: 2px 7px; border-radius: var(--ntn-radius-xs); }
+  .sink__note { margin: 0; flex: 1 1 280px; font-size: var(--ntn-font-size-xs); color: var(--ntn-text-muted); }
   /* The photo for the Glass examples and the droplet's whole-page band. Browsers disagree on
      whether a relative url() in a custom property resolves against this page or against
      dist/nocturne.css, so these are written to land on examples/images from both. A real app
@@ -44,7 +44,7 @@
     padding: var(--ntn-space-6); border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-xl);
     background: var(--ntn-bg-app);
   }
-  .sink__label { font-size: var(--ntn-text-2xs); text-transform: uppercase; letter-spacing: var(--ntn-tracking-caps); color: var(--ntn-text-disabled); font-weight: var(--ntn-weight-medium); }
+  .sink__label { font-size: var(--ntn-font-size-2xs); text-transform: uppercase; letter-spacing: var(--ntn-tracking-caps); color: var(--ntn-text-disabled); font-weight: var(--ntn-weight-medium); }
 </style>
 </head>
 <body>
@@ -1351,31 +1351,31 @@
           <div class="ntn-grid ntn-grid--4">
             <div class="ntn-edge" style="padding:var(--ntn-space-5);background:var(--ntn-surface-1)">
               <p class="sink__label">Default</p>
-              <p style="margin:6px 0 0;font-size:var(--ntn-text-sm);color:var(--ntn-text-secondary)">A hairline and the standard radius. The baseline every effect starts from.</p>
+              <p style="margin:6px 0 0;font-size:var(--ntn-font-size-sm);color:var(--ntn-text-secondary)">A hairline and the standard radius. The baseline every effect starts from.</p>
             </div>
             <div class="ntn-edge ntn-edge--glow" style="padding:var(--ntn-space-5);background:var(--ntn-surface-1)">
               <p class="sink__label">Glow</p>
-              <p style="margin:6px 0 0;font-size:var(--ntn-text-sm);color:var(--ntn-text-secondary)">Accent hairline, halo, and a colour bleed from the top edge. The one element read first.</p>
+              <p style="margin:6px 0 0;font-size:var(--ntn-font-size-sm);color:var(--ntn-text-secondary)">Accent hairline, halo, and a colour bleed from the top edge. The one element read first.</p>
             </div>
             <div class="ntn-edge ntn-edge--processing" style="padding:var(--ntn-space-5);background:var(--ntn-surface-1)">
               <p class="sink__label">Processing</p>
-              <p style="margin:6px 0 0;font-size:var(--ntn-text-sm);color:var(--ntn-text-secondary)">A light travels the edge and an exterior glow orbits with it. Remove the class when the job lands.</p>
+              <p style="margin:6px 0 0;font-size:var(--ntn-font-size-sm);color:var(--ntn-text-secondary)">A light travels the edge and an exterior glow orbits with it. Remove the class when the job lands.</p>
             </div>
             <div class="ntn-edge ntn-edge--shine" style="padding:var(--ntn-space-5);background:var(--ntn-surface-1)">
               <span class="ntn-edge__shine" aria-hidden="true"></span>
               <p class="sink__label">Shine</p>
-              <p style="margin:6px 0 0;font-size:var(--ntn-text-sm);color:var(--ntn-text-secondary)">Two soft lights drift round the edge, half a lap apart. Ambient, so it can stay on.</p>
+              <p style="margin:6px 0 0;font-size:var(--ntn-font-size-sm);color:var(--ntn-text-secondary)">Two soft lights drift round the edge, half a lap apart. Ambient, so it can stay on.</p>
             </div>
           </div>
           <div class="ntn-edge ntn-edge--shine" style="display:flex;align-items:center;gap:var(--ntn-space-3);padding:var(--ntn-space-3) var(--ntn-space-3) var(--ntn-space-3) var(--ntn-space-5);border-radius:var(--ntn-radius-full);background:var(--ntn-surface-1)">
             <span class="ntn-edge__shine" aria-hidden="true"></span>
-            <input type="text" style="flex:1;min-width:0;border:0;background:transparent;color:var(--ntn-text-primary);font:inherit;font-size:var(--ntn-text-sm)" placeholder="Shine on a wide bar — the lights keep an even pace along the long sides" aria-label="Prompt">
+            <input type="text" style="flex:1;min-width:0;border:0;background:transparent;color:var(--ntn-text-primary);font:inherit;font-size:var(--ntn-font-size-sm)" placeholder="Shine on a wide bar — the lights keep an even pace along the long sides" aria-label="Prompt">
             <button class="ntn-btn ntn-btn--primary" style="border-radius:var(--ntn-radius-full)">Generate</button>
           </div>
           <div class="ntn-row" style="flex-wrap:wrap;gap:var(--ntn-space-4)">
             <button class="ntn-btn ntn-edge--glow" style="border-radius:var(--ntn-radius-md)"><i class="fa-light fa-sparkles"></i>On a button</button>
             <button class="ntn-btn ntn-edge--processing" style="border-radius:var(--ntn-radius-md)"><span class="ntn-spinner"></span>Deploying</button>
-            <span class="ntn-edge ntn-edge--processing" style="display:inline-flex;align-items:center;gap:var(--ntn-space-2);padding:6px 14px;border-radius:var(--ntn-radius-full);font-size:var(--ntn-text-xs);color:var(--ntn-text-secondary)">On a pill</span>
+            <span class="ntn-edge ntn-edge--processing" style="display:inline-flex;align-items:center;gap:var(--ntn-space-2);padding:6px 14px;border-radius:var(--ntn-radius-full);font-size:var(--ntn-font-size-xs);color:var(--ntn-text-secondary)">On a pill</span>
           </div>
           <section class="ntn-card ntn-card--processing">
             <header class="ntn-card__head">

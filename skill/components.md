@@ -1089,7 +1089,7 @@ Tokens that carry theme meaning, when you need them directly:
 | Token | Role |
 | --- | --- |
 | `--ntn-accent-fg` | Ink sitting ON the accent (labels, knobs, brand marks) |
-| `--ntn-control-knob` | A switch's off-state knob |
+| `--ntn-switch-knob` | A switch's off-state knob |
 | `--ntn-alpha-ink-04/06/10` | Wash over the current surface — white on dark, black on light |
 | `--ntn-bg-blur` | Translucent fill behind the sticky top bar |
 | `--ntn-accent-line`, `--ntn-success-line`, `--ntn-warning-line`, `--ntn-danger-line`, `--ntn-info-line` | Hairlines for tinted surfaces |

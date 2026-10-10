@@ -9,7 +9,7 @@ $-emphases: modifiers(".ntn-btn", (primary, secondary, subtle));
   height: var(--ntn-control-md); padding: 0 14px; border-radius: var(--ntn-radius-md);
   border: 1px solid var(--ntn-border-default); background: var(--ntn-surface-2); color: var(--ntn-text-primary);
   box-shadow: var(--ntn-shadow-xs); cursor: pointer; white-space: nowrap; text-decoration: none;
-  font-family: var(--ntn-font-sans); font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-medium);
+  font-family: var(--ntn-font-sans); font-size: var(--ntn-font-size-sm); font-weight: var(--ntn-weight-medium);
   letter-spacing: var(--ntn-tracking-body); line-height: 1;
   transition: tr(background), tr(color), tr(border-color), tr(transform, instant);
 
@@ -98,11 +98,11 @@ $-emphases: modifiers(".ntn-btn", (primary, secondary, subtle));
   }
 
   &--sm {
-    height: var(--ntn-control-sm); padding: 0 10px; gap: 6px; font-size: var(--ntn-text-xs); border-radius: var(--ntn-radius-sm);
+    height: var(--ntn-control-sm); padding: 0 10px; gap: 6px; font-size: var(--ntn-font-size-xs); border-radius: var(--ntn-radius-sm);
 
     i { font-size: 14px; }
   }
-  &--lg { height: var(--ntn-control-lg); padding: 0 18px; font-size: var(--ntn-text-md); }
+  &--lg { height: var(--ntn-control-lg); padding: 0 18px; font-size: var(--ntn-font-size-md); }
   &--block { width: 100%; }
 
   &[data-loading] {
@@ -153,7 +153,7 @@ $-emphases: modifiers(".ntn-btn", (primary, secondary, subtle));
   display: inline-flex; align-items: center; justify-content: center; gap: var(--ntn-space-2);
   height: 48px; min-width: 48px; padding: 0; border-radius: var(--ntn-radius-full);
   border: 1px solid color-mix(in oklab, var(--ntn-accent-500) 70%, white); background: var(--ntn-accent-fill); color: var(--ntn-accent-fg);
-  font-family: var(--ntn-font-sans); font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-medium); white-space: nowrap;
+  font-family: var(--ntn-font-sans); font-size: var(--ntn-font-size-sm); font-weight: var(--ntn-weight-medium); white-space: nowrap;
   box-shadow: 0 10px 30px -10px var(--ntn-accent-glow), var(--ntn-shadow-float), var(--ntn-highlight-top); cursor: pointer;
   transition: tr(background), tr(transform, fast, out);
 
@@ -187,7 +187,7 @@ $-emphases: modifiers(".ntn-btn", (primary, secondary, subtle));
   &__btn {
     display: inline-flex; border: 0; border-radius: 0;
     background: transparent; cursor: pointer; white-space: nowrap;
-    font-family: var(--ntn-font-sans); font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-medium); line-height: 1;
+    font-family: var(--ntn-font-sans); font-size: var(--ntn-font-size-sm); font-weight: var(--ntn-weight-medium); line-height: 1;
     @include segment;
 
     @include hover { @include segment-hover; }
@@ -195,6 +195,6 @@ $-emphases: modifiers(".ntn-btn", (primary, secondary, subtle));
     &:disabled, &[aria-disabled="true"] { @include disabled; }
     .ntn-badge { margin-left: 2px; }
   }
-  &--sm &__btn { height: calc(var(--ntn-control-sm) - 2px); padding: 0 10px; font-size: var(--ntn-text-xs); }
+  &--sm &__btn { height: calc(var(--ntn-control-sm) - 2px); padding: 0 10px; font-size: var(--ntn-font-size-xs); }
   &--lg &__btn { height: calc(var(--ntn-control-lg) - 2px); padding: 0 15px; }
 }
