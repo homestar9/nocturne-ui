@@ -515,6 +515,33 @@ Both moving effects read one registered angle (`--ntn-spin`), animated on the ho
 inherited by its ring, so the light and the glow never drift apart. Under
 `prefers-reduced-motion` they settle to a static halo.
 
+## Glass — `ntn-glass` · Ambient — `ntn-ambient`
+
+Opt-in translucent surfaces for a page that sits over artwork or a gradient. Without something
+behind them they just look like ordinary cards, so pair them with `ntn-ambient` or your own
+backdrop.
+
+| Class | Effect |
+| --- | --- |
+| `ntn-glass` | On a `ntn-card`, `ntn-stat`, `ntn-accordion` or `ntn-sidebar`: that surface turns translucent and blurred, with a lit top edge. On any other element: every such surface inside it does. Table heads and the sidebar brand inside turn to a faint tint. Nested surfaces keep the tint but drop the second blur and shadow |
+| `ntn-ambient` | The backdrop: a static accent glow behind the top of the app that fades into the canvas. First child of `.ntn-app`, or of a panel with `position: relative; isolation: isolate; overflow: hidden`. Add artwork with a root-relative URL: `--ntn-background-image` at full strength (when everything on it is glass), or `--ntn-ambient-image` dimmed and faded (when text also sits on it) |
+
+```html
+<div class="ntn-app ntn-glass">          <!-- the whole app: sidebar and every card -->
+  <div class="ntn-ambient"></div>
+  <aside class="ntn-sidebar">…</aside>
+  …
+</div>
+
+<section class="ntn-card ntn-glass">…</section>   <!-- one card over a hero image -->
+```
+
+Inputs, buttons, badges, menus, popovers and modals stay solid. Glass falls back to solid under
+`prefers-reduced-transparency`, and the sidebar does too as the phone drawer. Tune it with
+`--ntn-glass-bg`, `--ntn-glass-border`, `--ntn-glass-highlight`, `--ntn-glass-shadow` and
+`--ntn-glass-blur`; the backdrop with `--ntn-background-image`, `--ntn-ambient-image`,
+`--ntn-ambient-opacity` and `--ntn-ambient-height`. Keep the backdrop static: blur over a moving one re-renders every frame.
+
 ## Badge — `ntn-badge`
 
 Modifiers: `--neutral` (default) `--primary` `--success` `--warning` `--danger` `--info` · `--dot` (leading status dot)

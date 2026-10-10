@@ -47,6 +47,7 @@
   --ntn-surface-3:     #F1F3F7;
   --ntn-surface-inset: rgba(16,20,27,0.05);
   --ntn-bg-blur:       rgba(255,255,255,0.78);
+  --ntn-glass-bg:      color-mix(in srgb, var(--ntn-n-0) 72%, transparent);
 
   --ntn-border-subtle:  #E7EAF0;
   --ntn-border-default: #DCE0E8;
@@ -62,6 +63,11 @@
   --ntn-shadow-md:  0 8px 24px -14px rgba(16,20,27,0.20), 0 1px 2px rgba(16,20,27,0.04);
   --ntn-shadow-lg:  0 24px 60px -24px rgba(16,20,27,0.28), 0 1px 3px rgba(16,20,27,0.06);
   --ntn-shadow-pop: 0 12px 32px -10px rgba(16,20,27,0.22);
+
+  /* Glass: a bright lit edge, and the ambient image kept faint on a light page */
+  --ntn-glass-highlight: inset 0 1px 0 rgba(255,255,255,0.6);
+  --ntn-glass-shadow:    0 1px 2px rgba(16,20,27,0.05), 0 18px 40px -24px rgba(16,20,27,0.25);
+  --ntn-ambient-opacity: 0.22;
 
   --ntn-scrim: rgba(16,20,27,0.42);
 }

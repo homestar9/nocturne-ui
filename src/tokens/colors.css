@@ -113,6 +113,9 @@
   --ntn-surface-inset:  rgba(0,0,0,0.25);
   /* Translucent bar behind the sticky top bar's blur */
   --ntn-bg-blur:        rgba(10,12,16,0.72);
+  /* Glass surfaces (glass.css): a translucent card colour and a hairline drawn in the ink */
+  --ntn-glass-bg:       color-mix(in srgb, var(--ntn-n-100) 72%, transparent);
+  --ntn-glass-border:   color-mix(in srgb, var(--ntn-n-900) 8%, transparent);
 
   --ntn-border-subtle:  #171C24;
   --ntn-border-default: var(--ntn-n-400);

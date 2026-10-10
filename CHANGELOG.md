@@ -6,7 +6,23 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+### Added
+- **`ntn-glass`**: translucent, blurred cards, stats, accordions and sidebar with a lit top edge,
+  for pages over artwork or a gradient. Put it on one surface, or on a wrapper (up to
+  `.ntn-app`) to glaze every surface inside. Controls, menus and modals stay solid. Falls back to
+  solid under `prefers-reduced-transparency` and for the phone sidebar drawer.
+- **`ntn-ambient`**: the backdrop to sit glass on, a static accent glow behind the top of the app
+  that fades into the canvas. An app adds its artwork at full strength with
+  `--ntn-background-image`, or dimmed and fading with `--ntn-ambient-image`.
+- **Tokens:** `--ntn-glass-bg`, `-border`, `-highlight`, `-shadow`, `-blur`,
+  `--ntn-background-image`, and `--ntn-ambient-image`, `-opacity`, `-height`. Amber sets
+  DeployBot's light-mode glass.
+- **Kitchen sink:** a Glass section showing glass over the glow, over a photo as the ambient
+  image, and over the photo as the background image (`examples/images/background.avif`), and a
+  droplet button in the top bar that turns glass and the ambient band on for the whole page.
+
 ### Changed
+- **Brand:** cards are opaque except under `ntn-glass` (`skill/brand.md`).
 - **`themes/amber.css` uses DeployBot's greys.** Dark mode drops the blue tint for near-neutral
   graphite. Light mode gets a warm paper canvas and off-white cards with slate text, and the
   accent text stops become a burnt amber (`--ntn-accent-300` is `#9B4900`). The faint step

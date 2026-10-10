@@ -15,7 +15,8 @@
 
 /* ── Nocturne color primitives ───────────────────────────────────────────────
    Neutrals carry the interface. Accents are a thin layer on top and are the
-   only thing a client theme needs to override.
+   only thing a client theme needs to override. A theme may also retint the
+   neutral ramp, as themes/amber.css does.
 
    Dark is the default. The light theme lives in theme-light.css and remaps
    these same names — components never branch on theme.
@@ -127,6 +128,9 @@
   --ntn-surface-inset:  rgba(0,0,0,0.25);
   /* Translucent bar behind the sticky top bar's blur */
   --ntn-bg-blur:        rgba(10,12,16,0.72);
+  /* Glass surfaces (glass.css): a translucent card colour and a hairline drawn in the ink */
+  --ntn-glass-bg:       color-mix(in srgb, var(--ntn-n-100) 72%, transparent);
+  --ntn-glass-border:   color-mix(in srgb, var(--ntn-n-900) 8%, transparent);
 
   --ntn-border-subtle:  #171C24;
   --ntn-border-default: var(--ntn-n-400);
@@ -229,6 +233,12 @@
   --ntn-shadow-md: 0 8px 24px -12px rgba(0,0,0,0.70), 0 0 0 1px rgba(255,255,255,0.02) inset;
   --ntn-shadow-lg: 0 24px 60px -24px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.03) inset;
   --ntn-shadow-pop: 0 12px 32px -8px rgba(0,0,0,0.75);
+
+  /* Glass (glass.css): a lit top edge and a wide soft drop; the strength of an app's
+     ambient image */
+  --ntn-glass-highlight: inset 0 1px 0 rgba(255,255,255,0.06);
+  --ntn-glass-shadow:    0 24px 60px -24px rgba(0,0,0,0.70);
+  --ntn-ambient-opacity: 0.5;
 }
 
 :root, [data-theme] {
@@ -245,6 +255,13 @@
      block or stacking context, so the default costs nothing. */
   --ntn-surface-filter: none;
   --ntn-pop-filter: none;
+  /* ntn-glass and ntn-ambient (glass.css). An app points these at its own artwork with a
+     root-relative url(...) or a gradient: --ntn-background-image at full strength, or
+     --ntn-ambient-image as a dimmed band that fades out. */
+  --ntn-glass-blur: blur(20px) saturate(140%);
+  --ntn-background-image: none;
+  --ntn-ambient-image: none;
+  --ntn-ambient-height: 760px;
 }
 
 :root {
@@ -314,6 +331,7 @@
   --ntn-surface-3:     #F1F3F7;
   --ntn-surface-inset: rgba(16,20,27,0.05);
   --ntn-bg-blur:       rgba(255,255,255,0.78);
+  --ntn-glass-bg:      color-mix(in srgb, var(--ntn-n-0) 72%, transparent);
 
   --ntn-border-subtle:  #E7EAF0;
   --ntn-border-default: #DCE0E8;
@@ -329,6 +347,11 @@
   --ntn-shadow-md:  0 8px 24px -14px rgba(16,20,27,0.20), 0 1px 2px rgba(16,20,27,0.04);
   --ntn-shadow-lg:  0 24px 60px -24px rgba(16,20,27,0.28), 0 1px 3px rgba(16,20,27,0.06);
   --ntn-shadow-pop: 0 12px 32px -10px rgba(16,20,27,0.22);
+
+  /* Glass: a bright lit edge, and the ambient image kept faint on a light page */
+  --ntn-glass-highlight: inset 0 1px 0 rgba(255,255,255,0.6);
+  --ntn-glass-shadow:    0 1px 2px rgba(16,20,27,0.05), 0 18px 40px -24px rgba(16,20,27,0.25);
+  --ntn-ambient-opacity: 0.22;
 
   --ntn-scrim: rgba(16,20,27,0.42);
 }

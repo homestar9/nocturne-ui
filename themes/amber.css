@@ -7,7 +7,8 @@
       DeployBot has a matching colour it is used exactly ("DB" below); the other steps are filled
       at DeployBot's hue and chroma, between their neighbours' lightness.
    3. Edges: crisper hairlines (border-subtle is DeployBot's card outline, which also draws
-      table rows and dividers) and DeployBot's lit top edge on cards (shadow-md).
+      table rows and dividers), DeployBot's lit top edge on cards (shadow-md), and DeployBot's
+      light-mode glass for ntn-glass surfaces.
 
    The faint step (n-600, --ntn-text-disabled) is DeployBot's, which is softer than Nocturne's:
    eyebrows, section labels and placeholders read lighter, about 2.2:1 in light mode.
@@ -54,6 +55,8 @@
 
   /* Cards: DeployBot's lit top edge in place of Nocturne's faint all-round ring */
   --ntn-shadow-md: 0 8px 24px -12px rgba(0,0,0,0.70), inset 0 1px 0 rgba(255,255,255,0.06);
+  /* Glass keeps Nocturne's 72% card tint here. DeployBot's own 4% tint only reads over dimmed,
+     pre-blurred art; over a photo it loses the text. */
 }
 
 /* ── Light ──────────────────────────────────────────────────────────────── */
@@ -91,4 +94,8 @@
   /* Cards: DeployBot's lit top edge */
   --ntn-shadow-md: 0 8px 24px -14px rgba(16,20,27,0.20), 0 1px 2px rgba(16,20,27,0.04),
                    inset 0 1px 0 rgba(255,255,255,0.6);
+
+  /* Glass (ntn-glass): DeployBot's surface at 72%, and a hairline at 9% ink */
+  --ntn-glass-bg:     color-mix(in srgb, var(--ntn-n-50) 72%, transparent);
+  --ntn-glass-border: color-mix(in srgb, var(--ntn-n-900) 9%, transparent);
 }

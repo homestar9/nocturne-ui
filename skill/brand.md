@@ -34,9 +34,11 @@ fill, chart area fills, and filled accent buttons (primary button, primary icon 
 which are lit from the top.
 
 Transparency and blur exist in two places only: the sticky top bar (72% app colour + 20px blur)
-and the modal scrim (72% black + 6px blur). Cards are always opaque. (`--ntn-surface-filter` and
-`--ntn-pop-filter` exist for apps that skin the kit into a different look. Leave them at `none`
-when building to the Nocturne brand.)
+and the modal scrim (72% black + 6px blur). Cards are opaque, with one opt-in exception:
+`ntn-glass` glazes cards, stats, accordions and the sidebar for a page that sits over artwork or
+the `ntn-ambient` glow. Use it only where there is something behind to show through, and never
+on controls. (`--ntn-surface-filter` and `--ntn-pop-filter` exist for apps that skin the kit
+into a different look. Leave them at `none` when building to the Nocturne brand.)
 
 ## Type
 

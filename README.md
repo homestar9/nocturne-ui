@@ -152,6 +152,46 @@ from the ramp. Three details:
 
 Semantics, spacing, and type are shared across every product and are not forkable.
 
+### Glass surfaces
+
+For a page that sits over artwork or a gradient, two opt-in classes:
+
+- **`ntn-glass`** makes a `ntn-card`, `ntn-stat`, `ntn-accordion` or `ntn-sidebar` translucent
+  and blurred, with a lit top edge. Put it on the surface itself, or on any wrapper (up to
+  `.ntn-app`) to glaze every surface inside. Controls, menus and modals stay solid.
+- **`ntn-ambient`**, the first child of `.ntn-app`, is the backdrop: a static accent glow behind
+  the top of the page that fades into the canvas. Add your own artwork one of two ways:
+  - `--ntn-background-image` draws it at full strength, filling the app. Best when the content
+    on it is all glass.
+  - `--ntn-ambient-image` draws it as atmosphere: dimmed by `--ntn-ambient-opacity` and faded out
+    over `--ntn-ambient-height`. Best when headings and other text sit straight on the backdrop.
+
+  It also works inside a single panel, such as a hero: give the panel `position: relative;
+  isolation: isolate; overflow: hidden` so the backdrop stays inside it.
+
+```html
+<div class="ntn-app ntn-glass">
+  <div class="ntn-ambient"></div>
+  …
+</div>
+```
+
+```css
+:root { --ntn-background-image: url(/img/backdrop.avif); }   /* full strength */
+:root { --ntn-ambient-image: url(/img/backdrop.avif); }      /* dimmed, fading */
+```
+
+Use a root-relative or absolute URL. Browsers disagree on whether a relative `url()` in a custom
+property resolves against your stylesheet or against `nocturne.css`. Glass keeps text readable
+even over a full-strength photo; the kitchen sink shows all three backdrops.
+
+The rules match the specificity of the components they restyle and come right after them, so
+glass beats the base background without `!important`, and state modifiers (an interactive card's
+hover, `ntn-edge--glow`, `--processing`) still win. Glass turns solid under
+`prefers-reduced-transparency` and for the phone sidebar drawer. Tune it with the `--ntn-glass-*`
+and `--ntn-ambient-*` tokens; `themes/amber.css` sets DeployBot's light-mode glass. The droplet button in
+the kitchen sink's top bar turns both on.
+
 ### Glass hooks
 
 Nocturne's cards are opaque. An app that uses the kit as the base of a different look (a frosted

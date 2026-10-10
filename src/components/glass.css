@@ -1,0 +1,71 @@
+/* ── Glass and ambient ───────────────────────────────────────────────────────
+   Nocturne surfaces are opaque. These two opt-in classes are the exception, for a page that
+   sits over artwork or a gradient.
+
+   ntn-ambient  The backdrop, first inside .ntn-app (or a positioned, isolated panel). Three
+                layers, bottom to top:
+                --ntn-background-image  the app's artwork at full strength, filling the
+                                        container. None by default.
+                accent glow             a soft glow at the top.
+                --ntn-ambient-image     artwork as atmosphere: dimmed by --ntn-ambient-opacity
+                                        and faded out over --ntn-ambient-height.
+   ntn-glass    Translucent, blurred surfaces. On a card, stat, accordion or sidebar it makes
+                that surface glass; on any other element it makes every such surface inside it
+                glass. Inputs, buttons, badges and menus stay solid so they stay readable.
+
+   The surface rules sit right after the components they restyle and match their specificity,
+   so they beat the base background while state modifiers (an interactive card's hover, the
+   glow and processing edges) still win. The sidebar and table head come later in the cascade,
+   so their rules carry one more class. */
+
+/* Ambient — static on purpose: glass over a moving backdrop re-blurs every frame. */
+.ntn-app:has(> .ntn-ambient) { position: relative; isolation: isolate; }
+.ntn-ambient {
+  position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+  background: var(--ntn-background-image) center top / cover no-repeat;
+}
+/* The glow and the ambient image share the band: the top of the container, fading out. */
+.ntn-ambient::before, .ntn-ambient::after {
+  content: ""; position: absolute; inset: 0 0 auto; height: var(--ntn-ambient-height);
+  -webkit-mask-image: linear-gradient(to bottom, #000, rgb(0 0 0 / 0.55) 45%, transparent);
+  mask-image: linear-gradient(to bottom, #000, rgb(0 0 0 / 0.55) 45%, transparent);
+}
+.ntn-ambient::before { background: radial-gradient(1100px 520px at 50% -12%, var(--ntn-accent-glow), transparent 70%); }
+.ntn-ambient::after {
+  background: var(--ntn-ambient-image) center top / cover no-repeat;
+  opacity: var(--ntn-ambient-opacity);
+}
+
+/* Glass surfaces */
+:where(.ntn-glass):is(.ntn-card, .ntn-stat, .ntn-accordion),
+:where(.ntn-glass) :is(.ntn-card, .ntn-stat, .ntn-accordion) {
+  background-color: var(--ntn-glass-bg);
+  border-color: var(--ntn-glass-border);
+  box-shadow: var(--ntn-glass-highlight), var(--ntn-glass-shadow);
+  backdrop-filter: var(--ntn-glass-blur);
+}
+.ntn-glass.ntn-sidebar, .ntn-glass .ntn-sidebar {
+  background-color: var(--ntn-glass-bg);
+  border-color: var(--ntn-glass-border);
+  backdrop-filter: var(--ntn-glass-blur);
+}
+
+/* Nested surfaces stay quiet: no second blur, no second drop. */
+.ntn-glass:is(.ntn-card, .ntn-stat, .ntn-accordion) :is(.ntn-card, .ntn-stat, .ntn-accordion),
+.ntn-glass :is(.ntn-card, .ntn-stat, .ntn-accordion) :is(.ntn-card, .ntn-stat, .ntn-accordion) {
+  box-shadow: none; backdrop-filter: none;
+}
+
+/* Opaque bands inside a glass surface become a faint tint, so the glass shows through. */
+.ntn-glass .ntn-table thead,
+.ntn-glass .ntn-sidebar__brand { background: var(--ntn-alpha-ink-04); }
+
+/* Back to solid when the user asks for less transparency, and for the phone drawer, which
+   slides over page content rather than artwork. */
+@media (prefers-reduced-transparency: reduce) {
+  :where(.ntn-glass):is(.ntn-card, .ntn-stat, .ntn-accordion),
+  :where(.ntn-glass) :is(.ntn-card, .ntn-stat, .ntn-accordion) { background-color: var(--ntn-surface-1); backdrop-filter: none; }
+}
+@media (prefers-reduced-transparency: reduce), (max-width: 720px) {
+  .ntn-glass.ntn-sidebar, .ntn-glass .ntn-sidebar { background-color: var(--ntn-bg-sunken); backdrop-filter: none; }
+}
