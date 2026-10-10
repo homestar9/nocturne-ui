@@ -1,124 +1,158 @@
 /* ── Text field, select, slider, search ───────────────────────────────────── */
+@use "../abstracts" as *;
 
-.ntn-field { display: flex; flex-direction: column; gap: 6px; width: 100%; }
-.ntn-field__label { font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-secondary); }
-.ntn-field__control {
-  display: flex; align-items: center; gap: var(--ntn-space-2);
-  height: var(--ntn-control-md); padding: 0 10px;
-  background: var(--ntn-surface-2); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-md);
-  box-shadow: var(--ntn-shadow-xs);
-  transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
-}
-.ntn-field__control i { font-size: 16px; color: var(--ntn-text-muted); flex: 0 0 auto; }
-.ntn-field__control input, .ntn-field__control textarea {
-  flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; box-shadow: none; padding: 0;
-  color: var(--ntn-text-primary); font-family: var(--ntn-font-sans); font-size: var(--ntn-text-sm); letter-spacing: var(--ntn-tracking-body);
-}
-.ntn-field__control input::placeholder, .ntn-field__control textarea::placeholder { color: var(--ntn-text-disabled); }
-.ntn-field__control:focus-within { border-color: var(--ntn-accent-500); box-shadow: var(--ntn-ring-focus); }
-/* Anatomy, in order: __label, then __control holding [leading <i> | __prefix] <input> [__suffix | __action],
-   then __hint and __error. Mark an invalid field with aria-invalid="true" on the input (point
-   aria-describedby at __error); data-invalid on the block still works. Use the required attribute
-   for required fields, and give every text input a placeholder (" " if nothing to say), which lets
-   themes float the label with :placeholder-shown. */
-.ntn-field__prefix,
-.ntn-field__suffix { font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); flex: 0 0 auto; }
-.ntn-field__action {
-  display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
-  width: var(--ntn-control-sm); height: calc(var(--ntn-control-sm) - 4px); margin-right: -6px;
-  border: 0; border-radius: var(--ntn-radius-sm); background: transparent; color: var(--ntn-text-muted); cursor: pointer;
-  transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard);
-}
-.ntn-field__action:hover { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); }
-.ntn-field__control .ntn-field__action i { font-size: 14px; color: inherit; }
-.ntn-field__hint { font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
-.ntn-field__error { font-size: var(--ntn-text-xs); color: var(--ntn-danger-400); }
-.ntn-field--sm .ntn-field__control { height: var(--ntn-control-sm); padding: 0 8px; }
-.ntn-field--sm .ntn-field__control input { font-size: var(--ntn-text-xs); }
-.ntn-field--lg .ntn-field__control { height: var(--ntn-control-lg); padding: 0 12px; }
-.ntn-field--lg .ntn-field__control input { font-size: var(--ntn-text-md); }
-.ntn-field--textarea .ntn-field__control { height: auto; padding: 10px; align-items: flex-start; }
-.ntn-field--textarea textarea { resize: vertical; min-height: 78px; line-height: var(--ntn-leading-normal); }
-.ntn-field:is([data-invalid], :has([aria-invalid="true"])) .ntn-field__control { border-color: var(--ntn-danger-500); box-shadow: 0 0 0 3px var(--ntn-danger-soft); }
-.ntn-field:is([data-invalid], :has([aria-invalid="true"])) .ntn-field__hint { color: var(--ntn-danger-400); }
-.ntn-field:has(input:disabled, textarea:disabled) .ntn-field__control { background: var(--ntn-surface-1); opacity: 0.55; }
+.ntn-field {
+  /* Anatomy, in order: __label, then __control holding [leading <i> | __prefix] <input> [__suffix | __action],
+     then __hint and __error. Mark an invalid field with aria-invalid="true" on the input (point
+     aria-describedby at __error); data-invalid on the block still works. Use the required attribute
+     for required fields, and give every text input a placeholder (" " if nothing to say), which lets
+     themes float the label with :placeholder-shown. */
+  display: flex; flex-direction: column; gap: 6px; width: 100%;
 
-.ntn-select { display: flex; flex-direction: column; gap: 6px; width: 100%; }
-.ntn-select__label { font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-secondary); }
-.ntn-select__control { position: relative; display: flex; align-items: center; }
-.ntn-select__control::after {
-  content: ""; position: absolute; right: 12px; width: 8px; height: 8px; pointer-events: none;
-  border-right: 1.5px solid var(--ntn-text-muted); border-bottom: 1.5px solid var(--ntn-text-muted);
-  transform: translateY(-2px) rotate(45deg);
-}
-.ntn-select__control select {
-  appearance: none; -webkit-appearance: none; width: 100%;
-  height: var(--ntn-control-md); padding: 0 32px 0 12px;
-  background: var(--ntn-surface-2); color: var(--ntn-text-primary);
-  border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-md); box-shadow: var(--ntn-shadow-xs);
-  font-family: var(--ntn-font-sans); font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-medium); cursor: pointer;
-  transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
-}
-.ntn-select__control select:focus-visible { border-color: var(--ntn-accent-500); box-shadow: var(--ntn-ring-focus); outline: 0; }
-.ntn-select__control select:disabled { opacity: 0.5; cursor: not-allowed; }
-.ntn-select__control option { background: var(--ntn-surface-2); color: var(--ntn-text-primary); }
-.ntn-select__hint { font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
-.ntn-select__error { font-size: var(--ntn-text-xs); color: var(--ntn-danger-400); }
-.ntn-select:is([data-invalid], :has([aria-invalid="true"])) .ntn-select__control select { border-color: var(--ntn-danger-500); box-shadow: 0 0 0 3px var(--ntn-danger-soft); }
-.ntn-select--sm .ntn-select__control select { height: var(--ntn-control-sm); font-size: var(--ntn-text-xs); padding: 0 28px 0 10px; }
-.ntn-select--lg .ntn-select__control select { height: var(--ntn-control-lg); font-size: var(--ntn-text-md); padding: 0 34px 0 14px; }
-/* Label beside the control — for toolbars and pagination rows. */
-.ntn-select--inline { flex-direction: row; align-items: center; gap: var(--ntn-space-2); width: auto; }
-.ntn-select--inline .ntn-select__label { white-space: nowrap; color: var(--ntn-text-muted); font-weight: var(--ntn-weight-regular); }
-.ntn-select--inline .ntn-select__control select { width: auto; }
+  &__label { @include field-label; }
+  &__control {
+    display: flex; align-items: center; gap: var(--ntn-space-2);
+    height: var(--ntn-control-md); padding: 0 10px;
+    @include control-surface;
+    @include transition(border-color, box-shadow);
 
-/* Menu and combobox live in components/menu.css. */
+    i { font-size: 16px; color: var(--ntn-text-muted); flex: 0 0 auto; }
+    input, textarea {
+      flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; box-shadow: none; padding: 0;
+      color: var(--ntn-text-primary); font-family: var(--ntn-font-sans); font-size: var(--ntn-text-sm); letter-spacing: var(--ntn-tracking-body);
+
+      &::placeholder { color: var(--ntn-text-disabled); }
+    }
+    &:focus-within { @include focus-accent; }
+  }
+  &__prefix,
+  &__suffix { font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); flex: 0 0 auto; }
+  &__action {
+    display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+    width: var(--ntn-control-sm); height: calc(var(--ntn-control-sm) - 4px); margin-right: -6px;
+    border: 0; border-radius: var(--ntn-radius-sm); background: transparent; color: var(--ntn-text-muted); cursor: pointer;
+    @include transition(background, color);
+
+    &:hover { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); }
+  }
+  &__control &__action i { font-size: 14px; color: inherit; }
+  &__hint { font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
+  &__error { font-size: var(--ntn-text-xs); color: var(--ntn-danger-400); }
+  &--sm &__control {
+    height: var(--ntn-control-sm); padding: 0 8px;
+
+    input { font-size: var(--ntn-text-xs); }
+  }
+  &--lg &__control {
+    height: var(--ntn-control-lg); padding: 0 12px;
+
+    input { font-size: var(--ntn-text-md); }
+  }
+  &--textarea {
+    .ntn-field__control { height: auto; padding: 10px; align-items: flex-start; }
+    textarea { resize: vertical; min-height: 78px; line-height: var(--ntn-leading-normal); }
+  }
+  &:is([data-invalid], :has([aria-invalid="true"])) {
+    .ntn-field__control { @include invalid; }
+    .ntn-field__hint { color: var(--ntn-danger-400); }
+  }
+  &:has(input:disabled, textarea:disabled) .ntn-field__control { background: var(--ntn-surface-1); opacity: 0.55; }
+}
+
+.ntn-select {
+  display: flex; flex-direction: column; gap: 6px; width: 100%;
+
+  &__label { @include field-label; }
+  &__control {
+    position: relative; display: flex; align-items: center;
+
+    &::after {
+      content: ""; position: absolute; right: 12px; pointer-events: none;
+      @include chevron(8px);
+    }
+    select {
+      appearance: none; -webkit-appearance: none; width: 100%;
+      height: var(--ntn-control-md); padding: 0 32px 0 12px;
+      color: var(--ntn-text-primary);
+      @include control-surface;
+      font-family: var(--ntn-font-sans); font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-medium); cursor: pointer;
+      @include transition(border-color, box-shadow);
+
+      &:focus-visible { @include focus-accent; outline: 0; }
+      &:disabled { opacity: 0.5; cursor: not-allowed; }
+    }
+    option { background: var(--ntn-surface-2); color: var(--ntn-text-primary); }
+  }
+  &__hint { font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
+  &__error { font-size: var(--ntn-text-xs); color: var(--ntn-danger-400); }
+  &:is([data-invalid], :has([aria-invalid="true"])) &__control select { @include invalid; }
+  &--sm &__control select { height: var(--ntn-control-sm); font-size: var(--ntn-text-xs); padding: 0 28px 0 10px; }
+  &--lg &__control select { height: var(--ntn-control-lg); font-size: var(--ntn-text-md); padding: 0 34px 0 14px; }
+  &--inline {
+    /* Label beside the control — for toolbars and pagination rows. */
+    flex-direction: row; align-items: center; gap: var(--ntn-space-2); width: auto;
+
+    .ntn-select__label { white-space: nowrap; color: var(--ntn-text-muted); font-weight: var(--ntn-weight-regular); }
+    .ntn-select__control select { width: auto; }
+  }
+}
+
+/* Menu and combobox live in components/_menu.scss. */
 
 /* --ntn-slider-pct is written by nocturne.js onto this block (a state var: it follows the class
    prefix), so the track, a value bubble or any sibling can read it. */
-.ntn-slider { --ntn-slider-pct: 50%; display: flex; flex-direction: column; gap: var(--ntn-space-3); width: 100%; }
-.ntn-slider__head { display: flex; align-items: center; justify-content: space-between; gap: var(--ntn-space-3); }
-.ntn-slider__label { font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-secondary); }
-.ntn-slider__value { font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); color: var(--ntn-text-primary); }
-.ntn-slider input[type="range"] {
-  appearance: none; -webkit-appearance: none; width: 100%; height: 16px; margin: 0; cursor: pointer;
-  /* Track drawn on the input itself so it renders identically in every engine. */
-  background-image: linear-gradient(90deg, var(--ntn-accent-600), var(--ntn-accent-400)), linear-gradient(var(--ntn-n-400), var(--ntn-n-400));
-  background-size: var(--ntn-slider-pct) 4px, 100% 4px;
-  background-position: 0 50%, 0 50%;
-  background-repeat: no-repeat;
-  border-radius: var(--ntn-radius-full);
+.ntn-slider {
+  --ntn-slider-pct: 50%; display: flex; flex-direction: column; gap: var(--ntn-space-3); width: 100%;
+
+  &__head { display: flex; align-items: center; justify-content: space-between; gap: var(--ntn-space-3); }
+  &__label { @include field-label; }
+  &__value { font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); color: var(--ntn-text-primary); }
+
+  input[type="range"] {
+    appearance: none; -webkit-appearance: none; width: 100%; height: 16px; margin: 0; cursor: pointer;
+    /* Track drawn on the input itself so it renders identically in every engine. */
+    background-image: linear-gradient(90deg, var(--ntn-accent-600), var(--ntn-accent-400)), linear-gradient(var(--ntn-n-400), var(--ntn-n-400));
+    background-size: var(--ntn-slider-pct) 4px, 100% 4px;
+    background-position: 0 50%, 0 50%;
+    background-repeat: no-repeat;
+    border-radius: var(--ntn-radius-full);
+
+    &::-webkit-slider-runnable-track { height: 16px; background: transparent; border: 0; }
+    &::-moz-range-track { height: 16px; background: transparent; border: 0; }
+    &::-moz-range-progress { background: transparent; }
+    &::-webkit-slider-thumb {
+      appearance: none; -webkit-appearance: none; width: 14px; height: 14px; margin-top: 1px;
+      border-radius: var(--ntn-radius-full); background: var(--ntn-accent-fg); border: 3px solid var(--ntn-accent-500);
+      box-shadow: 0 0 0 4px var(--ntn-accent-softer), var(--ntn-shadow-xs);
+    }
+    &::-moz-range-thumb {
+      width: 14px; height: 14px; border-radius: var(--ntn-radius-full); background: var(--ntn-accent-fg); border: 3px solid var(--ntn-accent-500);
+      box-shadow: 0 0 0 4px var(--ntn-accent-softer), var(--ntn-shadow-xs);
+    }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+  }
 }
-.ntn-slider input[type="range"]::-webkit-slider-runnable-track { height: 16px; background: transparent; border: 0; }
-.ntn-slider input[type="range"]::-moz-range-track { height: 16px; background: transparent; border: 0; }
-.ntn-slider input[type="range"]::-moz-range-progress { background: transparent; }
-.ntn-slider input[type="range"]::-webkit-slider-thumb {
-  appearance: none; -webkit-appearance: none; width: 14px; height: 14px; margin-top: 1px;
-  border-radius: var(--ntn-radius-full); background: var(--ntn-accent-fg); border: 3px solid var(--ntn-accent-500);
-  box-shadow: 0 0 0 4px var(--ntn-accent-softer), var(--ntn-shadow-xs);
-}
-.ntn-slider input[type="range"]::-moz-range-thumb {
-  width: 14px; height: 14px; border-radius: var(--ntn-radius-full); background: var(--ntn-accent-fg); border: 3px solid var(--ntn-accent-500);
-  box-shadow: 0 0 0 4px var(--ntn-accent-softer), var(--ntn-shadow-xs);
-}
-.ntn-slider input[type="range"]:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .ntn-search {
   display: flex; align-items: center; gap: 9px; width: 100%; height: var(--ntn-control-md); padding: 0 12px;
   background: var(--ntn-surface-2); border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-md);
-  transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
+  @include transition(border-color, box-shadow);
+
+  i { font-size: 15px; color: var(--ntn-text-muted); flex: 0 0 auto; }
+  input {
+    flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; box-shadow: none; color: var(--ntn-text-primary); font-family: var(--ntn-font-sans); font-size: var(--ntn-text-sm);
+
+    &::placeholder { color: var(--ntn-text-disabled); }
+  }
+  &:focus-within { @include focus-accent; }
+  &__shortcut { @include keycap; flex: 0 0 auto; }
+  &[data-loading] > i:first-child {
+    /* Loading: data-loading on the block turns the leading icon into a spinner while results are on
+       their way (set aria-busy="true" on the input too). Drawn in CSS, so any icon set works. */
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid var(--ntn-border-default); border-top-color: var(--ntn-accent-500);
+    color: transparent; font-size: 0; animation: ntn-spin 700ms linear infinite;
+  }
+  &--sm { height: var(--ntn-control-sm); }
+  &--lg { height: var(--ntn-control-lg); }
 }
-.ntn-search i { font-size: 15px; color: var(--ntn-text-muted); flex: 0 0 auto; }
-.ntn-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; box-shadow: none; color: var(--ntn-text-primary); font-family: var(--ntn-font-sans); font-size: var(--ntn-text-sm); }
-.ntn-search input::placeholder { color: var(--ntn-text-disabled); }
-.ntn-search:focus-within { border-color: var(--ntn-accent-500); box-shadow: var(--ntn-ring-focus); }
-.ntn-search__shortcut { padding: 2px 6px; border-radius: var(--ntn-radius-xs); border: 1px solid var(--ntn-border-default); background: var(--ntn-surface-3); color: var(--ntn-text-muted); font-family: var(--ntn-font-mono); font-size: var(--ntn-text-2xs); flex: 0 0 auto; }
-/* Loading: data-loading on the block turns the leading icon into a spinner while results are on
-   their way (set aria-busy="true" on the input too). Drawn in CSS, so any icon set works. */
-.ntn-search[data-loading] > i:first-child {
-  width: 14px; height: 14px; border-radius: 50%;
-  border: 2px solid var(--ntn-border-default); border-top-color: var(--ntn-accent-500);
-  color: transparent; font-size: 0; animation: ntn-spin 700ms linear infinite;
-}
-.ntn-search--sm { height: var(--ntn-control-sm); }
-.ntn-search--lg { height: var(--ntn-control-lg); }

@@ -1,34 +1,51 @@
 /* ── Table ────────────────────────────────────────────────────────────────── */
+@use "../abstracts" as *;
 
-.ntn-table { width: 100%; overflow-x: auto; }
-.ntn-table table { width: 100%; border-collapse: collapse; font-size: var(--ntn-text-sm); }
-/* The header row is its own band — it has to read as a divider between whatever
-   sits above the table (card head, toolbar, filters) and the first data row. */
-.ntn-table thead { background: var(--ntn-surface-2); }
-.ntn-table th {
-  padding: 10px var(--ntn-space-4); text-align: left; white-space: nowrap; user-select: none;
-  border-bottom: 1px solid var(--ntn-border-default);
-  font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-muted);
+.ntn-table {
+  width: 100%; overflow-x: auto;
+
+  table { width: 100%; border-collapse: collapse; font-size: var(--ntn-text-sm); }
+  thead {
+    /* The header row is its own band — it has to read as a divider between whatever
+       sits above the table (card head, toolbar, filters) and the first data row. */
+    background: var(--ntn-surface-2);
+  }
+  th {
+    padding: 10px var(--ntn-space-4); text-align: left; white-space: nowrap; user-select: none;
+    border-bottom: 1px solid var(--ntn-border-default);
+    font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-muted);
+
+    i { font-size: 12px; color: var(--ntn-text-disabled); margin-left: 4px; }
+    &[aria-sort] { cursor: pointer; color: var(--ntn-text-secondary); }
+    &[aria-sort="ascending"] i, &[aria-sort="descending"] i { color: var(--ntn-accent-300); }
+  }
+  td { padding: var(--ntn-space-3) var(--ntn-space-4); border-bottom: 1px solid var(--ntn-border-subtle); color: var(--ntn-text-secondary); vertical-align: middle; }
+  tbody tr {
+    transition: tr(background);
+
+    &:hover { background: var(--ntn-surface-hover); }
+    &[aria-selected="true"] { background: var(--ntn-accent-softer); }
+  }
+  &__num { text-align: right; font-family: var(--ntn-font-mono); font-variant-numeric: tabular-nums; color: var(--ntn-text-primary); }
+  &__primary { color: var(--ntn-text-primary); font-weight: var(--ntn-weight-medium); }
+  &__actions { text-align: right; white-space: nowrap; }
+  &__empty { padding: 34px var(--ntn-space-4); text-align: center; color: var(--ntn-text-muted); }
+  &--compact td { padding: var(--ntn-space-2) var(--ntn-space-4); }
+  &--zebra tbody {
+    tr:nth-child(even) {
+      background: var(--ntn-alpha-ink-04);
+
+      &:hover { background: var(--ntn-surface-hover); }
+    }
+    td { border-bottom: 0; }
+    tr:last-child td { border-bottom: 1px solid var(--ntn-border-subtle); }
+  }
 }
-.ntn-table th i { font-size: 12px; color: var(--ntn-text-disabled); margin-left: 4px; }
-.ntn-table th[aria-sort] { cursor: pointer; color: var(--ntn-text-secondary); }
-.ntn-table th[aria-sort="ascending"] i, .ntn-table th[aria-sort="descending"] i { color: var(--ntn-accent-300); }
-.ntn-table td { padding: var(--ntn-space-3) var(--ntn-space-4); border-bottom: 1px solid var(--ntn-border-subtle); color: var(--ntn-text-secondary); vertical-align: middle; }
-.ntn-table tbody tr { transition: background var(--ntn-dur-fast) var(--ntn-ease-standard); }
-.ntn-table tbody tr:hover { background: var(--ntn-surface-hover); }
-.ntn-table tbody tr[aria-selected="true"] { background: var(--ntn-accent-softer); }
-.ntn-table__num { text-align: right; font-family: var(--ntn-font-mono); font-variant-numeric: tabular-nums; color: var(--ntn-text-primary); }
-.ntn-table__primary { color: var(--ntn-text-primary); font-weight: var(--ntn-weight-medium); }
-.ntn-table__actions { text-align: right; white-space: nowrap; }
-.ntn-table__empty { padding: 34px var(--ntn-space-4); text-align: center; color: var(--ntn-text-muted); }
-.ntn-table--compact td { padding: var(--ntn-space-2) var(--ntn-space-4); }
-.ntn-table--zebra tbody tr:nth-child(even) { background: var(--ntn-alpha-ink-04); }
-.ntn-table--zebra tbody tr:nth-child(even):hover { background: var(--ntn-surface-hover); }
-.ntn-table--zebra tbody td { border-bottom: 0; }
-.ntn-table--zebra tbody tr:last-child td { border-bottom: 1px solid var(--ntn-border-subtle); }
 /* Inside a card the outer cells line up with the card's own 20px gutter. */
-.ntn-card--flush .ntn-table th:first-child, .ntn-card--flush .ntn-table td:first-child { padding-left: var(--ntn-space-5); }
-.ntn-card--flush .ntn-table th:last-child,  .ntn-card--flush .ntn-table td:last-child  { padding-right: var(--ntn-space-5); }
+.ntn-card--flush .ntn-table {
+  th:first-child, td:first-child { padding-left: var(--ntn-space-5); }
+  th:last-child, td:last-child { padding-right: var(--ntn-space-5); }
+}
 
 /* ── Table toolbar — the filter row above a table ─────────────────────────── */
 /* Shell: <section class="ntn-card ntn-card--flush"> head · toolbar · filters ·
@@ -36,15 +53,17 @@
 
 /* Vertical rhythm: the toolbar is a band of its own between the card head and the
    table, so it carries padding on both sides and a rule underneath. */
-.ntn-toolbar { display: flex; align-items: center; gap: var(--ntn-space-3); flex-wrap: wrap; padding: var(--ntn-space-4) var(--ntn-space-5); }
-.ntn-toolbar:first-child { padding-top: var(--ntn-space-5); }
-.ntn-toolbar--divided { border-bottom: 1px solid var(--ntn-border-default); }
-/* A revealed filter panel brings its own top rule — never stack the two. */
-.ntn-toolbar--divided + .ntn-filters { border-top: 0; }
-.ntn-toolbar__start { display: flex; align-items: center; gap: var(--ntn-space-2); min-width: 0; flex-wrap: wrap; }
-.ntn-toolbar__end { display: flex; align-items: center; gap: var(--ntn-space-2); min-width: 0; margin-left: auto; }
-.ntn-toolbar__search { width: clamp(180px, 24vw, 280px); }
-@media (max-width: 720px) {
+.ntn-toolbar {
+  display: flex; align-items: center; gap: var(--ntn-space-3); flex-wrap: wrap; padding: var(--ntn-space-4) var(--ntn-space-5);
+
+  &:first-child { padding-top: var(--ntn-space-5); }
+  &--divided { border-bottom: 1px solid var(--ntn-border-default); }
+  &--divided + .ntn-filters { /* A revealed filter panel brings its own top rule — never stack the two. */ border-top: 0; }
+  &__start { display: flex; align-items: center; gap: var(--ntn-space-2); min-width: 0; flex-wrap: wrap; }
+  &__end { display: flex; align-items: center; gap: var(--ntn-space-2); min-width: 0; margin-left: auto; }
+  &__search { width: clamp(180px, 24vw, 280px); }
+}
+@include below(md) {
   .ntn-toolbar__end { margin-left: 0; width: 100%; }
   .ntn-toolbar__search { flex: 1; width: auto; }
 }
@@ -55,17 +74,20 @@
   padding: var(--ntn-space-4) var(--ntn-space-5);
   border-top: 1px solid var(--ntn-border-subtle); background: var(--ntn-alpha-ink-04);
   animation: ntn-rise var(--ntn-dur-base) var(--ntn-ease-out);
+
+  &__field { flex: 0 1 190px; min-width: 150px; }
+  &__actions { display: flex; align-items: center; gap: var(--ntn-space-2); margin-left: auto; }
+  &__applied { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; width: 100%; }
 }
-.ntn-filters__field { flex: 0 1 190px; min-width: 150px; }
-.ntn-filters__actions { display: flex; align-items: center; gap: var(--ntn-space-2); margin-left: auto; }
-.ntn-filters__applied { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; width: 100%; }
 .ntn-filter-tag {
   display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 4px 0 10px;
   border: 1px solid var(--ntn-accent-line); border-radius: var(--ntn-radius-full);
   background: var(--ntn-accent-soft); color: var(--ntn-accent-200); font-size: var(--ntn-text-xs);
+
+  &__remove {
+    display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px;
+    border: 0; border-radius: var(--ntn-radius-full); background: transparent; color: inherit; font-size: 11px; cursor: pointer;
+
+    &:hover { background: var(--ntn-accent-soft-hover); }
+  }
 }
-.ntn-filter-tag__remove {
-  display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px;
-  border: 0; border-radius: var(--ntn-radius-full); background: transparent; color: inherit; font-size: 11px; cursor: pointer;
-}
-.ntn-filter-tag__remove:hover { background: var(--ntn-accent-soft-hover); }

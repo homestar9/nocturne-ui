@@ -4,18 +4,28 @@
    effect. `--shine` is the one that needs markup: a single ntn-edge__shine child.
    `ntn-card--glow` / `ntn-card--processing` are kept as aliases so the card
    shorthand still works. */
+@use "../abstracts" as *;
+
+// Each effect is an ntn-edge modifier with a card alias.
+$-glow: ".ntn-edge--glow, .ntn-card--glow";
+$-processing: ".ntn-edge--processing, .ntn-card--processing";
+// The four moving parts of the shine: two lights on the ring, two halos on the host.
+$-shine-parts: ".ntn-edge__shine::before, .ntn-edge__shine::after, .ntn-edge--shine::before, .ntn-edge--shine::after";
 
 /* One registered angle drives every moving effect. It inherits, so a host can
    animate it once and its pseudo-elements read the same frame. */
 @property --ntn-spin { syntax: "<angle>"; initial-value: 0deg; inherits: true; }
 @keyframes ntn-border-spin { to { --ntn-spin: 360deg; } }
 
-.ntn-edge { position: relative; border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-xl); }
-.ntn-edge--strong { border-color: var(--ntn-border-strong); }
+.ntn-edge {
+  position: relative; border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-xl);
+
+  &--strong { border-color: var(--ntn-border-strong); }
+}
 
 /* Glow — the one element on the page you want read first. Accent hairline, a
    halo, and a faint colour bleed from the top edge. */
-.ntn-edge--glow, .ntn-card--glow {
+#{$-glow} {
   position: relative;
   border-color: var(--ntn-accent-line);
   background-image: radial-gradient(120% 90% at 50% -25%, var(--ntn-accent-soft), transparent 62%);
@@ -25,7 +35,7 @@
 
 /* Processing — a light travels the edge while work is in flight, and an exterior
    glow orbits with it. Both read the same --ntn-spin, so they never drift. */
-.ntn-edge--processing, .ntn-card--processing {
+#{$-processing} {
   position: relative;
   border-color: var(--ntn-border-default);
   /* Static fallback first, for engines without trigonometric functions. */
@@ -33,18 +43,16 @@
   box-shadow: calc(cos(var(--ntn-spin)) * 9px) calc(sin(var(--ntn-spin)) * 9px) 26px -8px var(--ntn-accent-glow),
               0 0 26px -16px var(--ntn-accent-glow), var(--ntn-shadow-md);
   animation: ntn-border-spin 2.8s linear infinite;
-}
-.ntn-edge--processing::before, .ntn-card--processing::before {
-  content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  border-radius: inherit; padding: 1.5px;
-  background: conic-gradient(from var(--ntn-spin),
-    transparent 0deg 186deg, var(--ntn-accent-700) 232deg, var(--ntn-accent-400) 288deg,
-    var(--ntn-cyan-400) 324deg, var(--ntn-accent-300) 348deg, transparent 360deg);
-  /* Ring only: paint the padding box, knock the content box back out. */
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask-composite: exclude;
+
+  &::before {
+    content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    border-radius: inherit; padding: 1.5px;
+    background: conic-gradient(from var(--ntn-spin),
+      transparent 0deg 186deg, var(--ntn-accent-700) 232deg, var(--ntn-accent-400) 288deg,
+      var(--ntn-cyan-400) 324deg, var(--ntn-accent-300) 348deg, transparent 360deg);
+    /* Ring only: paint the padding box, knock the content box back out. */
+    @include ring-mask;
+  }
 }
 
 /* Shine — the quiet one: two soft lights drift round the edge half a lap apart, each
@@ -57,21 +65,17 @@
 @supports not (offset-path: border-box) { .ntn-edge__shine { display: none; } }
 
 @supports (offset-path: border-box) {
-  /* The frame sits on the 1px border and is masked to a ring of --ntn-shine-thickness. */
   .ntn-edge__shine {
+    /* The frame sits on the 1px border and is masked to a ring of --ntn-shine-thickness. */
     position: absolute; inset: -1px; z-index: 2; pointer-events: none;
     border-radius: inherit; padding: var(--ntn-shine-thickness);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask-composite: exclude;
+    @include ring-mask;
   }
-  /* Lights and halos ride the border box at a steady speed; the ::after pair runs half a
-     lap ahead. The light turns with the path and is anchored at its bright end, so the
-     head stays on the border through the corners and the trail follows. Each halo is
-     centred on its light's head. */
-  .ntn-edge__shine::before, .ntn-edge__shine::after,
-  .ntn-edge--shine::before, .ntn-edge--shine::after {
+  #{$-shine-parts} {
+    /* Lights and halos ride the border box at a steady speed; the ::after pair runs half a
+       lap ahead. The light turns with the path and is anchored at its bright end, so the
+       head stays on the border through the corners and the trail follows. Each halo is
+       centred on its light's head. */
     content: ""; position: absolute; pointer-events: none;
     offset-path: border-box;
     animation: ntn-shine-trail var(--ntn-shine-speed) linear infinite;
@@ -84,8 +88,8 @@
                 var(--ntn-shine-color) 35%, transparent 70%);
     mix-blend-mode: plus-lighter;
   }
-  /* Halos sit under the content and spill past the edge. */
   .ntn-edge--shine::before, .ntn-edge--shine::after {
+    /* Halos sit under the content and spill past the edge. */
     z-index: -1; width: 6rem; height: 6rem; border-radius: 50%;
     background: radial-gradient(circle, var(--ntn-shine-head) 0%, var(--ntn-shine-color) 40%, transparent 70%);
     filter: blur(20px); opacity: var(--ntn-shine-glow);
@@ -93,11 +97,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ntn-edge--processing, .ntn-card--processing {
+  #{$-processing} {
     animation: none;
     box-shadow: 0 0 24px -12px var(--ntn-accent-glow), var(--ntn-shadow-md);
   }
-  /* Paused, the lights rest half a lap apart. */
-  .ntn-edge__shine::before, .ntn-edge__shine::after,
-  .ntn-edge--shine::before, .ntn-edge--shine::after { animation-play-state: paused; }
+  #{$-shine-parts} {
+    /* Paused, the lights rest half a lap apart. */
+    animation-play-state: paused;
+  }
 }

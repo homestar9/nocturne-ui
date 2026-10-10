@@ -1,101 +1,128 @@
 /* ── Badge, alert, tooltip, progress, spinner, avatar ─────────────────────── */
+@use "sass:list";
+@use "../abstracts" as *;
 
 .ntn-badge {
   display: inline-flex; align-items: center; gap: 5px; flex: 0 0 auto; height: 22px; padding: 0 9px;
   border-radius: var(--ntn-radius-full); background: var(--ntn-alpha-ink-06); color: var(--ntn-text-secondary);
   border: 1px solid var(--ntn-border-default);
   font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-medium); letter-spacing: var(--ntn-tracking-body); white-space: nowrap;
+
+  i { font-size: 11px; }
+  &::before { content: none; }
+  &--dot::before { content: ""; display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--ntn-n-600); flex: 0 0 auto; }
+  // Tones: --neutral (the default, stated explicitly) · --primary · --success · --warning · --danger · --info
+  @each $tone in list.join(primary, $statuses) {
+    &--#{$tone} {
+      background: tone($tone, soft); color: tone($tone, ink); border-color: tone($tone, line);
+
+      &.ntn-badge--dot::before { background: tone($tone, dot); }
+    }
+  }
+  &--sm { height: 18px; padding: 0 7px; font-size: var(--ntn-text-2xs); }
+  &--count { min-width: 18px; height: 18px; padding: 0 5px; justify-content: center; background: var(--ntn-surface-3); font-family: var(--ntn-font-mono); font-size: var(--ntn-text-2xs); font-weight: var(--ntn-weight-semibold); line-height: 1; }
 }
-.ntn-badge i { font-size: 11px; }
-.ntn-badge::before { content: none; }
-.ntn-badge--dot::before { content: ""; display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--ntn-n-600); flex: 0 0 auto; }
-/* Tones: --neutral (the default, stated explicitly) · --primary · --success · --warning · --danger · --info */
-.ntn-badge--primary { background: var(--ntn-accent-soft); color: var(--ntn-accent-300); border-color: var(--ntn-accent-line); }
-.ntn-badge--primary.ntn-badge--dot::before { background: var(--ntn-accent-400); }
-.ntn-badge--success { background: var(--ntn-success-soft); color: var(--ntn-success-400); border-color: var(--ntn-success-line); }
-.ntn-badge--success.ntn-badge--dot::before { background: var(--ntn-success-400); }
-.ntn-badge--warning { background: var(--ntn-warning-soft); color: var(--ntn-warning-400); border-color: var(--ntn-warning-line); }
-.ntn-badge--warning.ntn-badge--dot::before { background: var(--ntn-warning-400); }
-.ntn-badge--danger { background: var(--ntn-danger-soft); color: var(--ntn-danger-400); border-color: var(--ntn-danger-line); }
-.ntn-badge--danger.ntn-badge--dot::before { background: var(--ntn-danger-400); }
-.ntn-badge--info { background: var(--ntn-info-soft); color: var(--ntn-info-400); border-color: var(--ntn-info-line); }
-.ntn-badge--info.ntn-badge--dot::before { background: var(--ntn-info-400); }
-.ntn-badge--sm { height: 18px; padding: 0 7px; font-size: var(--ntn-text-2xs); }
-.ntn-badge--count { min-width: 18px; height: 18px; padding: 0 5px; justify-content: center; background: var(--ntn-surface-3); font-family: var(--ntn-font-mono); font-size: var(--ntn-text-2xs); font-weight: var(--ntn-weight-semibold); line-height: 1; }
 
 .ntn-alert {
   display: flex; align-items: flex-start; flex-wrap: wrap; gap: var(--ntn-space-3); padding: 14px var(--ntn-space-4);
-  background: var(--ntn-info-soft); border: 1px solid var(--ntn-info-line); border-radius: var(--ntn-radius-lg);
+  background: tone(info, soft); border: 1px solid tone(info, line); border-radius: var(--ntn-radius-lg);
+
+  > i { font-size: 16px; margin-top: 1px; flex: 0 0 auto; color: tone(info, ink); }
+  &__body { flex: 1 1 180px; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  &__title { font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-semibold); color: var(--ntn-text-primary); }
+  &__text { font-size: var(--ntn-text-xs); color: var(--ntn-text-secondary); line-height: var(--ntn-leading-normal); }
+  &__actions { display: flex; align-items: center; gap: var(--ntn-space-2); flex: 0 0 auto; margin-left: auto; }
+  // Tones: --info (the default; state it anyway) · --primary · --success · --warning · --danger
+  @each $tone in info, success, warning, danger, primary {
+    &--#{$tone} {
+      background: tone($tone, soft); border-color: tone($tone, line);
+
+      > i { color: tone($tone, ink); }
+    }
+  }
+  &--banner { border-radius: 0; border-left: 0; border-right: 0; padding: 12px var(--ntn-space-4); }
 }
-.ntn-alert > i { font-size: 16px; margin-top: 1px; flex: 0 0 auto; color: var(--ntn-info-400); }
-.ntn-alert__body { flex: 1 1 180px; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-.ntn-alert__title { font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-semibold); color: var(--ntn-text-primary); }
-.ntn-alert__text { font-size: var(--ntn-text-xs); color: var(--ntn-text-secondary); line-height: var(--ntn-leading-normal); }
-.ntn-alert__actions { display: flex; align-items: center; gap: var(--ntn-space-2); flex: 0 0 auto; margin-left: auto; }
-/* Tones: --info (the default; state it anyway) · --primary · --success · --warning · --danger */
-.ntn-alert--info { background: var(--ntn-info-soft); border-color: var(--ntn-info-line); }
-.ntn-alert--info > i { color: var(--ntn-info-400); }
-.ntn-alert--success { background: var(--ntn-success-soft); border-color: var(--ntn-success-line); }
-.ntn-alert--success > i { color: var(--ntn-success-400); }
-.ntn-alert--warning { background: var(--ntn-warning-soft); border-color: var(--ntn-warning-line); }
-.ntn-alert--warning > i { color: var(--ntn-warning-400); }
-.ntn-alert--danger { background: var(--ntn-danger-soft); border-color: var(--ntn-danger-line); }
-.ntn-alert--danger > i { color: var(--ntn-danger-400); }
-.ntn-alert--primary { background: var(--ntn-accent-soft); border-color: var(--ntn-accent-line); }
-.ntn-alert--primary > i { color: var(--ntn-accent-300); }
-.ntn-alert--banner { border-radius: 0; border-left: 0; border-right: 0; padding: 12px var(--ntn-space-4); }
 
 /* Tooltip — CSS only. Wrap the trigger, add the bubble as a sibling.
    --wrap lets a bubble hold a sentence; __title + __text give it two lines. */
-.ntn-tooltip { position: relative; display: inline-flex; }
-.ntn-tooltip__bubble {
-  position: absolute; z-index: var(--ntn-z-tooltip); bottom: calc(100% + 9px); left: 50%; transform: translateX(-50%);
-  padding: 6px 9px; border-radius: var(--ntn-radius-md); background: var(--ntn-surface-3); border: 1px solid var(--ntn-border-default);
-  color: var(--ntn-text-primary); font-size: var(--ntn-text-xs); line-height: 1.35; white-space: nowrap; text-align: left;
-  box-shadow: var(--ntn-shadow-pop); pointer-events: none; opacity: 0; visibility: hidden; backdrop-filter: var(--ntn-pop-filter);
-  transition: opacity var(--ntn-dur-fast) var(--ntn-ease-out) 90ms, visibility var(--ntn-dur-fast) 90ms;
-}
-/* Arrow — a rotated corner of the same surface, so it inherits the border. */
-.ntn-tooltip__bubble::after {
-  content: ""; position: absolute; width: 8px; height: 8px; background: inherit;
-  border: 1px solid var(--ntn-border-default); border-width: 0 1px 1px 0; transform: rotate(45deg);
-  bottom: -5px; left: 50%; margin-left: -4px;
-}
-.ntn-tooltip:hover .ntn-tooltip__bubble, .ntn-tooltip:focus-within .ntn-tooltip__bubble { opacity: 1; visibility: visible; animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out); }
-.ntn-tooltip__bubble--bottom { bottom: auto; top: calc(100% + 9px); }
-.ntn-tooltip__bubble--bottom::after { bottom: auto; top: -5px; border-width: 1px 0 0 1px; }
-.ntn-tooltip__bubble--left { bottom: auto; top: 50%; left: auto; right: calc(100% + 9px); transform: translateY(-50%); }
-.ntn-tooltip__bubble--left::after { bottom: auto; top: 50%; left: auto; right: -5px; margin: -4px 0 0; border-width: 0 0 1px 1px; }
-.ntn-tooltip__bubble--right { bottom: auto; top: 50%; left: calc(100% + 9px); transform: translateY(-50%); }
-.ntn-tooltip__bubble--right::after { bottom: auto; top: 50%; left: -5px; margin: -4px 0 0; border-width: 1px 1px 0 0; }
-/* Align the bubble to the trigger's edge instead of its centre — for a bubble
-   wider than the thing it describes, sitting near the edge of the view. */
-.ntn-tooltip__bubble--start { left: 0; transform: none; }
-.ntn-tooltip__bubble--start::after { left: 14px; margin-left: 0; }
-.ntn-tooltip__bubble--end { left: auto; right: 0; transform: none; }
-.ntn-tooltip__bubble--end::after { left: auto; right: 14px; margin-left: 0; }
-.ntn-tooltip__bubble--wrap { white-space: normal; width: max-content; max-width: 232px; padding: 8px 10px; }
-.ntn-tooltip__title { display: block; font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-semibold); color: var(--ntn-text-primary); }
-.ntn-tooltip__text { display: block; margin-top: 2px; font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
-.ntn-tooltip__key { display: inline-block; margin-left: 6px; font-family: var(--ntn-font-mono); font-size: var(--ntn-text-2xs); color: var(--ntn-text-disabled); }
+.ntn-tooltip {
+  position: relative; display: inline-flex;
 
-.ntn-progress { display: flex; flex-direction: column; gap: 7px; width: 100%; }
-.ntn-progress__head { display: flex; align-items: center; justify-content: space-between; gap: var(--ntn-space-3); }
-.ntn-progress__label { font-size: var(--ntn-text-xs); color: var(--ntn-text-secondary); }
-.ntn-progress__value { font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); color: var(--ntn-text-primary); }
-.ntn-progress__track { position: relative; height: 6px; border-radius: var(--ntn-radius-full); background: var(--ntn-n-300); overflow: hidden; }
-/* --ntn-progress (0–100%) is written by nocturne.js onto .ntn-progress from the fill's data-value. */
-.ntn-progress__fill { height: 100%; width: var(--ntn-progress, 0%); border-radius: var(--ntn-radius-full); background: linear-gradient(90deg, var(--ntn-accent-600), var(--ntn-accent-400)); transition: width var(--ntn-dur-slow) var(--ntn-ease-out); }
-.ntn-progress--sm .ntn-progress__track { height: 4px; }
-.ntn-progress--lg .ntn-progress__track { height: 10px; }
-.ntn-progress--success .ntn-progress__fill { background: var(--ntn-success-500); }
-.ntn-progress--warning .ntn-progress__fill { background: var(--ntn-warning-500); }
-.ntn-progress--danger .ntn-progress__fill { background: var(--ntn-danger-500); }
-.ntn-progress--neutral .ntn-progress__fill { background: var(--ntn-n-600); }
-.ntn-progress--indeterminate .ntn-progress__fill { width: 100%; background: linear-gradient(90deg, transparent, var(--ntn-accent-500), transparent); background-size: 200% 100%; animation: ntn-shimmer 1.4s linear infinite; }
+  &__bubble {
+    position: absolute; z-index: var(--ntn-z-tooltip); bottom: calc(100% + 9px); left: 50%; transform: translateX(-50%);
+    padding: 6px 9px; border-radius: var(--ntn-radius-md); background: var(--ntn-surface-3); border: 1px solid var(--ntn-border-default);
+    color: var(--ntn-text-primary); font-size: var(--ntn-text-xs); line-height: 1.35; white-space: nowrap; text-align: left;
+    box-shadow: var(--ntn-shadow-pop); pointer-events: none; opacity: 0; visibility: hidden; backdrop-filter: var(--ntn-pop-filter);
+    transition: opacity var(--ntn-dur-fast) var(--ntn-ease-out) 90ms, visibility var(--ntn-dur-fast) 90ms;
 
-.ntn-spinner { display: inline-block; width: 16px; height: 16px; flex: 0 0 auto; border-radius: 50%; border: 2px solid var(--ntn-n-400); border-top-color: var(--ntn-accent-400); animation: ntn-spin 700ms linear infinite; }
-.ntn-spinner--lg { width: 24px; height: 24px; border-width: 3px; }
+    &::after {
+      /* Arrow — a rotated corner of the same surface, so it inherits the border. */
+      content: ""; position: absolute; width: 8px; height: 8px; background: inherit;
+      border: 1px solid var(--ntn-border-default); border-width: 0 1px 1px 0; transform: rotate(45deg);
+      bottom: -5px; left: 50%; margin-left: -4px;
+    }
+  }
+  &:hover &__bubble, &:focus-within &__bubble { opacity: 1; visibility: visible; animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out); }
+  &__bubble {
+    &--bottom {
+      bottom: auto; top: calc(100% + 9px);
+
+      &::after { bottom: auto; top: -5px; border-width: 1px 0 0 1px; }
+    }
+    &--left {
+      bottom: auto; top: 50%; left: auto; right: calc(100% + 9px); transform: translateY(-50%);
+
+      &::after { bottom: auto; top: 50%; left: auto; right: -5px; margin: -4px 0 0; border-width: 0 0 1px 1px; }
+    }
+    &--right {
+      bottom: auto; top: 50%; left: calc(100% + 9px); transform: translateY(-50%);
+
+      &::after { bottom: auto; top: 50%; left: -5px; margin: -4px 0 0; border-width: 1px 1px 0 0; }
+    }
+    &--start {
+      /* Align the bubble to the trigger's edge instead of its centre — for a bubble
+         wider than the thing it describes, sitting near the edge of the view. */
+      left: 0; transform: none;
+
+      &::after { left: 14px; margin-left: 0; }
+    }
+    &--end {
+      left: auto; right: 0; transform: none;
+
+      &::after { left: auto; right: 14px; margin-left: 0; }
+    }
+    &--wrap { white-space: normal; width: max-content; max-width: 232px; padding: 8px 10px; }
+  }
+  &__title { display: block; font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-semibold); color: var(--ntn-text-primary); }
+  &__text { display: block; margin-top: 2px; font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
+  &__key { display: inline-block; margin-left: 6px; font-family: var(--ntn-font-mono); font-size: var(--ntn-text-2xs); color: var(--ntn-text-disabled); }
+}
+
+.ntn-progress {
+  display: flex; flex-direction: column; gap: 7px; width: 100%;
+
+  &__head { display: flex; align-items: center; justify-content: space-between; gap: var(--ntn-space-3); }
+  &__label { font-size: var(--ntn-text-xs); color: var(--ntn-text-secondary); }
+  &__value { font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); color: var(--ntn-text-primary); }
+  &__track { position: relative; height: 6px; border-radius: var(--ntn-radius-full); background: var(--ntn-n-300); overflow: hidden; }
+  &__fill {
+    /* --ntn-progress (0–100%) is written by nocturne.js onto .ntn-progress from the fill's data-value. */
+    height: 100%; width: var(--ntn-progress, 0%); border-radius: var(--ntn-radius-full); background: linear-gradient(90deg, var(--ntn-accent-600), var(--ntn-accent-400)); transition: tr(width, slow, out);
+  }
+  &--sm &__track { height: 4px; }
+  &--lg &__track { height: 10px; }
+  @each $tone in success, warning, danger {
+    &--#{$tone} &__fill { background: tone($tone, solid); }
+  }
+  &--neutral &__fill { background: var(--ntn-n-600); }
+  &--indeterminate &__fill { width: 100%; background: linear-gradient(90deg, transparent, var(--ntn-accent-500), transparent); background-size: 200% 100%; animation: ntn-shimmer 1.4s linear infinite; }
+}
+
+.ntn-spinner {
+  display: inline-block; width: 16px; height: 16px; flex: 0 0 auto; border-radius: 50%; border: 2px solid var(--ntn-n-400); border-top-color: var(--ntn-accent-400); animation: ntn-spin 700ms linear infinite;
+
+  &--lg { width: 24px; height: 24px; border-width: 3px; }
+}
 .ntn-loading { display: inline-flex; align-items: center; gap: var(--ntn-space-2); color: var(--ntn-text-muted); font-size: var(--ntn-text-xs); }
 
 .ntn-avatar {
@@ -104,19 +131,25 @@
   background: linear-gradient(140deg, var(--ntn-accent-700), var(--ntn-accent-500));
   border: 1px solid var(--ntn-alpha-ink-10); color: var(--ntn-accent-fg);
   font-size: 12px; font-weight: var(--ntn-weight-semibold); letter-spacing: 0.02em;
-}
-.ntn-avatar img { width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
-.ntn-avatar--xs { width: 20px; height: 20px; font-size: 9px; }
-.ntn-avatar--sm { width: 24px; height: 24px; font-size: 9px; }
-.ntn-avatar--lg { width: 40px; height: 40px; font-size: 14px; }
-.ntn-avatar--xl { width: 56px; height: 56px; font-size: 20px; }
-.ntn-avatar--ring { border: 2px solid var(--ntn-surface-1); }
-.ntn-avatar__status { position: absolute; right: -1px; bottom: -1px; width: 9px; height: 9px; border-radius: 50%; background: var(--ntn-n-600); border: 2px solid var(--ntn-surface-1); }
-.ntn-avatar__status--online { background: var(--ntn-success-500); }
-.ntn-avatar__status--busy { background: var(--ntn-danger-500); }
-.ntn-avatar__status--away { background: var(--ntn-warning-500); }
 
-.ntn-avatars { display: inline-flex; align-items: center; }
-.ntn-avatars .ntn-avatar { border: 2px solid var(--ntn-surface-1); }
-.ntn-avatars > * + * { margin-left: -8px; }
-.ntn-avatars__more { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; margin-left: -8px; border-radius: var(--ntn-radius-full); background: var(--ntn-surface-3); border: 2px solid var(--ntn-surface-1); color: var(--ntn-text-secondary); font-size: 9px; font-weight: var(--ntn-weight-medium); }
+  img { width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
+  @each $size, $box, $text in (xs, 20px, 9px), (sm, 24px, 9px), (lg, 40px, 14px), (xl, 56px, 20px) {
+    &--#{$size} { width: $box; height: $box; font-size: $text; }
+  }
+  &--ring { border: 2px solid var(--ntn-surface-1); }
+  &__status {
+    position: absolute; right: -1px; bottom: -1px; width: 9px; height: 9px; border-radius: 50%; background: var(--ntn-n-600); border: 2px solid var(--ntn-surface-1);
+
+    @each $state, $tone in (online: success, busy: danger, away: warning) {
+      &--#{$state} { background: tone($tone, solid); }
+    }
+  }
+}
+
+.ntn-avatars {
+  display: inline-flex; align-items: center;
+
+  .ntn-avatar { border: 2px solid var(--ntn-surface-1); }
+  > * + * { margin-left: -8px; }
+  &__more { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; margin-left: -8px; border-radius: var(--ntn-radius-full); background: var(--ntn-surface-3); border: 2px solid var(--ntn-surface-1); color: var(--ntn-text-secondary); font-size: 9px; font-weight: var(--ntn-weight-medium); }
+}

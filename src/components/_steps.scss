@@ -8,96 +8,122 @@
    </ol>
 
    Wrap marker+text in <button class="ntn-steps__hit"> to make a step clickable. */
+@use "../abstracts" as *;
 
 .ntn-steps {
   --ntn-step-size: 32px;
   --ntn-step-line: 2px;
   display: flex; align-items: flex-start; gap: var(--ntn-space-2);
   list-style: none; margin: 0; padding: 0; width: 100%;
-}
-.ntn-steps__step {
-  position: relative; flex: 1 1 0; min-width: 0;
-  display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
-}
-.ntn-steps__hit {
-  display: flex; flex-direction: column; align-items: center; gap: inherit; text-align: inherit;
-  width: 100%; padding: 0; border: 0; background: transparent; color: inherit; cursor: pointer; font-family: var(--ntn-font-sans);
-}
-.ntn-steps__hit:disabled { cursor: not-allowed; }
-.ntn-steps__hit:focus-visible { outline: 0; }
-.ntn-steps__hit:focus-visible .ntn-steps__marker { box-shadow: var(--ntn-ring-focus); }
 
-/* Connector — drawn from the previous marker's centre to this one's. */
-.ntn-steps__step + .ntn-steps__step::before {
-  content: ""; position: absolute; z-index: 0;
-  top: calc(var(--ntn-step-size) / 2 - var(--ntn-step-line) / 2);
-  right: 50%; left: calc(-50% - var(--ntn-space-2)); height: var(--ntn-step-line);
-  background: var(--ntn-border-default); border-radius: var(--ntn-radius-full);
+  &__step {
+    position: relative; flex: 1 1 0; min-width: 0;
+    display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
+  }
+  &__hit {
+    display: flex; flex-direction: column; align-items: center; gap: inherit; text-align: inherit;
+    width: 100%; padding: 0; border: 0; background: transparent; color: inherit; cursor: pointer; font-family: var(--ntn-font-sans);
+
+    &:disabled { cursor: not-allowed; }
+    &:focus-visible {
+      outline: 0;
+
+      .ntn-steps__marker { box-shadow: var(--ntn-ring-focus); }
+    }
+  }
+
+  &__step + &__step::before {
+    /* Connector — drawn from the previous marker's centre to this one's. */
+    content: ""; position: absolute; z-index: 0;
+    top: calc(var(--ntn-step-size) / 2 - var(--ntn-step-line) / 2);
+    right: 50%; left: calc(-50% - var(--ntn-space-2)); height: var(--ntn-step-line);
+    background: var(--ntn-border-default); border-radius: var(--ntn-radius-full);
+  }
+  &__step[data-state="complete"]::before,
+  &__step[data-state="current"]::before { background: var(--ntn-accent-600); }
+
+  &__marker {
+    position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+    width: var(--ntn-step-size); height: var(--ntn-step-size); border-radius: var(--ntn-radius-full);
+    background: var(--ntn-surface-2); border: 2px solid var(--ntn-border-default); color: var(--ntn-text-disabled);
+    font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-medium);
+    transition: tr(background, base), tr(border-color, base), tr(color, base), tr(box-shadow, base);
+
+    i { font-size: 13px; }
+  }
+  &__step[data-state="complete"] &__marker { background: var(--ntn-accent); border-color: var(--ntn-accent-500); color: var(--ntn-accent-fg); }
+  &__step[data-state="current"] &__marker {
+    background: var(--ntn-accent-soft); border-color: var(--ntn-accent-500); color: var(--ntn-accent-200);
+    box-shadow: 0 0 0 4px var(--ntn-accent-softer);
+  }
+
+  &__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  &__title { font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-muted); text-wrap: pretty; }
+  &__desc { font-size: var(--ntn-text-xs); color: var(--ntn-text-disabled); text-wrap: pretty; }
+  &__step[data-state="complete"] &__title { color: var(--ntn-text-secondary); }
+  &__step[data-state="current"] {
+    .ntn-steps__title { color: var(--ntn-text-primary); }
+    .ntn-steps__desc { color: var(--ntn-text-muted); }
+  }
+  &__hit:hover &__title { color: var(--ntn-text-primary); }
+
+  &--inline {
+    gap: var(--ntn-space-5);
+
+    .ntn-steps__step,
+    .ntn-steps__hit {
+      /* Marker beside the text instead of above it — for narrow columns and toolbars. */
+      flex-direction: row; align-items: center; text-align: left; gap: var(--ntn-space-3);
+    }
+    .ntn-steps__step + .ntn-steps__step::before { display: none; }
+  }
+
+  &--vertical {
+    /* Vertical spine — the shape most wizards want on a settings page. */
+    flex-direction: column; align-items: stretch; gap: var(--ntn-space-5);
+
+    .ntn-steps__step,
+    .ntn-steps__hit { flex-direction: row; align-items: flex-start; text-align: left; gap: var(--ntn-space-3); }
+    .ntn-steps__step { flex: 0 0 auto; }
+    .ntn-steps__step + .ntn-steps__step::before {
+      top: calc(-1 * var(--ntn-space-5)); bottom: auto; left: calc(var(--ntn-step-size) / 2 - var(--ntn-step-line) / 2); right: auto;
+      width: var(--ntn-step-line); height: var(--ntn-space-5);
+    }
+    .ntn-steps__text { padding-top: 5px; }
+  }
+
+  &--bars {
+    /* Bars — "Step 2 of 4" with no labels. Segments live in the same markup. */
+    gap: 6px;
+
+    .ntn-steps__step { gap: 0; }
+    .ntn-steps__step::before { display: none; }
+    .ntn-steps__marker {
+      width: 100%; height: 6px; border: 0; border-radius: var(--ntn-radius-full);
+      background: var(--ntn-n-300); font-size: 0; color: transparent;
+
+      i { display: none; }
+    }
+    .ntn-steps__step[data-state="complete"] .ntn-steps__marker { background: var(--ntn-accent-600); }
+    .ntn-steps__step[data-state="current"] .ntn-steps__marker { background: var(--ntn-accent-400); box-shadow: none; }
+    .ntn-steps__text { display: none; }
+  }
+  &__count { font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); white-space: nowrap; }
+
+  &--sm {
+    --ntn-step-size: 24px; --ntn-step-line: 2px;
+
+    .ntn-steps__marker {
+      font-size: var(--ntn-text-2xs);
+
+      i { font-size: 11px; }
+    }
+    .ntn-steps__title { font-size: var(--ntn-text-xs); }
+    .ntn-steps__desc { display: none; }
+  }
 }
-.ntn-steps__step[data-state="complete"]::before,
-.ntn-steps__step[data-state="current"]::before { background: var(--ntn-accent-600); }
-
-.ntn-steps__marker {
-  position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
-  width: var(--ntn-step-size); height: var(--ntn-step-size); border-radius: var(--ntn-radius-full);
-  background: var(--ntn-surface-2); border: 2px solid var(--ntn-border-default); color: var(--ntn-text-disabled);
-  font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-medium);
-  transition: background var(--ntn-dur-base) var(--ntn-ease-standard), border-color var(--ntn-dur-base) var(--ntn-ease-standard),
-              color var(--ntn-dur-base) var(--ntn-ease-standard), box-shadow var(--ntn-dur-base) var(--ntn-ease-standard);
-}
-.ntn-steps__marker i { font-size: 13px; }
-.ntn-steps__step[data-state="complete"] .ntn-steps__marker { background: var(--ntn-accent); border-color: var(--ntn-accent-500); color: var(--ntn-accent-fg); }
-.ntn-steps__step[data-state="current"] .ntn-steps__marker {
-  background: var(--ntn-accent-soft); border-color: var(--ntn-accent-500); color: var(--ntn-accent-200);
-  box-shadow: 0 0 0 4px var(--ntn-accent-softer);
-}
-
-.ntn-steps__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.ntn-steps__title { font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-muted); text-wrap: pretty; }
-.ntn-steps__desc { font-size: var(--ntn-text-xs); color: var(--ntn-text-disabled); text-wrap: pretty; }
-.ntn-steps__step[data-state="complete"] .ntn-steps__title { color: var(--ntn-text-secondary); }
-.ntn-steps__step[data-state="current"] .ntn-steps__title { color: var(--ntn-text-primary); }
-.ntn-steps__step[data-state="current"] .ntn-steps__desc { color: var(--ntn-text-muted); }
-.ntn-steps__hit:hover .ntn-steps__title { color: var(--ntn-text-primary); }
-
-/* Marker beside the text instead of above it — for narrow columns and toolbars. */
-.ntn-steps--inline .ntn-steps__step,
-.ntn-steps--inline .ntn-steps__hit { flex-direction: row; align-items: center; text-align: left; gap: var(--ntn-space-3); }
-.ntn-steps--inline .ntn-steps__step + .ntn-steps__step::before { display: none; }
-.ntn-steps--inline { gap: var(--ntn-space-5); }
-
-/* Vertical spine — the shape most wizards want on a settings page. */
-.ntn-steps--vertical { flex-direction: column; align-items: stretch; gap: var(--ntn-space-5); }
-.ntn-steps--vertical .ntn-steps__step,
-.ntn-steps--vertical .ntn-steps__hit { flex-direction: row; align-items: flex-start; text-align: left; gap: var(--ntn-space-3); }
-.ntn-steps--vertical .ntn-steps__step { flex: 0 0 auto; }
-.ntn-steps--vertical .ntn-steps__step + .ntn-steps__step::before {
-  top: calc(-1 * var(--ntn-space-5)); bottom: auto; left: calc(var(--ntn-step-size) / 2 - var(--ntn-step-line) / 2); right: auto;
-  width: var(--ntn-step-line); height: var(--ntn-space-5);
-}
-.ntn-steps--vertical .ntn-steps__text { padding-top: 5px; }
-
-/* Bars — "Step 2 of 4" with no labels. Segments live in the same markup. */
-.ntn-steps--bars { gap: 6px; }
-.ntn-steps--bars .ntn-steps__step { gap: 0; }
-.ntn-steps--bars .ntn-steps__step::before { display: none; }
-.ntn-steps--bars .ntn-steps__marker {
-  width: 100%; height: 6px; border: 0; border-radius: var(--ntn-radius-full);
-  background: var(--ntn-n-300); font-size: 0; color: transparent;
-}
-.ntn-steps--bars .ntn-steps__marker i { display: none; }
-.ntn-steps--bars .ntn-steps__step[data-state="complete"] .ntn-steps__marker { background: var(--ntn-accent-600); }
-.ntn-steps--bars .ntn-steps__step[data-state="current"] .ntn-steps__marker { background: var(--ntn-accent-400); box-shadow: none; }
-.ntn-steps--bars .ntn-steps__text { display: none; }
-.ntn-steps__count { font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); white-space: nowrap; }
-
-.ntn-steps--sm { --ntn-step-size: 24px; --ntn-step-line: 2px; }
-.ntn-steps--sm .ntn-steps__marker { font-size: var(--ntn-text-2xs); }
-.ntn-steps--sm .ntn-steps__marker i { font-size: 11px; }
-.ntn-steps--sm .ntn-steps__title { font-size: var(--ntn-text-xs); }
-.ntn-steps--sm .ntn-steps__desc { display: none; }
 
 /* Labels drop away first when the row runs out of room. */
-@media (max-width: 640px) {
+@include below(sm) {
   .ntn-steps:not(.ntn-steps--vertical):not(.ntn-steps--inline) .ntn-steps__desc { display: none; }
 }

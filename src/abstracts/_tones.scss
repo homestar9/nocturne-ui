@@ -1,0 +1,49 @@
+// Colour tones shared by the badge, alert, button, progress and avatar status modifiers. Each tone
+// maps to the custom properties that paint it, so a theme still retints every tone at runtime.
+//   soft  — tinted background          line  — hairline in the tone
+//   ink   — text and icons             dot   — a small solid mark
+//   solid — a filled bar or pip        on    — ink that sits on the solid fill
+@use "sass:list";
+@use "sass:map";
+
+/// The semantic tones, in the order their modifiers are declared.
+$statuses: success, warning, danger, info;
+
+@function -status($name) {
+  @return (
+    soft: var(--ntn-#{$name}-soft),
+    line: var(--ntn-#{$name}-line),
+    ink: var(--ntn-#{$name}-400),
+    dot: var(--ntn-#{$name}-400),
+    solid: var(--ntn-#{$name}-500),
+    on: var(--ntn-#{$name}-fg),
+  );
+}
+
+$tones: (
+  primary: (
+    soft: var(--ntn-accent-soft),
+    line: var(--ntn-accent-line),
+    ink: var(--ntn-accent-300),
+    dot: var(--ntn-accent-400),
+  ),
+  success: -status(success),
+  warning: -status(warning),
+  danger: -status(danger),
+  info: -status(info),
+);
+
+/// One part of a tone, e.g. tone(danger, soft) → var(--ntn-danger-soft).
+@function tone($name, $part) {
+  @return map.get($tones, $name, $part);
+}
+
+/// A comma-separated selector list of modifiers: modifiers(".ntn-btn", (a, b)) →
+/// ".ntn-btn--a, .ntn-btn--b".
+@function modifiers($block, $names) {
+  $list: ();
+  @each $name in $names {
+    $list: list.append($list, "#{$block}--#{$name}", $separator: comma);
+  }
+  @return $list;
+}

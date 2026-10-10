@@ -1,0 +1,30 @@
+// Viewport breakpoints. Media queries can't read custom properties, so these are compile-time
+// only; components size themselves with tokens and switch layout here.
+//   sm  — the narrowest layouts drop secondary text (steps)
+//   md  — phones: the sidebar becomes a drawer, grids and toolbars stack
+//   lg  — small laptops: wide grids fall back to two columns
+@use "sass:map";
+
+$breakpoints: (
+  sm: 640px,
+  md: 720px,
+  lg: 1100px,
+);
+
+/// The media condition for viewports at or below breakpoint $bp.
+@function below($bp) {
+  @return "(max-width: #{map.get($breakpoints, $bp)})";
+}
+
+/// The media condition for viewports wider than breakpoint $bp.
+@function above($bp) {
+  @return "(min-width: #{map.get($breakpoints, $bp) + 1px})";
+}
+
+@mixin below($bp) {
+  @media #{below($bp)} { @content; }
+}
+
+@mixin above($bp) {
+  @media #{above($bp)} { @content; }
+}

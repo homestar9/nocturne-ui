@@ -19,34 +19,40 @@
    so they beat the base background while state modifiers (an interactive card's hover, the
    glow and processing edges) still win. The sidebar and table head come later in the cascade,
    so their rules carry one more class. */
+@use "../abstracts" as *;
+
+// The surfaces glass applies to.
+$-surfaces: ".ntn-card, .ntn-stat, .ntn-accordion";
+$-glass-surface: ":where(.ntn-glass):is(#{$-surfaces}), :where(.ntn-glass) :is(#{$-surfaces})";
+$-glass-sidebar: ".ntn-glass.ntn-sidebar, .ntn-glass .ntn-sidebar";
 
 /* Ambient — static on purpose: glass over a moving backdrop re-blurs every frame. */
 .ntn-app:has(> .ntn-ambient) { position: relative; isolation: isolate; }
 .ntn-ambient {
   position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
   background: var(--ntn-background-image) center top / cover no-repeat;
-}
-/* The glow and the ambient image share the band: the top of the container, fading out. */
-.ntn-ambient::before, .ntn-ambient::after {
-  content: ""; position: absolute; inset: 0 0 auto; height: var(--ntn-ambient-height);
-  -webkit-mask-image: linear-gradient(to bottom, #000, rgb(0 0 0 / 0.55) 45%, transparent);
-  mask-image: linear-gradient(to bottom, #000, rgb(0 0 0 / 0.55) 45%, transparent);
-}
-.ntn-ambient::before { background: radial-gradient(1100px 520px at 50% -12%, var(--ntn-accent-glow), transparent 70%); }
-.ntn-ambient::after {
-  background: var(--ntn-ambient-image) center top / cover no-repeat;
-  opacity: var(--ntn-ambient-opacity);
+
+  &::before, &::after {
+    /* The glow and the ambient image share the band: the top of the container, fading out. */
+    content: ""; position: absolute; inset: 0 0 auto; height: var(--ntn-ambient-height);
+    -webkit-mask-image: linear-gradient(to bottom, #000, rgb(0 0 0 / 0.55) 45%, transparent);
+    mask-image: linear-gradient(to bottom, #000, rgb(0 0 0 / 0.55) 45%, transparent);
+  }
+  &::before { background: radial-gradient(1100px 520px at 50% -12%, var(--ntn-accent-glow), transparent 70%); }
+  &::after {
+    background: var(--ntn-ambient-image) center top / cover no-repeat;
+    opacity: var(--ntn-ambient-opacity);
+  }
 }
 
 /* Glass surfaces */
-:where(.ntn-glass):is(.ntn-card, .ntn-stat, .ntn-accordion),
-:where(.ntn-glass) :is(.ntn-card, .ntn-stat, .ntn-accordion) {
+#{$-glass-surface} {
   background-color: var(--ntn-glass-bg);
   border-color: var(--ntn-glass-border);
   box-shadow: var(--ntn-glass-highlight), var(--ntn-glass-shadow);
   backdrop-filter: var(--ntn-glass-blur);
 }
-.ntn-glass.ntn-sidebar, .ntn-glass .ntn-sidebar {
+#{$-glass-sidebar} {
   background-color: var(--ntn-glass-bg);
   border-color: var(--ntn-glass-border);
   backdrop-filter: var(--ntn-glass-blur);
@@ -57,8 +63,8 @@
 .ntn-glass--flat, .ntn-glass--flat [data-theme] { --ntn-glass-highlight: 0 0 #0000; }
 
 /* Nested surfaces stay quiet: no second blur, no second drop. */
-.ntn-glass:is(.ntn-card, .ntn-stat, .ntn-accordion) :is(.ntn-card, .ntn-stat, .ntn-accordion),
-.ntn-glass :is(.ntn-card, .ntn-stat, .ntn-accordion) :is(.ntn-card, .ntn-stat, .ntn-accordion) {
+.ntn-glass:is(#{$-surfaces}) :is(#{$-surfaces}),
+.ntn-glass :is(#{$-surfaces}) :is(#{$-surfaces}) {
   box-shadow: none; backdrop-filter: none;
 }
 
@@ -69,9 +75,8 @@
 /* Back to solid when the user asks for less transparency, and for the phone drawer, which
    slides over page content rather than artwork. */
 @media (prefers-reduced-transparency: reduce) {
-  :where(.ntn-glass):is(.ntn-card, .ntn-stat, .ntn-accordion),
-  :where(.ntn-glass) :is(.ntn-card, .ntn-stat, .ntn-accordion) { background-color: var(--ntn-surface-1); backdrop-filter: none; }
+  #{$-glass-surface} { background-color: var(--ntn-surface-1); backdrop-filter: none; }
 }
-@media (prefers-reduced-transparency: reduce), (max-width: 720px) {
-  .ntn-glass.ntn-sidebar, .ntn-glass .ntn-sidebar { background-color: var(--ntn-bg-sunken); backdrop-filter: none; }
+@media (prefers-reduced-transparency: reduce), #{below(md)} {
+  #{$-glass-sidebar} { background-color: var(--ntn-bg-sunken); backdrop-filter: none; }
 }

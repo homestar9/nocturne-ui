@@ -1,4 +1,5 @@
 /* ── Card, stat, modal, accordion, divider ────────────────────────────────── */
+@use "../abstracts" as *;
 
 /* A card does NOT clip its content, so a combobox panel, tooltip or date picker opened inside
    it can spill out. Children that paint a background at the card's edge round their own corners
@@ -13,86 +14,119 @@
   display: flex; flex-direction: column;
   background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-xl);
   box-shadow: var(--ntn-shadow-md); backdrop-filter: var(--ntn-surface-filter);
-  transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), transform var(--ntn-dur-fast) var(--ntn-ease-out);
-}
-.ntn-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ntn-space-4); padding: var(--ntn-space-5) var(--ntn-space-5) 0; }
-.ntn-card__title { margin: 0; font-size: var(--ntn-text-lg); font-weight: var(--ntn-weight-semibold); letter-spacing: var(--ntn-tracking-heading); color: var(--ntn-text-primary); }
-.ntn-card__sub { margin: 3px 0 0; font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
-.ntn-card__actions { display: flex; align-items: center; gap: var(--ntn-space-2); flex: 0 0 auto; }
-.ntn-card__body { padding: var(--ntn-space-5); flex: 1; min-height: 0; }
-.ntn-card__foot { padding: var(--ntn-space-3) var(--ntn-space-5); border-top: 1px solid var(--ntn-border-subtle); background: var(--ntn-alpha-ink-04); font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); border-radius: 0 0 calc(var(--ntn-radius-xl) - 1px) calc(var(--ntn-radius-xl) - 1px); }
-.ntn-card--flush { overflow: hidden; }
-.ntn-card--flush .ntn-card__body { padding: 0; }
-/* A flush card is the table/list shell: its head always needs a rule under it,
-   otherwise the head, the toolbar and the first row run together. */
-.ntn-card--flush > .ntn-card__head { padding-bottom: var(--ntn-space-4); border-bottom: 1px solid var(--ntn-border-default); }
-.ntn-card__head--divided { border-bottom: 1px solid var(--ntn-border-subtle); padding-bottom: var(--ntn-space-4); }
-.ntn-card__heading { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.ntn-card__heading .ntn-card__title { display: flex; align-items: center; gap: var(--ntn-space-2); flex-wrap: wrap; }
-.ntn-card--interactive { cursor: pointer; }
-.ntn-card--interactive:hover { border-color: var(--ntn-border-strong); transform: translateY(-1px); }
-/* Border effects (--glow, --processing) live in effects.css as the ntn-edge block;
-   the ntn-card-- aliases are defined there too. */
+  transition: tr(border-color), tr(transform, fast, out);
 
-.ntn-stat { display: flex; flex-direction: column; gap: 6px; padding: var(--ntn-space-4) 18px; background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg); }
-.ntn-stat__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.ntn-stat__label { font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
-.ntn-stat__figure { display: flex; align-items: baseline; gap: var(--ntn-space-2); flex-wrap: wrap; }
-.ntn-stat__value { font-size: var(--ntn-text-2xl); font-weight: var(--ntn-weight-semibold); letter-spacing: var(--ntn-tracking-heading); color: var(--ntn-text-primary); }
-.ntn-stat__delta { font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-medium); color: var(--ntn-success-400); }
-.ntn-stat__delta--down { color: var(--ntn-danger-400); }
-.ntn-stat__delta--flat { color: var(--ntn-text-muted); }
-.ntn-stat__caption { font-size: var(--ntn-text-xs); color: var(--ntn-text-disabled); }
+  &__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ntn-space-4); padding: var(--ntn-space-5) var(--ntn-space-5) 0; }
+  &__title { margin: 0; font-size: var(--ntn-text-lg); font-weight: var(--ntn-weight-semibold); letter-spacing: var(--ntn-tracking-heading); color: var(--ntn-text-primary); }
+  &__sub { margin: 3px 0 0; font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
+  &__actions { display: flex; align-items: center; gap: var(--ntn-space-2); flex: 0 0 auto; }
+  &__body { padding: var(--ntn-space-5); flex: 1; min-height: 0; }
+  &__foot { padding: var(--ntn-space-3) var(--ntn-space-5); border-top: 1px solid var(--ntn-border-subtle); background: var(--ntn-alpha-ink-04); font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); border-radius: 0 0 calc(var(--ntn-radius-xl) - 1px) calc(var(--ntn-radius-xl) - 1px); }
+  &--flush {
+    overflow: hidden;
+
+    .ntn-card__body { padding: 0; }
+    > .ntn-card__head {
+      /* A flush card is the table/list shell: its head always needs a rule under it,
+         otherwise the head, the toolbar and the first row run together. */
+      padding-bottom: var(--ntn-space-4); border-bottom: 1px solid var(--ntn-border-default);
+    }
+  }
+  &__head--divided { border-bottom: 1px solid var(--ntn-border-subtle); padding-bottom: var(--ntn-space-4); }
+  &__heading {
+    display: flex; flex-direction: column; gap: 3px; min-width: 0;
+
+    .ntn-card__title { display: flex; align-items: center; gap: var(--ntn-space-2); flex-wrap: wrap; }
+  }
+  &--interactive {
+    cursor: pointer;
+
+    &:hover { border-color: var(--ntn-border-strong); transform: translateY(-1px); }
+  }
+  // Border effects (--glow, --processing) live in _effects.scss as the ntn-edge block;
+  // the ntn-card-- aliases are defined there too.
+}
+
+.ntn-stat {
+  display: flex; flex-direction: column; gap: 6px; padding: var(--ntn-space-4) 18px; background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg);
+
+  &__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  &__label { font-size: var(--ntn-text-xs); color: var(--ntn-text-muted); }
+  &__figure { display: flex; align-items: baseline; gap: var(--ntn-space-2); flex-wrap: wrap; }
+  &__value { font-size: var(--ntn-text-2xl); font-weight: var(--ntn-weight-semibold); letter-spacing: var(--ntn-tracking-heading); color: var(--ntn-text-primary); }
+  &__delta {
+    font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs); font-weight: var(--ntn-weight-medium); color: var(--ntn-success-400);
+
+    &--down { color: var(--ntn-danger-400); }
+    &--flat { color: var(--ntn-text-muted); }
+  }
+  &__caption { font-size: var(--ntn-text-xs); color: var(--ntn-text-disabled); }
+}
 
 /* Modal — native <dialog>. Open with dialog.showModal(). */
 .ntn-modal {
   width: 100%; max-width: 520px; padding: 0; border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-2xl);
   background: var(--ntn-surface-1); color: var(--ntn-text-primary); box-shadow: var(--ntn-shadow-lg); overflow: hidden;
   backdrop-filter: var(--ntn-pop-filter);
+
+  &::backdrop { background: var(--ntn-scrim); backdrop-filter: var(--ntn-blur-scrim); }
+  &[open] { animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out); }
+  &__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ntn-space-4); padding: var(--ntn-space-5) var(--ntn-space-5) 0; }
+  &__title { margin: 0; font-size: var(--ntn-text-xl); font-weight: var(--ntn-weight-semibold); letter-spacing: var(--ntn-tracking-heading); color: var(--ntn-text-primary); }
+  &__close {
+    /* The dismiss button in the head (pair it with data-ntn-close and aria-label="Close"). */
+    display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+    width: var(--ntn-control-sm); height: var(--ntn-control-sm);
+    border: 1px solid transparent; border-radius: var(--ntn-radius-md); background: transparent;
+    color: var(--ntn-text-muted); cursor: pointer;
+    @include transition(background, color);
+
+    &:hover { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); }
+    i { font-size: 14px; }
+  }
+  &__desc { margin: 6px 0 0; font-size: var(--ntn-text-sm); color: var(--ntn-text-muted); line-height: var(--ntn-leading-normal); }
+  &__body { padding: var(--ntn-space-5); display: flex; flex-direction: column; gap: 14px; }
+  &__foot { display: flex; justify-content: flex-end; gap: var(--ntn-space-2); padding: 14px var(--ntn-space-5); border-top: 1px solid var(--ntn-border-subtle); background: var(--ntn-alpha-ink-04); }
+  &--sm { max-width: 380px; }
+  &--lg { max-width: 720px; }
 }
-.ntn-modal::backdrop { background: var(--ntn-scrim); backdrop-filter: var(--ntn-blur-scrim); }
-.ntn-modal[open] { animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out); }
-.ntn-modal__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ntn-space-4); padding: var(--ntn-space-5) var(--ntn-space-5) 0; }
-.ntn-modal__title { margin: 0; font-size: var(--ntn-text-xl); font-weight: var(--ntn-weight-semibold); letter-spacing: var(--ntn-tracking-heading); color: var(--ntn-text-primary); }
-/* The dismiss button in the head (pair it with data-ntn-close and aria-label="Close"). */
-.ntn-modal__close {
-  display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
-  width: var(--ntn-control-sm); height: var(--ntn-control-sm);
-  border: 1px solid transparent; border-radius: var(--ntn-radius-md); background: transparent;
-  color: var(--ntn-text-muted); cursor: pointer;
-  transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard);
-}
-.ntn-modal__close:hover { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); }
-.ntn-modal__close i { font-size: 14px; }
-.ntn-modal__desc { margin: 6px 0 0; font-size: var(--ntn-text-sm); color: var(--ntn-text-muted); line-height: var(--ntn-leading-normal); }
-.ntn-modal__body { padding: var(--ntn-space-5); display: flex; flex-direction: column; gap: 14px; }
-.ntn-modal__foot { display: flex; justify-content: flex-end; gap: var(--ntn-space-2); padding: 14px var(--ntn-space-5); border-top: 1px solid var(--ntn-border-subtle); background: var(--ntn-alpha-ink-04); }
-.ntn-modal--sm { max-width: 380px; }
-.ntn-modal--lg { max-width: 720px; }
 
 /* Accordion — native <details>. */
-.ntn-accordion { display: flex; flex-direction: column; background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg); overflow: hidden; }
-.ntn-accordion__item { border-top: 1px solid var(--ntn-border-subtle); }
-.ntn-accordion__item:first-child { border-top: 0; }
-.ntn-accordion__item[open] > summary { background: var(--ntn-alpha-ink-04); }
-.ntn-accordion__item > summary {
-  display: flex; align-items: center; gap: 10px; padding: 14px var(--ntn-space-4); cursor: pointer; list-style: none;
-  font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-primary);
-  transition: background var(--ntn-dur-fast) var(--ntn-ease-standard);
-}
-.ntn-accordion__item > summary::-webkit-details-marker { display: none; }
-.ntn-accordion__item > summary i { font-size: 15px; color: var(--ntn-text-muted); }
-.ntn-accordion__item[open] > summary i { color: var(--ntn-accent-300); }
-.ntn-accordion__item > summary::after {
-  content: ""; margin-left: auto; width: 7px; height: 7px; flex: 0 0 auto;
-  border-right: 1.5px solid var(--ntn-text-muted); border-bottom: 1.5px solid var(--ntn-text-muted);
-  transform: translateY(-2px) rotate(45deg); transition: transform var(--ntn-dur-base) var(--ntn-ease-standard);
-}
-.ntn-accordion__item[open] > summary::after { transform: translateY(2px) rotate(225deg); }
-.ntn-accordion__panel { padding: var(--ntn-space-3) var(--ntn-space-4) var(--ntn-space-4); font-size: var(--ntn-text-sm); color: var(--ntn-text-secondary); line-height: var(--ntn-leading-normal); animation: ntn-rise var(--ntn-dur-base) var(--ntn-ease-out); }
+.ntn-accordion {
+  display: flex; flex-direction: column; background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg); overflow: hidden;
 
-.ntn-divider { border: 0; height: 1px; background: var(--ntn-border-default); margin: var(--ntn-space-4) 0; }
-.ntn-divider--subtle { background: var(--ntn-border-subtle); }
-.ntn-divider--vertical { width: 1px; height: auto; align-self: stretch; margin: 0 var(--ntn-space-4); flex: 0 0 auto; }
-.ntn-divider-label { display: flex; align-items: center; gap: var(--ntn-space-3); margin: var(--ntn-space-4) 0; font-size: var(--ntn-text-2xs); text-transform: uppercase; letter-spacing: var(--ntn-tracking-caps); color: var(--ntn-text-disabled); font-weight: var(--ntn-weight-medium); }
-.ntn-divider-label::before, .ntn-divider-label::after { content: ""; height: 1px; flex: 1; background: var(--ntn-border-default); }
+  &__item {
+    border-top: 1px solid var(--ntn-border-subtle);
+
+    &:first-child { border-top: 0; }
+    &[open] > summary { background: var(--ntn-alpha-ink-04); }
+    > summary {
+      display: flex; align-items: center; gap: 10px; padding: 14px var(--ntn-space-4); cursor: pointer; list-style: none;
+      font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-primary);
+      transition: tr(background);
+
+      &::-webkit-details-marker { display: none; }
+      i { font-size: 15px; color: var(--ntn-text-muted); }
+    }
+    &[open] > summary i { color: var(--ntn-accent-300); }
+    > summary::after {
+      content: ""; margin-left: auto; flex: 0 0 auto;
+      @include chevron(7px);
+      transition: tr(transform, base);
+    }
+    &[open] > summary::after { transform: translateY(2px) rotate(225deg); }
+  }
+  &__panel { padding: var(--ntn-space-3) var(--ntn-space-4) var(--ntn-space-4); font-size: var(--ntn-text-sm); color: var(--ntn-text-secondary); line-height: var(--ntn-leading-normal); animation: ntn-rise var(--ntn-dur-base) var(--ntn-ease-out); }
+}
+
+.ntn-divider {
+  border: 0; height: 1px; background: var(--ntn-border-default); margin: var(--ntn-space-4) 0;
+
+  &--subtle { background: var(--ntn-border-subtle); }
+  &--vertical { width: 1px; height: auto; align-self: stretch; margin: 0 var(--ntn-space-4); flex: 0 0 auto; }
+}
+.ntn-divider-label {
+  display: flex; align-items: center; gap: var(--ntn-space-3); margin: var(--ntn-space-4) 0; @include caps-label;
+
+  &::before, &::after { content: ""; height: 1px; flex: 1; background: var(--ntn-border-default); }
+}
