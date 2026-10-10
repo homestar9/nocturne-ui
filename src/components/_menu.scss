@@ -38,7 +38,7 @@
 
     i { font-size: 14px; }
     &:hover, &[data-ntn-active] { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); }
-    &:focus-visible { outline: 0; background: var(--ntn-surface-hover); color: var(--ntn-text-primary); box-shadow: var(--ntn-ring-focus); }
+    &:focus-visible { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); @include focus-ring; }
     &:is([aria-checked="true"], [aria-selected="true"]) {
       background: var(--ntn-accent-soft); color: var(--ntn-text-primary);
 

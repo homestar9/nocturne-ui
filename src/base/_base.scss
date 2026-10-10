@@ -1,4 +1,6 @@
 /* Minimal global reset. Consumers link nocturne.css and get this for free. */
+@use "../abstracts" as *;
+
 *, *::before, *::after { box-sizing: border-box; }
 
 /* [hidden] has to beat component display rules (.ntn-card is a flex block). */
@@ -34,10 +36,11 @@ a {
    Cancel their default italic without touching an <i> used for real italics in content. */
 i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
 
-/* The ring never changes an element's shape — each component keeps its own radius. */
-:focus-visible { outline: none; box-shadow: var(--ntn-ring-focus); }
+/* The ring is an outline: it follows each component's radius, never changes its shape, and no
+   component shadow can replace it. */
+:focus-visible { @include focus-ring; }
 /* Fields inside a bordered group let the group own the ring — no double outline. */
-.ntn-field__control :focus-visible, .ntn-search :focus-visible { box-shadow: none; }
+.ntn-field__control :focus-visible, .ntn-search :focus-visible, .ntn-combo__search :focus-visible { outline: none; }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }

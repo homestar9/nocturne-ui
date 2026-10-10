@@ -26,9 +26,9 @@
 
     &:disabled { cursor: not-allowed; }
     &:focus-visible {
-      outline: 0;
+      outline: 0;   // the marker carries the ring, not the whole hit area
 
-      .ntn-steps__marker { box-shadow: var(--ntn-ring-focus); }
+      .ntn-steps__marker { @include focus-ring; }
     }
   }
 

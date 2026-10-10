@@ -230,6 +230,10 @@
 
 :root, [data-theme] {
   --ntn-glow-accent: 0 0 0 1px var(--ntn-accent-600), 0 6px 22px -8px var(--ntn-accent-glow);
+  /* Keyboard focus. The outline is the default ring: it never competes with a control's own
+     box-shadow and survives forced-colours mode. Field-style controls pair the box-shadow ring
+     with an accent border instead. */
+  --ntn-focus-outline: 3px solid var(--ntn-focus-ring);
   --ntn-ring-focus: 0 0 0 3px var(--ntn-focus-ring);
   /* The lit top edge of a filled accent control */
   --ntn-highlight-top: inset 0 1px 0 rgba(255,255,255,0.22);

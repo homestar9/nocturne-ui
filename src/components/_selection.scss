@@ -87,7 +87,7 @@ $-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBo
     .ntn-rating__star:hover::before,
     .ntn-rating__star:has(~ .ntn-rating__star:hover)::before { background: var(--ntn-rating-color); }
   }
-  &__star:has(input:focus-visible), &__clear:has(input:focus-visible) { box-shadow: var(--ntn-ring-focus); }
+  &__star:has(input:focus-visible), &__clear:has(input:focus-visible) { @include focus-ring; }
   &:has(input:disabled) {
     opacity: 0.5;
 
@@ -138,7 +138,7 @@ $-inner-radius: calc(var(--ntn-radius-md) - 1px);
 
       i { color: var(--ntn-accent-300); }
     }
-    &:has(input:focus-visible) { box-shadow: var(--ntn-ring-focus); z-index: 1; }
+    &:has(input:focus-visible) { @include focus-ring; z-index: 1; }
   }
 }
 

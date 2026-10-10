@@ -228,6 +228,10 @@
 
 :root, [data-theme] {
   --ntn-glow-accent: 0 0 0 1px var(--ntn-accent-600), 0 6px 22px -8px var(--ntn-accent-glow);
+  /* Keyboard focus. The outline is the default ring: it never competes with a control's own
+     box-shadow and survives forced-colours mode. Field-style controls pair the box-shadow ring
+     with an accent border instead. */
+  --ntn-focus-outline: 3px solid var(--ntn-focus-ring);
   --ntn-ring-focus: 0 0 0 3px var(--ntn-focus-ring);
   /* The lit top edge of a filled accent control */
   --ntn-highlight-top: inset 0 1px 0 rgba(255,255,255,0.22);
@@ -386,15 +390,16 @@ i:is([class*=fa-], [data-icon], :empty) {
   font-style: normal;
 }
 
-/* The ring never changes an element's shape — each component keeps its own radius. */
+/* The ring is an outline: it follows each component's radius, never changes its shape, and no
+   component shadow can replace it. */
 :focus-visible {
-  outline: none;
-  box-shadow: var(--ntn-ring-focus);
+  outline: var(--ntn-focus-outline);
+  outline-offset: 0;
 }
 
 /* Fields inside a bordered group let the group own the ring — no double outline. */
-.ntn-field__control :focus-visible, .ntn-search :focus-visible {
-  box-shadow: none;
+.ntn-field__control :focus-visible, .ntn-search :focus-visible, .ntn-combo__search :focus-visible {
+  outline: none;
 }
 
 ::-webkit-scrollbar {
@@ -1042,6 +1047,11 @@ i:is([class*=fa-], [data-icon], :empty) {
   border-color: var(--ntn-accent-500);
   box-shadow: var(--ntn-ring-focus);
 }
+@media (forced-colors: active) {
+  .ntn-field__control:focus-within {
+    outline: 2px solid Highlight;
+  }
+}
 .ntn-field__prefix, .ntn-field__suffix {
   font-family: var(--ntn-font-mono);
   font-size: var(--ntn-text-xs);
@@ -1160,9 +1170,14 @@ i:is([class*=fa-], [data-icon], :empty) {
   transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
 }
 .ntn-select__control select:focus-visible {
+  outline: 0;
   border-color: var(--ntn-accent-500);
   box-shadow: var(--ntn-ring-focus);
-  outline: 0;
+}
+@media (forced-colors: active) {
+  .ntn-select__control select:focus-visible {
+    outline: 2px solid Highlight;
+  }
 }
 .ntn-select__control select:disabled {
   opacity: 0.5;
@@ -1325,6 +1340,11 @@ i:is([class*=fa-], [data-icon], :empty) {
   border-color: var(--ntn-accent-500);
   box-shadow: var(--ntn-ring-focus);
 }
+@media (forced-colors: active) {
+  .ntn-search:focus-within {
+    outline: 2px solid Highlight;
+  }
+}
 .ntn-search__shortcut {
   padding: 2px 6px;
   border-radius: var(--ntn-radius-xs);
@@ -1431,10 +1451,10 @@ i:is([class*=fa-], [data-icon], :empty) {
   color: var(--ntn-text-primary);
 }
 .ntn-menu__item:focus-visible {
-  outline: 0;
   background: var(--ntn-surface-hover);
   color: var(--ntn-text-primary);
-  box-shadow: var(--ntn-ring-focus);
+  outline: var(--ntn-focus-outline);
+  outline-offset: 0;
 }
 .ntn-menu__item:is([aria-checked=true], [aria-selected=true]) {
   background: var(--ntn-accent-soft);
@@ -1562,6 +1582,11 @@ i:is([class*=fa-], [data-icon], :empty) {
   outline: 0;
   border-color: var(--ntn-accent-500);
   box-shadow: var(--ntn-ring-focus);
+}
+@media (forced-colors: active) {
+  .ntn-combo__trigger:focus-visible, .ntn-combo__trigger[aria-expanded=true] {
+    outline: 2px solid Highlight;
+  }
 }
 .ntn-combo__trigger:disabled {
   opacity: 0.5;
@@ -1865,9 +1890,15 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-daterange__trigger:hover {
   border-color: var(--ntn-border-strong);
 }
-.ntn-daterange__trigger[aria-expanded=true] {
+.ntn-daterange__trigger:focus-visible, .ntn-daterange__trigger[aria-expanded=true] {
+  outline: 0;
   border-color: var(--ntn-accent-500);
   box-shadow: var(--ntn-ring-focus);
+}
+@media (forced-colors: active) {
+  .ntn-daterange__trigger:focus-visible, .ntn-daterange__trigger[aria-expanded=true] {
+    outline: 2px solid Highlight;
+  }
 }
 .ntn-daterange__value {
   flex: 1;
@@ -2131,9 +2162,14 @@ i:is([class*=fa-], [data-icon], :empty) {
   color-scheme: inherit;
 }
 .ntn-daterange__time input:focus-visible {
+  outline: 0;
   border-color: var(--ntn-accent-500);
   box-shadow: var(--ntn-ring-focus);
-  outline: 0;
+}
+@media (forced-colors: active) {
+  .ntn-daterange__time input:focus-visible {
+    outline: 2px solid Highlight;
+  }
 }
 .ntn-daterange--single .ntn-daterange__cals { /* Single date: one month, no range band to draw. */
   padding-right: var(--ntn-space-5);
@@ -2382,7 +2418,8 @@ i:is([class*=fa-], [data-icon], :empty) {
   background: var(--ntn-rating-color);
 }
 .ntn-rating__star:has(input:focus-visible), .ntn-rating__clear:has(input:focus-visible) {
-  box-shadow: var(--ntn-ring-focus);
+  outline: var(--ntn-focus-outline);
+  outline-offset: 0;
 }
 .ntn-rating:has(input:disabled) {
   opacity: 0.5;
@@ -2494,7 +2531,8 @@ i:is([class*=fa-], [data-icon], :empty) {
   color: var(--ntn-accent-300);
 }
 .ntn-radio-group--segmented .ntn-radio:has(input:focus-visible) {
-  box-shadow: var(--ntn-ring-focus);
+  outline: var(--ntn-focus-outline);
+  outline-offset: 0;
   z-index: 1;
 }
 
@@ -3843,6 +3881,11 @@ i:is([class*=fa-], [data-icon], :empty) {
   border-color: var(--ntn-accent-500);
   box-shadow: var(--ntn-ring-focus);
 }
+@media (forced-colors: active) {
+  .ntn-tree__row:focus-visible, .ntn-tree__item:focus-visible > .ntn-tree__row {
+    outline: 2px solid Highlight;
+  }
+}
 .ntn-tree__item[aria-selected=true] > .ntn-tree__row {
   background: var(--ntn-accent-soft);
   border-color: var(--ntn-accent-line);
@@ -4318,9 +4361,9 @@ i:is([class*=fa-], [data-icon], :empty) {
   color: var(--ntn-text-secondary);
 }
 .ntn-tabs__tab:focus-visible {
-  outline: 0;
   border-radius: var(--ntn-radius-xs);
-  box-shadow: var(--ntn-ring-focus);
+  outline: var(--ntn-focus-outline);
+  outline-offset: 0;
 }
 .ntn-tabs__tab[aria-selected=true] {
   color: var(--ntn-text-primary);
@@ -4432,8 +4475,8 @@ i:is([class*=fa-], [data-icon], :empty) {
 }
 
 .ntn-tabs__panel:focus-visible {
-  outline: 0;
-  box-shadow: var(--ntn-ring-focus);
+  outline: var(--ntn-focus-outline);
+  outline-offset: 0;
   border-radius: var(--ntn-radius-lg);
 }
 
@@ -4621,7 +4664,8 @@ i:is([class*=fa-], [data-icon], :empty) {
   outline: 0;
 }
 .ntn-steps__hit:focus-visible .ntn-steps__marker {
-  box-shadow: var(--ntn-ring-focus);
+  outline: var(--ntn-focus-outline);
+  outline-offset: 0;
 }
 .ntn-steps__step + .ntn-steps__step::before {
   /* Connector — drawn from the previous marker's centre to this one's. */

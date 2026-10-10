@@ -63,6 +63,24 @@ try {
     check(rule && rule[1].includes(`backdrop-filter: var(--ntn-${hook}-filter)`), `.${block} reads --ntn-${hook}-filter`);
   }
 
+  console.log('Focus');
+  const rules = [...css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}@]+)\{([^{}]*)\}/g)]
+    .map((m) => ({ sel: m[1].trim().replace(/\s+/g, ' '), body: m[2] }));
+  const globalRing = rules.find((r) => r.sel === ':focus-visible');
+  check(globalRing && /outline:\s*var\(--ntn-focus-outline\)/.test(globalRing.body),
+    'the global focus ring is an outline, so no component box-shadow can replace it');
+  // Rules allowed to drop the outline without a replacement ring:
+  const RING_ELSEWHERE = [
+    /^\.ntn-field__control :focus-visible,/,   // the bordered group draws the ring (:focus-within)
+    /^\.ntn-steps__hit:focus-visible$/,        // the marker inside draws the ring
+  ];
+  const ringless = rules.filter((r) => r.sel.includes(':focus-visible')
+    && /outline:\s*(0|none)\s*;/.test(r.body)
+    && !/box-shadow:\s*var\(--ntn-ring-focus\)/.test(r.body)
+    && !RING_ELSEWHERE.some((re) => re.test(r.sel)));
+  check(ringless.length === 0, 'no :focus-visible rule removes the outline without drawing a ring'
+    + (ringless.length ? ': ' + ringless.map((r) => r.sel).join(' | ') : ''));
+
   console.log('data-theme works on a subtree');
   // Group the token file's declarations by rule selector.
   const tokensCss = (await readFile(join(base, 'tokens.css'), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '');

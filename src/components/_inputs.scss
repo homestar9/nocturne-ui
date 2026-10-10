@@ -78,7 +78,7 @@
       font-family: var(--ntn-font-sans); font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-medium); cursor: pointer;
       @include transition(border-color, box-shadow);
 
-      &:focus-visible { @include focus-accent; outline: 0; }
+      &:focus-visible { outline: 0; @include focus-accent; }
       &:disabled { opacity: 0.5; cursor: not-allowed; }
     }
     option { background: var(--ntn-surface-2); color: var(--ntn-text-primary); }

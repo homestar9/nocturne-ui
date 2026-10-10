@@ -115,7 +115,7 @@
 
     i { font-size: 14px; }
     &:hover { color: var(--ntn-text-secondary); }
-    &:focus-visible { outline: 0; border-radius: var(--ntn-radius-xs); box-shadow: var(--ntn-ring-focus); }
+    &:focus-visible { border-radius: var(--ntn-radius-xs); @include focus-ring; }
     &[aria-selected="true"] { color: var(--ntn-text-primary); border-bottom-color: var(--ntn-accent-500); }
     &:disabled, &[aria-disabled="true"] { color: var(--ntn-text-disabled); cursor: not-allowed; }
     &:disabled:hover { color: var(--ntn-text-disabled); }
@@ -177,7 +177,7 @@
 }
 
 .ntn-tabs--sm .ntn-tabs__tab { font-size: var(--ntn-text-xs); }
-.ntn-tabs__panel:focus-visible { outline: 0; box-shadow: var(--ntn-ring-focus); border-radius: var(--ntn-radius-lg); }
+.ntn-tabs__panel:focus-visible { @include focus-ring; border-radius: var(--ntn-radius-lg); }
 
 @media (prefers-reduced-motion: reduce) {
   .ntn-tabs { scroll-behavior: auto; }

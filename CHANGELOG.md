@@ -27,6 +27,7 @@ renamed or removed class names and tokens.
 - **Kitchen sink:** a Glass section showing glass over the glow, over a photo as the ambient
   image, and over the photo as the background image (`examples/images/background.avif`), and a
   droplet button in the top bar that turns glass and the ambient band on for the whole page.
+- **Token:** `--ntn-focus-outline`, the keyboard focus ring as an outline value.
 
 ### Changed
 - **Container frames are `--ntn-border-default`** in every theme, as in DeployBot: `ntn-card`,
@@ -60,6 +61,12 @@ renamed or removed class names and tokens.
 - `--ntn-btn-solid` and `--ntn-btn-solid-hover`. No rule read them.
 
 ### Fixed
+- **Keyboard focus ring (NTN-3).** Buttons, the primary icon button, the FAB, the switch, the date
+  trigger and interactive cards showed no focus ring: their own `box-shadow` replaced the global
+  one. The ring is now an outline (`--ntn-focus-outline`), which no shadow can replace. It also
+  survives Windows forced-colours mode, where field-style controls now draw a system outline too.
+  The date trigger rings on focus, not only while open, and the combobox search no longer shows a
+  second ring inside its group.
 - **`ntn-icon-btn`** dims for `aria-disabled="true"` as well as `disabled`, like `ntn-btn`.
 - **Combobox:** `aria-invalid="true"` on the trigger shows the invalid state, as it does on a
   field or select (`data-invalid` on the block still works).

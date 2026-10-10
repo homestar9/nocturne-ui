@@ -34,10 +34,19 @@
   backdrop-filter: var(--ntn-pop-filter);
 }
 
-/// A control that has focus (or is open): accent border plus the focus ring.
+/// The keyboard focus ring, drawn as an outline so no component box-shadow can replace it.
+@mixin focus-ring {
+  outline: var(--ntn-focus-outline);
+  outline-offset: 0;
+}
+
+/// A field-style control that has focus (or is open): accent border plus the ring as a halo.
+/// Forced-colours mode drops box-shadows and forces borders, so there it gets a system outline.
 @mixin focus-accent {
   border-color: var(--ntn-accent-500);
   box-shadow: var(--ntn-ring-focus);
+
+  @media (forced-colors: active) { outline: 2px solid Highlight; }
 }
 
 /// A control whose value is invalid.

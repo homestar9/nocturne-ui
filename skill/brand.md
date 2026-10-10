@@ -64,8 +64,10 @@ overshoots, nothing spins except spinners.
 ## States
 
 Hover washes the surface +4% white and brightens the border one step. Press adds +6% and nudges
-0.5px down. Focus-visible is a 3px violet ring (`--ntn-ring-focus`) with the border switched to
-`--ntn-accent-500`. Disabled is 45% opacity plus `not-allowed`. Rows and nav items follow the same
+0.5px down. Focus-visible is a 3px violet ring drawn as an outline (`--ntn-focus-outline`), so a
+control's own shadow never hides it and it survives forced-colours mode. Field-style controls
+(field, select, combobox, date trigger, tree row) instead switch the border to `--ntn-accent-500`
+and add the same ring as a halo (`--ntn-ring-focus`). Disabled is 45% opacity plus `not-allowed`. Rows and nav items follow the same
 rules as buttons.
 
 ## Imagery

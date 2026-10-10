@@ -19,7 +19,7 @@
 
     i { font-size: 15px; color: var(--ntn-text-muted); flex: 0 0 auto; }
     &:hover { border-color: var(--ntn-border-strong); }
-    &[aria-expanded="true"] { @include focus-accent; }
+    &:focus-visible, &[aria-expanded="true"] { outline: 0; @include focus-accent; }
   }
   &__value {
     flex: 1; min-width: 0; @include truncate; font-variant-numeric: tabular-nums;
@@ -131,7 +131,7 @@
       color: var(--ntn-text-primary); font-family: var(--ntn-font-mono); font-size: var(--ntn-text-xs);
       color-scheme: inherit;
 
-      &:focus-visible { @include focus-accent; outline: 0; }
+      &:focus-visible { outline: 0; @include focus-accent; }
     }
   }
 
