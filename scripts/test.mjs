@@ -98,6 +98,15 @@ try {
   });
   check(hoverWhileDisabled.length === 0, 'hover styles skip disabled controls' + (hoverWhileDisabled.length ? ': ' + hoverWhileDisabled.join(' | ') : ''));
 
+  console.log('One tone set');
+  // Every toned block offers primary, the four statuses and neutral; its default needs no class.
+  const TONE_SET = ['primary', 'success', 'warning', 'danger', 'info', 'neutral'];
+  const DEFAULT_TONE = { 'ntn-badge': 'neutral', 'ntn-alert': null, 'ntn-progress': 'primary', 'ntn-btn': ['primary', 'neutral'] };
+  for (const [block, dflt] of Object.entries(DEFAULT_TONE)) {
+    const missing = TONE_SET.filter((t) => ![].concat(dflt).includes(t) && !css.includes(`.${block}--${t}`));
+    check(missing.length === 0, `.${block} offers every tone` + (missing.length ? ': missing ' + missing.join(' ') : ''));
+  }
+
   console.log('Layout follows its tokens');
   const pageRule = css.match(/(?:^|\n)\.ntn-page \{([^}]*)\}/);
   check(pageRule && /max-width:\s*var\(--ntn-page-max\)/.test(pageRule[1]), '.ntn-page is as wide as --ntn-page-max');

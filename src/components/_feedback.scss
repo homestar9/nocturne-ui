@@ -31,8 +31,8 @@
   &__title { font-size: var(--ntn-text-sm); font-weight: var(--ntn-weight-semibold); color: var(--ntn-text-primary); }
   &__text { font-size: var(--ntn-text-xs); color: var(--ntn-text-secondary); line-height: var(--ntn-leading-normal); }
   &__actions { display: flex; align-items: center; gap: var(--ntn-space-2); flex: 0 0 auto; margin-left: auto; }
-  // Tones: --info (the default; state it anyway) · --primary · --success · --warning · --danger
-  @each $tone in info, success, warning, danger, primary {
+  // Tones: --info (the default; state it anyway) · --primary · --success · --warning · --danger · --neutral
+  @each $tone in info, success, warning, danger, primary, neutral {
     &--#{$tone} {
       background: tone($tone, soft); border-color: tone($tone, line);
 
@@ -110,10 +110,10 @@
   }
   &--sm &__track { height: 4px; }
   &--lg &__track { height: 10px; }
-  @each $tone in success, warning, danger {
+  // Tones: the accent (the default) · --success · --warning · --danger · --info · --neutral
+  @each $tone in success, warning, danger, info, neutral {
     &--#{$tone} &__fill { background: tone($tone, solid); }
   }
-  &--neutral &__fill { background: var(--ntn-n-600); }
   &--indeterminate &__fill {
     width: 100%; background: linear-gradient(90deg, transparent, var(--ntn-accent-500), transparent); background-size: 200% 100%; animation: ntn-shimmer 1.4s linear infinite;
 

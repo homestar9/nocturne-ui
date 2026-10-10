@@ -32,6 +32,9 @@ renamed or removed class names and tokens.
   filled buttons, glowing buttons, the FAB and the switch track. Mode tokens: the light theme
   softens them.
 - **Token:** `--ntn-disabled-opacity` (0.45), the one fade every disabled control uses.
+- **One tone set (NTN-8).** Every toned block now offers primary, success, warning, danger, info
+  and neutral (`skill/components.md` "Tones"). New: `ntn-alert--neutral` (a grey notice) and
+  `ntn-progress--info`.
 
 ### Changed
 - **Container frames are `--ntn-border-default`** in every theme, as in DeployBot: `ntn-card`,

@@ -554,6 +554,21 @@ Inputs, buttons, badges, menus, popovers and modals stay solid. Glass falls back
 `--ntn-glass-blur`; the backdrop with `--ntn-background-image`, `--ntn-ambient-image`,
 `--ntn-ambient-opacity` and `--ntn-ambient-height`. Keep the backdrop static: blur over a moving one re-renders every frame.
 
+## Tones
+
+Every toned block offers the same set: `--primary` (the accent), `--success`, `--warning`,
+`--danger`, `--info` and `--neutral`. Each block has one default that needs no modifier:
+
+| Block | Default | Note |
+|---|---|---|
+| `ntn-badge` | neutral | |
+| `ntn-alert` | info | state it anyway with `--info` |
+| `ntn-progress` | primary | |
+| `ntn-btn` | primary | neutral is the default emphasis with no tone; tones combine with an emphasis |
+
+Avatar status names a presence, not a tone: `--online` (success), `--busy` (danger), `--away`
+(warning), and offline (neutral) by default.
+
 ## Badge — `ntn-badge`
 
 Modifiers: `--neutral` (default) `--primary` `--success` `--warning` `--danger` `--info` · `--dot` (leading status dot)
@@ -568,7 +583,7 @@ Modifiers: `--neutral` (default) `--primary` `--success` `--warning` `--danger` 
 ## Alert — `ntn-alert`
 
 Elements: `__body` `__title` `__text` `__actions`. Modifiers: `--success` `--warning`
-`--danger` `--primary` `--info` · `--banner` (full-bleed, square). Default tone is info; state it with `--info`.
+`--danger` `--primary` `--info` `--neutral` · `--banner` (full-bleed, square). Default tone is info; state it with `--info`.
 Dismiss with `data-ntn-dismiss`.
 
 ```html
@@ -609,7 +624,7 @@ Never put anything interactive in a bubble — it is `pointer-events: none`. Giv
 ## Progress — `ntn-progress`
 
 Elements: `__head` `__label` `__value` `__track` `__fill`. Modifiers: `--sm` `--lg`
-`--success` `--warning` `--danger` `--neutral` `--indeterminate`.
+`--success` `--warning` `--danger` `--info` `--neutral` `--indeterminate`.
 Set the level with `data-value` (and optional `data-max`) on `__fill`; `nocturne.js` applies it.
 
 ```html
