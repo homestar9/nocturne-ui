@@ -69,5 +69,9 @@
   --ntn-glass-shadow:    0 1px 2px rgba(16,20,27,0.05), 0 18px 40px -24px rgba(16,20,27,0.25);
   --ntn-ambient-opacity: 0.22;
 
+  /* Shine: a white head vanishes on a light page, so the head is the accent */
+  --ntn-shine-head: var(--ntn-accent-400);
+  --ntn-shine-glow: 0.2;
+
   --ntn-scrim: rgba(16,20,27,0.42);
 }

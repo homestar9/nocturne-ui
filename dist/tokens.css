@@ -239,6 +239,10 @@
   --ntn-glass-highlight: inset 0px 10px 10px -10px rgba(255,255,255,0.3);
   --ntn-glass-shadow:    0 24px 60px -24px rgba(0,0,0,0.70);
   --ntn-ambient-opacity: 0.5;
+
+  /* Shine edge (effects.css): the bright head of each light, and its halo's strength */
+  --ntn-shine-head: #FFFFFF;
+  --ntn-shine-glow: 0.3;
 }
 
 :root, [data-theme] {
@@ -246,6 +250,8 @@
   --ntn-ring-focus: 0 0 0 3px var(--ntn-focus-ring);
   /* The lit top edge of a filled accent control */
   --ntn-highlight-top: inset 0 1px 0 rgba(255,255,255,0.22);
+  /* The colour a shine light fades through */
+  --ntn-shine-color: var(--ntn-accent-500);
 }
 
 :root {
@@ -262,6 +268,11 @@
   --ntn-background-image: none;
   --ntn-ambient-image: none;
   --ntn-ambient-height: 760px;
+  /* ntn-edge--shine (effects.css): one lap per --ntn-shine-speed; --ntn-shine-length is the
+     light's trail, of which only the ring shows */
+  --ntn-shine-speed: 20s;
+  --ntn-shine-thickness: 1px;
+  --ntn-shine-length: 240px;
 }
 
 :root {
@@ -352,6 +363,10 @@
   --ntn-glass-highlight: inset 0px 10px 10px -10px rgba(255,255,255,0.3);
   --ntn-glass-shadow:    0 1px 2px rgba(16,20,27,0.05), 0 18px 40px -24px rgba(16,20,27,0.25);
   --ntn-ambient-opacity: 0.22;
+
+  /* Shine: a white head vanishes on a light page, so the head is the accent */
+  --ntn-shine-head: var(--ntn-accent-400);
+  --ntn-shine-glow: 0.2;
 
   --ntn-scrim: rgba(16,20,27,0.42);
 }

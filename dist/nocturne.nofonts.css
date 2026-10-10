@@ -237,6 +237,10 @@
   --ntn-glass-highlight: inset 0px 10px 10px -10px rgba(255,255,255,0.3);
   --ntn-glass-shadow:    0 24px 60px -24px rgba(0,0,0,0.70);
   --ntn-ambient-opacity: 0.5;
+
+  /* Shine edge (effects.css): the bright head of each light, and its halo's strength */
+  --ntn-shine-head: #FFFFFF;
+  --ntn-shine-glow: 0.3;
 }
 
 :root, [data-theme] {
@@ -244,6 +248,8 @@
   --ntn-ring-focus: 0 0 0 3px var(--ntn-focus-ring);
   /* The lit top edge of a filled accent control */
   --ntn-highlight-top: inset 0 1px 0 rgba(255,255,255,0.22);
+  /* The colour a shine light fades through */
+  --ntn-shine-color: var(--ntn-accent-500);
 }
 
 :root {
@@ -260,6 +266,11 @@
   --ntn-background-image: none;
   --ntn-ambient-image: none;
   --ntn-ambient-height: 760px;
+  /* ntn-edge--shine (effects.css): one lap per --ntn-shine-speed; --ntn-shine-length is the
+     light's trail, of which only the ring shows */
+  --ntn-shine-speed: 20s;
+  --ntn-shine-thickness: 1px;
+  --ntn-shine-length: 240px;
 }
 
 :root {
@@ -350,6 +361,10 @@
   --ntn-glass-highlight: inset 0px 10px 10px -10px rgba(255,255,255,0.3);
   --ntn-glass-shadow:    0 1px 2px rgba(16,20,27,0.05), 0 18px 40px -24px rgba(16,20,27,0.25);
   --ntn-ambient-opacity: 0.22;
+
+  /* Shine: a white head vanishes on a light page, so the head is the accent */
+  --ntn-shine-head: var(--ntn-accent-400);
+  --ntn-shine-glow: 0.2;
 
   --ntn-scrim: rgba(16,20,27,0.42);
 }
@@ -1475,8 +1490,9 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
 /* ── Border effects — ntn-edge ────────────────────────────────────────────────
    A border treatment that composes onto anything: a card, a panel, a toolbar, a
    bare div. `ntn-edge` on its own is the default hairline; the modifiers add the
-   effect. `ntn-card--glow` / `ntn-card--processing` are kept as aliases so the
-   card shorthand still works. */
+   effect. `--shine` is the one that needs markup: a single ntn-edge__shine child.
+   `ntn-card--glow` / `ntn-card--processing` are kept as aliases so the card
+   shorthand still works. */
 
 /* One registered angle drives every moving effect. It inherits, so a host can
    animate it once and its pseudo-elements read the same frame. */
@@ -1520,11 +1536,59 @@ i:is([class*="fa-"], [data-icon], :empty) { font-style: normal; }
   mask-composite: exclude;
 }
 
+/* Shine — the quiet one: two soft lights drift round the edge half a lap apart, each
+   trailed by a faint halo. Ambient, not a state, so it can stay on. The lights need a
+   ring to ride inside, which a pseudo-element can't hold, so the host carries one
+   child: <span class="ntn-edge__shine" aria-hidden="true"></span>. */
+@keyframes ntn-shine-trail { to { offset-distance: 100%; } }
+
+.ntn-edge--shine { position: relative; isolation: isolate; }
+@supports not (offset-path: border-box) { .ntn-edge__shine { display: none; } }
+
+@supports (offset-path: border-box) {
+  /* The frame sits on the 1px border and is masked to a ring of --ntn-shine-thickness. */
+  .ntn-edge__shine {
+    position: absolute; inset: -1px; z-index: 2; pointer-events: none;
+    border-radius: inherit; padding: var(--ntn-shine-thickness);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+  /* Lights and halos ride the border box at a steady speed; the ::after pair runs half a
+     lap ahead. The light turns with the path and is anchored at its bright end, so the
+     head stays on the border through the corners and the trail follows. Each halo is
+     centred on its light's head. */
+  .ntn-edge__shine::before, .ntn-edge__shine::after,
+  .ntn-edge--shine::before, .ntn-edge--shine::after {
+    content: ""; position: absolute; pointer-events: none;
+    offset-path: border-box;
+    animation: ntn-shine-trail var(--ntn-shine-speed) linear infinite;
+  }
+  .ntn-edge__shine::after, .ntn-edge--shine::after { animation-delay: calc(var(--ntn-shine-speed) / -2); }
+  .ntn-edge__shine::before, .ntn-edge__shine::after {
+    width: var(--ntn-shine-length); height: calc(var(--ntn-shine-length) / 2);
+    offset-anchor: 100% 50%;
+    background: radial-gradient(100% 100% at right, var(--ntn-shine-head) 0%, var(--ntn-shine-head) 5%,
+                var(--ntn-shine-color) 35%, transparent 70%);
+    mix-blend-mode: plus-lighter;
+  }
+  /* Halos sit under the content and spill past the edge. */
+  .ntn-edge--shine::before, .ntn-edge--shine::after {
+    z-index: -1; width: 6rem; height: 6rem; border-radius: 50%;
+    background: radial-gradient(circle, var(--ntn-shine-head) 0%, var(--ntn-shine-color) 40%, transparent 70%);
+    filter: blur(20px); opacity: var(--ntn-shine-glow);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ntn-edge--processing, .ntn-card--processing {
     animation: none;
     box-shadow: 0 0 24px -12px var(--ntn-accent-glow), var(--ntn-shadow-md);
   }
+  /* Paused, the lights rest half a lap apart. */
+  .ntn-edge__shine::before, .ntn-edge__shine::after,
+  .ntn-edge--shine::before, .ntn-edge--shine::after { animation-play-state: paused; }
 }
 
 /* ── Table ────────────────────────────────────────────────────────────────── */

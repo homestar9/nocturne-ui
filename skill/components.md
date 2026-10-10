@@ -504,16 +504,24 @@ the effect. Set your own `border-radius` and the effect follows it.
 | `ntn-edge` | Default hairline (`--ntn-border-default`, as on cards), `--ntn-radius-xl`. `--strong` for `--ntn-border-strong` |
 | `ntn-edge--glow` | Accent hairline, halo, and a colour bleed from the top edge. The one element on the page you want read first |
 | `ntn-edge--processing` | A light travels the edge and an exterior glow orbits with it. Pair with a `ntn-spinner` or an indeterminate `ntn-progress`; remove the class when the job lands |
+| `ntn-edge--shine` | The quiet one: two soft lights drift round the edge half a lap apart, each with a faint halo. Ambient rather than a state, so it can stay on — a prompt bar, a hero panel. Needs one `ntn-edge__shine` child |
 
 ```html
 <div class="ntn-edge ntn-edge--processing" style="padding:20px">…</div>
 <button class="ntn-btn ntn-edge--glow">Upgrade</button>
 <section class="ntn-card ntn-card--processing">…</section>   <!-- card shorthand -->
+<div class="ntn-edge ntn-edge--shine">
+  <span class="ntn-edge__shine" aria-hidden="true"></span>   <!-- the ring the lights ride in -->
+  …
+</div>
 ```
 
-Both moving effects read one registered angle (`--ntn-spin`), animated on the host and
-inherited by its ring, so the light and the glow never drift apart. Under
-`prefers-reduced-motion` they settle to a static halo.
+Processing reads one registered angle (`--ntn-spin`), animated on the host and inherited by
+its ring, so the light and the glow never drift apart. Shine's lights follow the border box
+(`offset-path`), so they keep an even pace on any shape; tune them with `--ntn-shine-speed`,
+`-length`, `-thickness`, `-head`, `-color` and `-glow`. Where `offset-path` is unsupported,
+shine falls back to the plain hairline. Under `prefers-reduced-motion` processing settles to a
+static halo and the shine lights stop where they are.
 
 ## Glass — `ntn-glass` · Ambient — `ntn-ambient`
 

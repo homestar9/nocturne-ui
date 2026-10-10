@@ -18,6 +18,12 @@ renamed or removed class names and tokens.
 - **Tokens:** `--ntn-glass-bg`, `-border`, `-highlight`, `-shadow`, `-blur`,
   `--ntn-background-image`, and `--ntn-ambient-image`, `-opacity`, `-height`. Amber sets
   DeployBot's light-mode glass.
+- **`ntn-edge--shine`**: a quieter border effect beside `--glow` and `--processing`. Two
+  soft lights drift round the edge half a lap apart, each trailed by a faint halo; ambient, so
+  it can stay on. The lights ride the border box with `offset-path`, so the host carries one
+  `<span class="ntn-edge__shine" aria-hidden="true">` child. Falls back to the plain hairline
+  without `offset-path` support, and pauses under `prefers-reduced-motion`. Tokens:
+  `--ntn-shine-speed`, `-length`, `-thickness`, `-head`, `-color`, `-glow`.
 - **Kitchen sink:** a Glass section showing glass over the glow, over a photo as the ambient
   image, and over the photo as the background image (`examples/images/background.avif`), and a
   droplet button in the top bar that turns glass and the ambient band on for the whole page.
