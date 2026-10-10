@@ -6,7 +6,7 @@ fourth without asking.
 ## 1. Console (sidebar + sticky top bar)
 
 The default for any signed-in screen. 244px sidebar, 56px top bar, 24px gutters, 14px gaps,
-1360px content max.
+1440px content max (`--ntn-page-max`).
 
 ```html
 <div class="ntn-app">

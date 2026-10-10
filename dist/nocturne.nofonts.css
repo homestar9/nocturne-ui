@@ -496,7 +496,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 
 .ntn-page {
   width: 100%;
-  max-width: 1360px;
+  max-width: var(--ntn-page-max);
   margin: 0 auto;
   padding: var(--ntn-space-6);
   display: flex;

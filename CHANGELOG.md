@@ -57,6 +57,10 @@ renamed or removed class names and tokens.
 - **Breakpoints use range syntax** (`width <= 720px` / `width > 720px`), so the phone and
   wide-screen rules meet exactly. With `max-width: 720px` and `min-width: 721px`, a fractional
   width between the two matched neither.
+- **`ntn-page` is 1440px wide, and follows `--ntn-page-max` (NTN-6).** The page column was
+  hard-coded to 1360px while the token said 1440px, so setting the token did nothing. It now reads
+  the token, and the token's 1440px is the width: pages are 80px wider on large screens. Set
+  `--ntn-page-max: 1360px` to keep the old width.
 - **Toggle-group and segmented end corners** follow `--ntn-radius-md` (minus the 1px border)
   instead of a fixed 7px. No change at the default radius.
 

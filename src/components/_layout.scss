@@ -9,7 +9,7 @@
 }
 
 .ntn-page {
-  width: 100%; max-width: 1360px; margin: 0 auto; padding: var(--ntn-space-6); display: flex; flex-direction: column; gap: 14px;
+  width: 100%; max-width: var(--ntn-page-max); margin: 0 auto; padding: var(--ntn-space-6); display: flex; flex-direction: column; gap: 14px;
 
   &__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ntn-space-4); flex-wrap: wrap; }
   &__title { margin: 0; font-size: var(--ntn-text-2xl); font-weight: var(--ntn-weight-semibold); letter-spacing: var(--ntn-tracking-display); line-height: var(--ntn-leading-tight); color: var(--ntn-text-primary); }
