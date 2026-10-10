@@ -1032,7 +1032,8 @@ moved for you — mirror the event into your own model.
 
 A wizard's spine on an `<ol>`. Elements: `__step` `__hit` (makes a step clickable) `__marker`
 `__text` `__title` `__desc` `__count`. Modifiers: `--vertical` `--inline` (marker beside the
-text) `--bars` (segments only, for "Step 3 of 4") `--sm`.
+text) `--bars` (segments only, for "Step 3 of 4") `--sm`. A horizontal row narrower than 640px
+(its own width, via a container query, not the window's) drops the `__desc` lines.
 
 Each step carries `data-state="complete | current | upcoming"` — that one attribute paints the
 marker, both label lines and the connector behind it. Complete steps take a check icon,

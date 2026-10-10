@@ -107,6 +107,11 @@ try {
     check(missing.length === 0, `.${block} offers every tone` + (missing.length ? ': missing ' + missing.join(' ') : ''));
   }
 
+  console.log('Breakpoints');
+  const drawerPx = (js.match(/DRAWER_QUERY\s*=\s*'\(max-width:\s*(\d+)px\)'/) || [])[1];
+  const drawerCss = css.match(/@media \(width <= (\d+)px\) \{\s*\.ntn-sidebar \{[^}]*position: fixed/);
+  check(drawerPx && drawerCss && drawerPx === drawerCss[1], `nocturne.js and the CSS switch the sidebar to a drawer at the same width (${drawerPx}px / ${drawerCss && drawerCss[1]}px)`);
+
   console.log('Layout follows its tokens');
   const pageRule = css.match(/(?:^|\n)\.ntn-page \{([^}]*)\}/);
   check(pageRule && /max-width:\s*var\(--ntn-page-max\)/.test(pageRule[1]), '.ntn-page is as wide as --ntn-page-max');

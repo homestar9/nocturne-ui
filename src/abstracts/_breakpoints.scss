@@ -1,12 +1,14 @@
 // Viewport breakpoints. Media queries can't read custom properties, so these are compile-time
 // only; components size themselves with tokens and switch layout here.
-//   sm  — the narrowest layouts drop secondary text (steps)
-//   md  — phones: the sidebar becomes a drawer, grids and toolbars stack
+//   md  — phones: the sidebar becomes a drawer, grids and toolbars stack, the date panel narrows
 //   lg  — small laptops: wide grids fall back to two columns
+// md must match DRAWER_QUERY in js/nocturne.js (test.mjs checks). A block that reacts to its own
+// width rather than the window uses a container query instead (steps). Toolbars and the date
+// range can't: container-type makes an element a stacking context and the containing block of
+// its absolute children, which would trap the popup panels inside them.
 @use "sass:map";
 
 $breakpoints: (
-  sm: 640px,
   md: 720px,
   lg: 1100px,
 );

@@ -61,6 +61,10 @@ renamed or removed class names and tokens.
 - **Breakpoints use range syntax** (`width <= 720px` / `width > 720px`), so the phone and
   wide-screen rules meet exactly. With `max-width: 720px` and `min-width: 721px`, a fractional
   width between the two matched neither.
+- **Step descriptions follow the row, not the window (NTN-11).** A horizontal `ntn-steps` drops
+  its `__desc` lines when the row itself is narrower than 640px (a container query), so a wizard
+  in a narrow column sheds them too. Before, only a viewport of 640px or less did. `skill/patterns.md`
+  now lists the two viewport breakpoints (1100px, 720px) for page-level CSS.
 - **`ntn-page` is 1440px wide, and follows `--ntn-page-max` (NTN-6).** The page column was
   hard-coded to 1360px while the token said 1440px, so setting the token did nothing. It now reads
   the token, and the token's 1440px is the width: pages are 80px wider on large screens. Set

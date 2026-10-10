@@ -3,6 +3,18 @@
 Three shells cover nearly every screen in a Nocturne product. Start from one; do not invent a
 fourth without asking.
 
+**Breakpoints.** Nocturne's layout changes at two viewport widths. Match them in page-level CSS
+rather than inventing others:
+
+| Width | What changes |
+|---|---|
+| 1100px and below | 3- and 4-column grids and the split grids fall back to two columns |
+| 720px and below | the phone layout: the sidebar becomes a drawer, every grid is one column, toolbars stack, the date panel narrows |
+
+Write them in range syntax (`@media (width <= 720px)` / `(width > 720px)`), so the two sides
+meet with no gap. Steps react to their own width instead of the window: a horizontal row
+narrower than 640px drops its descriptions.
+
 ## 1. Console (sidebar + sticky top bar)
 
 The default for any signed-in screen. 244px sidebar, 56px top bar, 24px gutters, 14px gaps,

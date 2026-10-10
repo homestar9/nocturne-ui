@@ -10,6 +10,9 @@
    Wrap marker+text in <button class="ntn-steps__hit"> to make a step clickable. */
 @use "../abstracts" as *;
 
+// A horizontal row narrower than this drops the step descriptions.
+$-desc-min: 640px;
+
 .ntn-steps {
   --ntn-step-size: 32px;
   --ntn-step-line: 2px;
@@ -123,7 +126,10 @@
   }
 }
 
-/* Labels drop away first when the row runs out of room. */
-@include below(sm) {
-  .ntn-steps:not(.ntn-steps--vertical):not(.ntn-steps--inline) .ntn-steps__desc { display: none; }
+/* Labels drop away first when the row runs out of room: the row itself, not the window, so a
+   wizard in a narrow column sheds them too. Only the default horizontal row is a container;
+   --inline sits in toolbars, where size containment could collapse it. */
+.ntn-steps:not(.ntn-steps--vertical):not(.ntn-steps--inline) { container: ntn-steps / inline-size; }
+@container ntn-steps (width <= #{$-desc-min}) {
+  .ntn-steps__desc { display: none; }
 }
