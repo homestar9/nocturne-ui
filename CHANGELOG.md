@@ -6,6 +6,8 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.9.0 — 2026-10-10
+
 ### Added
 - **`ntn-glass`**: translucent, blurred cards, stats, accordions and sidebar with a lit top edge,
   for pages over artwork or a gradient. Put it on one surface, or on a wrapper (up to
@@ -39,6 +41,8 @@ renamed or removed class names and tokens.
 - **One tone set (NTN-8).** Every toned block now offers primary, success, warning, danger, info
   and neutral (`skill/components.md` "Tones"). New: `ntn-alert--neutral` (a grey notice) and
   `ntn-progress--info`.
+- **Token:** `--ntn-accent-800` fills the gap in the accent ramp, derived from 700 and 900, so
+  every theme has it without setting it (NTN-13).
 
 ### Changed
 - **Token names (NTN-10).** Font sizes are `--ntn-font-size-2xs … -5xl` (were `--ntn-text-*`, which
@@ -78,24 +82,18 @@ renamed or removed class names and tokens.
   `--ntn-page-max: 1360px` to keep the old width.
 - **Toggle-group and segmented end corners** follow `--ntn-radius-md` (minus the 1px border)
   instead of a fixed 7px. No change at the default radius.
+- **Cascade (NTN-12).** Nocturne stays unlayered; the README shows how an app puts it in a
+  cascade layer at import (`@import … layer(ntn)`). The menu and date-range carets drop their
+  `!important` for a two-class selector; `[hidden]` in the reset is the only `!important` left.
+- **Derived tokens (NTN-13).** The dark `--ntn-bg-blur`, `--ntn-scrim` and `--ntn-border-subtle`
+  derive from the neutral ramp instead of hard-coded colours (same values), so a theme that
+  retints the greys carries them. Spacing written in pixels that sit on the space scale reads the
+  `--ntn-space-*` tokens (same values); off-scale geometry stays literal.
 
 ### Removed
 - `--ntn-btn-solid` and `--ntn-btn-solid-hover`. No rule read them.
 - `--ntn-shadow-none` (it was `none`), `--ntn-border-accent` (the same value as `--ntn-accent`) and
   `--ntn-glow-accent` (unread; the halo tokens replaced it) (NTN-13).
-
-### Cascade (NTN-12)
-- Nocturne stays unlayered; the README shows how an app puts it in a cascade layer at import
-  (`@import … layer(ntn)`). The menu and date-range carets drop their `!important` for a
-  two-class selector; `[hidden]` in the reset is the only `!important` left.
-
-### Tokens tidied (NTN-13)
-- `--ntn-accent-800` fills the gap in the accent ramp, derived from 700 and 900, so every theme
-  has it without setting it.
-- The dark `--ntn-bg-blur`, `--ntn-scrim` and `--ntn-border-subtle` derive from the neutral ramp
-  instead of hard-coded colours (same values), so a theme that retints the greys carries them.
-- Spacing written in pixels that sit on the space scale reads the `--ntn-space-*` tokens (same
-  values); off-scale geometry stays literal.
 
 ### Fixed
 - **Keyboard focus ring (NTN-3).** Buttons, the primary icon button, the FAB, the switch, the date
@@ -131,7 +129,9 @@ renamed or removed class names and tokens.
 - **Accordion:** an open panel's text sat right against the summary. `ntn-accordion__panel` now
   has 12px (`--ntn-space-3`) of top padding.
 
-## 1.7.0 — 2026-10-06
+## 1.8.0 — 2026-10-07
+
+Prepared as 1.7.0 and published as 1.8.0; there is no 1.7.0 on npm.
 
 ### Added
 - **`ntn-btn--glow`**: with `--primary`, adds a halo in the button's colour (accent, or the
