@@ -25,6 +25,10 @@ renamed or removed class names and tokens.
   and `--ntn-check-mark-white` / `--ntn-check-dash-white`, so a theme whose ink flips per mode
   can point the checkbox art back at white.
 
+### Fixed
+- **Progress steps** (NTN-17): the connector no longer shows through the current step's marker.
+  Its soft accent tint now sits on an opaque `--ntn-surface-2` base, like the upcoming marker.
+
 ### Changed
 - The processing ring reads `--ntn-processing-glint` instead of `--ntn-cyan-400`, so no
   component reads a chart hue directly. A test guards it.
