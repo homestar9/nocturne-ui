@@ -45,7 +45,8 @@ page-level recipes.
   slider fill, alert dismissal, and table select-all via `data-ntn-*` attributes.
 - Icons: Font Awesome **Light**. Never an emoji, never a hand-rolled SVG, never a second family.
 - Accent is the main themeable channel. To rebrand, override `--ntn-accent-*` (a theme may also
-  retint the `--ntn-n-*` greys, as `themes/amber.css` does) — never fork a component.
+  retint the `--ntn-n-*` greys, as `themes/amber.css` and `themes/mono.css` do) — never fork a
+  component. For an app with its own brand colour, `themes/mono.css` keeps the whole kit grey.
 - Themes: `data-theme="dark"` (default), `"light"`, or `"auto"`. `nocturne.js` resolves `auto`,
   persists the choice, and drives any `[data-ntn-theme-toggle]` button.
 - Sizes exist as modifiers (`--sm`, `--lg`); if a size is not offered, the design wants the default.

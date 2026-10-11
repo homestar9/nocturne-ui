@@ -4,9 +4,11 @@
 
 Eleven cool greys (`--ntn-n-0` … `--ntn-n-1000`) do about 90% of the work. One violet ramp
 (`--ntn-accent-100` … `--ntn-accent-900`) is the accent and the main themeable channel; a theme may
-also retint the greys, as `themes/amber.css` does with warmer, less blue ones. Magenta
-(`--ntn-magenta-*`) and cyan (`--ntn-cyan-*`) exist **only** as chart series two and three — never in
-chrome. Semantic hues are green / amber / red / blue, each with a 14–15% alpha tint for
+also retint the greys, as `themes/amber.css` does with warmer, less blue ones. `themes/mono.css`
+turns everything but the status tones grey (a near-white accent in dark mode, near black in
+light), for apps that bring their own brand colour. Magenta (`--ntn-magenta-*`) and cyan
+(`--ntn-cyan-*`) exist **only** as chart series two and three — never in chrome. The one cyan
+glint in the processing ring goes through `--ntn-processing-glint`, so a theme can retint it. Semantic hues are green / amber / red / blue, each with a 14–15% alpha tint for
 surfaces (`--ntn-success-soft`, `--ntn-warning-soft`, `--ntn-danger-soft`, `--ntn-info-soft`).
 
 Ink is full-opacity at every level. The system dims text by choosing a lighter grey
@@ -20,7 +22,8 @@ is always furthest from the ink, `--ntn-n-1000` is always the ink), surfaces bec
 a grey canvas, and the shadows turn into soft grey drops instead of black ones. Accent 500–900
 and every semantic 500 are unchanged, so fills, gradients, and the brand mark are identical in
 both themes; only the 100–400 tints darken, because those are the values used as ink on a tinted
-ground. Write for dark, then check light — if something breaks, a token value is wrong, not a
+ground. The exception is a theme whose fill itself must flip: `themes/mono.css` sets 500–900
+and `--ntn-accent-fg` for light mode as well. Write for dark, then check light — if something breaks, a token value is wrong, not a
 component.
 
 ## Depth

@@ -6,6 +6,23 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+### Added
+- **`themes/mono.css`** (NTN-15): a theme in greys only, so an app can bring its own brand colour
+  without fighting a theme hue. The accent is near white in dark mode and near black in light
+  mode, and its ink flips with it. The neutrals keep Nocturne's lightness with the blue taken
+  out. Charts, the processing ring and the light-mode shadows go grey too. The status tones keep
+  their colour.
+- **Kitchen sink:** a Mono button in the accent picker.
+- **Tokens:** `--ntn-processing-glint`, the bright stop in the processing ring (cyan by default),
+  and `--ntn-check-mark-white` / `--ntn-check-dash-white`, so a theme whose ink flips per mode
+  can point the checkbox art back at white.
+
+### Changed
+- The processing ring reads `--ntn-processing-glint` instead of `--ntn-cyan-400`, so no
+  component reads a chart hue directly. A test guards it.
+- The dark checkbox art (`--ntn-check-mark-ink`, `-dash-ink`) is a pure grey (`#0A0A0A`, was
+  `#0A0C10`).
+
 ## 1.9.0 — 2026-10-10
 
 ### Added

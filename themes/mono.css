@@ -1,0 +1,117 @@
+/* Mono theme: every surface, line, accent and effect in grey. The accent is near white in dark
+   mode and near black in light mode, so an app can bring its own brand colour without it fighting
+   a theme hue. The status tones (success, warning, danger, info) keep their colour: they carry
+   meaning, and semantics are the same in every theme.
+
+   Three blocks:
+   1. Dark: the accent ramp, the dark ink that sits on it, and the neutral ramp. Each grey has
+      the OKLab lightness of Nocturne's own step with the blue taken out, so text contrast is
+      unchanged.
+   2. Light: the same, plus every colour Nocturne's light theme sets outright (surfaces, lines,
+      shadows, scrim), all in neutral ink. Unlike other themes, light mode also sets 500–900:
+      the fill itself turns from near white to near black. The ink on it flips to white.
+   3. Aliases Nocturne re-declares on every data-theme element (the chart series and the
+      processing ring's glint). Setting them on ":root [data-theme]" too keeps a light panel in a
+      dark page grey.
+
+   Accent text (--ntn-text-accent, links, current items) sits just past --ntn-text-primary:
+   brighter in dark mode, blacker in light. Selection and current state lean on weight, ink bars
+   and soft fills more than on hue. */
+
+/* ── Dark (default) ─────────────────────────────────────────────────────── */
+:root, :root [data-theme="dark"] {
+  /* Accent: near white, a step brighter than the primary text */
+  --ntn-accent-100: #FFFFFF;
+  --ntn-accent-200: #FCFCFC;
+  --ntn-accent-300: #F7F7F7;
+  --ntn-accent-400: #F2F2F2;
+  --ntn-accent-500: #EDEDED;
+  --ntn-accent-600: #E3E3E3;
+  --ntn-accent-700: #C4C4C4;
+  --ntn-accent-900: #262626;
+
+  /* White text on near white fails contrast: use a dark ink, and draw the checkbox art in it too. */
+  --ntn-accent-fg: #0C0C0C;
+  --ntn-check-mark: var(--ntn-check-mark-ink);
+  --ntn-check-dash: var(--ntn-check-dash-ink);
+
+  /* Neutrals: surfaces 0–300, lines 400–500, text 600–900 */
+  --ntn-n-0:   #060606;
+  --ntn-n-50:  #0C0C0C;
+  --ntn-n-100: #121212;
+  --ntn-n-200: #181818;
+  --ntn-n-300: #202020;
+  --ntn-n-400: #2A2A2A;
+  --ntn-n-500: #414141;
+  --ntn-n-600: #636363;
+  --ntn-n-700: #929292;
+  --ntn-n-800: #BFBFBF;
+  --ntn-n-900: #E9E9E9;
+}
+
+/* ── Light ──────────────────────────────────────────────────────────────── */
+:root[data-theme="light"], :root [data-theme="light"] {
+  /* Accent: near black. 100 is the pale tint; the text stops (200–400) are blacker than the
+     primary text; 500–900 are the fills. */
+  --ntn-accent-100: #F2F2F2;
+  --ntn-accent-200: #0A0A0A;
+  --ntn-accent-300: #000000;
+  --ntn-accent-400: #262626;
+  --ntn-accent-500: #333333;
+  --ntn-accent-600: #171717;
+  --ntn-accent-700: #000000;
+  --ntn-accent-900: #000000;
+
+  /* On near black the ink is white again, and so is the checkbox art. */
+  --ntn-accent-fg: #FFFFFF;
+  --ntn-check-mark: var(--ntn-check-mark-white);
+  --ntn-check-dash: var(--ntn-check-dash-white);
+
+  /* Neutrals: paper 0–500, ink 600–900 */
+  --ntn-n-0:   #FFFFFF;
+  --ntn-n-50:  #FBFBFB;
+  --ntn-n-100: #F6F6F6;
+  --ntn-n-200: #EFEFEF;
+  --ntn-n-300: #E7E7E7;
+  --ntn-n-400: #D9D9D9;
+  --ntn-n-500: #BABABA;
+  --ntn-n-600: #767676;
+  --ntn-n-700: #656565;
+  --ntn-n-800: #3A3A3A;
+  --ntn-n-900: #141414;
+
+  --ntn-alpha-ink-04: rgba(20,20,20,0.035);
+  --ntn-alpha-ink-06: rgba(20,20,20,0.055);
+  --ntn-alpha-ink-10: rgba(20,20,20,0.10);
+
+  /* Surfaces and lines, which Nocturne's light theme sets outright (the white ones are already grey) */
+  --ntn-bg-app:         #F7F7F7;
+  --ntn-surface-3:      #F3F3F3;
+  --ntn-surface-inset:  rgba(20,20,20,0.05);
+  --ntn-border-subtle:  #EAEAEA;
+  --ntn-border-default: #E0E0E0;
+  --ntn-border-strong:  #C9C9C9;
+
+  /* Depth: the same soft drops, in neutral ink */
+  --ntn-shadow-xs:  0 1px 2px rgba(20,20,20,0.06);
+  --ntn-shadow-sm:  0 1px 2px rgba(20,20,20,0.08);
+  --ntn-shadow-md:  0 8px 24px -14px rgba(20,20,20,0.20), 0 1px 2px rgba(20,20,20,0.04);
+  --ntn-shadow-lg:  0 24px 60px -24px rgba(20,20,20,0.28), 0 1px 3px rgba(20,20,20,0.06);
+  --ntn-shadow-pop: 0 12px 32px -10px rgba(20,20,20,0.22);
+  --ntn-shadow-control:  0 1px 2px rgba(20,20,20,0.12);
+  --ntn-shadow-hairline: 0 0 0 1px rgba(20,20,20,0.06);
+  --ntn-shadow-float:    0 2px 6px rgba(20,20,20,0.16);
+  --ntn-shadow-inset:    inset 0 1px 2px rgba(20,20,20,0.12);
+  --ntn-glass-shadow:    0 1px 2px rgba(20,20,20,0.05), 0 18px 40px -24px rgba(20,20,20,0.25);
+
+  --ntn-scrim: rgba(20,20,20,0.42);
+}
+
+/* ── Aliases, on every data-theme element ───────────────────────────────── */
+:root, :root [data-theme] {
+  /* Chart series step down from the accent instead of moving to magenta and cyan */
+  --ntn-chart-2: var(--ntn-n-800);
+  --ntn-chart-3: var(--ntn-n-700);
+  /* The processing ring's glint is the ink: white in dark mode, black in light */
+  --ntn-processing-glint: var(--ntn-n-1000);
+}

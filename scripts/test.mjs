@@ -151,11 +151,11 @@ try {
 
   console.log('data-theme works on a subtree');
   // Group the token file's declarations by rule selector.
-  const tokensCss = (await readFile(join(base, 'tokens.css'), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '');
-  const blocks = [...tokensCss.matchAll(/([^{}]+)\{([^}]*)\}/g)].map((m) => ({
+  const parseBlocks = (text) => [...text.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^}]*)\}/g)].map((m) => ({
     sel: m[1].trim().replace(/\s+/g, ' '),
-    decls: [...m[2].matchAll(/(--ntn-[a-z0-9-]+)\s*:([^;]*);/g)].map((d) => [d[1], d[2]]),
+    decls: [...m[2].matchAll(/(--ntn-[a-z0-9-]+)\s*:([^;]*);/g)].map((d) => [d[1], d[2].trim()]),
   }));
+  const blocks = parseBlocks(await readFile(join(base, 'tokens.css'), 'utf8'));
   const namesIn = (pred) => new Set(blocks.filter((b) => pred(b.sel)).flatMap((b) => b.decls.map(([n]) => n)));
   // Sass drops the quotes around an attribute value that is a plain identifier.
   const lightNames = namesIn((s) => /^\[data-theme="?light"?\]$/.test(s));
@@ -166,6 +166,61 @@ try {
   const rootOnly = blocks.filter((b) => b.sel === ':root').flatMap((b) => b.decls);
   const stale = rootOnly.filter(([, v]) => [...v.matchAll(/var\((--ntn-[a-z0-9-]+)/g)].some((m) => lightNames.has(m[1]))).map(([n]) => n);
   check(stale.length === 0, 'no :root-only token reads a mode token (it would resolve once, at the root)' + (stale.length ? ': ' + stale.join(' ') : ''));
+
+  console.log('Chart hues stay in charts');
+  // Magenta and cyan are chart series two and three (skill/brand.md). Chrome reads a token a theme can retint.
+  const chartHues = [];
+  for (const name of await readdir(componentsDir)) {
+    const lines = (await readFile(join(componentsDir, name), 'utf8')).split('\n');
+    lines.forEach((line, i) => { if (/var\(--ntn-(magenta|cyan)-/.test(line)) chartHues.push(`${name}:${i + 1}`); });
+  }
+  check(chartHues.length === 0, 'no component reads --ntn-magenta-* or --ntn-cyan-*' + (chartHues.length ? ': ' + chartHues.join(' ') : ''));
+
+  console.log('Mono theme');
+  // Hex (bare or URL-encoded in an SVG) and rgb()/rgba() literals, as [r, g, b].
+  const colours = (v) => [...v.matchAll(/(?:#|%23)([0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{3,4})\b|rgba?\(\s*(\d+)[\s,]+(\d+)[\s,]+(\d+)/gi)].map((m) => {
+    if (!m[1]) return [m[2], m[3], m[4]].map(Number);
+    const h = m[1].length <= 4 ? [...m[1]].map((c) => c + c).join('') : m[1];
+    return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
+  });
+  const isGrey = ([r, g, b]) => r === g && g === b;
+  const monoText = await readFile(resolve(root, 'themes', 'mono.css'), 'utf8');
+  const tinted = colours(monoText).filter((c) => !isGrey(c));
+  check(tinted.length === 0, 'every colour themes/mono.css writes is a pure grey' + (tinted.length ? ': ' + tinted.map((c) => `rgb(${c})`).join(' ') : ''));
+
+  // Whatever Nocturne colours outside the status tones, mono must set again for the same mode.
+  const monoBlocks = parseBlocks(monoText);
+  const monoNames = (pred) => new Set(monoBlocks.filter((b) => pred(b.sel)).flatMap((b) => b.decls.map(([n]) => n)));
+  const monoDark = monoNames((s) => /data-theme="dark"/.test(s));
+  const monoLight = monoNames((s) => /data-theme="light"/.test(s));
+  const monoAlias = monoNames((s) => /\[data-theme\]/.test(s));
+  const STATUS = /^--ntn-(success|warning|danger|info|magenta|cyan)-/;
+  const coloured = (v) => colours(v).some((c) => !isGrey(c)) || /var\(--ntn-(magenta|cyan)-/.test(v);
+  const leaks = blocks.flatMap((b) => {
+    const light = /^\[data-theme="?light"?\]$/.test(b.sel);
+    const covered = light ? monoLight : monoDark;
+    return b.decls.filter(([n, v]) => !STATUS.test(n) && coloured(v) && !covered.has(n) && !monoAlias.has(n))
+      .map(([n]) => `${n} (${light ? 'light' : 'dark'})`);
+  });
+  check(leaks.length === 0, 'mono sets again every non-status colour Nocturne declares, in the same mode' + (leaks.length ? ': ' + [...new Set(leaks)].join(' ') : ''));
+
+  const RAMP = ['100', '200', '300', '400', '500', '600', '700', '900'].map((s) => `--ntn-accent-${s}`).concat('--ntn-accent-fg');
+  const unset = RAMP.flatMap((n) => [[monoDark, 'dark'], [monoLight, 'light']].filter(([set]) => !set.has(n)).map(([, mode]) => `${n} (${mode})`));
+  check(unset.length === 0, 'mono sets the whole accent ramp and its ink in both modes' + (unset.length ? ': ' + unset.join(' ') : ''));
+
+  // WCAG contrast between two of mono's own literals in one mode.
+  const monoValue = (mode, n) => monoBlocks.filter((b) => b.sel.includes(`data-theme="${mode}"`)).flatMap((b) => b.decls).find(([d]) => d === n)?.[1];
+  const luminance = (rgb) => rgb.map((c) => c / 255).map((c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
+    .reduce((sum, c, i) => sum + c * [0.2126, 0.7152, 0.0722][i], 0);
+  const contrast = (a, b) => { const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
+  // Light surface-1 is Nocturne's white paper; bg-app is the greyer canvas, the harder ground.
+  const PAIRS = [['dark', '--ntn-accent-fg', '--ntn-accent-600'], ['dark', '--ntn-accent-300', '--ntn-n-100'],
+    ['light', '--ntn-accent-fg', '--ntn-accent-600'], ['light', '--ntn-accent-300', '--ntn-bg-app']];
+  for (const [mode, fg, bg] of PAIRS) {
+    const [a, b] = [fg, bg].map((n) => colours(monoValue(mode, n) || '')[0]);
+    const ratio = a && b ? contrast(a, b) : 0;
+    check(ratio >= 4.5, `${mode}: ${fg} on ${bg} is ${ratio.toFixed(1)}:1 (needs 4.5)`);
+  }
 
   console.log('Prefix build');
   for (const file of baseFiles) {

@@ -49,7 +49,7 @@ $-shine-parts: ".ntn-edge__shine::before, .ntn-edge__shine::after, .ntn-edge--sh
     border-radius: inherit; padding: 1.5px;
     background: conic-gradient(from var(--ntn-spin),
       transparent 0deg 186deg, var(--ntn-accent-700) 232deg, var(--ntn-accent-400) 288deg,
-      var(--ntn-cyan-400) 324deg, var(--ntn-accent-300) 348deg, transparent 360deg);
+      var(--ntn-processing-glint) 324deg, var(--ntn-accent-300) 348deg, transparent 360deg);
     /* Ring only: paint the padding box, knock the content box back out. */
     @include ring-mask;
   }

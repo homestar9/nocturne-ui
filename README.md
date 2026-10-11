@@ -135,9 +135,15 @@ server-rendered HTML: `nocturne.js` starts itself as soon as it is imported and 
 ## Accent
 
 Accent is the main channel a product may override, and it applies to both themes. Violet is the
-default. Two more ship in `themes/`: `emerald.css` and `amber.css` (a warm gold). Amber also
-swaps the blue-leaning greys for warmer ones: near-neutral graphite in dark mode, warm paper with
-slate text in light mode. Load one after the stylesheet:
+default. Three more ship in `themes/`:
+- `emerald.css`.
+- `amber.css`, a warm gold. Amber also swaps the blue-leaning greys for warmer ones: near-neutral
+  graphite in dark mode, warm paper with slate text in light mode.
+- `mono.css`, which turns everything grey except the status tones. The accent is near white in
+  dark mode and near black in light mode, so an app can add its own brand colour on top without
+  it fighting a theme hue.
+
+Load one after the stylesheet:
 
 ```js
 import '@homestar9/nocturne-ui';
@@ -159,6 +165,9 @@ from the ramp. Three details:
   load order, and the brand follows into `data-theme` subtrees.
 - **Dark ink:** if your accent needs dark ink, point the checkbox art at it too:
   `--ntn-check-mark: var(--ntn-check-mark-ink); --ntn-check-dash: var(--ntn-check-dash-ink);`
+  If the ink flips between modes, set `--ntn-accent-fg` and the checkbox art in each block. Use
+  the `-white` pair where the ink is white, and also set 500–900 in the light block when the fill
+  itself changes, as `mono.css` does.
 - **Greys (optional):** a theme may also retint the neutral ramp (`--ntn-n-0` to `-900`) and the
   surfaces and borders the light theme sets outright, as `amber.css` does. Set every one you
   change in both blocks, or the dark value leaks into light mode. Check text contrast:

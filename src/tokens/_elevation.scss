@@ -36,6 +36,8 @@
   --ntn-highlight-top: inset 0 1px 0 rgba(255,255,255,0.22);
   /* The colour a shine light fades through */
   --ntn-shine-color: var(--ntn-accent-500);
+  /* The bright glint in the processing ring, just ahead of the accent stops */
+  --ntn-processing-glint: var(--ntn-cyan-400);
 }
 
 :root {
