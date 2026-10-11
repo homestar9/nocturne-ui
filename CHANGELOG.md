@@ -12,7 +12,15 @@ renamed or removed class names and tokens.
   mode, and its ink flips with it. The neutrals keep Nocturne's lightness with the blue taken
   out. Charts, the processing ring and the light-mode shadows go grey too. The status tones keep
   their colour.
-- **Kitchen sink:** a Mono button in the accent picker.
+- **`themes/synthwave.css`** (NTN-16): Miami Vice after dark. A hot pink accent with dark ink,
+  kept about 40° of hue from the danger red. Miami teal for the second chart series, the
+  processing glint and the shine lights, and a sunset orange for the third series. Night-purple
+  greys in dark mode, pastel pink paper with purple-navy ink in light mode. Hotter glows, and a
+  CSS-gradient sunset as `--ntn-ambient-image` (turn it off with `none`).
+- **Kitchen sink:** Mono and Synthwave buttons in the accent picker.
+- **Tests:** every theme, Nocturne's own included, is checked for contrast (the ink on the fill,
+  and accent text on cards and canvas, in both modes), and for any mode token set in its dark
+  block but not again for light (it would beat Nocturne's light theme on load order).
 - **Tokens:** `--ntn-processing-glint`, the bright stop in the processing ring (cyan by default),
   and `--ntn-check-mark-white` / `--ntn-check-dash-white`, so a theme whose ink flips per mode
   can point the checkbox art back at white.

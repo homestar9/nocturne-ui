@@ -208,18 +208,57 @@ try {
   const unset = RAMP.flatMap((n) => [[monoDark, 'dark'], [monoLight, 'light']].filter(([set]) => !set.has(n)).map(([, mode]) => `${n} (${mode})`));
   check(unset.length === 0, 'mono sets the whole accent ramp and its ink in both modes' + (unset.length ? ': ' + unset.join(' ') : ''));
 
-  // WCAG contrast between two of mono's own literals in one mode.
-  const monoValue = (mode, n) => monoBlocks.filter((b) => b.sel.includes(`data-theme="${mode}"`)).flatMap((b) => b.decls).find(([d]) => d === n)?.[1];
-  const luminance = (rgb) => rgb.map((c) => c / 255).map((c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
-    .reduce((sum, c, i) => sum + c * [0.2126, 0.7152, 0.0722][i], 0);
+  console.log('Themes');
+  // Nocturne itself, then every file in themes/, each read as its dark, light and alias blocks.
+  const linear = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  const luminance = (rgb) => rgb.map((c) => linear(c / 255)).reduce((sum, c, i) => sum + c * [0.2126, 0.7152, 0.0722][i], 0);
   const contrast = (a, b) => { const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
-  // Light surface-1 is Nocturne's white paper; bg-app is the greyer canvas, the harder ground.
-  const PAIRS = [['dark', '--ntn-accent-fg', '--ntn-accent-600'], ['dark', '--ntn-accent-300', '--ntn-n-100'],
-    ['light', '--ntn-accent-fg', '--ntn-accent-600'], ['light', '--ntn-accent-300', '--ntn-bg-app']];
-  for (const [mode, fg, bg] of PAIRS) {
-    const [a, b] = [fg, bg].map((n) => colours(monoValue(mode, n) || '')[0]);
-    const ratio = a && b ? contrast(a, b) : 0;
-    check(ratio >= 4.5, `${mode}: ${fg} on ${bg} is ${ratio.toFixed(1)}:1 (needs 4.5)`);
+  const oklchHue = (rgb) => {
+    const [r, g, b] = rgb.map((c) => linear(c / 255));
+    const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+    const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+    const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+    return (Math.atan2(0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s, 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s) * 180 / Math.PI + 360) % 360;
+  };
+  const decl = (bs) => new Map(bs.flatMap((b) => b.decls));
+  const coreLight = decl(blocks.filter((b) => /^\[data-theme="?light"?\]$/.test(b.sel)));
+  const coreDark = decl(blocks.filter((b) => !/^\[data-theme="?light"?\]$/.test(b.sel) && !b.sel.startsWith('@')));
+  const themes = [['nocturne', []]];
+  for (const f of (await readdir(resolve(root, 'themes'))).filter((n) => n.endsWith('.css')).sort()) {
+    themes.push([f, parseBlocks(await readFile(resolve(root, 'themes', f), 'utf8'))]);
+  }
+  for (const [name, tb] of themes) {
+    const dark = decl(tb.filter((b) => b.sel.includes('data-theme="dark"')));
+    const light = decl(tb.filter((b) => b.sel.includes('data-theme="light"')));
+    const alias = decl(tb.filter((b) => b.sel.includes('[data-theme]')));
+    // Which value wins on <html> in each mode. The theme's dark block also matches :root in light
+    // mode and ties Nocturne's [data-theme=light] on specificity, winning on load order.
+    const chain = { dark: [dark, alias, coreDark], light: [light, alias, dark, coreLight, coreDark] };
+    const value = (mode, n, depth = 0) => {
+      const v = chain[mode].find((m) => m.has(n))?.get(n) ?? '';
+      const ref = v.match(/^var\((--ntn-[a-z0-9-]+)\)$/);
+      return ref && depth < 8 ? value(mode, ref[1], depth + 1) : v;
+    };
+    const rgb = (mode, n) => colours(value(mode, n))[0];
+
+    // Light surface-1 is white paper; bg-app is the greyer canvas, the harder ground.
+    for (const mode of ['dark', 'light']) {
+      for (const [fg, bg] of [['--ntn-accent-fg', '--ntn-accent-600'], ['--ntn-accent-300', '--ntn-surface-1'], ['--ntn-accent-300', '--ntn-bg-app']]) {
+        const [a, b] = [rgb(mode, fg), rgb(mode, bg)];
+        const ratio = a && b ? contrast(a, b) : 0;
+        check(ratio >= 4.5, `${name}, ${mode}: ${fg} on ${bg} is ${ratio.toFixed(1)}:1 (needs 4.5)`);
+      }
+    }
+    // A mode token set only in the dark block would beat Nocturne's light theme (see above).
+    const stuck = [...dark.keys()].filter((n) => lightNames.has(n) && !light.has(n));
+    check(stuck.length === 0, `${name}: every mode token its dark block sets is set again for light` + (stuck.length ? ': ' + stuck.join(' ') : ''));
+
+    if (name === 'synthwave.css') {
+      // The pink must not read as the danger red: at least 35° apart in OKLCH hue.
+      const gap = Math.abs(oklchHue(rgb('dark', '--ntn-accent-600')) - oklchHue(rgb('dark', '--ntn-danger-500')));
+      const apart = Math.min(gap, 360 - gap);
+      check(apart >= 35, `synthwave.css: the accent is ${apart.toFixed(0)}° of hue from danger (needs 35)`);
+    }
   }
 
   console.log('Prefix build');

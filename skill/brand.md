@@ -6,7 +6,8 @@ Eleven cool greys (`--ntn-n-0` … `--ntn-n-1000`) do about 90% of the work. One
 (`--ntn-accent-100` … `--ntn-accent-900`) is the accent and the main themeable channel; a theme may
 also retint the greys, as `themes/amber.css` does with warmer, less blue ones. `themes/mono.css`
 turns everything but the status tones grey (a near-white accent in dark mode, near black in
-light), for apps that bring their own brand colour. Magenta (`--ntn-magenta-*`) and cyan
+light), for apps that bring their own brand colour. `themes/synthwave.css` goes the other way:
+hot pink and Miami teal on night-purple greys, with a sunset behind `ntn-ambient`. Magenta (`--ntn-magenta-*`) and cyan
 (`--ntn-cyan-*`) exist **only** as chart series two and three — never in chrome. The one cyan
 glint in the processing ring goes through `--ntn-processing-glint`, so a theme can retint it. Semantic hues are green / amber / red / blue, each with a 14–15% alpha tint for
 surfaces (`--ntn-success-soft`, `--ntn-warning-soft`, `--ntn-danger-soft`, `--ntn-info-soft`).

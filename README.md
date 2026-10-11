@@ -135,13 +135,17 @@ server-rendered HTML: `nocturne.js` starts itself as soon as it is imported and 
 ## Accent
 
 Accent is the main channel a product may override, and it applies to both themes. Violet is the
-default. Three more ship in `themes/`:
+default. Four more ship in `themes/`:
 - `emerald.css`.
 - `amber.css`, a warm gold. Amber also swaps the blue-leaning greys for warmer ones: near-neutral
   graphite in dark mode, warm paper with slate text in light mode.
 - `mono.css`, which turns everything grey except the status tones. The accent is near white in
   dark mode and near black in light mode, so an app can add its own brand colour on top without
   it fighting a theme hue.
+- `synthwave.css`, Miami Vice after dark: a hot pink accent, Miami teal for the second chart
+  series and the edge lights, night-purple greys (pastel pink paper in light mode), hotter glows,
+  and a sunset as the `--ntn-ambient-image` behind `ntn-ambient`. Turn the sunset off with
+  `--ntn-ambient-image: none`.
 
 Load one after the stylesheet:
 

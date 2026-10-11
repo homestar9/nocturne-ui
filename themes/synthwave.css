@@ -1,0 +1,129 @@
+/* Synthwave theme: Miami after dark, 1985. Hot pink neon on a night-purple sky, Miami teal as
+   the second light, and a sunset for ntn-ambient to sit glass on.
+
+   Three blocks:
+   1. Dark: the pink ramp, the dark ink that sits on it, and night-purple neutrals. Each neutral
+      keeps the OKLab lightness of Nocturne's own step, so text contrast is unchanged; the
+      surfaces carry more purple than the text, which stays a near-white lavender.
+   2. Light: Miami by day. Pastel pink paper with purple-navy ink, accent text in deep magenta, and
+      every colour Nocturne's light theme sets outright, tinted to match. The pink fills (500–900)
+      and their dark ink are the same in both modes.
+   3. Aliases Nocturne re-declares on every data-theme element: teal for the second chart series,
+      the processing glint and the shine lights, a sunset orange for the third series, hotter
+      neon glows, and the sunset. Setting them on ":root [data-theme]" too keeps a light panel in
+      a dark page on theme.
+
+   The pink sits at OKLCH hue 343°, a magenta-leaning hot pink. A classic #FF3E9A (357°) is only
+   25° from the danger red and the two buttons read alike; at 343° they are about 40° apart.
+   White text on this pink is about 3:1, so the ink is dark and the checkbox art is drawn in it.
+
+   The sunset shows wherever an app uses ntn-ambient. Turn it off with --ntn-ambient-image: none,
+   or point it at your own artwork as usual. */
+
+/* ── Dark (default) ─────────────────────────────────────────────────────── */
+:root, :root [data-theme="dark"] {
+  /* Accent: neon pink */
+  --ntn-accent-100: #FFE2F2;
+  --ntn-accent-200: #FFC8E8;
+  --ntn-accent-300: #FFA7DC;
+  --ntn-accent-400: #FF82D1;
+  --ntn-accent-500: #FF5BC9;
+  --ntn-accent-600: #FE2CC3;
+  --ntn-accent-700: #CD229D;
+  --ntn-accent-900: #470D35;
+
+  /* White text on the pink fails contrast: use a night-purple ink, and draw the checkbox art in it too. */
+  --ntn-accent-fg: #140A29;
+  --ntn-check-mark: var(--ntn-check-mark-ink);
+  --ntn-check-dash: var(--ntn-check-dash-ink);
+
+  /* Neutrals: surfaces 0–300, lines 400–500, text 600–900 */
+  --ntn-n-0:   #07040E;
+  --ntn-n-50:  #0D0917;
+  --ntn-n-100: #130E20;
+  --ntn-n-200: #191428;
+  --ntn-n-300: #221B33;
+  --ntn-n-400: #2C253F;
+  --ntn-n-500: #423C56;
+  --ntn-n-600: #655F78;
+  --ntn-n-700: #948FA5;
+  --ntn-n-800: #C0BDCD;
+  --ntn-n-900: #E9E8F0;
+
+  /* A brighter halo round each shine light, and a stronger sunset */
+  --ntn-shine-glow: 0.45;
+  --ntn-ambient-opacity: 0.6;
+}
+
+/* ── Light ──────────────────────────────────────────────────────────────── */
+:root[data-theme="light"], :root [data-theme="light"] {
+  /* Accent: the text stops (100–400) darken to a deep magenta */
+  --ntn-accent-100: #FEEEF7;
+  --ntn-accent-200: #850E65;
+  --ntn-accent-300: #9C1376;
+  --ntn-accent-400: #AF2186;
+
+  /* Neutrals: pastel pink paper 0–500, purple-navy ink 600–900 */
+  --ntn-n-0:   #FFFFFF;
+  --ntn-n-50:  #FEFAFB;
+  --ntn-n-100: #FAF4F6;
+  --ntn-n-200: #F5ECF0;
+  --ntn-n-300: #EEE4E8;
+  --ntn-n-400: #E1D5DA;
+  --ntn-n-500: #C3B5BE;
+  --ntn-n-600: #75728C;
+  --ntn-n-700: #64617D;
+  --ntn-n-800: #393552;
+  --ntn-n-900: #141024;
+
+  --ntn-alpha-ink-04: rgba(20,16,36,0.035);
+  --ntn-alpha-ink-06: rgba(20,16,36,0.055);
+  --ntn-alpha-ink-10: rgba(20,16,36,0.10);
+
+  /* Surfaces and lines, which Nocturne's light theme sets outright */
+  --ntn-bg-app:         #FCF5F8;
+  --ntn-surface-3:      #F9F0F4;
+  --ntn-surface-inset:  rgba(20,16,36,0.05);
+  --ntn-border-subtle:  #F0E7EB;
+  --ntn-border-default: #E7DDE1;
+  --ntn-border-strong:  #D2C4CA;
+
+  /* Depth: the same soft drops, in the purple-navy ink */
+  --ntn-shadow-xs:  0 1px 2px rgba(20,16,36,0.06);
+  --ntn-shadow-sm:  0 1px 2px rgba(20,16,36,0.08);
+  --ntn-shadow-md:  0 8px 24px -14px rgba(20,16,36,0.20), 0 1px 2px rgba(20,16,36,0.04);
+  --ntn-shadow-lg:  0 24px 60px -24px rgba(20,16,36,0.28), 0 1px 3px rgba(20,16,36,0.06);
+  --ntn-shadow-pop: 0 12px 32px -10px rgba(20,16,36,0.22);
+  --ntn-shadow-control:  0 1px 2px rgba(20,16,36,0.12);
+  --ntn-shadow-hairline: 0 0 0 1px rgba(20,16,36,0.06);
+  --ntn-shadow-float:    0 2px 6px rgba(20,16,36,0.16);
+  --ntn-shadow-inset:    inset 0 1px 2px rgba(20,16,36,0.12);
+  --ntn-glass-shadow:    0 1px 2px rgba(20,16,36,0.05), 0 18px 40px -24px rgba(20,16,36,0.25);
+
+  --ntn-scrim: rgba(20,16,36,0.42);
+
+  /* Set again here, or the dark block's :root values would beat Nocturne's light theme */
+  --ntn-shine-glow: 0.25;
+  --ntn-ambient-opacity: 0.3;
+}
+
+/* ── Aliases, on every data-theme element ───────────────────────────────── */
+:root, :root [data-theme] {
+  /* Charts: pink, then teal and sunset orange instead of Nocturne's magenta and cyan */
+  --ntn-chart-2: #2DE2E6;
+  --ntn-chart-3: #FF8A3D;
+
+  /* Teal lights: the processing ring's glint, and the colour each shine light fades through */
+  --ntn-processing-glint: #2DE2E6;
+  --ntn-shine-color: #2DE2E6;
+
+  /* Hotter neon: glow buttons, glow and processing edges, the FAB, a switch that is on */
+  --ntn-accent-glow: color-mix(in srgb, var(--ntn-accent-500) 50%, transparent);
+
+  /* The sunset over the water: a low sun at the horizon, its reflection below, under a sky that
+     runs from night purple through pink to orange. ntn-ambient dims it and fades it out. */
+  --ntn-ambient-image:
+    radial-gradient(22% 30% at 50% 44%, rgba(255,214,110,0.95), rgba(255,138,61,0.7) 45%, transparent 75%),
+    linear-gradient(to bottom, #1B0B3A 0%, #4A1466 14%, #A3207F 27%, #F0407C 36%, #FF8A3D 44%,
+                    rgba(255,91,201,0.35) 44.5%, transparent 75%);
+}
