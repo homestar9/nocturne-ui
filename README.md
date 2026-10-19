@@ -23,11 +23,11 @@ npm install @homestar9/nocturne-ui
 No bundler? Load it from a CDN, or vendor the one file — `dist/nocturne.css` is self-contained:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.9.0/dist/nocturne.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.10.0/dist/nocturne.css">
 ```
 
 ```bash
-curl -O https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.9.0/dist/nocturne.css
+curl -O https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.10.0/dist/nocturne.css
 ```
 
 ## Use
@@ -377,23 +377,41 @@ escape it. Sass-only names (`$variables`, mixins, functions) never reach the CSS
 
 ## Release
 
+The repo follows gitflow: features branch from `develop` as `feature/*`, releases go out through
+a `release/X.Y.Z` branch that merges into both `master` and `develop`, and `master` only ever
+holds published versions. The git-flow CLI is not required; these are the plain-git equivalents
+of `git flow release start` and `finish`.
+
 ```bash
-npm whoami                              # must print your npm user; on 401, run `npm login` first
-npm version minor --no-git-tag-version  # bump package.json and the lockfile only
-npm run build                           # dist/ banners carry the new version
+npm whoami                                   # must print your npm user; on 401, run `npm login` first
+git checkout -b release/X.Y.Z develop
+npm version minor --no-git-tag-version       # bump package.json and the lockfile only
+npm run build                                # dist/ banners carry the new version
 npm test
-git commit -am "Release X.Y.Z"          # with CHANGELOG [Unreleased] renamed to X.Y.Z — date
+git commit -am "Release X.Y.Z"               # CHANGELOG [Unreleased] → X.Y.Z — date; README CDN links
+git checkout master
+git merge --no-ff release/X.Y.Z
 git tag -a vX.Y.Z -m X.Y.Z
-npm publish                             # prepack rebuilds and tests, then → npmjs.com (public)
-git push --follow-tags
+git checkout develop
+git merge --no-ff release/X.Y.Z
+git branch -d release/X.Y.Z
+git checkout master
+npm publish                                  # prepack rebuilds and tests, then → npmjs.com (public)
+git push origin master develop --follow-tags
 ```
 
 Check the login first: `npm publish` without a valid session fails with a misleading
 `404 Not Found - PUT …/@homestar9%2fnocturne-ui`, not an auth error. Bump before building: the
 `dist/` banners read the version from `package.json`, so building first commits a `dist/` that
 names the previous version. `prepack` rebuilds anyway, so a stale `dist/` is published fresh but
-left uncommitted. Tag with `-a`: `--follow-tags` pushes annotated tags only. Update the CDN links
-under Install to the new version.
+left uncommitted. Merge with `--no-ff` even when master could fast-forward, so every release is
+one merge commit on `master`. Tag with `-a`: `--follow-tags` pushes annotated tags only. Update
+the CDN links under Install to the new version. A version that was tagged but never published
+keeps its CHANGELOG heading with an `(unpublished)` suffix, and its tag is deleted before it is
+pushed.
+
+Hotfixes branch from `master` as `hotfix/X.Y.Z`, bump **patch**, and finish the same way: merge
+into `master`, tag, merge into `develop`.
 
 Semver is the contract: **patch** for fixes, **minor** for new components or tokens, **major**
 for any renamed or removed class or token. Record every change in `CHANGELOG.md` — consuming
