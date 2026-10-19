@@ -1,4 +1,4 @@
-/*! Nocturne nocturne.nofonts.css v1.9.0 — dark-first SaaS design system.
+/*! Nocturne nocturne.nofonts.css v1.10.0 — dark-first SaaS design system.
  *  Compiled from src/*.scss. Edit files in src/, never in dist/. */
 
 /* Nocturne — full stylesheet: tokens + reset + components. */
@@ -4814,7 +4814,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   color: var(--ntn-accent-fg);
 }
 .ntn-steps__step[data-state=current] .ntn-steps__marker {
-  background: var(--ntn-accent-soft);
+  background: linear-gradient(var(--ntn-accent-soft), var(--ntn-accent-soft)), var(--ntn-surface-2);
   border-color: var(--ntn-accent-500);
   color: var(--ntn-accent-200);
   box-shadow: 0 0 0 4px var(--ntn-accent-softer);

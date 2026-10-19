@@ -97,6 +97,12 @@ try {
   const calmRise = css.match(/@media \(prefers-reduced-motion: reduce\) \{\s*@keyframes ntn-rise \{((?:[^{}]*\{[^{}]*\})*)[^{}]*\}/);
   check(calmRise && !/transform/.test(calmRise[1]), 'under reduced motion, entrances (ntn-rise) fade without moving');
 
+  console.log('Progress steps (NTN-17)');
+  // The connector runs under the markers, so the current marker's see-through tint needs an opaque base.
+  const currentMarker = rules.find((r) => r.sel === '.ntn-steps__step[data-state=current] .ntn-steps__marker');
+  check(currentMarker && /background:[^;]*,\s*var\(--ntn-surface-2\)\s*;/.test(currentMarker.body),
+    'the current step marker paints its tint over an opaque --ntn-surface-2 base');
+
   console.log('One disabled treatment');
   const disabledRules = rules.filter((r) => /:disabled|\[aria-disabled=("?)true\1\]/.test(r.sel) && /(?:^|[;\s])opacity:/.test(r.body));
   const oddFades = disabledRules.filter((r) => !/(?:^|[;\s])opacity:\s*var\(--ntn-disabled-opacity\)/.test(r.body));

@@ -6,6 +6,8 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.10.0 — 2026-10-19
+
 ### Added
 - **`themes/mono.css`** (NTN-15): a theme in greys only, so an app can bring its own brand colour
   without fighting a theme hue. The accent is near white in dark mode and near black in light
@@ -25,13 +27,17 @@ renamed or removed class names and tokens.
   and `--ntn-check-mark-white` / `--ntn-check-dash-white`, so a theme whose ink flips per mode
   can point the checkbox art back at white.
 
+### Fixed
+- **Progress steps** (NTN-17): the connector no longer shows through the current step's marker.
+  Its soft accent tint now sits on an opaque `--ntn-surface-2` base, like the upcoming marker.
+
 ### Changed
 - The processing ring reads `--ntn-processing-glint` instead of `--ntn-cyan-400`, so no
   component reads a chart hue directly. A test guards it.
 - The dark checkbox art (`--ntn-check-mark-ink`, `-dash-ink`) is a pure grey (`#0A0A0A`, was
   `#0A0C10`).
 
-## 1.9.0 — 2026-10-10
+## 1.9.0 — 2026-10-10 (unpublished)
 
 ### Added
 - **`ntn-glass`**: translucent, blurred cards, stats, accordions and sidebar with a lit top edge,
