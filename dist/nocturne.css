@@ -254,6 +254,8 @@
   --ntn-shine-color: var(--ntn-accent-500);
   /* The bright glint in the processing ring, just ahead of the accent stops */
   --ntn-processing-glint: var(--ntn-cyan-400);
+  /* The ntn-ambient glow; its tone modifiers set it too */
+  --ntn-ambient-glow: var(--ntn-accent-glow);
 }
 
 :root {
@@ -265,11 +267,12 @@
   --ntn-pop-filter: none;
   /* ntn-glass and ntn-ambient (_glass.scss). An app points these at its own artwork with a
      root-relative url(...) or a gradient: --ntn-background-image at full strength, or
-     --ntn-ambient-image as a dimmed band that fades out. */
+     --ntn-ambient-image as a dimmed band that fades out. --ntn-ambient-size is that band's depth
+     from its edge: a corner's side, or the spotlight's diameter. */
   --ntn-glass-blur: blur(20px) saturate(140%);
   --ntn-background-image: none;
   --ntn-ambient-image: none;
-  --ntn-ambient-height: 760px;
+  --ntn-ambient-size: 760px;
   /* ntn-edge--shine (_effects.scss): one lap per --ntn-shine-speed; --ntn-shine-length is the
      light's trail, of which only the ring shows */
   --ntn-shine-speed: 20s;
@@ -3451,9 +3454,13 @@ i:is([class*=fa-], [data-icon], :empty) {
                 layers, bottom to top:
                 --ntn-background-image  the app's artwork at full strength, filling the
                                         container. None by default.
-                accent glow             a soft glow at the top.
-                --ntn-ambient-image     artwork as atmosphere: dimmed by --ntn-ambient-opacity
-                                        and faded out over --ntn-ambient-height.
+                glow                    a soft --ntn-ambient-glow, the accent's by default.
+                --ntn-ambient-image     artwork as atmosphere: dimmed by --ntn-ambient-opacity.
+                The glow and the ambient image share a band that fades out over
+                --ntn-ambient-size. It sits at the top; --bottom, --left, --right, the four
+                corners (--top-left …) and --center move it, and the background image anchors to
+                the same side. The tones (--success …) tint the glow. Ambients stack: each later
+                one adds its band over the first, and only the first draws the background image.
    ntn-glass    Translucent, blurred surfaces. On a card, stat, accordion or sidebar it makes
                 that surface glass; on any other element it makes every such surface inside it
                 glass. Inputs, buttons, badges and menus stay solid so they stay readable.
@@ -3483,16 +3490,164 @@ i:is([class*=fa-], [data-icon], :empty) {
   content: "";
   position: absolute;
   inset: 0 0 auto;
-  height: var(--ntn-ambient-height);
+  height: var(--ntn-ambient-size);
   -webkit-mask-image: linear-gradient(to bottom, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
   mask-image: linear-gradient(to bottom, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
 }
 .ntn-ambient::before {
-  background: radial-gradient(1100px 520px at 50% -12%, var(--ntn-accent-glow), transparent 70%);
+  background: radial-gradient(1100px 520px at 50% -12%, var(--ntn-ambient-glow), transparent 70%);
 }
 .ntn-ambient::after {
   background: var(--ntn-ambient-image) center top/cover no-repeat;
   opacity: var(--ntn-ambient-opacity);
+}
+.ntn-ambient--bottom {
+  background-position: center bottom;
+}
+.ntn-ambient--bottom::before, .ntn-ambient--bottom::after {
+  inset: auto 0 0;
+  width: auto;
+  height: var(--ntn-ambient-size);
+  -webkit-mask-image: linear-gradient(to top, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+  mask-image: linear-gradient(to top, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+}
+.ntn-ambient--bottom::before {
+  background-image: radial-gradient(1100px 520px at 50% 112%, var(--ntn-ambient-glow), transparent 70%);
+}
+.ntn-ambient--bottom::after {
+  background-position: center bottom;
+}
+.ntn-ambient--left {
+  background-position: left center;
+}
+.ntn-ambient--left::before, .ntn-ambient--left::after {
+  inset: 0 auto 0 0;
+  width: var(--ntn-ambient-size);
+  height: auto;
+  -webkit-mask-image: linear-gradient(to right, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+  mask-image: linear-gradient(to right, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+}
+.ntn-ambient--left::before {
+  background-image: radial-gradient(520px 1100px at -12% 50%, var(--ntn-ambient-glow), transparent 70%);
+}
+.ntn-ambient--left::after {
+  background-position: left center;
+}
+.ntn-ambient--right {
+  background-position: right center;
+}
+.ntn-ambient--right::before, .ntn-ambient--right::after {
+  inset: 0 0 0 auto;
+  width: var(--ntn-ambient-size);
+  height: auto;
+  -webkit-mask-image: linear-gradient(to left, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+  mask-image: linear-gradient(to left, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+}
+.ntn-ambient--right::before {
+  background-image: radial-gradient(520px 1100px at 112% 50%, var(--ntn-ambient-glow), transparent 70%);
+}
+.ntn-ambient--right::after {
+  background-position: right center;
+}
+.ntn-ambient--top-left {
+  background-position: left top;
+}
+.ntn-ambient--top-left::before, .ntn-ambient--top-left::after {
+  inset: 0 auto auto 0;
+  width: var(--ntn-ambient-size);
+  height: var(--ntn-ambient-size);
+  -webkit-mask-image: radial-gradient(farthest-side at left top, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+  mask-image: radial-gradient(farthest-side at left top, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+}
+.ntn-ambient--top-left::before {
+  background-image: radial-gradient(farthest-side at left top, var(--ntn-ambient-glow), transparent 70%);
+}
+.ntn-ambient--top-left::after {
+  background-position: left top;
+}
+.ntn-ambient--top-right {
+  background-position: right top;
+}
+.ntn-ambient--top-right::before, .ntn-ambient--top-right::after {
+  inset: 0 0 auto auto;
+  width: var(--ntn-ambient-size);
+  height: var(--ntn-ambient-size);
+  -webkit-mask-image: radial-gradient(farthest-side at right top, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+  mask-image: radial-gradient(farthest-side at right top, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+}
+.ntn-ambient--top-right::before {
+  background-image: radial-gradient(farthest-side at right top, var(--ntn-ambient-glow), transparent 70%);
+}
+.ntn-ambient--top-right::after {
+  background-position: right top;
+}
+.ntn-ambient--bottom-left {
+  background-position: left bottom;
+}
+.ntn-ambient--bottom-left::before, .ntn-ambient--bottom-left::after {
+  inset: auto auto 0 0;
+  width: var(--ntn-ambient-size);
+  height: var(--ntn-ambient-size);
+  -webkit-mask-image: radial-gradient(farthest-side at left bottom, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+  mask-image: radial-gradient(farthest-side at left bottom, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+}
+.ntn-ambient--bottom-left::before {
+  background-image: radial-gradient(farthest-side at left bottom, var(--ntn-ambient-glow), transparent 70%);
+}
+.ntn-ambient--bottom-left::after {
+  background-position: left bottom;
+}
+.ntn-ambient--bottom-right {
+  background-position: right bottom;
+}
+.ntn-ambient--bottom-right::before, .ntn-ambient--bottom-right::after {
+  inset: auto 0 0 auto;
+  width: var(--ntn-ambient-size);
+  height: var(--ntn-ambient-size);
+  -webkit-mask-image: radial-gradient(farthest-side at right bottom, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+  mask-image: radial-gradient(farthest-side at right bottom, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+}
+.ntn-ambient--bottom-right::before {
+  background-image: radial-gradient(farthest-side at right bottom, var(--ntn-ambient-glow), transparent 70%);
+}
+.ntn-ambient--bottom-right::after {
+  background-position: right bottom;
+}
+.ntn-ambient--center {
+  background-position: center;
+}
+.ntn-ambient--center::before, .ntn-ambient--center::after {
+  inset: calc(50% - var(--ntn-ambient-size) / 2) auto auto calc(50% - var(--ntn-ambient-size) / 2);
+  width: var(--ntn-ambient-size);
+  height: var(--ntn-ambient-size);
+  -webkit-mask-image: radial-gradient(closest-side, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+  mask-image: radial-gradient(closest-side, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+}
+.ntn-ambient--center::before {
+  background-image: radial-gradient(closest-side, var(--ntn-ambient-glow), transparent 70%);
+}
+.ntn-ambient--center::after {
+  background-position: center;
+}
+.ntn-ambient--success {
+  --ntn-ambient-glow: color-mix(in srgb, var(--ntn-success-500) 35%, transparent);
+}
+.ntn-ambient--warning {
+  --ntn-ambient-glow: color-mix(in srgb, var(--ntn-warning-500) 35%, transparent);
+}
+.ntn-ambient--danger {
+  --ntn-ambient-glow: color-mix(in srgb, var(--ntn-danger-500) 35%, transparent);
+}
+.ntn-ambient--info {
+  --ntn-ambient-glow: color-mix(in srgb, var(--ntn-info-500) 35%, transparent);
+}
+.ntn-ambient--neutral {
+  --ntn-ambient-glow: color-mix(in srgb, var(--ntn-n-600) 35%, transparent);
+}
+
+/* Stacked ambients: the first draws the background image, the rest only add their band. */
+.ntn-ambient ~ .ntn-ambient {
+  background: none;
 }
 
 /* Glass surfaces */

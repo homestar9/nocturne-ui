@@ -193,14 +193,32 @@ For a page that sits over artwork or a gradient, two opt-in classes:
   - `--ntn-background-image` draws it at full strength, filling the app. Best when the content
     on it is all glass.
   - `--ntn-ambient-image` draws it as atmosphere: dimmed by `--ntn-ambient-opacity` and faded out
-    over `--ntn-ambient-height`. Best when headings and other text sit straight on the backdrop.
+    over `--ntn-ambient-size`. Best when headings and other text sit straight on the backdrop.
 
   It also works inside a single panel, such as a hero: give the panel `position: relative;
   isolation: isolate; overflow: hidden` so the backdrop stays inside it.
 
+  To build your own ambient effect:
+  - **Placement.** The glow and the ambient image sit in a band across the top. `--bottom`,
+    `--left` and `--right` move the band to that edge. `--top-left`, `--top-right`,
+    `--bottom-left` and `--bottom-right` make it a square in that corner. `--center` makes it a
+    spotlight. `--ntn-background-image` anchors to the same side.
+  - **Colour.** The glow is `--ntn-ambient-glow`, which defaults to the accent, so it follows the
+    theme. The tones `--success`, `--warning`, `--danger`, `--info` and `--neutral` tint it, or
+    you can set the token to any translucent colour.
+  - **Layers.** Stack several ambients for several lights. Only the first draws
+    `--ntn-background-image`.
+
 ```html
 <div class="ntn-app ntn-glass">
   <div class="ntn-ambient"></div>
+  …
+</div>
+
+<!-- Two lights: the accent top left, info bottom right -->
+<div class="ntn-app ntn-glass">
+  <div class="ntn-ambient ntn-ambient--top-left"></div>
+  <div class="ntn-ambient ntn-ambient--bottom-right ntn-ambient--info"></div>
   …
 </div>
 ```
@@ -208,6 +226,7 @@ For a page that sits over artwork or a gradient, two opt-in classes:
 ```css
 :root { --ntn-background-image: url(/img/backdrop.avif); }   /* full strength */
 :root { --ntn-ambient-image: url(/img/backdrop.avif); }      /* dimmed, fading */
+:root { --ntn-ambient-glow: rgb(255 120 60 / 0.35); }        /* any glow colour */
 ```
 
 Use a root-relative or absolute URL. Browsers disagree on whether a relative `url()` in a custom

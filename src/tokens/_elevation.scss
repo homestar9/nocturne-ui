@@ -38,6 +38,8 @@
   --ntn-shine-color: var(--ntn-accent-500);
   /* The bright glint in the processing ring, just ahead of the accent stops */
   --ntn-processing-glint: var(--ntn-cyan-400);
+  /* The ntn-ambient glow; its tone modifiers set it too */
+  --ntn-ambient-glow: var(--ntn-accent-glow);
 }
 
 :root {
@@ -49,11 +51,12 @@
   --ntn-pop-filter: none;
   /* ntn-glass and ntn-ambient (_glass.scss). An app points these at its own artwork with a
      root-relative url(...) or a gradient: --ntn-background-image at full strength, or
-     --ntn-ambient-image as a dimmed band that fades out. */
+     --ntn-ambient-image as a dimmed band that fades out. --ntn-ambient-size is that band's depth
+     from its edge: a corner's side, or the spotlight's diameter. */
   --ntn-glass-blur: blur(20px) saturate(140%);
   --ntn-background-image: none;
   --ntn-ambient-image: none;
-  --ntn-ambient-height: 760px;
+  --ntn-ambient-size: 760px;
   /* ntn-edge--shine (_effects.scss): one lap per --ntn-shine-speed; --ntn-shine-length is the
      light's trail, of which only the ring shows */
   --ntn-shine-speed: 20s;

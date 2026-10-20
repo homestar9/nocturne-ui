@@ -537,6 +537,14 @@ backdrop.
 | `ntn-glass` | On a `ntn-card`, `ntn-stat`, `ntn-accordion` or `ntn-sidebar`: that surface turns translucent and blurred, with a lit top edge. On any other element: every such surface inside it does. Table heads and the sidebar brand inside turn to a faint tint. Nested surfaces keep the tint but drop the second blur and shadow |
 | `ntn-glass--flat` | With `ntn-glass`: no lit top edge, for that element and everything inside. Use it over the plain `ntn-ambient` glow; keep the edge over a photo |
 | `ntn-ambient` | The backdrop: a static accent glow behind the top of the app that fades into the canvas. First child of `.ntn-app`, or of a panel with `position: relative; isolation: isolate; overflow: hidden`. Add artwork with a root-relative URL: `--ntn-background-image` at full strength (when everything on it is glass), or `--ntn-ambient-image` dimmed and faded (when text also sits on it) |
+| `ntn-ambient--bottom` `--left` `--right` | Move the glow's band to that edge. The default, with no class, is the top |
+| `ntn-ambient--top-left` `--top-right` `--bottom-left` `--bottom-right` | The band becomes a square in that corner, fading out radially |
+| `ntn-ambient--center` | A round spotlight in the middle, `--ntn-ambient-size` across: behind a hero or a sign-in card |
+| `ntn-ambient--success` `--warning` `--danger` `--info` `--neutral` | Tint the glow. The default is the accent. Combine with a placement |
+
+The `--ntn-ambient-image` follows the band, and `--ntn-background-image` anchors to the same side.
+Stack several ambients for more than one light. Each later one adds its own band, and only the
+first draws `--ntn-background-image`.
 
 ```html
 <div class="ntn-app ntn-glass">          <!-- the whole app: sidebar and every card -->
@@ -546,13 +554,20 @@ backdrop.
 </div>
 
 <section class="ntn-card ntn-glass">…</section>   <!-- one card over a hero image -->
+
+<div class="ntn-app ntn-glass">          <!-- two lights: accent top left, info bottom right -->
+  <div class="ntn-ambient ntn-ambient--top-left"></div>
+  <div class="ntn-ambient ntn-ambient--bottom-right ntn-ambient--info"></div>
+  …
+</div>
 ```
 
 Inputs, buttons, badges, menus, popovers and modals stay solid. Glass falls back to solid under
 `prefers-reduced-transparency`, and the sidebar does too as the phone drawer. Tune it with
 `--ntn-glass-bg`, `--ntn-glass-border`, `--ntn-glass-highlight`, `--ntn-glass-shadow` and
 `--ntn-glass-blur`; the backdrop with `--ntn-background-image`, `--ntn-ambient-image`,
-`--ntn-ambient-opacity` and `--ntn-ambient-height`. Keep the backdrop static: blur over a moving one re-renders every frame.
+`--ntn-ambient-opacity`, `--ntn-ambient-size` (the band's depth from its edge) and
+`--ntn-ambient-glow` (any colour, ideally translucent: the accent's is 35%). Keep the backdrop static: blur over a moving one re-renders every frame.
 
 ## Tones
 

@@ -46,6 +46,11 @@
     padding: var(--ntn-space-6); border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-xl);
     background: var(--ntn-bg-app);
   }
+  /* A small stage for one ambient placement or tone, with a band sized to fit it. */
+  .sink__ambient-tile {
+    --ntn-ambient-size: 200px;
+    display: grid; place-items: center; min-height: 140px;
+  }
   .sink__label { font-size: var(--ntn-font-size-2xs); text-transform: uppercase; letter-spacing: var(--ntn-tracking-caps); color: var(--ntn-text-disabled); font-weight: var(--ntn-weight-medium); }
   /* The Code view (sink-code.js): a toggle in each head, and a panel of snippets under the examples. */
   .sink__codeview { display: flex; flex-direction: column; gap: var(--ntn-space-4); min-width: 0; }
@@ -1418,7 +1423,7 @@
             <code class="sink__code">.ntn-glass</code>
             <code class="sink__code">.ntn-glass--flat</code>
             <code class="sink__code">.ntn-ambient</code>
-            <p class="sink__note">Translucent, blurred surfaces for a page that sits over artwork or a gradient. On a card, stat, accordion or sidebar it glazes that surface; on a wrapper it glazes every surface inside. <code>ntn-ambient</code>, first inside <code>.ntn-app</code>, is a static accent glow to sit them on; point <code>--ntn-ambient-image</code> at your own artwork. <code>ntn-glass--flat</code> drops the lit top edge, which suits the plain glow. Below, flat glass over the glow alone, then glass over a photo as <code>--ntn-ambient-image</code> (dimmed and faded, for a page where text also sits on the backdrop), and over the same photo as <code>--ntn-background-image</code> (full strength). The droplet in the top bar turns glass on for this whole page, with the photo as the ambient image.</p>
+            <p class="sink__note">Translucent, blurred surfaces for a page that sits over artwork or a gradient. On a card, stat, accordion or sidebar it glazes that surface; on a wrapper it glazes every surface inside. <code>ntn-ambient</code>, first inside <code>.ntn-app</code>, is a static accent glow to sit them on; point <code>--ntn-ambient-image</code> at your own artwork. <code>ntn-glass--flat</code> drops the lit top edge, which suits the plain glow. Below, flat glass over the glow alone, then glass over a photo as <code>--ntn-ambient-image</code> (dimmed and faded, for a page where text also sits on the backdrop), and over the same photo as <code>--ntn-background-image</code> (full strength). Then the placements, which move the glow to an edge, a corner or the centre; the tones, which tint it (or set <code>--ntn-ambient-glow</code>); and two ambients stacked for two lights. The droplet in the top bar turns glass on for this whole page, with the photo as the ambient image.</p>
           </header>
           <!-- Three stages, each with its own ntn-ambient and ntn-glass on the wrapper, so every surface
                inside is glazed. The second sets --ntn-ambient-image, the third --ntn-background-image. -->
@@ -1556,6 +1561,64 @@
                     </table>
                   </div>
                 </div>
+              </section>
+            </div>
+          </div>
+          <div class="ntn-stack">
+            <p class="sink__label">Placement · <code>ntn-ambient--{edge|corner|center}</code>, top by default</p>
+            <div class="ntn-grid ntn-grid--3" data-sink-example="Placement">
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--top-left"></div><code>--top-left</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient"></div><code>(default)</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--top-right"></div><code>--top-right</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--left"></div><code>--left</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--center"></div><code>--center</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--right"></div><code>--right</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--bottom-left"></div><code>--bottom-left</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--bottom"></div><code>--bottom</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--bottom-right"></div><code>--bottom-right</code></div>
+            </div>
+          </div>
+          <div class="ntn-stack">
+            <p class="sink__label">Tones · <code>ntn-ambient--{tone}</code>, or any colour as <code>--ntn-ambient-glow</code></p>
+            <div class="ntn-grid ntn-grid--3" data-sink-example="Tones">
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient"></div><code>(accent)</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--success"></div><code>--success</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--warning"></div><code>--warning</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--danger"></div><code>--danger</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--info"></div><code>--info</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--neutral"></div><code>--neutral</code></div>
+            </div>
+          </div>
+          <div class="ntn-stack">
+            <p class="sink__label">Two lights · stacked <code>ntn-ambient</code>s</p>
+            <div class="ntn-glass ntn-glass--flat ntn-grid ntn-grid--3 sink__glass-stage" data-sink-example="Two lights">
+              <!-- Each ambient adds its own band; only the first draws --ntn-background-image. -->
+              <div class="ntn-ambient ntn-ambient--top-left"></div>
+              <div class="ntn-ambient ntn-ambient--bottom-right ntn-ambient--info"></div>
+              <section class="ntn-card">
+                <header class="ntn-card__head">
+                  <div class="ntn-card__heading">
+                    <h3 class="ntn-card__title">Glass card</h3>
+                    <p class="ntn-card__sub">The accent from the top left.</p>
+                  </div>
+                </header>
+                <div class="ntn-card__body">Stack ambients with different placements and tones to build your own backdrop.</div>
+              </section>
+              <div class="ntn-stack">
+                <div class="ntn-stat">
+                  <div class="ntn-stat__head"><span class="ntn-stat__label">Deploys today</span></div>
+                  <div class="ntn-stat__figure"><span class="ntn-stat__value">42</span><span class="ntn-stat__delta">+12%</span></div>
+                  <span class="ntn-stat__caption">vs. yesterday</span>
+                </div>
+              </div>
+              <section class="ntn-card">
+                <header class="ntn-card__head">
+                  <div class="ntn-card__heading">
+                    <h3 class="ntn-card__title">Glass card</h3>
+                    <p class="ntn-card__sub">Info from the bottom right.</p>
+                  </div>
+                </header>
+                <div class="ntn-card__body">Each light fades over <code>--ntn-ambient-size</code>.</div>
               </section>
             </div>
           </div>
