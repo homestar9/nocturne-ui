@@ -117,6 +117,11 @@
   --ntn-accent-fill-hover: linear-gradient(180deg, color-mix(in oklab, var(--ntn-accent-500) 88%, white),
                                                     color-mix(in oklab, var(--ntn-accent-500) 75%, var(--ntn-accent-600)));
   --ntn-accent-halo: color-mix(in srgb, var(--ntn-accent-500) 55%, transparent);
+  /* ntn-gradient (_gradient.scss): where the wash starts, where --strong starts, and the --line
+     border. Its tone modifiers set all three. */
+  --ntn-gradient-color: var(--ntn-accent-soft);
+  --ntn-gradient-strong: var(--ntn-accent-line);
+  --ntn-gradient-line: var(--ntn-accent-line);
   /* The ramp's 800 stop sits between its neighbours, so a theme that sets 700 and 900 gets it. */
   --ntn-accent-800: color-mix(in oklab, var(--ntn-accent-700), var(--ntn-accent-900));
   /* ── Semantic aliases: use these in components ─────────────────────────── */
@@ -271,6 +276,8 @@
   --ntn-background-image: none;
   --ntn-ambient-image: none;
   --ntn-ambient-size: 760px;
+  /* ntn-gradient (_gradient.scss): how far down the wash fades out */
+  --ntn-gradient-size: 160px;
   /* ntn-edge--shine (_effects.scss): one lap per --ntn-shine-speed; --ntn-shine-length is the
      light's trail, of which only the ring shows */
   --ntn-shine-speed: 20s;
@@ -5108,4 +5115,51 @@ i:is([class*=fa-], [data-icon], :empty) {
   .ntn-steps__desc {
     display: none;
   }
+}
+/* ── Gradient — ntn-gradient ─────────────────────────────────────────────────
+   A wash that composes onto any surface: a card, a stat, a panel, a bare div. A tone fades
+   from the top edge to transparent over --ntn-gradient-size, on top of the surface's own
+   background, so it fades into a solid card and into glass alike. Accent by default; the tones
+   recolour it, --strong starts it deeper, --full runs it the whole height, and --line draws
+   the border in the tone.
+
+   Last in the cascade: cards, the sidebar and the table set `background` as a shorthand, and
+   ntn-edge--glow sets a background-image, so the wash must follow them all to win at the same
+   specificity. On a glow card it replaces the colour bleed; the border and halo stay. */
+.ntn-gradient {
+  background-image: linear-gradient(to bottom, var(--ntn-gradient-color), transparent var(--ntn-gradient-size));
+}
+.ntn-gradient--success {
+  --ntn-gradient-color: var(--ntn-success-soft);
+  --ntn-gradient-strong: var(--ntn-success-line);
+  --ntn-gradient-line: var(--ntn-success-line);
+}
+.ntn-gradient--warning {
+  --ntn-gradient-color: var(--ntn-warning-soft);
+  --ntn-gradient-strong: var(--ntn-warning-line);
+  --ntn-gradient-line: var(--ntn-warning-line);
+}
+.ntn-gradient--danger {
+  --ntn-gradient-color: var(--ntn-danger-soft);
+  --ntn-gradient-strong: var(--ntn-danger-line);
+  --ntn-gradient-line: var(--ntn-danger-line);
+}
+.ntn-gradient--info {
+  --ntn-gradient-color: var(--ntn-info-soft);
+  --ntn-gradient-strong: var(--ntn-info-line);
+  --ntn-gradient-line: var(--ntn-info-line);
+}
+.ntn-gradient--neutral {
+  --ntn-gradient-color: var(--ntn-alpha-ink-06);
+  --ntn-gradient-strong: var(--ntn-alpha-ink-10);
+  --ntn-gradient-line: var(--ntn-border-strong);
+}
+.ntn-gradient--strong {
+  --ntn-gradient-color: var(--ntn-gradient-strong);
+}
+.ntn-gradient--full {
+  --ntn-gradient-size: 100%;
+}
+.ntn-gradient--line {
+  border-color: var(--ntn-gradient-line);
 }

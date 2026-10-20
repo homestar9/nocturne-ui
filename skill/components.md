@@ -569,6 +569,31 @@ Inputs, buttons, badges, menus, popovers and modals stay solid. Glass falls back
 `--ntn-ambient-opacity`, `--ntn-ambient-size` (the band's depth from its edge) and
 `--ntn-ambient-glow` (any colour, ideally translucent: the accent's is 35%). Keep the backdrop static: blur over a moving one re-renders every frame.
 
+## Gradient — `ntn-gradient`
+
+A wash that composes onto any surface: card, stat, accordion, modal, sidebar or a bare div. A tone
+fades from the top edge to transparent, over the surface's own background, so it fades into a
+solid card and into glass alike.
+
+| Class | Effect |
+| --- | --- |
+| `ntn-gradient` | The wash, in the accent's soft tint, fading out over `--ntn-gradient-size` (160px) |
+| `ntn-gradient--success` `--warning` `--danger` `--info` `--neutral` | Wash in that tone instead |
+| `ntn-gradient--strong` | Start from the tone's deeper colour (30% instead of 14%) |
+| `ntn-gradient--full` | Fade over the whole height instead of the fixed depth |
+| `ntn-gradient--line` | Draw the border in the tone's hairline colour |
+
+```html
+<!-- A dashboard: quiet neutral cards, and the one that needs attention -->
+<section class="ntn-card ntn-gradient ntn-gradient--neutral">…</section>
+<section class="ntn-card ntn-gradient ntn-gradient--danger ntn-gradient--strong ntn-gradient--line">…</section>
+```
+
+The fixed depth keeps a row of cards of different heights matching at the top; use `--full` for
+one long fade. Wash in any colour with `--ntn-gradient-color` (and `--ntn-gradient-strong`,
+`--ntn-gradient-line` for the modifiers). On an `ntn-edge--glow` card the wash replaces the glow's
+colour bleed; the border and halo stay. An interactive card's hover border still wins over `--line`.
+
 ## Tones
 
 Every toned block offers the same set: `--primary` (the accent), `--success`, `--warning`,
@@ -580,6 +605,8 @@ Every toned block offers the same set: `--primary` (the accent), `--success`, `-
 | `ntn-alert` | info | state it anyway with `--info` |
 | `ntn-progress` | primary | |
 | `ntn-btn` | primary | neutral is the default emphasis with no tone; tones combine with an emphasis |
+| `ntn-ambient` | primary | tints the glow |
+| `ntn-gradient` | primary | tints the wash |
 
 Avatar status names a presence, not a tone: `--online` (success), `--busy` (danger), `--away`
 (warning), and offline (neutral) by default.

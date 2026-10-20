@@ -112,6 +112,18 @@ try {
   const stacked = rules.find((r) => r.sel === '.ntn-ambient ~ .ntn-ambient');
   check(stacked && /background:\s*none\s*;/.test(stacked.body), 'a stacked ambient leaves the background image to the first');
 
+  console.log('Gradient (NTN-19)');
+  const washAt = rules.findIndex((r) => r.sel === '.ntn-gradient');
+  const wash = rules[washAt];
+  check(wash && /var\(--ntn-gradient-color\)/.test(wash.body) && /var\(--ntn-gradient-size\)/.test(wash.body), 'the wash reads --ntn-gradient-color and --ntn-gradient-size');
+  const noWashMod = ['strong', 'full', 'line'].filter((m) => !rules.some((r) => r.sel === `.ntn-gradient--${m}`));
+  check(noWashMod.length === 0, 'ntn-gradient offers --strong, --full and --line' + (noWashMod.length ? ': missing ' + noWashMod.join(' ') : ''));
+  // The wash must follow every surface background it lies over, or a shorthand wipes it out.
+  const lastAt = (re) => rules.reduce((at, r, i) => (re.test(r.sel) ? i : at), -1);
+  const before = { '.ntn-card': /(^|,\s*)\.ntn-card(,|$)/, '.ntn-sidebar': /(^|,\s*)\.ntn-sidebar(,|$)/, '.ntn-edge--glow': /\.ntn-edge--glow(,|$)/ };
+  const washFirst = Object.entries(before).filter(([, re]) => lastAt(re) > washAt).map(([n]) => n);
+  check(washAt >= 0 && washFirst.length === 0, 'the wash comes after the surfaces it lies over' + (washFirst.length ? ': ' + washFirst.join(' ') : ''));
+
   console.log('One disabled treatment');
   const disabledRules = rules.filter((r) => /:disabled|\[aria-disabled=("?)true\1\]/.test(r.sel) && /(?:^|[;\s])opacity:/.test(r.body));
   const oddFades = disabledRules.filter((r) => !/(?:^|[;\s])opacity:\s*var\(--ntn-disabled-opacity\)/.test(r.body));
@@ -128,7 +140,7 @@ try {
   console.log('One tone set');
   // Every toned block offers primary, the four statuses and neutral; its default needs no class.
   const TONE_SET = ['primary', 'success', 'warning', 'danger', 'info', 'neutral'];
-  const DEFAULT_TONE = { 'ntn-badge': 'neutral', 'ntn-alert': null, 'ntn-progress': 'primary', 'ntn-btn': ['primary', 'neutral'], 'ntn-ambient': 'primary' };
+  const DEFAULT_TONE = { 'ntn-badge': 'neutral', 'ntn-alert': null, 'ntn-progress': 'primary', 'ntn-btn': ['primary', 'neutral'], 'ntn-ambient': 'primary', 'ntn-gradient': 'primary' };
   for (const [block, dflt] of Object.entries(DEFAULT_TONE)) {
     const missing = TONE_SET.filter((t) => ![].concat(dflt).includes(t) && !css.includes(`.${block}--${t}`));
     check(missing.length === 0, `.${block} offers every tone` + (missing.length ? ': missing ' + missing.join(' ') : ''));

@@ -19,6 +19,14 @@ renamed or removed class names and tokens.
 - **Stacked ambients:** several `ntn-ambient` elements layer their lights, and only the first
   draws `--ntn-background-image`.
 - **Kitchen sink:** placement, tone and layered examples in the Glass section.
+- **`ntn-gradient`** (NTN-19): a wash for any surface. A tone fades from the top edge into the
+  surface's own background, solid or glass. The accent is the default.
+  - Tones: `--success`, `--warning`, `--danger`, `--info` and `--neutral`.
+  - `--strong` starts from a deeper colour.
+  - `--full` fades over the whole height instead of `--ntn-gradient-size`.
+  - `--line` draws the border in the tone.
+- **Tokens:** `--ntn-gradient-color`, `-strong`, `-line` and `-size`.
+- **Kitchen sink:** a Gradient section with tone, dashboard, depth and glass examples.
 
 ### Changed
 - **Breaking:** `--ntn-ambient-height` is now `--ntn-ambient-size`, since the band can sit on a

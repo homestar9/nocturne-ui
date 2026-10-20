@@ -1,8 +1,8 @@
-// Colour tones shared by the badge, alert, button, progress and avatar status modifiers. Each tone
-// maps to the custom properties that paint it, so a theme still retints every tone at runtime.
-// Every toned block offers the same set: primary, the four statuses, and neutral. Each block's
-// default is one of them (badge neutral, alert info, progress primary), and the button gets
-// neutral from its default emphasis.
+// Colour tones shared by the badge, alert, button, progress, avatar status, ambient and gradient
+// modifiers. Each tone maps to the custom properties that paint it, so a theme still retints every
+// tone at runtime. Every toned block offers the same set: primary, the four statuses, and neutral.
+// Each block's default is one of them (badge neutral, alert info, progress, ambient and gradient
+// primary), and the button gets neutral from its default emphasis.
 //   soft  — tinted background          line  — hairline in the tone
 //   ink   — text and icons             dot   — a small solid mark
 //   solid — a filled bar or pip        on    — ink that sits on the solid fill

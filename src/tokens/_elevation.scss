@@ -57,6 +57,8 @@
   --ntn-background-image: none;
   --ntn-ambient-image: none;
   --ntn-ambient-size: 760px;
+  /* ntn-gradient (_gradient.scss): how far down the wash fades out */
+  --ntn-gradient-size: 160px;
   /* ntn-edge--shine (_effects.scss): one lap per --ntn-shine-speed; --ntn-shine-length is the
      light's trail, of which only the ring shows */
   --ntn-shine-speed: 20s;

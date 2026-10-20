@@ -1,0 +1,33 @@
+/* ── Gradient — ntn-gradient ─────────────────────────────────────────────────
+   A wash that composes onto any surface: a card, a stat, a panel, a bare div. A tone fades
+   from the top edge to transparent over --ntn-gradient-size, on top of the surface's own
+   background, so it fades into a solid card and into glass alike. Accent by default; the tones
+   recolour it, --strong starts it deeper, --full runs it the whole height, and --line draws
+   the border in the tone.
+
+   Last in the cascade: cards, the sidebar and the table set `background` as a shorthand, and
+   ntn-edge--glow sets a background-image, so the wash must follow them all to win at the same
+   specificity. On a glow card it replaces the colour bleed; the border and halo stay. */
+@use "../abstracts" as *;
+
+.ntn-gradient {
+  background-image: linear-gradient(to bottom, var(--ntn-gradient-color), transparent var(--ntn-gradient-size));
+
+  @each $tone in $statuses {
+    &--#{$tone} {
+      --ntn-gradient-color: #{tone($tone, soft)};
+      --ntn-gradient-strong: #{tone($tone, line)};
+      --ntn-gradient-line: #{tone($tone, line)};
+    }
+  }
+  // Neutral's tone line is an opaque grey, far too heavy for a wash, so it starts from the ink.
+  &--neutral {
+    --ntn-gradient-color: var(--ntn-alpha-ink-06);
+    --ntn-gradient-strong: var(--ntn-alpha-ink-10);
+    --ntn-gradient-line: var(--ntn-border-strong);
+  }
+  // After the tones, so it wins whichever tone is set.
+  &--strong { --ntn-gradient-color: var(--ntn-gradient-strong); }
+  &--full { --ntn-gradient-size: 100%; }
+  &--line { border-color: var(--ntn-gradient-line); }
+}
