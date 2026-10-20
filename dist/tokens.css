@@ -70,9 +70,13 @@
   --ntn-alpha-ink-04: rgba(255,255,255,0.04);
   --ntn-alpha-ink-06: rgba(255,255,255,0.06);
   --ntn-alpha-ink-10: rgba(255,255,255,0.10);
+  /* A per-person avatar (--ntn-avatar-hue): the OKLCH lightness its gradient starts from */
+  --ntn-avatar-lightness: 0.78;
 }
 
 :root {
+  /* ...and its chroma. themes/mono.css sets 0, so per-person avatars turn grey there. */
+  --ntn-avatar-chroma: 0.12;
   --ntn-success-soft: rgba(34,197,138,0.14);
   --ntn-success-line: rgba(34,197,138,0.30);
   --ntn-warning-soft: rgba(241,169,22,0.15);
@@ -338,6 +342,8 @@
   --ntn-alpha-ink-04: rgba(16,20,27,0.035);
   --ntn-alpha-ink-06: rgba(16,20,27,0.055);
   --ntn-alpha-ink-10: rgba(16,20,27,0.10);
+  /* A per-person avatar starts a touch deeper, so it holds its shape on white */
+  --ntn-avatar-lightness: 0.76;
   /* Surfaces are set outright: grey canvas, white paper, grey recesses. */
   --ntn-bg-app: #F6F7F9;
   --ntn-bg-sunken: #FFFFFF;

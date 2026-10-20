@@ -15,7 +15,7 @@ which case use `.ntn-icon`.
 | --- | --- |
 | `ntn-app` | Flex shell: sidebar + main |
 | `ntn-app__main` | Column holding navbar and scroll area |
-| `ntn-app__scroll` | The scrolling region under a sticky navbar |
+| `ntn-app__scroll` | The content area under the sticky navbar. The page scrolls, not this pane, so `position: sticky` inside it sticks to the viewport (offset top stickies by `--ntn-topbar-h`) |
 | `ntn-page` | Centred content column up to `--ntn-page-max` (1440px), 24px gutters, 14px gaps |
 | `ntn-page__head` `ntn-page__title` `ntn-page__sub` `ntn-page__actions` | Page header parts |
 | `ntn-grid` + `--2` `--3` `--4` `--split` `--split-reverse` | Card grids (14px gap, responsive) |
@@ -607,6 +607,7 @@ Every toned block offers the same set: `--primary` (the accent), `--success`, `-
 | `ntn-btn` | primary | neutral is the default emphasis with no tone; tones combine with an emphasis |
 | `ntn-ambient` | primary | tints the glow |
 | `ntn-gradient` | primary | tints the wash |
+| `ntn-toast` | neutral | the four statuses add an icon |
 
 Avatar status names a presence, not a tone: `--online` (success), `--busy` (danger), `--away`
 (warning), and offline (neutral) by default.
@@ -641,6 +642,72 @@ Dismiss with `data-ntn-dismiss`.
   </div>
 </div>
 ```
+
+## Toast — `ntn-toast` · `ntn-toaster`
+
+A short notice about something that just happened ("Post published", "Couldn't save"). It
+stacks in a corner and leaves on its own. Use an alert for anything that must stay on the page,
+and a modal for anything the user must decide.
+
+Call `toast()` from `nocturne.js`. Don't write toasts by hand: the function builds the markup,
+the region, the timer and the announcements.
+
+```js
+import { toast } from '@homestar9/nocturne-ui/js';
+
+toast('Draft saved');                                      // neutral, top-end, 4s
+toast({ title: 'Post published', message: '“Spring launch” is live.', tone: 'success' });
+const t = toast({ message: 'Uploading…', duration: 0 });   // stays until dismissed
+t.close();
+```
+
+**Options**
+- `message`, `title`: plain text, set as text, so user data is safe in them.
+- `tone`: `neutral` (default), `primary`, `success`, `warning`, `danger` or `info`. The four
+  statuses add an icon; turn it off with `icon: false`.
+- `duration`: in ms, default `4000`. `0` keeps the toast until it is dismissed.
+- `dismissible`: default `true`, which draws the close button.
+- `placement`: `top-end` (default), `top-start`, `top-center`, `bottom-end` or `bottom-start`.
+
+**Behaviour**
+- **Regions.** Each placement has one region, created on first use. Importing the module creates
+  nothing.
+- **Order.** The newest toast sits nearest the edge. At most 5 show at once; the oldest is
+  dropped.
+- **Stacking.** The region opens in the top layer. While a modal is open the toast mounts inside
+  it, because everything outside a modal is inert. If the modal closes, its toasts move to the
+  page.
+- **Timer.** Hover or keyboard focus pauses it. Escape closes the focused toast and leaves the
+  modal open. Focus returns to where it was.
+- **Announcements.** Each toast is announced once, through a hidden polite live region, or an
+  assertive one for `danger`. The toasts themselves are not live regions.
+- **Event.** Closing fires `ntn:toastclose` with `detail.reason`: `timeout`, `dismiss`, `api`
+  (`close()`), or `overflow` (dropped by the cap).
+- **Icons.** They come from `configure({ icon })`, under the keys `close`, `success`, `warning`,
+  `danger` and `info`.
+- **Reduced motion.** The toast fades in and out, and the timer line is hidden.
+
+The markup `toast()` builds, for reference and for server-rendered flashes. A hand-written toast
+does nothing on its own, so put it in an `ntn-toaster` with `aria-live="polite"`:
+
+```html
+<section class="ntn-toaster" data-ntn-placement="top-end" aria-live="polite" aria-label="Notifications">
+  <div class="ntn-toast ntn-toast--success">
+    <i class="fa-light fa-circle-check ntn-toast__icon" aria-hidden="true"></i>
+    <div class="ntn-toast__body">
+      <div class="ntn-toast__title">Post published</div>
+      <div class="ntn-toast__message">“Spring launch” is live on the site.</div>
+    </div>
+    <button type="button" class="ntn-toast__close" aria-label="Dismiss"><i class="fa-light fa-xmark"></i></button>
+    <div class="ntn-toast__timer"></div>
+  </div>
+</section>
+```
+
+Elements: `__icon` `__body` `__title` `__message` `__close` `__timer`. Modifiers: `--neutral`
+(default) `--primary` `--success` `--warning` `--danger` `--info`. State: `data-ntn-paused` (the
+timer line stops), `data-ntn-leaving` (the exit). `--ntn-toast-duration` sets the timer line's
+length.
 
 ## Tooltip — `ntn-tooltip`
 
@@ -690,7 +757,7 @@ Set the level with `data-value` (and optional `data-max`) on `__fill`; `nocturne
 
 ## Avatar — `ntn-avatar` · `ntn-avatars`
 
-Modifiers: `--xs` `--sm` `--lg` `--xl` `--ring`. Status dot: `__status` with
+Modifiers: `--xs` `--sm` `--lg` `--xl` `--ring` `--unknown`. Status dot: `__status` with
 `--online` `--busy` `--away`. Overlapping group: `ntn-avatars`, overflow via `__more`.
 
 ```html
@@ -702,6 +769,37 @@ Modifiers: `--xs` `--sm` `--lg` `--xl` `--ring`. Status dot: `__status` with
   <span class="ntn-avatar ntn-avatar--sm">JT</span>
   <span class="ntn-avatars__more">+4</span>
 </span>
+```
+
+**A colour per person.** By default every avatar is the accent gradient. To tell people apart,
+set `--ntn-avatar-hue` (0–359) inline. The kit keeps the lightness and chroma, tuned per mode,
+and draws dark ink on every hue. Mono sets the chroma to 0, so these avatars turn grey there.
+Without the property nothing changes.
+
+```html
+<span class="ntn-avatar" style="--ntn-avatar-hue: 235">AL</span>        <!-- server-rendered -->
+<span class="ntn-avatar" data-ntn-avatar-name="Ada Lovelace">AL</span>   <!-- nocturne.js hashes the name -->
+```
+
+`avatarHue(name)` (exported by `nocturne.js`) is the hash, so the same name gets the same colour
+everywhere: `h = (h × 31 + c) mod 360` over the name's **UTF-16 code units** `c`, from `h = 0`. A
+server-side twin must hash the same units (JavaScript's `charCodeAt`, Java's `charAt`). Check it
+against these vectors:
+
+| Name | Hue |
+| --- | --- |
+| `""` | 0 |
+| `A` | 65 |
+| `Ada Lovelace` | 235 |
+| `Grace Hopper` | 356 |
+| `Zoë` | 166 |
+| `😀` | 259 |
+
+**No person** (deleted, system, unassigned): `--unknown` is a flat neutral disc. Label it, since
+the `?` means nothing to a screen reader:
+
+```html
+<span class="ntn-avatar ntn-avatar--unknown" role="img" aria-label="Unknown user">?</span>
 ```
 
 ---
@@ -819,13 +917,83 @@ Filter-form elements: `__field` `__actions` `__applied`, plus `ntn-filter-tag` /
 above any content block. The filter form is revealed by a button carrying
 `data-ntn-reveal="#id"`, and drops its own top rule when it follows a `--divided` toolbar.
 
+## Upload — `ntn-dropzone` · `ntn-file`
+
+The look of an upload, with no engine assumed. Nocturne bundles no upload library: drive these
+from Dropzone, Uppy or a plain form.
+
+**Drop area.** A `<label class="ntn-dropzone">` with a file input inside it. The kit stretches
+the input invisibly over the label, so click-to-browse and dropping files on it work with no JS,
+and the label draws the focus ring.
+
+- Elements: `__icon` (a disc holding an `<i>`), `__title`, `__hint` (limits and accepted types).
+- Modifier: `--compact`, a single line for a tight form.
+- State: `data-ntn-dragover` while files are held over it. `aria-disabled="true"` also needs
+  `disabled` on the input.
+
+```html
+<label class="ntn-dropzone" data-ntn-dropzone>
+  <input type="file" name="files" multiple accept="image/*,application/pdf">
+  <span class="ntn-dropzone__icon"><i class="fa-light fa-cloud-arrow-up"></i></span>
+  <span class="ntn-dropzone__title">Drop files here or click to browse</span>
+  <span class="ntn-dropzone__hint">PNG, JPG or PDF, up to 10 MB each</span>
+</label>
+```
+
+**`data-ntn-dropzone`** (optional, `nocturne.js`):
+- **Drag-over state.** It sets `data-ntn-dragover` while files are dragged over the area. Enters
+  and leaves are counted, so moving over a child doesn't flicker it. Only drags that carry files
+  count.
+- **`ntn:files`.** It fires `ntn:files` with `detail.files` (an array of `File`) on a drop or a
+  pick.
+
+An upload library that runs its own drag handling (Dropzone) doesn't need the attribute. Toggle
+`data-ntn-dragover` from the library's `dragenter` / `dragleave` / `drop` events instead, and
+leave out the input if the library adds its own.
+
+**File rows.** `ntn-file-list` (a `<ul>`) of `ntn-file` rows.
+
+- Elements: `__thumb` (an `<img>`, or a span holding an icon), `__name`, `__meta` (size and
+  status), `__actions` (icon buttons), `__progress` (an `ntn-progress--sm`) and `__error`.
+- State: `data-ntn-state` on the row.
+  - `uploading`: the only state that shows `__progress`.
+  - `done`
+  - `error`: the only state that shows `__error`, and it tints the row danger.
+  - No state means a file already stored.
+- An engine's template can therefore always carry both the progress bar and the error.
+
+```html
+<ul class="ntn-file-list">
+  <li class="ntn-file" data-ntn-state="uploading">
+    <img class="ntn-file__thumb" src="…" alt="">
+    <span class="ntn-file__name">launch-hero.png</span>
+    <span class="ntn-file__meta">2.4 MB</span>
+    <div class="ntn-file__actions">
+      <button class="ntn-icon-btn ntn-icon-btn--sm" type="button" aria-label="Remove launch-hero.png"><i class="fa-light fa-trash"></i></button>
+    </div>
+    <div class="ntn-progress ntn-progress--sm ntn-file__progress">
+      <div class="ntn-progress__track"><div class="ntn-progress__fill" style="width: 45%"></div></div>
+    </div>
+    <span class="ntn-file__error" role="alert"></span>
+  </li>
+</ul>
+```
+
+With Dropzone, use this row as `previewTemplate`:
+- Put `data-dz-thumbnail` on the `<img>`, `data-dz-name` on `__name`, `data-dz-size` on
+  `__meta`, `data-dz-uploadprogress` on `__fill` and `data-dz-errormessage` on `__error`.
+- Set `data-ntn-state` from the `sending` / `success` / `error` events.
+
 ## Date & range picker — `ntn-daterange`
 
 Elements: `__trigger` `__value` `__caret` `__panel` `__row` `__presets` `__preset` `__cals`
 `__cal` `__foot` `__summary` `__actions`. Modifiers: `--sm` `--block`.
 `__row` must wrap `__presets` + `__cals` — the panel is a column, and that row is what
-sets its width. `nocturne.js` positions the panel inside whatever clips it and adds
-`__panel--narrow` (chip presets, one month) when it cannot fit.
+sets its width. Ship the panel `hidden` (the no-JS state). `nocturne.js` makes it a
+`popover="manual"`, so it opens in the **top layer**: no `overflow` ancestor clips it, and inside
+a modal it sits above the dialog. It is placed under the trigger (`data-ntn-placement` on the
+panel, default `bottom-start`), flips above near the bottom of the window, follows the trigger on
+scroll, and gets `__panel--narrow` (chip presets, one month) when it cannot fit the window.
 
 The two month grids are rendered by `nocturne.js` — write the shell only. Selection is
 draft-first: presets and clicks change nothing outside the panel until **Apply**, which fires
@@ -852,6 +1020,34 @@ in the footer:
 
 The event detail then carries `time`, `startISO` and `endISO` (`2026-10-02T09:30`) alongside the
 plain dates. There is no range + time variant — two times in one popover is a form, not a picker.
+The input's value stays 24-hour `HH:MM`; the trigger shows the time the user's locale writes it
+(`2:05 PM` in en-US, `14:05` in en-GB).
+
+**Clear.** A `data-ntn-daterange-clear` button in `__actions` commits an empty value at once
+(time included) and fires `ntn:daterangechange` with `start`, `end`, `time`, `startISO` and
+`endISO` all `null`. Use it for optional dates (publish, expiry):
+
+```html
+<button class="ntn-btn ntn-btn--subtle ntn-btn--sm" type="button" data-ntn-daterange-clear>Clear</button>
+```
+
+**Forms.** `data-ntn-name="x"` on the root keeps hidden inputs in step with the committed value,
+as the combobox does: `x` is the ISO start (`2026-10-02`, or `2026-10-02T09:30` with a time) and,
+for a range, `x-end` the ISO end. Both are `""` when empty. Every commit also fires a bubbling
+`change`, and a form `reset` restores the first-rendered value.
+
+**Set from code.** The `data-ntn-start` / `data-ntn-end` / `data-ntn-time` attributes always hold
+the committed value. Change them and call `refresh(root)`, or:
+
+```js
+import { setDateRange } from '@homestar9/nocturne-ui/js';
+setDateRange(root, { start: '2026-09-01', end: new Date(2026, 8, 20) }); // ISO strings or Dates
+setDateRange(root, { time: '17:45' });   // a part left out is kept
+setDateRange(root, { start: null });     // null clears
+```
+
+Either way the trigger and the form inputs redraw, and no event fires (like setting an input's
+value).
 
 ```html
 <div class="ntn-daterange" data-ntn-daterange data-ntn-start="2026-09-01" data-ntn-end="2026-09-20">
@@ -1171,11 +1367,14 @@ table, so header, toolbar, filter form and pager can sit anywhere in that wrappe
 | `data-ntn-prev` / `data-ntn-next` / `data-ntn-goto="3"` | Step and jump |
 | `data-ntn-table-empty` on a `<tr>` | Shown only when nothing matches |
 | `data-value` / `data-max` on `.ntn-progress__fill` | Sets the fill width |
+| `data-ntn-avatar-name="Ada Lovelace"` on `.ntn-avatar` | Sets `--ntn-avatar-hue` from `avatarHue(name)` |
+| `data-ntn-dropzone` on `.ntn-dropzone` | Sets `data-ntn-dragover` while files are dragged over it; fires `ntn:files` on a drop or pick |
 | `data-ntn-theme-toggle` | Flips dark ⇄ light, persists, swaps the icon |
 | `data-ntn-theme-set="dark\|light\|auto"` | Sets a specific theme preference |
-| `data-ntn-daterange` on `.ntn-daterange` | Renders the month grids, owns selection; fires `ntn:daterangechange` on Apply |
-| `data-ntn-start` / `-end` / `-min` / `-max` | Initial range and bounds, `YYYY-MM-DD` |
+| `data-ntn-daterange` on `.ntn-daterange` | Renders the month grids, owns selection, opens the panel in the top layer; fires `ntn:daterangechange` on Apply or Clear |
+| `data-ntn-start` / `-end` / `-min` / `-max` | Range and bounds, `YYYY-MM-DD`; start / end / time always hold the committed value (change them + `refresh(root)`, or call `setDateRange()`) |
+| `data-ntn-name="field"` on `.ntn-daterange` | Posts `field` (ISO start) and, for a range, `field-end` with its form; fires `change`, honours `form.reset()` |
 | `data-ntn-single` on the root | One date instead of a range |
 | `data-ntn-time="09:30"` + `data-ntn-daterange-time` on an input | Adds a time to a single date; event gains `time`, `startISO`, `endISO` |
 | `data-ntn-range="7\|today\|month\|last-month\|ytd"` on a preset | Sets the draft range |
-| `data-ntn-daterange-label` / `-summary` / `-apply` / `-cancel` | The picker's trigger text, footer readout, and buttons |
+| `data-ntn-daterange-label` / `-summary` / `-apply` / `-cancel` / `-clear` | The picker's trigger text, footer readout, and buttons |

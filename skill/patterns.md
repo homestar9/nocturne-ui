@@ -39,6 +39,10 @@ Rules of the shell:
 - The page header (`ntn-page__head`) carries the H1 and the page's own actions — one primary
   button at most.
 - Collapse to the rail with `data-ntn-toggle=".ntn-sidebar"` on a top-bar icon button.
+- The page (the document) scrolls; `ntn-app__scroll` is not a scroll container. A sticky save
+  bar (`position: sticky; bottom: 0`) or side column (`top: var(--ntn-topbar-h)`) inside the
+  content sticks to the viewport. Don't give the content area its own `overflow`, or it captures
+  every sticky inside it.
 
 ## 2. Dashboard body
 

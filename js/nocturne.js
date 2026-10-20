@@ -17,12 +17,17 @@ function make(tag, attrs = {}, ...children) {
 }
 /* Icons the behaviours draw themselves, by SEMANTIC key. The default renders Font Awesome Light;
    an app with its own icon system calls configure({ icon: (key) => element }) and then refresh(). */
-const FA_ICONS = { close: 'xmark', prev: 'chevron-left', next: 'chevron-right', 'theme-light': 'sun', 'theme-dark': 'moon' };
+const FA_ICONS = {
+  close: 'xmark', prev: 'chevron-left', next: 'chevron-right', 'theme-light': 'sun', 'theme-dark': 'moon',
+  success: 'circle-check', warning: 'triangle-exclamation', danger: 'circle-exclamation', info: 'circle-info',
+};
 let renderIcon = (key) => make('i', { class: 'fa-light fa-' + (FA_ICONS[key] || key), 'aria-hidden': 'true' });
 
 /**
- * Swap how nocturne.js renders the icons it creates (chip remove, calendar arrows, theme toggle).
- * @param {{ icon?: (key: string) => Element }} options  Keys: close, prev, next, theme-light, theme-dark.
+ * Swap how nocturne.js renders the icons it creates (chip remove, calendar arrows, theme toggle,
+ * toasts).
+ * @param {{ icon?: (key: string) => Element }} options  Keys: close, prev, next, theme-light,
+ *   theme-dark, and the toast tones success, warning, danger, info.
  */
 export function configure({ icon } = {}) {
   if (typeof icon === 'function') renderIcon = icon;
@@ -701,9 +706,14 @@ function ddPlace(root) {
   const panel = ddPanel(root);
   const trigger = ddTrigger(root);
   if (!panel || !trigger) return;
-  const r = trigger.getBoundingClientRect();
-  const [side, align] = (panel.dataset.ntnPlacement || 'bottom-end').split('-');
-  const gap = Number(panel.dataset.ntnOffset || 6);
+  placeFixed(panel, trigger, panel.dataset.ntnPlacement || 'bottom-end', Number(panel.dataset.ntnOffset || 6));
+}
+
+/* Places a top-layer (position: fixed) panel against an anchor in viewport pixels. Shared by
+   dropdowns and the date picker. */
+function placeFixed(panel, anchor, placement, gap) {
+  const r = anchor.getBoundingClientRect();
+  const [side, align] = placement.split('-');
   const margin = 8;
   const w = panel.offsetWidth;
   const h = panel.offsetHeight;
@@ -806,6 +816,7 @@ function ddOnFocusOut(e) {
 
 function ddReposition() {
   $$('[data-ntn-dropdown][data-ntn-open]').forEach(ddPlace);
+  $$('[data-ntn-daterange]').filter((r) => drState(r).open).forEach(drPlace);
 }
 
 /* Table select-all + per-row aria-selected. */
@@ -910,11 +921,14 @@ function pressToggle(btn) {
    <div class="ntn-daterange" data-ntn-daterange data-ntn-start="2026-09-01" …>
    The trigger, the preset list and the footer are markup; the two month grids are
    rendered here. Selection is draft-first: nothing leaves the component until
-   Apply, which fires ntn:daterangechange. */
+   Apply (or Clear), which fires ntn:daterangechange. The data-ntn-start / -end / -time
+   attributes always hold the committed value: an app may change them and call refresh(root),
+   or call setDateRange(). The panel opens in the top layer, placed against the trigger. */
 
 const drMonthFmt = new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' });
 const drDayFmt = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' });
 const drFullFmt = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+const drTimeFmt = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' });
 const drNarrow = new Intl.DateTimeFormat(undefined, { weekday: 'narrow' });
 /* 1 Sep 2024 was a Sunday — seven days from there gives the locale's initials. */
 const DOW = Array.from({ length: 7 }, (_, i) => drNarrow.format(new Date(2024, 8, 1 + i)));
@@ -925,28 +939,114 @@ const shift = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n)
 const same = (a, b) => !!a && !!b && a.getTime() === b.getTime();
 const drIso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const drParse = (s) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; };
+const drTimeOk = (t) => /^\d{2}:\d{2}(:\d{2}(\.\d+)?)?$/.test(t || '');
+/* The input's value stays 24-hour HH:MM; the label shows it the way the user's locale does. */
+const drTimeLabel = (t) => (drTimeOk(t) ? drTimeFmt.format(new Date(2000, 0, 1, +t.slice(0, 2), +t.slice(3, 5))) : '');
+const drStamp = (s, d) => (d && s.time ? `${drIso(d)}T${s.time}` : d ? drIso(d) : null);
 
 function drLabel(a, b, time) {
   if (!a) return null;
-  const t = time ? ` · ${time}` : '';
+  const t = drTimeLabel(time) ? ` · ${drTimeLabel(time)}` : '';
   if (!b || same(a, b)) return drFullFmt.format(a) + t;
   return a.getFullYear() === b.getFullYear()
     ? `${drDayFmt.format(a)} – ${drFullFmt.format(b)}`
     : `${drFullFmt.format(a)} – ${drFullFmt.format(b)}`;
 }
 
+const drDefaults = new WeakMap();
+const drPanel = (root) => root.querySelector('.ntn-daterange__panel');
+
 function drState(root) {
   if (!root.ntnRange) {
-    const start = drParse(root.dataset.ntnStart);
-    const end = drParse(root.dataset.ntnEnd);
     const single = root.hasAttribute('data-ntn-single');
-    root.ntnRange = {
-      single, start, end: single ? start : end, draftStart: start, draftEnd: single ? start : end,
-      hover: null, open: false, time: root.dataset.ntnTime || '',
-      view: monthStart(start || new Date()),
-    };
+    root.ntnRange = { single, hover: null, open: false };
+    drDefaults.set(root, { start: root.dataset.ntnStart || null, end: root.dataset.ntnEnd || null, time: root.dataset.ntnTime || null });
+    drLoad(root);
   }
   return root.ntnRange;
+}
+
+/* Reads the committed value from the attributes. Skipped while open, so a draft survives. */
+function drLoad(root) {
+  const s = drState(root);
+  if (s.open) return;
+  s.start = drParse(root.dataset.ntnStart);
+  s.end = s.single ? s.start : drParse(root.dataset.ntnEnd);
+  s.draftStart = s.start; s.draftEnd = s.end;
+  s.time = drTimeOk(root.dataset.ntnTime) ? root.dataset.ntnTime : '';
+  s.view = monthStart(s.start || new Date());
+}
+
+/* Opens in the top layer where the browser supports popovers, so no overflow ancestor clips the
+   panel and it sits above a modal around it. The markup ships hidden for the no-JS case. */
+function drSetup(root) {
+  const panel = drPanel(root);
+  if (!panel || typeof panel.showPopover !== 'function') return;
+  if (!panel.hasAttribute('popover')) panel.setAttribute('popover', 'manual');
+  panel.hidden = false;
+}
+
+function drShow(panel, on) {
+  if (!panel) return;
+  if (panel.hasAttribute('popover') && typeof panel.showPopover === 'function') {
+    try { on ? panel.showPopover() : panel.hidePopover(); } catch (e) { /* already in that state */ }
+  } else {
+    panel.hidden = !on;
+  }
+}
+
+/* Form association: data-ntn-name="x" keeps hidden inputs in step with the committed value —
+   x (ISO start, with THH:MM when there is a time) and, for a range, x-end. "" when empty. */
+function drSyncInputs(root) {
+  const name = root.dataset.ntnName;
+  if (!name) return;
+  const s = drState(root);
+  const want = [[name, drStamp(s, s.start)]];
+  if (!s.single) want.push([name + '-end', drStamp(s, s.end)]);
+  const inputs = $$('input[data-ntn-daterange-input]', root);
+  want.forEach(([n, v], i) => {
+    let input = inputs[i];
+    if (!input) { input = make('input', { type: 'hidden', 'data-ntn-daterange-input': '' }); root.append(input); }
+    input.name = n;
+    input.value = v || '';
+  });
+  inputs.slice(want.length).forEach((el) => el.remove());
+}
+
+function drRefresh(root) {
+  drSetup(root);
+  drLoad(root);
+  drSyncTrigger(root);
+  drSyncInputs(root);
+}
+
+/**
+ * Sets a date picker's committed value from code (a saved filter, a record being edited) and
+ * redraws its trigger and form inputs. Fires no event, like setting an input's value.
+ * @param {Element} root  the [data-ntn-daterange] element
+ * @param {{ start?: string|Date|null, end?: string|Date|null, time?: string|null }} value
+ *   Dates as YYYY-MM-DD or Date, time as 24-hour HH:MM. null clears a part; a part left out is kept.
+ */
+export function setDateRange(root, { start, end, time } = {}) {
+  if (!root || !root.matches || !root.matches('[data-ntn-daterange]')) return;
+  const s = drState(root);
+  if (s.open) drClose(root, false);
+  const day = (v) => (v instanceof Date ? drIso(v) : drParse(v) ? v : '');
+  if (start !== undefined) root.dataset.ntnStart = day(start);
+  if (end !== undefined) root.dataset.ntnEnd = day(end);
+  if (time !== undefined) { if (drTimeOk(time)) root.dataset.ntnTime = time; else delete root.dataset.ntnTime; }
+  drRefresh(root);
+  const t = root.querySelector('[data-ntn-daterange-time]');
+  if (t) t.value = s.time;
+}
+
+/* A form reset puts each picker back to the value it was first rendered with. */
+function drOnReset(e) {
+  if (e.defaultPrevented) return;
+  $$('[data-ntn-daterange]', e.target).forEach((root) => {
+    const initial = drDefaults.get(root);
+    if (initial) setDateRange(root, initial);
+  });
 }
 
 function drPresetRange(key) {
@@ -1042,24 +1142,24 @@ function drSyncTrigger(root) {
 
 function drClose(root, commit) {
   const s = drState(root);
-  const panel = root.querySelector('.ntn-daterange__panel');
   const trigger = root.querySelector('.ntn-daterange__trigger');
   if (commit) {
     s.start = s.draftStart;
     s.end = s.single ? s.draftStart : (s.draftEnd || s.draftStart);
     root.dataset.ntnStart = s.start ? drIso(s.start) : '';
     root.dataset.ntnEnd = s.end ? drIso(s.end) : '';
-    if (s.time) root.dataset.ntnTime = s.time; 
+    if (s.time) root.dataset.ntnTime = s.time; else delete root.dataset.ntnTime;
     drSyncTrigger(root);
-    const stamp = (d) => (d && s.time ? `${drIso(d)}T${s.time}` : d ? drIso(d) : null);
+    drSyncInputs(root);
     root.dispatchEvent(new CustomEvent('ntn:daterangechange', {
       bubbles: true,
       detail: {
         start: s.start ? drIso(s.start) : null, end: s.end ? drIso(s.end) : null,
-        time: s.time || null, startISO: stamp(s.start), endISO: stamp(s.end),
+        time: s.time || null, startISO: drStamp(s, s.start), endISO: drStamp(s, s.end),
         single: s.single, startDate: s.start, endDate: s.end,
       },
     }));
+    root.dispatchEvent(new Event('change', { bubbles: true }));
   } else {
     s.draftStart = s.start; s.draftEnd = s.end; s.time = root.dataset.ntnTime || '';
     const t = root.querySelector('[data-ntn-daterange-time]');
@@ -1067,49 +1167,42 @@ function drClose(root, commit) {
   }
   s.hover = null;
   s.open = false;
-  if (panel) panel.hidden = true;
+  drShow(drPanel(root), false);
   if (trigger) trigger.setAttribute('aria-expanded', 'false');
 }
 
-/* Place the panel in pixels against whatever actually clips it — an app scroll
-   container is usually narrower than the window, so a viewport-only check leaves
-   the panel hanging outside the column. */
-function drClipBounds(el) {
-  let n = el.parentElement;
-  while (n && n !== document.body && n !== document.documentElement) {
-    const ox = getComputedStyle(n).overflowX;
-    if (ox !== 'visible') { const r = n.getBoundingClientRect(); return { left: Math.max(0, r.left), right: Math.min(innerWidth, r.right) }; }
-    n = n.parentElement;
-  }
-  return { left: 0, right: innerWidth };
+/* Clear commits an empty value at once (an optional publish or expiry date). */
+function drClear(root) {
+  const s = drState(root);
+  s.draftStart = null; s.draftEnd = null; s.time = '';
+  const t = root.querySelector('[data-ntn-daterange-time]');
+  if (t) t.value = '';
+  drClose(root, true);
 }
 
-function drPlace(root, panel) {
+/* Narrow (chip presets, one month) when the full panel cannot fit the window; then, in the top
+   layer, place it under the trigger — flipped above near the bottom, kept on screen. */
+function drPlace(root) {
+  const panel = drPanel(root);
+  if (!panel) return;
   panel.classList.remove('ntn-daterange__panel--narrow');
-  panel.style.left = '0px';
-  const pad = 8;
-  const bounds = drClipBounds(panel);
-  const avail = bounds.right - bounds.left - pad * 2;
-  if (panel.offsetWidth > avail) panel.classList.add('ntn-daterange__panel--narrow');
-  const anchor = root.getBoundingClientRect().left;
-  const w = panel.offsetWidth;
-  let left = 0;
-  if (anchor + w > bounds.right - pad) left = bounds.right - pad - w - anchor;
-  if (anchor + left < bounds.left + pad) left = bounds.left + pad - anchor;
-  panel.style.left = Math.round(left) + 'px';
+  if (panel.offsetWidth > innerWidth - 16) panel.classList.add('ntn-daterange__panel--narrow');
+  const trigger = root.querySelector('.ntn-daterange__trigger');
+  if (trigger && panel.hasAttribute('popover')) placeFixed(panel, trigger, panel.dataset.ntnPlacement || 'bottom-start', 6);
 }
 
 function drOpen(root) {
   const s = drState(root);
-  const panel = root.querySelector('.ntn-daterange__panel');
+  const panel = drPanel(root);
   const trigger = root.querySelector('.ntn-daterange__trigger');
+  drSetup(root);
   s.draftStart = s.start; s.draftEnd = s.end; s.hover = null;
   s.view = monthStart(s.start || new Date());
   s.open = true;
-  if (panel) panel.hidden = false;
+  drShow(panel, true);
   if (trigger) trigger.setAttribute('aria-expanded', 'true');
   drRender(root);
-  if (panel) drPlace(root, panel);
+  drPlace(root);
 }
 
 /* Returns true when the click belonged to the picker. */
@@ -1141,6 +1234,7 @@ function drOnClick(root, e) {
   }
 
   if (e.target.closest('[data-ntn-daterange-apply]')) { drClose(root, true); return true; }
+  if (e.target.closest('[data-ntn-daterange-clear]')) { drClear(root); return true; }
   if (e.target.closest('[data-ntn-daterange-cancel]')) { drClose(root, false); return true; }
   return true;
 }
@@ -1319,6 +1413,14 @@ function onKeyDown(e) {
   const t = e.target;
   const q = (sel) => (t && t.closest ? t.closest(sel) : null);
 
+  // Escape in a dismissible toast closes that toast only (preventDefault keeps a modal open).
+  const toastEl = q('.ntn-toast');
+  if (toastEl && e.key === 'Escape' && toastEl.querySelector('.ntn-toast__close')) {
+    e.preventDefault();
+    toastClose(toastEl, 'dismiss');
+    return;
+  }
+
   // A closed dropdown's trigger: arrow keys open it on the first / last item.
   const ddTrig = q('[data-ntn-dropdown] > [aria-haspopup], [data-ntn-dropdown] > [data-ntn-dropdown-trigger]');
   if (ddTrig && !ddIsOpen(ddRoot(ddTrig)) && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
@@ -1367,6 +1469,10 @@ function onChange(e) {
     }
     syncTable(table);
   }
+  if (e.type === 'change' && el.matches('[data-ntn-dropzone] input[type="file"]')) {
+    const zone = el.closest('[data-ntn-dropzone]');
+    if (zone.getAttribute('aria-disabled') !== 'true') dzFire(zone, el.files);
+  }
   if (el.matches('[data-ntn-daterange-time]')) {
     const root = el.closest('[data-ntn-daterange]');
     if (root) { drState(root).time = el.value; drRender(root); }
@@ -1385,6 +1491,247 @@ function onChange(e) {
   }
 }
 
+/* ── Avatar hue ──────────────────────────────────────────────────────────────
+   A stable colour per person. The hash is deliberately simple so a server can twin it:
+   h = (h × 31 + c) mod 360 over the name's UTF-16 code units c, from h = 0. A twin must hash
+   the same units (JavaScript's charCodeAt, Java's charAt), not code points, to agree on
+   names outside the Basic Multilingual Plane (emoji, some CJK). */
+
+/**
+ * The hue (0–359) for a name, for --ntn-avatar-hue.
+ * @param {string} name
+ * @returns {number}
+ */
+export function avatarHue(name) {
+  const s = String(name ?? '');
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 360;
+  return h;
+}
+
+/* data-ntn-avatar-name="Ada Lovelace" on an .ntn-avatar sets its hue from the name. */
+function syncAvatar(el) {
+  el.style.setProperty('--ntn-avatar-hue', String(avatarHue(el.dataset.ntnAvatarName)));
+}
+
+/* ── Drop area ───────────────────────────────────────────────────────────────
+   <label class="ntn-dropzone" data-ntn-dropzone> with a file input stretched over it. The
+   browser already takes a drop on that input; this adds data-ntn-dragover while files are held
+   over the area, and fires ntn:files { files } on a drop or a pick, for apps with no upload
+   library. Enters and leaves are counted, because moving over a child fires both. Only drags
+   that carry files count, so a tree row dragged across the page passes it by. */
+
+const dzDepth = new WeakMap();
+const dzFiles = (e) => !!e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files');
+
+function dzZone(e) {
+  const zone = e.target.closest && e.target.closest('[data-ntn-dropzone]');
+  return zone && zone.getAttribute('aria-disabled') !== 'true' && dzFiles(e) ? zone : null;
+}
+
+function dzFire(zone, files) {
+  zone.dispatchEvent(new CustomEvent('ntn:files', { bubbles: true, detail: { files: Array.from(files || []) } }));
+}
+
+function dzReset(zone) {
+  dzDepth.delete(zone);
+  zone.removeAttribute('data-ntn-dragover');
+}
+
+function onDzEnter(e) {
+  const zone = dzZone(e);
+  if (!zone) return;
+  dzDepth.set(zone, (dzDepth.get(zone) || 0) + 1);
+  zone.setAttribute('data-ntn-dragover', '');
+}
+
+function onDzLeave(e) {
+  const zone = dzZone(e);
+  if (!zone) return;
+  const depth = (dzDepth.get(zone) || 1) - 1;
+  if (depth > 0) dzDepth.set(zone, depth); else dzReset(zone);
+}
+
+/* Without this, a drop that misses the input would make the browser open the file. */
+function onDzOver(e) {
+  if (dzZone(e)) e.preventDefault();
+}
+
+function onDzDrop(e) {
+  const zone = dzZone(e);
+  if (!zone) return;
+  dzReset(zone);
+  // A drop on the input sets its files natively, and the change that follows fires ntn:files.
+  if (e.target.matches && e.target.matches('input[type="file"]')) return;
+  e.preventDefault();
+  dzFire(zone, e.dataTransfer.files);
+}
+
+/* ── Toast ───────────────────────────────────────────────────────────────────
+   toast() builds a notice in a corner region, created on first use (one per placement and
+   container). The region opens in the top layer; while a modal is open it is mounted inside
+   that dialog, because everything outside a modal is inert. Announcements go through two hidden
+   live regions per container (polite, and assertive for danger), so each toast is read once.
+   Text is always set as text, never parsed as HTML. */
+
+const TOAST_PLACEMENTS = ['top-end', 'top-start', 'top-center', 'bottom-end', 'bottom-start'];
+const TOAST_TONES = ['primary', 'success', 'warning', 'danger', 'info'];
+const TOAST_ICONS = ['success', 'warning', 'danger', 'info'];
+const TOAST_MAX = 5;
+const TOAST_LEAVE_MS = 160;
+const toasts = new WeakMap();
+
+/* The topmost open modal, if any: toasts outside it could not be reached. */
+function toastHost() {
+  const modals = $$('dialog[open]').filter((d) => { try { return d.matches(':modal'); } catch (e) { return false; } });
+  return modals.pop() || document.body;
+}
+
+function toastLive(host, assertive) {
+  const sel = `:scope > .ntn-toaster__live[aria-live="${assertive ? 'assertive' : 'polite'}"]`;
+  let live = host.querySelector(sel);
+  if (!live) { live = make('div', { class: 'ntn-toaster__live', 'aria-live': assertive ? 'assertive' : 'polite', 'aria-atomic': 'true' }); host.append(live); }
+  return live;
+}
+
+function toastRegion(host, placement) {
+  let region = host.querySelector(`:scope > .ntn-toaster[data-ntn-placement="${placement}"]`);
+  if (!region) {
+    region = make('section', { class: 'ntn-toaster', 'data-ntn-placement': placement, 'aria-label': 'Notifications' });
+    if (typeof region.showPopover === 'function') region.setAttribute('popover', 'manual');
+    host.append(region);
+  }
+  return region;
+}
+
+const regionToasts = (region) => $$(':scope > .ntn-toast:not([data-ntn-leaving])', region);
+
+/* An empty region is hidden; re-opening it puts it on top of the top layer again, above any
+   menu or picker opened since. (A region already showing toasts is left alone, since re-opening
+   would replay their animations.) */
+function toastRaise(region) {
+  if (!region.hasAttribute('popover') || regionToasts(region).length) return;
+  try { region.hidePopover(); } catch (e) { /* not open */ }
+  try { region.showPopover(); } catch (e) { /* detached */ }
+}
+
+function toastSettle(region) {
+  if (region.querySelector(':scope > .ntn-toast')) return;
+  if (region.hasAttribute('popover')) { try { region.hidePopover(); } catch (e) { /* not open */ } }
+}
+
+function toastTick(el) {
+  const t = toasts.get(el);
+  if (!t || !t.duration) return;
+  const pause = t.hover || t.focus;
+  el.toggleAttribute('data-ntn-paused', pause);
+  if (pause && t.timer) {
+    clearTimeout(t.timer); t.timer = null;
+    t.left -= Date.now() - t.since;
+  } else if (!pause && !t.timer) {
+    t.since = Date.now();
+    t.timer = setTimeout(() => toastClose(el, 'timeout'), Math.max(0, t.left));
+  }
+}
+
+function toastClose(el, reason) {
+  const t = toasts.get(el);
+  if (!t || t.closed) return;
+  t.closed = true;
+  clearTimeout(t.timer);
+  const region = el.parentElement;
+  const hadFocus = el.contains(document.activeElement);
+  el.setAttribute('data-ntn-leaving', '');
+  el.dispatchEvent(new CustomEvent('ntn:toastclose', { bubbles: true, detail: { reason } }));
+  if (hadFocus) {
+    // Back to where the user was before tabbing in, or to the next toast.
+    const next = region && regionToasts(region).map((x) => x.querySelector('.ntn-toast__close')).find(Boolean);
+    const back = t.returnTo && t.returnTo.isConnected ? t.returnTo : next;
+    if (back) back.focus();
+  }
+  setTimeout(() => { el.remove(); if (region) toastSettle(region); }, TOAST_LEAVE_MS);
+}
+
+/**
+ * Shows a toast.
+ * @param {string | {
+ *   message?: string, title?: string, tone?: 'neutral'|'primary'|'success'|'warning'|'danger'|'info',
+ *   duration?: number, dismissible?: boolean, icon?: boolean,
+ *   placement?: 'top-end'|'top-start'|'top-center'|'bottom-end'|'bottom-start'
+ * }} options  A string is the message. duration is in ms (default 4000); 0 keeps it until
+ *   dismissed. Text is set as text, so it may carry user data.
+ * @returns {{ element: HTMLElement, close: () => void }}
+ */
+export function toast(options = {}) {
+  const o = typeof options === 'string' ? { message: options } : options;
+  const { message = '', title = '', duration = 4000, dismissible = true, icon = true } = o;
+  const tone = TOAST_TONES.includes(o.tone) ? o.tone : 'neutral';
+  const placement = TOAST_PLACEMENTS.includes(o.placement) ? o.placement : 'top-end';
+  const host = toastHost();
+  const region = toastRegion(host, placement);
+
+  const el = make('div', { class: 'ntn-toast' + (tone === 'neutral' ? '' : ' ntn-toast--' + tone) });
+  if (icon && TOAST_ICONS.includes(tone)) {
+    const glyph = renderIcon(tone);
+    glyph.classList.add('ntn-toast__icon');
+    glyph.setAttribute('aria-hidden', 'true');
+    el.append(glyph);
+  }
+  const body = make('div', { class: 'ntn-toast__body' });
+  if (title) body.append(make('div', { class: 'ntn-toast__title' }, String(title)));
+  if (message) body.append(make('div', { class: 'ntn-toast__message' }, String(message)));
+  el.append(body);
+  if (dismissible) el.append(make('button', { type: 'button', class: 'ntn-toast__close', 'aria-label': 'Dismiss' }, renderIcon('close')));
+  if (duration > 0) {
+    el.style.setProperty('--ntn-toast-duration', duration + 'ms');
+    el.append(make('div', { class: 'ntn-toast__timer' }));
+  }
+
+  const t = { duration: duration > 0 ? duration : 0, left: duration, since: 0, timer: null, hover: false, focus: false, returnTo: null, closed: false };
+  toasts.set(el, t);
+  el.addEventListener('mouseenter', () => { t.hover = true; toastTick(el); });
+  el.addEventListener('mouseleave', () => { t.hover = false; toastTick(el); });
+  el.addEventListener('focusin', (e) => {
+    if (!t.focus && e.relatedTarget && !el.contains(e.relatedTarget)) t.returnTo = e.relatedTarget;
+    t.focus = true; toastTick(el);
+  });
+  el.addEventListener('focusout', (e) => { if (!el.contains(e.relatedTarget)) { t.focus = false; toastTick(el); } });
+  el.addEventListener('click', (e) => { if (e.target.closest('.ntn-toast__close')) toastClose(el, 'dismiss'); });
+
+  toastRaise(region);
+  region.append(el);
+  regionToasts(region).slice(0, -TOAST_MAX).forEach((old) => toastClose(old, 'overflow'));
+  toastTick(el);
+
+  // Announce after a beat, so a live region created just now is in the tree before it changes.
+  const live = toastLive(host, tone === 'danger');
+  const words = [title, message].filter(Boolean).join('. ');
+  live.textContent = '';
+  setTimeout(() => { live.textContent = words; }, 60);
+
+  return { element: el, close: () => toastClose(el, 'api') };
+}
+
+/* A modal that closes takes its toasts' region with it: hand them to the page instead. */
+function toastOnDialogClose(e) {
+  const dialog = e.target;
+  if (!dialog || dialog.tagName !== 'DIALOG') return;
+  $$(':scope > .ntn-toaster', dialog).forEach((region) => {
+    const live = $$(':scope > .ntn-toast:not([data-ntn-leaving])', region);
+    region.remove();
+    if (!live.length) return;
+    const home = toastRegion(document.body, region.dataset.ntnPlacement);
+    toastRaise(home);
+    live.forEach((el) => {
+      const t = toasts.get(el);
+      // Re-inserting restarts the timer line; start it where the clock is.
+      const timer = el.querySelector('.ntn-toast__timer');
+      if (timer && t) timer.style.animationDelay = -(t.duration - (t.timer ? t.left - (Date.now() - t.since) : t.left)) + 'ms';
+      home.append(el);
+    });
+  });
+}
+
 /** Re-scan the DOM. Call after rendering new markup (framework updates, HTMX swaps). */
 export function refresh(root = document) {
   // Everything matching inside root, plus root itself when it matches (refresh(tabList) works).
@@ -1396,8 +1743,9 @@ export function refresh(root = document) {
   within('.ntn-tabs').forEach(setupTabs);
   within('[data-ntn-tree]').forEach(treeSync);
   within('[data-ntn-combo]').forEach(comboRender);
-  within('[data-ntn-daterange]').forEach(drSyncTrigger);
+  within('[data-ntn-daterange]').forEach(drRefresh);
   within('[data-ntn-dropdown]').forEach(ddSetup);
+  within('[data-ntn-avatar-name]').forEach(syncAvatar);
   if (themeManaged) syncThemeControls(getTheme());
 }
 
@@ -1419,12 +1767,14 @@ export function start(options = {}) {
   document.addEventListener('input', onChange);
   document.addEventListener('change', onChange);
   document.addEventListener('reset', comboOnReset);
+  document.addEventListener('reset', drOnReset);
   document.addEventListener('mouseover', drOnHover);
   document.addEventListener('mouseover', (e) => {
     const sub = e.target.closest && e.target.closest('.ntn-menu__sub');
     if (sub) menuFlip(sub);
   });
   document.addEventListener('keydown', onKeyDown);
+  document.addEventListener('close', toastOnDialogClose, true);
   document.addEventListener('pointerdown', onTreePointerDown);
   document.addEventListener('pointerdown', ddOnPointerDown);
   document.addEventListener('focusout', ddOnFocusOut);
@@ -1434,6 +1784,10 @@ export function start(options = {}) {
   document.addEventListener('dragover', onTreeDragOver);
   document.addEventListener('drop', onTreeDrop);
   document.addEventListener('dragend', onTreeDragEnd);
+  document.addEventListener('dragenter', onDzEnter);
+  document.addEventListener('dragleave', onDzLeave);
+  document.addEventListener('dragover', onDzOver);
+  document.addEventListener('drop', onDzDrop);
   addEventListener('resize', reInk);
   addEventListener('load', reInk);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(reInk);
@@ -1445,4 +1799,4 @@ if (typeof document !== 'undefined') {
   else start();
 }
 
-export default { start, refresh, configure, open, close, toggle, getTheme, getThemePreference, setTheme, toggleTheme };
+export default { start, refresh, configure, open, close, toggle, toast, setDateRange, avatarHue, getTheme, getThemePreference, setTheme, toggleTheme };
