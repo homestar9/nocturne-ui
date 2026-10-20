@@ -6,6 +6,24 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+### Added
+- **`ntn-ambient` placements** (NTN-18):
+  - `--bottom`, `--left` and `--right` move the glow's band to that edge.
+  - `--top-left`, `--top-right`, `--bottom-left` and `--bottom-right` make it a square in that
+    corner.
+  - `--center` makes it a spotlight.
+  - The ambient image follows the band, and the background image anchors to the same side.
+- **`ntn-ambient` tones:** `--success`, `--warning`, `--danger`, `--info` and `--neutral` tint
+  the glow. The accent stays the default.
+- **Token:** `--ntn-ambient-glow`, the glow colour. It defaults to `--ntn-accent-glow`.
+- **Stacked ambients:** several `ntn-ambient` elements layer their lights, and only the first
+  draws `--ntn-background-image`.
+- **Kitchen sink:** placement, tone and layered examples in the Glass section.
+
+### Changed
+- **Breaking:** `--ntn-ambient-height` is now `--ntn-ambient-size`, since the band can sit on a
+  side.
+
 ## 1.10.0 — 2026-10-19
 
 ### Added

@@ -103,6 +103,15 @@ try {
   check(currentMarker && /background:[^;]*,\s*var\(--ntn-surface-2\)\s*;/.test(currentMarker.body),
     'the current step marker paints its tint over an opaque --ntn-surface-2 base');
 
+  console.log('Ambient (NTN-18)');
+  const PLACEMENTS = ['bottom', 'left', 'right', 'top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'];
+  const unplaced = PLACEMENTS.filter((p) => !rules.some((r) => r.sel.split(/\s*,\s*/).includes(`.ntn-ambient--${p}::before`)));
+  check(unplaced.length === 0, 'ntn-ambient offers every placement' + (unplaced.length ? ': missing ' + unplaced.join(' ') : ''));
+  const ambientGlow = rules.find((r) => r.sel === '.ntn-ambient::before');
+  check(ambientGlow && /var\(--ntn-ambient-glow\)/.test(ambientGlow.body), 'the ambient glow reads --ntn-ambient-glow');
+  const stacked = rules.find((r) => r.sel === '.ntn-ambient ~ .ntn-ambient');
+  check(stacked && /background:\s*none\s*;/.test(stacked.body), 'a stacked ambient leaves the background image to the first');
+
   console.log('One disabled treatment');
   const disabledRules = rules.filter((r) => /:disabled|\[aria-disabled=("?)true\1\]/.test(r.sel) && /(?:^|[;\s])opacity:/.test(r.body));
   const oddFades = disabledRules.filter((r) => !/(?:^|[;\s])opacity:\s*var\(--ntn-disabled-opacity\)/.test(r.body));
@@ -119,7 +128,7 @@ try {
   console.log('One tone set');
   // Every toned block offers primary, the four statuses and neutral; its default needs no class.
   const TONE_SET = ['primary', 'success', 'warning', 'danger', 'info', 'neutral'];
-  const DEFAULT_TONE = { 'ntn-badge': 'neutral', 'ntn-alert': null, 'ntn-progress': 'primary', 'ntn-btn': ['primary', 'neutral'] };
+  const DEFAULT_TONE = { 'ntn-badge': 'neutral', 'ntn-alert': null, 'ntn-progress': 'primary', 'ntn-btn': ['primary', 'neutral'], 'ntn-ambient': 'primary' };
   for (const [block, dflt] of Object.entries(DEFAULT_TONE)) {
     const missing = TONE_SET.filter((t) => ![].concat(dflt).includes(t) && !css.includes(`.${block}--${t}`));
     check(missing.length === 0, `.${block} offers every tone` + (missing.length ? ': missing ' + missing.join(' ') : ''));
