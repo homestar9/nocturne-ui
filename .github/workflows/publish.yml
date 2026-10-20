@@ -1,0 +1,41 @@
+# Publishes @homestar9/nocturne-ui to npm when a release tag (vX.Y.Z) is pushed, through npm
+# trusted publishing: GitHub's OIDC token stands in for an npm token, so there is no login and
+# no 2FA prompt, and npm attaches provenance. The trusted publisher on npmjs.com names this
+# file, so keep its name (publish.yml).
+name: Publish
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  id-token: write  # OIDC, for trusted publishing and provenance
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # the master check below needs the branch history
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false  # never cache in a release build
+
+      # Trusted publishing needs npm 11.5.1 or later.
+      - run: npm install -g npm@^11.5.1
+
+      - name: The tag names the version in package.json
+        run: test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
+
+      - name: The tag is on master (gitflow: master holds only released versions)
+        run: git merge-base --is-ancestor "$GITHUB_SHA" origin/master
+
+      - run: npm ci
+
+      # prepack rebuilds dist/ and runs npm test (including the dist/ drift check) first.
+      - run: npm publish
