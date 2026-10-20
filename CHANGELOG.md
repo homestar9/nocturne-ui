@@ -84,6 +84,8 @@ renamed or removed class names and tokens.
 ### Changed
 - **Breaking:** `--ntn-ambient-height` is now `--ntn-ambient-size`, since the band can sit on a
   side.
+- **Published from GitHub Actions** through npm trusted publishing, so each release carries npm
+  provenance linking it to the commit and workflow that built it.
 
 - **`ntn-daterange` opens in the top layer** (NTN-21):
   - The panel is a `popover="manual"`, so no `overflow` ancestor clips it, and inside a modal it

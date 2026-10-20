@@ -402,7 +402,6 @@ holds published versions. The git-flow CLI is not required; these are the plain-
 of `git flow release start` and `finish`.
 
 ```bash
-npm whoami                                   # must print your npm user; on 401, run `npm login` first
 git checkout -b release/X.Y.Z develop
 npm version minor --no-git-tag-version       # bump package.json and the lockfile only
 npm run build                                # dist/ banners carry the new version
@@ -415,16 +414,38 @@ git checkout develop
 git merge --no-ff release/X.Y.Z
 git branch -d release/X.Y.Z
 git checkout master
-npm publish                                  # prepack rebuilds and tests, then → npmjs.com (public)
-git push origin master develop --follow-tags
+git push --atomic origin master develop vX.Y.Z   # the tag push publishes (see below)
 ```
 
-Check the login first: `npm publish` without a valid session fails with a misleading
-`404 Not Found - PUT …/@homestar9%2fnocturne-ui`, not an auth error. Bump before building: the
+**Publishing is the tag push.** `.github/workflows/publish.yml` runs on any `v*` tag and
+publishes through [npm trusted publishing](https://docs.npmjs.com/trusted-publishers):
+- GitHub's OIDC token replaces an npm token, so there is no `npm login` and no 2FA prompt.
+- npm attaches provenance.
+- The job checks that the tag matches `package.json` and is on `master`.
+- `prepack` rebuilds `dist/` and runs `npm test` before anything is uploaded.
+
+Watch it under the repo's Actions tab. If it fails, fix the cause, then delete and re-push the
+tag:
+
+```bash
+git push origin :refs/tags/vX.Y.Z
+git push origin vX.Y.Z
+```
+
+The trusted publisher is set on npmjs.com under the package's Settings → Trusted Publisher:
+- GitHub Actions, user `homestar9`, repository `nocturne-ui`, workflow `publish.yml`.
+- `repository.url` in `package.json` must keep naming this repo.
+
+A manual `npm publish` (after `npm login`) still works as a fallback, unless publishing access is
+set to disallow tokens. Without a valid session it fails with a misleading
+`404 Not Found - PUT …/@homestar9%2fnocturne-ui`, not an auth error.
+
+Bump before building: the
 `dist/` banners read the version from `package.json`, so building first commits a `dist/` that
 names the previous version. `prepack` rebuilds anyway, so a stale `dist/` is published fresh but
 left uncommitted. Merge with `--no-ff` even when master could fast-forward, so every release is
-one merge commit on `master`. Tag with `-a`: `--follow-tags` pushes annotated tags only. Update
+one merge commit on `master`. Tag with `-a`, and push the tag by name with `--atomic`, so the branches and the tag land
+together and the job finds the tag already on `master`. Update
 the CDN links under Install to the new version. A version that was tagged but never published
 keeps its CHANGELOG heading with an `(unpublished)` suffix, and its tag is deleted before it is
 pushed.
