@@ -507,10 +507,12 @@ i:is([class*=fa-], [data-icon], :empty) {
   display: flex;
   flex-direction: column;
 }
+.ntn-app {
+  /* The page scrolls, not this pane. No overflow here: a scroll container would capture every
+     position: sticky inside it, and the pane never scrolls (the app is only min-height tall). */
+}
 .ntn-app__scroll {
   flex: 1;
-  min-height: 0;
-  overflow-y: auto;
 }
 
 .ntn-page {

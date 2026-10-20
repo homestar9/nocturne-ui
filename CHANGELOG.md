@@ -32,6 +32,14 @@ renamed or removed class names and tokens.
 - **Breaking:** `--ntn-ambient-height` is now `--ntn-ambient-size`, since the band can sit on a
   side.
 
+### Fixed
+- **The app shell no longer traps `position: sticky`** (NTN-20). `.ntn-app` is only `min-height`
+  tall, so `.ntn-app__scroll` never scrolled. Its `overflow-y: auto` still made it a scroll
+  container, so every sticky inside the content stuck to a pane that never moved.
+  - The overflow is gone, and the page is the one scroller.
+  - The kitchen sink has an App shell section with a sticky save bar. Its scrollspy and smooth
+    scrolling now follow the page.
+
 ## 1.10.0 — 2026-10-19
 
 ### Added

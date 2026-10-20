@@ -15,7 +15,7 @@ which case use `.ntn-icon`.
 | --- | --- |
 | `ntn-app` | Flex shell: sidebar + main |
 | `ntn-app__main` | Column holding navbar and scroll area |
-| `ntn-app__scroll` | The scrolling region under a sticky navbar |
+| `ntn-app__scroll` | The content area under the sticky navbar. The page scrolls, not this pane, so `position: sticky` inside it sticks to the viewport (offset top stickies by `--ntn-topbar-h`) |
 | `ntn-page` | Centred content column up to `--ntn-page-max` (1440px), 24px gutters, 14px gaps |
 | `ntn-page__head` `ntn-page__title` `ntn-page__sub` `ntn-page__actions` | Page header parts |
 | `ntn-grid` + `--2` `--3` `--4` `--split` `--split-reverse` | Card grids (14px gap, responsive) |

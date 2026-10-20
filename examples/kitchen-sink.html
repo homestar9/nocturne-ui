@@ -23,8 +23,15 @@
   .fa-light { font-family: "Font Awesome 6 Free"; font-weight: 900; font-style: normal }
 
   /* Page chrome for this browser only — not part of the library. */
-  .ntn-app__scroll { scroll-behavior: smooth; }
-  .sink { display: flex; flex-direction: column; gap: var(--ntn-space-4); scroll-margin-top: var(--ntn-space-4); }
+  html { scroll-behavior: smooth; }
+  .sink { display: flex; flex-direction: column; gap: var(--ntn-space-4); scroll-margin-top: calc(var(--ntn-topbar-h) + var(--ntn-space-4)); }
+  /* The sticky check for the app shell: a save bar pinned to the bottom of the viewport. */
+  .sink__savebar {
+    position: sticky; bottom: var(--ntn-space-4); z-index: var(--ntn-z-sticky);
+    display: flex; align-items: center; justify-content: space-between; gap: var(--ntn-space-3);
+    padding: var(--ntn-space-3) var(--ntn-space-4); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg);
+    background: var(--ntn-surface-2); box-shadow: var(--ntn-shadow-lg);
+  }
   .sink__head {
     display: flex; align-items: baseline; gap: var(--ntn-space-3); flex-wrap: wrap;
     padding-top: var(--ntn-space-6); border-top: 1px solid var(--ntn-border-subtle);
@@ -119,6 +126,7 @@
       </div>
       <div class="ntn-sidebar__group">
         <p class="ntn-sidebar__section">Containers</p>
+        <a class="ntn-sidebar__item" href="#shell"><i class="fa-light fa-browser"></i><span>App shell</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#cards"><i class="fa-light fa-clone"></i><span>Cards</span></a>
         <a class="ntn-sidebar__item" href="#edges"><i class="fa-light fa-wand-magic-sparkles"></i><span>Border effects</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#glass"><i class="fa-light fa-droplet"></i><span>Glass</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
@@ -1329,6 +1337,33 @@
           </section>
         </section>
 
+        <!-- ── App shell: sticky ──────────────────────────────────────── -->
+        <section class="sink" id="shell">
+          <header class="sink__head">
+            <h2 class="sink__title">App shell</h2>
+            <code class="sink__code">.ntn-app__scroll</code>
+            <p class="sink__note">The page scrolls, not the content area, so <code>position: sticky</code> inside it sticks to the viewport. Scroll through this card: the save bar stays pinned to the bottom of the window until the card's end.</p>
+          </header>
+          <section class="ntn-card" data-sink-example="Sticky save bar">
+            <header class="ntn-card__head">
+              <div class="ntn-card__heading">
+                <h3 class="ntn-card__title">Edit post</h3>
+                <p class="ntn-card__sub">A long form with a sticky save bar.</p>
+              </div>
+            </header>
+            <div class="ntn-card__body ntn-stack">
+              <div style="min-height:900px; display:grid; place-items:center; color:var(--ntn-text-muted)">Long content</div>
+              <div class="sink__savebar">
+                <span class="ntn-page__sub" style="margin:0">Unsaved changes</span>
+                <div class="ntn-row">
+                  <button class="ntn-btn ntn-btn--sm">Discard</button>
+                  <button class="ntn-btn ntn-btn--primary ntn-btn--sm">Save</button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </section>
+
         <!-- ── Cards ──────────────────────────────────────────────────── -->
         <section class="sink" id="cards">
           <header class="sink__head">
@@ -2056,7 +2091,7 @@
     entries.forEach((e) => e.isIntersecting ? seen.add(e.target.id) : seen.delete(e.target.id));
     const first = Array.from(byId.keys()).find((id) => seen.has(id));
     if (first) mark(first);
-  }, { root: document.querySelector('.ntn-app__scroll'), rootMargin: '0px 0px -70% 0px' });
+  }, { rootMargin: '0px 0px -70% 0px' });
   document.querySelectorAll('.sink').forEach((s) => io.observe(s));
 
   const readout = document.getElementById('daterange-readout');

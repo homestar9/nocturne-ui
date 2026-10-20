@@ -160,6 +160,9 @@ try {
   console.log('Layout follows its tokens');
   const pageRule = css.match(/(?:^|\n)\.ntn-page \{([^}]*)\}/);
   check(pageRule && /max-width:\s*var\(--ntn-page-max\)/.test(pageRule[1]), '.ntn-page is as wide as --ntn-page-max');
+  // NTN-20: the page scrolls. A scroll container here would capture every sticky inside the content.
+  const appScroll = rules.find((r) => r.sel === '.ntn-app__scroll');
+  check(appScroll && !/overflow/.test(appScroll.body), '.ntn-app__scroll is not a scroll container, so stickies inside it stick to the viewport');
   const flushLevels = new Set([...css.matchAll(/\.ntn-tree--flush((?: \.ntn-tree__group)+) \.ntn-tree__row \{[^}]*var\(--ntn-tree-indent\) \* (\d+)/g)]
     .filter((m) => m[1].split('.ntn-tree__group').length - 1 === Number(m[2])).map((m) => Number(m[2])));
   check([...Array(8)].every((_, i) => flushLevels.has(i + 1)), `a --flush tree indents each level by its depth (levels ${[...flushLevels].sort((a, b) => a - b).join(',')})`);
