@@ -38,8 +38,17 @@
        calendars — that row alone sets the panel's width. */
     position: absolute; top: calc(100% + 6px); left: 0; z-index: var(--ntn-z-dropdown);
     display: flex; flex-direction: column; width: max-content;
+    color: var(--ntn-text-primary);
     @include popover-surface;
     overflow: hidden;
+
+    /* nocturne.js makes the panel a popover, so it opens in the top layer (above any modal,
+       clipped by no overflow ancestor) and sets left/top from the trigger. */
+    &[popover] {
+      position: fixed; inset: auto; margin: 0; padding: 0;
+
+      &:not(:popover-open) { display: none; }
+    }
   }
   &__row { display: flex; align-items: stretch; }
 
@@ -140,12 +149,9 @@
   &--single &__cals { /* Single date: one month, no range band to draw. */ padding-right: var(--ntn-space-5); }
 }
 
-/* A --flush card clips its content; let a picker inside it out while it is open. */
-.ntn-card:has(.ntn-daterange__panel:not([hidden])) { overflow: visible; }
-
 /* Narrow: presets become a chip row and the second month drops. nocturne.js adds
-   --narrow when the panel cannot fit its clipping container, which is the case the
-   viewport media query below cannot see (a narrow column in a wide window). */
+   --narrow when the full panel cannot fit the window; the media query below covers
+   phones before the script measures. */
 @mixin -narrow-panel {
   width: min(320px, calc(100vw - 32px));
 

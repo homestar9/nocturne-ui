@@ -160,6 +160,10 @@ try {
   console.log('Layout follows its tokens');
   const pageRule = css.match(/(?:^|\n)\.ntn-page \{([^}]*)\}/);
   check(pageRule && /max-width:\s*var\(--ntn-page-max\)/.test(pageRule[1]), '.ntn-page is as wide as --ntn-page-max');
+  // NTN-21: the date panel opens in the top layer; its own display must not override the closed popover.
+  const drClosed = rules.find((r) => r.sel === '.ntn-daterange__panel[popover]:not(:popover-open)');
+  check(drClosed && /display:\s*none/.test(drClosed.body), 'a closed date-picker popover stays hidden despite the panel\'s display: flex');
+  check(!rules.some((r) => /^\.ntn-card:has\(\.ntn-daterange__panel/.test(r.sel)), 'no card overflow workaround for the date panel (the top layer is never clipped)');
   // NTN-20: the page scrolls. A scroll container here would capture every sticky inside the content.
   const appScroll = rules.find((r) => r.sel === '.ntn-app__scroll');
   check(appScroll && !/overflow/.test(appScroll.body), '.ntn-app__scroll is not a scroll container, so stickies inside it stick to the viewport');

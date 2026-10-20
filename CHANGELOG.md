@@ -27,12 +27,35 @@ renamed or removed class names and tokens.
   - `--line` draws the border in the tone.
 - **Tokens:** `--ntn-gradient-color`, `-strong`, `-line` and `-size`.
 - **Kitchen sink:** a Gradient section with tone, dashboard, depth and glass examples.
+- **`ntn-daterange` additions** (NTN-21):
+  - **Set from code:** a `setDateRange(root, { start, end, time })` export. Changing
+    `data-ntn-start`, `-end` or `-time` and calling `refresh(root)` works too. Neither fires an
+    event.
+  - **Clear:** a `data-ntn-daterange-clear` button commits an empty value, time included, and
+    fires `ntn:daterangechange` with null dates.
+  - **Forms:** `data-ntn-name="x"` posts `x` (the ISO start, plus the time) and, for a range,
+    `x-end` through hidden inputs. Every commit fires a bubbling `change`, and `form.reset()`
+    restores the first value.
+  - **Kitchen sink:** a clearable picker in a form, with Set from code and Reset buttons, and a
+    picker inside the Modal example.
 
 ### Changed
 - **Breaking:** `--ntn-ambient-height` is now `--ntn-ambient-size`, since the band can sit on a
   side.
 
+- **`ntn-daterange` opens in the top layer** (NTN-21):
+  - The panel is a `popover="manual"`, so no `overflow` ancestor clips it, and inside a modal it
+    sits above the dialog.
+  - It is placed against the trigger with the dropdown's flip-and-clamp logic, and follows it on
+    scroll and resize.
+  - `__panel--narrow` is now chosen from the window width.
+  - The `.ntn-card:has(…panel)` overflow workaround is gone.
+- **Locale time:** the date picker's trigger shows the time the way the user's locale writes it
+  (`2:05 PM` in en-US). Before, it showed the raw `14:05`.
+
 ### Fixed
+- **The date picker's time can now be emptied.** Apply with an empty time input used to keep the
+  old `data-ntn-time`.
 - **The app shell no longer traps `position: sticky`** (NTN-20). `.ntn-app` is only `min-height`
   tall, so `.ntn-app__scroll` never scrolled. Its `overflow-y: auto` still made it a scroll
   container, so every sticky inside the content stuck to a pane that never moved.

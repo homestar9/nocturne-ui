@@ -824,8 +824,11 @@ above any content block. The filter form is revealed by a button carrying
 Elements: `__trigger` `__value` `__caret` `__panel` `__row` `__presets` `__preset` `__cals`
 `__cal` `__foot` `__summary` `__actions`. Modifiers: `--sm` `--block`.
 `__row` must wrap `__presets` + `__cals` — the panel is a column, and that row is what
-sets its width. `nocturne.js` positions the panel inside whatever clips it and adds
-`__panel--narrow` (chip presets, one month) when it cannot fit.
+sets its width. Ship the panel `hidden` (the no-JS state). `nocturne.js` makes it a
+`popover="manual"`, so it opens in the **top layer**: no `overflow` ancestor clips it, and inside
+a modal it sits above the dialog. It is placed under the trigger (`data-ntn-placement` on the
+panel, default `bottom-start`), flips above near the bottom of the window, follows the trigger on
+scroll, and gets `__panel--narrow` (chip presets, one month) when it cannot fit the window.
 
 The two month grids are rendered by `nocturne.js` — write the shell only. Selection is
 draft-first: presets and clicks change nothing outside the panel until **Apply**, which fires
@@ -852,6 +855,34 @@ in the footer:
 
 The event detail then carries `time`, `startISO` and `endISO` (`2026-10-02T09:30`) alongside the
 plain dates. There is no range + time variant — two times in one popover is a form, not a picker.
+The input's value stays 24-hour `HH:MM`; the trigger shows the time the user's locale writes it
+(`2:05 PM` in en-US, `14:05` in en-GB).
+
+**Clear.** A `data-ntn-daterange-clear` button in `__actions` commits an empty value at once
+(time included) and fires `ntn:daterangechange` with `start`, `end`, `time`, `startISO` and
+`endISO` all `null`. Use it for optional dates (publish, expiry):
+
+```html
+<button class="ntn-btn ntn-btn--subtle ntn-btn--sm" type="button" data-ntn-daterange-clear>Clear</button>
+```
+
+**Forms.** `data-ntn-name="x"` on the root keeps hidden inputs in step with the committed value,
+as the combobox does: `x` is the ISO start (`2026-10-02`, or `2026-10-02T09:30` with a time) and,
+for a range, `x-end` the ISO end. Both are `""` when empty. Every commit also fires a bubbling
+`change`, and a form `reset` restores the first-rendered value.
+
+**Set from code.** The `data-ntn-start` / `data-ntn-end` / `data-ntn-time` attributes always hold
+the committed value. Change them and call `refresh(root)`, or:
+
+```js
+import { setDateRange } from '@homestar9/nocturne-ui/js';
+setDateRange(root, { start: '2026-09-01', end: new Date(2026, 8, 20) }); // ISO strings or Dates
+setDateRange(root, { time: '17:45' });   // a part left out is kept
+setDateRange(root, { start: null });     // null clears
+```
+
+Either way the trigger and the form inputs redraw, and no event fires (like setting an input's
+value).
 
 ```html
 <div class="ntn-daterange" data-ntn-daterange data-ntn-start="2026-09-01" data-ntn-end="2026-09-20">
@@ -1173,9 +1204,10 @@ table, so header, toolbar, filter form and pager can sit anywhere in that wrappe
 | `data-value` / `data-max` on `.ntn-progress__fill` | Sets the fill width |
 | `data-ntn-theme-toggle` | Flips dark ⇄ light, persists, swaps the icon |
 | `data-ntn-theme-set="dark\|light\|auto"` | Sets a specific theme preference |
-| `data-ntn-daterange` on `.ntn-daterange` | Renders the month grids, owns selection; fires `ntn:daterangechange` on Apply |
-| `data-ntn-start` / `-end` / `-min` / `-max` | Initial range and bounds, `YYYY-MM-DD` |
+| `data-ntn-daterange` on `.ntn-daterange` | Renders the month grids, owns selection, opens the panel in the top layer; fires `ntn:daterangechange` on Apply or Clear |
+| `data-ntn-start` / `-end` / `-min` / `-max` | Range and bounds, `YYYY-MM-DD`; start / end / time always hold the committed value (change them + `refresh(root)`, or call `setDateRange()`) |
+| `data-ntn-name="field"` on `.ntn-daterange` | Posts `field` (ISO start) and, for a range, `field-end` with its form; fires `change`, honours `form.reset()` |
 | `data-ntn-single` on the root | One date instead of a range |
 | `data-ntn-time="09:30"` + `data-ntn-daterange-time` on an input | Adds a time to a single date; event gains `time`, `startISO`, `endISO` |
 | `data-ntn-range="7\|today\|month\|last-month\|ytd"` on a preset | Sets the draft range |
-| `data-ntn-daterange-label` / `-summary` / `-apply` / `-cancel` | The picker's trigger text, footer readout, and buttons |
+| `data-ntn-daterange-label` / `-summary` / `-apply` / `-cancel` / `-clear` | The picker's trigger text, footer readout, and buttons |

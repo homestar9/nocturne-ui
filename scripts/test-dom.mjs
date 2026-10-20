@@ -219,6 +219,97 @@ console.log('Combo form association (R7)');
   check(document.querySelector('#tags [data-ntn-combo-value]').textContent.includes('Alpha'), '...and redraws the chips');
 }
 
+const picker = (attrs, foot = '') => `<div class="ntn-daterange" data-ntn-daterange ${attrs}>
+     <button type="button" class="ntn-daterange__trigger" aria-expanded="false"><span class="ntn-daterange__value" data-ntn-daterange-label></span></button>
+     <div class="ntn-daterange__panel" hidden>
+       <div class="ntn-daterange__cals"><div class="ntn-daterange__cal" data-ntn-cal="0"></div></div>
+       <footer class="ntn-daterange__foot">${foot}
+         <button type="button" data-ntn-daterange-clear>Clear</button>
+         <button type="button" data-ntn-daterange-cancel>Cancel</button>
+         <button type="button" data-ntn-daterange-apply>Apply</button>
+       </footer>
+     </div>
+   </div>`;
+
+console.log('Date picker: set from code, clear, form association (NTN-21)');
+{
+  const { document, window, mod } = await page(
+    `<form id="f">
+       ${picker('id="range" data-ntn-name="when" data-ntn-start="2026-09-01" data-ntn-end="2026-09-20"')}
+       ${picker('id="pub" data-ntn-single data-ntn-name="publish" data-ntn-start="2026-10-02" data-ntn-time="14:05"', '<input type="time" value="14:05" data-ntn-daterange-time>')}
+     </form>`);
+  const form = document.getElementById('f');
+  const range = document.getElementById('range');
+  const pub = document.getElementById('pub');
+  const data = () => new window.FormData(form);
+  const label = (r) => r.querySelector('[data-ntn-daterange-label]').textContent;
+  const fullDay = (y, m, d) => new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(y, m - 1, d));
+  const twoPm = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(new Date(2000, 0, 1, 14, 5));
+  const events = [];
+  const changes = [];
+  form.addEventListener('ntn:daterangechange', (e) => events.push(e.detail));
+  form.addEventListener('change', (e) => changes.push(e.target.id));
+
+  check(data().get('when') === '2026-09-01' && data().get('when-end') === '2026-09-20', 'a range posts x and x-end as ISO dates');
+  check(data().get('publish') === '2026-10-02T14:05' && !data().has('publish-end'), 'a single date with a time posts one ISO date-time');
+  check(label(pub) === `${fullDay(2026, 10, 2)} · ${twoPm}`, `the trigger shows the time the locale's way (${label(pub)})`);
+
+  mod.setDateRange(range, { start: '2026-01-05', end: new Date(2026, 0, 9) });
+  check(range.dataset.ntnStart === '2026-01-05' && range.dataset.ntnEnd === '2026-01-09', 'setDateRange() takes ISO strings or Dates and writes the attributes');
+  check(label(range).includes(fullDay(2026, 1, 9)), `...re-renders the trigger (${label(range)})`);
+  check(data().get('when') === '2026-01-05' && data().get('when-end') === '2026-01-09', '...and the form inputs');
+  check(events.length === 0, 'setDateRange() fires no event, like setting an input value');
+  mod.setDateRange(pub, { time: '08:00' });
+  check(pub.dataset.ntnStart === '2026-10-02' && data().get('publish') === '2026-10-02T08:00', 'a part left out is kept');
+  check(pub.querySelector('[data-ntn-daterange-time]').value === '08:00', 'the time input follows');
+
+  range.dataset.ntnStart = '2026-03-01';
+  range.dataset.ntnEnd = '2026-03-02';
+  mod.refresh(range);
+  check(data().get('when') === '2026-03-01' && label(range).includes(fullDay(2026, 3, 2)), 'changing the attributes and calling refresh(root) works too');
+
+  click(pub.querySelector('.ntn-daterange__trigger'));
+  click(pub.querySelector('[data-ntn-daterange-clear]'));
+  const cleared = events.at(-1);
+  check(cleared && cleared.start === null && cleared.end === null && cleared.time === null && cleared.startISO === null,
+    'Clear fires ntn:daterangechange with null dates and time');
+  check(pub.dataset.ntnStart === '' && !('ntnTime' in pub.dataset), 'Clear empties the attributes, the time included');
+  check(data().has('publish') && data().get('publish') === '', 'a cleared picker posts an empty value');
+  check(label(pub) === 'Select a date' && pub.querySelector('[data-ntn-daterange-label]').hasAttribute('data-empty'), 'the trigger shows its placeholder');
+  check(pub.querySelector('.ntn-daterange__panel').hidden && pub.querySelector('.ntn-daterange__trigger').getAttribute('aria-expanded') === 'false', 'the panel closes');
+  check(changes.join(',') === 'pub', `a commit fires a bubbling change the form hears (${changes.join(',')})`);
+
+  click(range.querySelector('.ntn-daterange__trigger'));
+  click(range.querySelector('[data-ntn-day="2026-03-10"]'));
+  click(range.querySelector('[data-ntn-day="2026-03-12"]'));
+  check(data().get('when') === '2026-03-01', 'a draft changes no input before Apply');
+  click(range.querySelector('[data-ntn-daterange-apply]'));
+  check(data().get('when') === '2026-03-10' && data().get('when-end') === '2026-03-12', 'Apply updates the inputs');
+
+  form.reset();
+  check(data().get('when') === '2026-09-01' && data().get('when-end') === '2026-09-20' && data().get('publish') === '2026-10-02T14:05',
+    'form.reset() restores the first-rendered values');
+  check(label(pub) === `${fullDay(2026, 10, 2)} · ${twoPm}`, '...and redraws the trigger');
+}
+
+console.log('Date picker opens in the top layer (NTN-21)');
+{
+  const { document, window, mod } = await page(picker('id="dr" data-ntn-start="2026-09-01" data-ntn-end="2026-09-20"'));
+  // jsdom has no popover API, so stub one and re-run set-up.
+  const shown = new Set();
+  window.HTMLElement.prototype.showPopover = function () { shown.add(this); };
+  window.HTMLElement.prototype.hidePopover = function () { shown.delete(this); };
+  mod.refresh();
+  const dr = document.getElementById('dr');
+  const panel = dr.querySelector('.ntn-daterange__panel');
+  check(panel.getAttribute('popover') === 'manual' && !panel.hidden, 'refresh() makes the panel a manual popover and drops the no-JS hidden');
+  click(dr.querySelector('.ntn-daterange__trigger'));
+  check(shown.has(panel), 'opening shows it in the top layer');
+  check(/^\d+px$/.test(panel.style.left) && /^\d+px$/.test(panel.style.top), `...placed against the trigger in viewport pixels (${panel.style.left}, ${panel.style.top})`);
+  document.body.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  check(!shown.has(panel) && !dr.ntnRange.open, 'Escape hides it again');
+}
+
 console.log('Sidebar drawer on a phone (R11)');
 {
   const { document, window } = await page(

@@ -1999,6 +1999,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   display: flex;
   flex-direction: column;
   width: max-content;
+  color: var(--ntn-text-primary);
   background: var(--ntn-surface-2);
   border: 1px solid var(--ntn-border-default);
   border-radius: var(--ntn-radius-lg);
@@ -2006,6 +2007,17 @@ i:is([class*=fa-], [data-icon], :empty) {
   animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out);
   backdrop-filter: var(--ntn-pop-filter);
   overflow: hidden;
+  /* nocturne.js makes the panel a popover, so it opens in the top layer (above any modal,
+     clipped by no overflow ancestor) and sets left/top from the trigger. */
+}
+.ntn-daterange__panel[popover] {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  padding: 0;
+}
+.ntn-daterange__panel[popover]:not(:popover-open) {
+  display: none;
 }
 .ntn-daterange__row {
   display: flex;
@@ -2239,14 +2251,9 @@ i:is([class*=fa-], [data-icon], :empty) {
   padding-right: var(--ntn-space-5);
 }
 
-/* A --flush card clips its content; let a picker inside it out while it is open. */
-.ntn-card:has(.ntn-daterange__panel:not([hidden])) {
-  overflow: visible;
-}
-
 /* Narrow: presets become a chip row and the second month drops. nocturne.js adds
-   --narrow when the panel cannot fit its clipping container, which is the case the
-   viewport media query below cannot see (a narrow column in a wide window). */
+   --narrow when the full panel cannot fit the window; the media query below covers
+   phones before the script measures. */
 .ntn-daterange__panel--narrow {
   width: min(320px, 100vw - 32px);
 }

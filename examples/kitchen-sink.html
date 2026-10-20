@@ -498,7 +498,7 @@
           <header class="sink__head">
             <h2 class="sink__title">Date &amp; range picker</h2>
             <code class="sink__code">.ntn-daterange</code>
-            <p class="sink__note">Presets, two months, draft-then-apply. Nothing leaves the component until <b>Apply</b>, which fires <code>ntn:daterangechange</code>. <code>data-ntn-single</code> turns the same component into a single-date picker; add <code>data-ntn-time</code> and a footer time input for date + time.</p>
+            <p class="sink__note">Presets, two months, draft-then-apply. Nothing leaves the component until <b>Apply</b>, which fires <code>ntn:daterangechange</code>. <code>data-ntn-single</code> turns the same component into a single-date picker; add <code>data-ntn-time</code> and a footer time input for date + time. A <code>data-ntn-daterange-clear</code> button empties it, <code>data-ntn-name</code> posts it with a form, and <code>setDateRange()</code> sets it from code. The panel opens in the top layer: try one at the bottom of the window, inside a card, or in the Modal example.</p>
           </header>
           <div class="ntn-card"><div class="ntn-card__body ntn-stack">
             <div class="ntn-row">
@@ -620,6 +620,38 @@
                 </div>
               </div>
             </div>
+            <hr class="ntn-divider">
+            <form class="ntn-row" style="flex-wrap:wrap;gap:var(--ntn-space-3)" id="publish-form">
+              <span class="sink__label" style="min-width:64px">In a form</span>
+              <div class="ntn-daterange ntn-daterange--single" data-ntn-daterange data-ntn-single data-ntn-name="publish" data-ntn-start="2026-10-02" data-ntn-time="17:45" id="publish-picker" data-sink-example="Clearable, posted with a form">
+                <button class="ntn-daterange__trigger" type="button" aria-expanded="false">
+                  <i class="fa-light fa-clock"></i>
+                  <span class="ntn-daterange__value" data-ntn-daterange-label data-ntn-placeholder="Not scheduled"></span>
+                  <i class="fa-light fa-chevron-down ntn-daterange__caret"></i>
+                </button>
+                <div class="ntn-daterange__panel" hidden>
+                  <div class="ntn-daterange__row">
+                    <div class="ntn-daterange__cals">
+                      <div class="ntn-daterange__cal" data-ntn-cal="0"></div>
+                    </div>
+                  </div>
+                  <footer class="ntn-daterange__foot">
+                    <label class="ntn-daterange__time">
+                      <span>Time</span>
+                      <input type="time" value="17:45" step="900" data-ntn-daterange-time>
+                    </label>
+                    <div class="ntn-daterange__actions">
+                      <button class="ntn-btn ntn-btn--subtle ntn-btn--sm" type="button" data-ntn-daterange-clear>Clear</button>
+                      <button class="ntn-btn ntn-btn--subtle ntn-btn--sm" type="button" data-ntn-daterange-cancel>Cancel</button>
+                      <button class="ntn-btn ntn-btn--primary ntn-btn--sm" type="button" data-ntn-daterange-apply>Apply</button>
+                    </div>
+                  </footer>
+                </div>
+              </div>
+              <button class="ntn-btn ntn-btn--sm" type="button" id="publish-set">Set from code</button>
+              <button class="ntn-btn ntn-btn--subtle ntn-btn--sm" type="reset">Reset</button>
+              <span class="sink__label">Posts <code id="publish-posted"></code></span>
+            </form>
           </div></div>
         </section>
 
@@ -1808,6 +1840,29 @@
                 <span class="ntn-select__label">Role</span>
                 <span class="ntn-select__control"><select><option>Member</option><option>Admin</option></select></span>
               </label>
+              <!-- The picker's panel opens in the top layer, above this dialog. -->
+              <div class="ntn-daterange ntn-daterange--single ntn-daterange--block" data-ntn-daterange data-ntn-single>
+                <span class="ntn-daterange__label">Access expires</span>
+                <button class="ntn-daterange__trigger" type="button" aria-expanded="false">
+                  <i class="fa-light fa-calendar"></i>
+                  <span class="ntn-daterange__value" data-ntn-daterange-label data-ntn-placeholder="Never"></span>
+                  <i class="fa-light fa-chevron-down ntn-daterange__caret"></i>
+                </button>
+                <div class="ntn-daterange__panel" hidden>
+                  <div class="ntn-daterange__row">
+                    <div class="ntn-daterange__cals">
+                      <div class="ntn-daterange__cal" data-ntn-cal="0"></div>
+                    </div>
+                  </div>
+                  <footer class="ntn-daterange__foot">
+                    <span class="ntn-daterange__summary" data-ntn-daterange-summary></span>
+                    <div class="ntn-daterange__actions">
+                      <button class="ntn-btn ntn-btn--subtle ntn-btn--sm" type="button" data-ntn-daterange-clear>Clear</button>
+                      <button class="ntn-btn ntn-btn--primary ntn-btn--sm" type="button" data-ntn-daterange-apply>Apply</button>
+                    </div>
+                  </footer>
+                </div>
+              </div>
             </div>
             <footer class="ntn-modal__foot">
               <button class="ntn-btn" data-ntn-close>Cancel</button>
@@ -2096,8 +2151,23 @@
 
   const readout = document.getElementById('daterange-readout');
   document.addEventListener('ntn:daterangechange', (e) => {
-    readout.textContent = e.detail.start ? `${e.detail.start} → ${e.detail.end}` : 'cleared';
+    if (e.target.id !== 'publish-picker') readout.textContent = e.detail.start ? `${e.detail.start} → ${e.detail.end}` : 'cleared';
   });
+
+  // The form-associated picker: show what it would post, and set it from code.
+  const { setDateRange } = await import('../js/nocturne.js');
+  const publishForm = document.getElementById('publish-form');
+  const posted = () => {
+    const v = new FormData(publishForm).get('publish');
+    document.getElementById('publish-posted').textContent = `publish=${v ? v : '""'}`;
+  };
+  publishForm.addEventListener('change', posted);
+  publishForm.addEventListener('reset', () => setTimeout(posted));
+  document.getElementById('publish-set').addEventListener('click', () => {
+    setDateRange(document.getElementById('publish-picker'), { start: '2026-12-01', time: '08:15' });
+    posted();
+  });
+  posted();
 
   document.getElementById('accent-picker').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-accent]');
