@@ -6,6 +6,8 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.11.0 — 2026-10-20
+
 ### Added
 - **`ntn-ambient` placements** (NTN-18):
   - `--bottom`, `--left` and `--right` move the glow's band to that edge.
