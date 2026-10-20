@@ -38,6 +38,16 @@ renamed or removed class names and tokens.
     restores the first value.
   - **Kitchen sink:** a clearable picker in a form, with Set from code and Reset buttons, and a
     picker inside the Modal example.
+- **A colour per person on `ntn-avatar`** (NTN-22):
+  - `--ntn-avatar-hue`, set inline, turns the accent gradient into an OKLCH gradient at that hue,
+    at the kit's lightness and chroma, with dark ink. Without it nothing changes.
+  - Tokens: `--ntn-avatar-lightness` (per mode) and `--ntn-avatar-chroma`. Mono sets the chroma
+    to 0.
+  - `avatarHue(name)` is the documented hash, with test vectors for server-side twins, and
+    `data-ntn-avatar-name` applies it.
+  - `ntn-avatar--unknown` is a neutral disc for "no person".
+  - The prefixed build renames `--ntn-avatar-hue` with the classes.
+  - **Kitchen sink:** hued and unknown avatars in the Avatars section.
 
 ### Changed
 - **Breaking:** `--ntn-ambient-height` is now `--ntn-ambient-size`, since the band can sit on a

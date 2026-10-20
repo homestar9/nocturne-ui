@@ -310,6 +310,21 @@ console.log('Date picker opens in the top layer (NTN-21)');
   check(!shown.has(panel) && !dr.ntnRange.open, 'Escape hides it again');
 }
 
+console.log('Avatar hue (NTN-22)');
+{
+  const { document, mod } = await page('<span class="ntn-avatar" id="a" data-ntn-avatar-name="Ada Lovelace">AL</span>');
+  // The documented vectors (skill/components.md): server-side twins test against these.
+  const VECTORS = [['', 0], ['A', 65], ['Ada Lovelace', 235], ['Grace Hopper', 356], ['Zoë', 166], ['😀', 259]];
+  const wrong = VECTORS.filter(([n, h]) => mod.avatarHue(n) !== h);
+  check(!wrong.length, 'avatarHue() matches the documented vectors' + (wrong.length ? ': ' + wrong.map(([n]) => JSON.stringify(n)).join(' ') : ''));
+  check(mod.default.avatarHue === mod.avatarHue, 'avatarHue is on the default export too');
+  const a = document.getElementById('a');
+  check(a.style.getPropertyValue('--ntn-avatar-hue') === '235', 'data-ntn-avatar-name sets --ntn-avatar-hue from the name');
+  a.dataset.ntnAvatarName = 'Grace Hopper';
+  mod.refresh(a);
+  check(a.style.getPropertyValue('--ntn-avatar-hue') === '356', 'refresh(el) follows a changed name');
+}
+
 console.log('Sidebar drawer on a phone (R11)');
 {
   const { document, window } = await page(

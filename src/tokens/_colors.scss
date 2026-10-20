@@ -60,9 +60,15 @@
   --ntn-alpha-ink-04: rgba(255,255,255,0.04);
   --ntn-alpha-ink-06: rgba(255,255,255,0.06);
   --ntn-alpha-ink-10: rgba(255,255,255,0.10);
+
+  /* A per-person avatar (--ntn-avatar-hue): the OKLCH lightness its gradient starts from */
+  --ntn-avatar-lightness: 0.78;
 }
 
 :root {
+  /* ...and its chroma. themes/mono.css sets 0, so per-person avatars turn grey there. */
+  --ntn-avatar-chroma: 0.12;
+
   --ntn-success-soft: rgba(34,197,138,0.14);  --ntn-success-line: rgba(34,197,138,0.30);
   --ntn-warning-soft: rgba(241,169,22,0.15);  --ntn-warning-line: rgba(241,169,22,0.30);
   --ntn-danger-soft:  rgba(242,84,91,0.14);   --ntn-danger-line:  rgba(242,84,91,0.30);

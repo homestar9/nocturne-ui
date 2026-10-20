@@ -690,7 +690,7 @@ Set the level with `data-value` (and optional `data-max`) on `__fill`; `nocturne
 
 ## Avatar — `ntn-avatar` · `ntn-avatars`
 
-Modifiers: `--xs` `--sm` `--lg` `--xl` `--ring`. Status dot: `__status` with
+Modifiers: `--xs` `--sm` `--lg` `--xl` `--ring` `--unknown`. Status dot: `__status` with
 `--online` `--busy` `--away`. Overlapping group: `ntn-avatars`, overflow via `__more`.
 
 ```html
@@ -702,6 +702,37 @@ Modifiers: `--xs` `--sm` `--lg` `--xl` `--ring`. Status dot: `__status` with
   <span class="ntn-avatar ntn-avatar--sm">JT</span>
   <span class="ntn-avatars__more">+4</span>
 </span>
+```
+
+**A colour per person.** By default every avatar is the accent gradient. To tell people apart,
+set `--ntn-avatar-hue` (0–359) inline. The kit keeps the lightness and chroma, tuned per mode,
+and draws dark ink on every hue. Mono sets the chroma to 0, so these avatars turn grey there.
+Without the property nothing changes.
+
+```html
+<span class="ntn-avatar" style="--ntn-avatar-hue: 235">AL</span>        <!-- server-rendered -->
+<span class="ntn-avatar" data-ntn-avatar-name="Ada Lovelace">AL</span>   <!-- nocturne.js hashes the name -->
+```
+
+`avatarHue(name)` (exported by `nocturne.js`) is the hash, so the same name gets the same colour
+everywhere: `h = (h × 31 + c) mod 360` over the name's **UTF-16 code units** `c`, from `h = 0`. A
+server-side twin must hash the same units (JavaScript's `charCodeAt`, Java's `charAt`). Check it
+against these vectors:
+
+| Name | Hue |
+| --- | --- |
+| `""` | 0 |
+| `A` | 65 |
+| `Ada Lovelace` | 235 |
+| `Grace Hopper` | 356 |
+| `Zoë` | 166 |
+| `😀` | 259 |
+
+**No person** (deleted, system, unassigned): `--unknown` is a flat neutral disc. Label it, since
+the `?` means nothing to a screen reader:
+
+```html
+<span class="ntn-avatar ntn-avatar--unknown" role="img" aria-label="Unknown user">?</span>
 ```
 
 ---
@@ -1202,6 +1233,7 @@ table, so header, toolbar, filter form and pager can sit anywhere in that wrappe
 | `data-ntn-prev` / `data-ntn-next` / `data-ntn-goto="3"` | Step and jump |
 | `data-ntn-table-empty` on a `<tr>` | Shown only when nothing matches |
 | `data-value` / `data-max` on `.ntn-progress__fill` | Sets the fill width |
+| `data-ntn-avatar-name="Ada Lovelace"` on `.ntn-avatar` | Sets `--ntn-avatar-hue` from `avatarHue(name)` |
 | `data-ntn-theme-toggle` | Flips dark ⇄ light, persists, swaps the icon |
 | `data-ntn-theme-set="dark\|light\|auto"` | Sets a specific theme preference |
 | `data-ntn-daterange` on `.ntn-daterange` | Renders the month grids, owns selection, opens the panel in the top layer; fires `ntn:daterangechange` on Apply or Clear |

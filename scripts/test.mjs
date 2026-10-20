@@ -238,6 +238,10 @@ try {
   });
   check(leaks.length === 0, 'mono sets again every non-status colour Nocturne declares, in the same mode' + (leaks.length ? ': ' + [...new Set(leaks)].join(' ') : ''));
 
+  // NTN-22: a per-person avatar hue is colour, so mono drops its chroma.
+  check(monoBlocks.some((b) => /\[data-theme\]/.test(b.sel) && b.decls.some(([n, v]) => n === '--ntn-avatar-chroma' && v === '0')),
+    'mono sets --ntn-avatar-chroma to 0 on every data-theme element, so per-person avatars stay grey');
+
   const RAMP = ['100', '200', '300', '400', '500', '600', '700', '900'].map((s) => `--ntn-accent-${s}`).concat('--ntn-accent-fg');
   const unset = RAMP.flatMap((n) => [[monoDark, 'dark'], [monoLight, 'light']].filter(([set]) => !set.has(n)).map(([, mode]) => `${n} (${mode})`));
   check(unset.length === 0, 'mono sets the whole accent ramp and its ink in both modes' + (unset.length ? ': ' + unset.join(' ') : ''));

@@ -1287,9 +1287,21 @@
           <header class="sink__head">
             <h2 class="sink__title">Avatars</h2>
             <code class="sink__code">.ntn-avatar</code>
-            <p class="sink__note">Five sizes, optional status dot. Stack them in <code>.ntn-avatars</code>.</p>
+            <p class="sink__note">Five sizes, optional status dot. Stack them in <code>.ntn-avatars</code>. A colour per person: set <code>--ntn-avatar-hue</code> inline (or <code>data-ntn-avatar-name</code>, which hashes the name). Mono turns them grey. <code>--unknown</code> is the no-person disc.</p>
           </header>
-          <div class="ntn-card"><div class="ntn-card__body">
+          <div class="ntn-card"><div class="ntn-card__body ntn-stack">
+            <div class="ntn-row" data-sink-example="A colour per person">
+              <span class="ntn-avatar" data-ntn-avatar-name="Ada Lovelace">AL</span>
+              <span class="ntn-avatar" data-ntn-avatar-name="Grace Hopper">GH</span>
+              <span class="ntn-avatar" data-ntn-avatar-name="Alan Turing">AT</span>
+              <span class="ntn-avatar" data-ntn-avatar-name="Katherine Johnson">KJ</span>
+              <span class="ntn-avatar" style="--ntn-avatar-hue: 30">MR</span>
+              <span class="ntn-avatar" style="--ntn-avatar-hue: 150">JT</span>
+              <span class="ntn-avatar ntn-avatar--lg" style="--ntn-avatar-hue: 200">AK</span>
+              <span class="ntn-avatar ntn-avatar--unknown" role="img" aria-label="Unknown user">?</span>
+              <span class="ntn-avatar ntn-avatar--sm ntn-avatar--unknown" role="img" aria-label="Unassigned"><i class="fa-light fa-user"></i></span>
+            </div>
+            <hr class="ntn-divider">
             <div class="ntn-row ntn-row--between">
               <span class="ntn-avatars" data-sink-example="A stack">
                 <span class="ntn-avatar ntn-avatar--sm">MR</span>

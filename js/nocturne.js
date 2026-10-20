@@ -1474,6 +1474,29 @@ function onChange(e) {
   }
 }
 
+/* ── Avatar hue ──────────────────────────────────────────────────────────────
+   A stable colour per person. The hash is deliberately simple so a server can twin it:
+   h = (h × 31 + c) mod 360 over the name's UTF-16 code units c, from h = 0. A twin must hash
+   the same units (JavaScript's charCodeAt, Java's charAt), not code points, to agree on
+   names outside the Basic Multilingual Plane (emoji, some CJK). */
+
+/**
+ * The hue (0–359) for a name, for --ntn-avatar-hue.
+ * @param {string} name
+ * @returns {number}
+ */
+export function avatarHue(name) {
+  const s = String(name ?? '');
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 360;
+  return h;
+}
+
+/* data-ntn-avatar-name="Ada Lovelace" on an .ntn-avatar sets its hue from the name. */
+function syncAvatar(el) {
+  el.style.setProperty('--ntn-avatar-hue', String(avatarHue(el.dataset.ntnAvatarName)));
+}
+
 /** Re-scan the DOM. Call after rendering new markup (framework updates, HTMX swaps). */
 export function refresh(root = document) {
   // Everything matching inside root, plus root itself when it matches (refresh(tabList) works).
@@ -1487,6 +1510,7 @@ export function refresh(root = document) {
   within('[data-ntn-combo]').forEach(comboRender);
   within('[data-ntn-daterange]').forEach(drRefresh);
   within('[data-ntn-dropdown]').forEach(ddSetup);
+  within('[data-ntn-avatar-name]').forEach(syncAvatar);
   if (themeManaged) syncThemeControls(getTheme());
 }
 
@@ -1535,4 +1559,4 @@ if (typeof document !== 'undefined') {
   else start();
 }
 
-export default { start, refresh, configure, open, close, toggle, setDateRange, getTheme, getThemePreference, setTheme, toggleTheme };
+export default { start, refresh, configure, open, close, toggle, setDateRange, avatarHue, getTheme, getThemePreference, setTheme, toggleTheme };

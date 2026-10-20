@@ -39,6 +39,9 @@
   --ntn-alpha-ink-06: rgba(16,20,27,0.055);
   --ntn-alpha-ink-10: rgba(16,20,27,0.10);
 
+  /* A per-person avatar starts a touch deeper, so it holds its shape on white */
+  --ntn-avatar-lightness: 0.76;
+
   /* Surfaces are set outright: grey canvas, white paper, grey recesses. */
   --ntn-bg-app:        #F6F7F9;
   --ntn-bg-sunken:     #FFFFFF;
