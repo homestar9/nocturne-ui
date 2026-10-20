@@ -1,0 +1,87 @@
+/* ── Toast — ntn-toaster + ntn-toast ─────────────────────────────────────────
+   A short notice that stacks in a corner and leaves on its own. toast() in nocturne.js builds
+   both, opens the region in the top layer (inside an open modal when there is one) and runs the
+   timer; written by hand, a region with aria-live="polite" works too. */
+@use "sass:list";
+@use "../abstracts" as *;
+
+$-edge: var(--ntn-space-4);
+
+.ntn-toaster {
+  position: fixed; z-index: var(--ntn-z-toast);
+  top: $-edge; right: $-edge; bottom: auto; left: auto;
+  display: flex; flex-direction: column-reverse; gap: var(--ntn-space-2);
+  width: min(360px, calc(100vw - 32px)); max-height: calc(100vh - 32px);
+  margin: 0; padding: 0; border: 0; background: transparent; overflow: visible;
+  // The region is only a frame: clicks pass through it to the page, toasts take their own.
+  pointer-events: none;
+
+  // DOM order is oldest first, so screen readers meet them in order; the newest sits nearest
+  // the edge: on top for top-*, at the bottom for bottom-*.
+  &[data-ntn-placement="top-start"] { right: auto; left: $-edge; }
+  &[data-ntn-placement="top-center"] { right: 0; left: 0; margin-inline: auto; }
+  &[data-ntn-placement="bottom-end"] { top: auto; bottom: $-edge; flex-direction: column; }
+  &[data-ntn-placement="bottom-start"] { top: auto; right: auto; bottom: $-edge; left: $-edge; flex-direction: column; }
+
+  &[popover]:not(:popover-open) { display: none; }
+
+  // Announcements go through these (toast() writes them); the toasts themselves aren't live.
+  &__live { @include visually-hidden; }
+}
+
+.ntn-toast {
+  position: relative; display: flex; align-items: flex-start; gap: var(--ntn-space-3);
+  padding: 12px 12px 12px 14px; overflow: hidden;
+  border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg);
+  background: var(--ntn-surface-2); box-shadow: var(--ntn-shadow-lg); backdrop-filter: var(--ntn-pop-filter);
+  color: var(--ntn-text-primary); font-size: var(--ntn-font-size-sm); line-height: var(--ntn-leading-normal);
+  pointer-events: auto;
+  animation: ntn-rise var(--ntn-dur-base) var(--ntn-ease-out);
+
+  &__icon { flex: 0 0 auto; margin-top: 2px; font-size: 16px; color: var(--ntn-text-muted); }
+  &__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; overflow-wrap: anywhere; }
+  &__title { font-weight: var(--ntn-weight-semibold); }
+  &__title ~ &__message { font-size: var(--ntn-font-size-xs); color: var(--ntn-text-secondary); }
+  &__close {
+    display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+    width: 24px; height: 24px; margin: -2px -2px -2px 0; padding: 0;
+    border: 0; border-radius: var(--ntn-radius-sm); background: transparent;
+    color: var(--ntn-text-muted); font-size: 13px; cursor: pointer;
+    @include transition(background, color);
+
+    &:hover { background: var(--ntn-surface-hover); color: var(--ntn-text-primary); }
+  }
+  &__timer {
+    /* Time left, as a line along the bottom edge. --ntn-toast-duration is set by toast(). */
+    position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+    background: var(--ntn-text-disabled); transform-origin: left;
+    animation: ntn-toast-timer var(--ntn-toast-duration, 4000ms) linear forwards;
+  }
+  &[data-ntn-paused] &__timer { animation-play-state: paused; }
+  &[data-ntn-leaving] { animation: ntn-toast-leave var(--ntn-dur-fast) var(--ntn-ease-in-out) forwards; }
+
+  // Tones: neutral (the default; --neutral states it) · --primary · --success · --warning ·
+  // --danger · --info. The soft tint is translucent, so it lies over an opaque surface: a toast
+  // floats over anything.
+  &--neutral { border-color: var(--ntn-border-default); }
+  @each $tone in list.join(primary, $statuses) {
+    &--#{$tone} {
+      background: linear-gradient(tone($tone, soft), tone($tone, soft)), var(--ntn-surface-2);
+      border-color: tone($tone, line);
+
+      .ntn-toast__icon { color: tone($tone, ink); }
+      .ntn-toast__timer { background: tone($tone, dot); }
+    }
+  }
+
+  // The shrinking line resizes, so under reduced motion it goes; the toast still times out.
+  @include reduced-motion {
+    &__timer { display: none; }
+  }
+}
+
+@keyframes ntn-toast-timer { from { transform: scaleX(1) } to { transform: scaleX(0) } }
+@keyframes ntn-toast-leave { to { opacity: 0; transform: scale(0.97) } }
+@include reduced-motion {
+  @keyframes ntn-toast-leave { to { opacity: 0 } }
+}

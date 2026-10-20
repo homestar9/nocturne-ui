@@ -69,7 +69,7 @@ try {
   console.log('Glass hooks (R15)');
   check(/--ntn-surface-filter:\s*none;/.test(css) && /--ntn-pop-filter:\s*none;/.test(css), 'both hooks default to none');
   const HOOKS = { 'ntn-card': 'surface', 'ntn-sidebar': 'surface', 'ntn-modal': 'pop', 'ntn-menu': 'pop',
-    'ntn-popover': 'pop', 'ntn-daterange__panel': 'pop', 'ntn-tooltip__bubble': 'pop' };
+    'ntn-popover': 'pop', 'ntn-daterange__panel': 'pop', 'ntn-tooltip__bubble': 'pop', 'ntn-toast': 'pop' };
   for (const [block, hook] of Object.entries(HOOKS)) {
     const rule = css.match(new RegExp(`(?:^|\\n)\\.${block} \\{([^}]*)\\}`));
     check(rule && rule[1].includes(`backdrop-filter: var(--ntn-${hook}-filter)`), `.${block} reads --ntn-${hook}-filter`);
@@ -96,6 +96,21 @@ try {
   console.log('Reduced motion');
   const calmRise = css.match(/@media \(prefers-reduced-motion: reduce\) \{\s*@keyframes ntn-rise \{((?:[^{}]*\{[^{}]*\})*)[^{}]*\}/);
   check(calmRise && !/transform/.test(calmRise[1]), 'under reduced motion, entrances (ntn-rise) fade without moving');
+  const calmLeave = css.match(/@media \(prefers-reduced-motion: reduce\) \{\s*@keyframes ntn-toast-leave \{((?:[^{}]*\{[^{}]*\})*)[^{}]*\}/);
+  check(calmLeave && !/transform/.test(calmLeave[1]), 'under reduced motion, a toast leaves by fading only');
+  check(/@media \(prefers-reduced-motion: reduce\) \{\s*\.ntn-toast__timer \{\s*display: none;/.test(css), 'under reduced motion, the shrinking toast timer is hidden');
+
+  console.log('Toast (NTN-23)');
+  // The tones are translucent, and a toast floats over anything: each tint needs an opaque base.
+  const seeThrough = ['primary', 'success', 'warning', 'danger', 'info'].filter((t) => {
+    const r = rules.find((x) => x.sel === `.ntn-toast--${t}`);
+    return !(r && /background:[^;]*,\s*var\(--ntn-surface-2\)\s*;/.test(r.body));
+  });
+  check(seeThrough.length === 0, 'every toast tone paints its tint over an opaque --ntn-surface-2' + (seeThrough.length ? ': ' + seeThrough.join(' ') : ''));
+  const toaster = rules.find((r) => r.sel === '.ntn-toaster');
+  check(toaster && /pointer-events:\s*none/.test(toaster.body) && rules.some((r) => r.sel === '.ntn-toast' && /pointer-events:\s*auto/.test(r.body)),
+    'the region lets clicks through; only the toasts take them');
+  check(rules.some((r) => r.sel === '.ntn-toaster[popover]:not(:popover-open)' && /display:\s*none/.test(r.body)), 'a closed toaster popover stays hidden despite its display: flex');
 
   console.log('Progress steps (NTN-17)');
   // The connector runs under the markers, so the current marker's see-through tint needs an opaque base.
@@ -140,7 +155,7 @@ try {
   console.log('One tone set');
   // Every toned block offers primary, the four statuses and neutral; its default needs no class.
   const TONE_SET = ['primary', 'success', 'warning', 'danger', 'info', 'neutral'];
-  const DEFAULT_TONE = { 'ntn-badge': 'neutral', 'ntn-alert': null, 'ntn-progress': 'primary', 'ntn-btn': ['primary', 'neutral'], 'ntn-ambient': 'primary', 'ntn-gradient': 'primary' };
+  const DEFAULT_TONE = { 'ntn-badge': 'neutral', 'ntn-alert': null, 'ntn-progress': 'primary', 'ntn-btn': ['primary', 'neutral'], 'ntn-ambient': 'primary', 'ntn-gradient': 'primary', 'ntn-toast': 'neutral' };
   for (const [block, dflt] of Object.entries(DEFAULT_TONE)) {
     const missing = TONE_SET.filter((t) => ![].concat(dflt).includes(t) && !css.includes(`.${block}--${t}`));
     check(missing.length === 0, `.${block} offers every tone` + (missing.length ? ': missing ' + missing.join(' ') : ''));

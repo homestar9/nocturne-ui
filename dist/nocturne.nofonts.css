@@ -3151,6 +3151,222 @@ i:is([class*=fa-], [data-icon], :empty) {
   font-weight: var(--ntn-weight-medium);
 }
 
+/* ── Toast — ntn-toaster + ntn-toast ─────────────────────────────────────────
+   A short notice that stacks in a corner and leaves on its own. toast() in nocturne.js builds
+   both, opens the region in the top layer (inside an open modal when there is one) and runs the
+   timer; written by hand, a region with aria-live="polite" works too. */
+.ntn-toaster {
+  position: fixed;
+  z-index: var(--ntn-z-toast);
+  top: var(--ntn-space-4);
+  right: var(--ntn-space-4);
+  bottom: auto;
+  left: auto;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--ntn-space-2);
+  width: min(360px, 100vw - 32px);
+  max-height: calc(100vh - 32px);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+  pointer-events: none;
+}
+.ntn-toaster[data-ntn-placement=top-start] {
+  right: auto;
+  left: var(--ntn-space-4);
+}
+.ntn-toaster[data-ntn-placement=top-center] {
+  right: 0;
+  left: 0;
+  margin-inline: auto;
+}
+.ntn-toaster[data-ntn-placement=bottom-end] {
+  top: auto;
+  bottom: var(--ntn-space-4);
+  flex-direction: column;
+}
+.ntn-toaster[data-ntn-placement=bottom-start] {
+  top: auto;
+  right: auto;
+  bottom: var(--ntn-space-4);
+  left: var(--ntn-space-4);
+  flex-direction: column;
+}
+.ntn-toaster[popover]:not(:popover-open) {
+  display: none;
+}
+.ntn-toaster__live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.ntn-toast {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ntn-space-3);
+  padding: 12px 12px 12px 14px;
+  overflow: hidden;
+  border: 1px solid var(--ntn-border-default);
+  border-radius: var(--ntn-radius-lg);
+  background: var(--ntn-surface-2);
+  box-shadow: var(--ntn-shadow-lg);
+  backdrop-filter: var(--ntn-pop-filter);
+  color: var(--ntn-text-primary);
+  font-size: var(--ntn-font-size-sm);
+  line-height: var(--ntn-leading-normal);
+  pointer-events: auto;
+  animation: ntn-rise var(--ntn-dur-base) var(--ntn-ease-out);
+}
+.ntn-toast__icon {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  font-size: 16px;
+  color: var(--ntn-text-muted);
+}
+.ntn-toast__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-wrap: anywhere;
+}
+.ntn-toast__title {
+  font-weight: var(--ntn-weight-semibold);
+}
+.ntn-toast__title ~ .ntn-toast__message {
+  font-size: var(--ntn-font-size-xs);
+  color: var(--ntn-text-secondary);
+}
+.ntn-toast__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  margin: -2px -2px -2px 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ntn-radius-sm);
+  background: transparent;
+  color: var(--ntn-text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard);
+}
+.ntn-toast__close:hover {
+  background: var(--ntn-surface-hover);
+  color: var(--ntn-text-primary);
+}
+.ntn-toast__timer {
+  /* Time left, as a line along the bottom edge. --ntn-toast-duration is set by toast(). */
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--ntn-text-disabled);
+  transform-origin: left;
+  animation: ntn-toast-timer var(--ntn-toast-duration, 4000ms) linear forwards;
+}
+.ntn-toast[data-ntn-paused] .ntn-toast__timer {
+  animation-play-state: paused;
+}
+.ntn-toast[data-ntn-leaving] {
+  animation: ntn-toast-leave var(--ntn-dur-fast) var(--ntn-ease-in-out) forwards;
+}
+.ntn-toast--neutral {
+  border-color: var(--ntn-border-default);
+}
+.ntn-toast--primary {
+  background: linear-gradient(var(--ntn-accent-soft), var(--ntn-accent-soft)), var(--ntn-surface-2);
+  border-color: var(--ntn-accent-line);
+}
+.ntn-toast--primary .ntn-toast__icon {
+  color: var(--ntn-accent-300);
+}
+.ntn-toast--primary .ntn-toast__timer {
+  background: var(--ntn-accent-400);
+}
+.ntn-toast--success {
+  background: linear-gradient(var(--ntn-success-soft), var(--ntn-success-soft)), var(--ntn-surface-2);
+  border-color: var(--ntn-success-line);
+}
+.ntn-toast--success .ntn-toast__icon {
+  color: var(--ntn-success-400);
+}
+.ntn-toast--success .ntn-toast__timer {
+  background: var(--ntn-success-400);
+}
+.ntn-toast--warning {
+  background: linear-gradient(var(--ntn-warning-soft), var(--ntn-warning-soft)), var(--ntn-surface-2);
+  border-color: var(--ntn-warning-line);
+}
+.ntn-toast--warning .ntn-toast__icon {
+  color: var(--ntn-warning-400);
+}
+.ntn-toast--warning .ntn-toast__timer {
+  background: var(--ntn-warning-400);
+}
+.ntn-toast--danger {
+  background: linear-gradient(var(--ntn-danger-soft), var(--ntn-danger-soft)), var(--ntn-surface-2);
+  border-color: var(--ntn-danger-line);
+}
+.ntn-toast--danger .ntn-toast__icon {
+  color: var(--ntn-danger-400);
+}
+.ntn-toast--danger .ntn-toast__timer {
+  background: var(--ntn-danger-400);
+}
+.ntn-toast--info {
+  background: linear-gradient(var(--ntn-info-soft), var(--ntn-info-soft)), var(--ntn-surface-2);
+  border-color: var(--ntn-info-line);
+}
+.ntn-toast--info .ntn-toast__icon {
+  color: var(--ntn-info-400);
+}
+.ntn-toast--info .ntn-toast__timer {
+  background: var(--ntn-info-400);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ntn-toast__timer {
+    display: none;
+  }
+}
+
+@keyframes ntn-toast-timer {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+@keyframes ntn-toast-leave {
+  to {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  @keyframes ntn-toast-leave {
+    to {
+      opacity: 0;
+    }
+  }
+}
 /* ── Card, stat, modal, accordion, divider ────────────────────────────────── */
 /* A card does NOT clip its content, so a combobox panel, tooltip or date picker opened inside
    it can spill out. Children that paint a background at the card's edge round their own corners

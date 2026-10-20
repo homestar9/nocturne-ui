@@ -325,6 +325,83 @@ console.log('Avatar hue (NTN-22)');
   check(a.style.getPropertyValue('--ntn-avatar-hue') === '356', 'refresh(el) follows a changed name');
 }
 
+console.log('Toast (NTN-23)');
+{
+  const { document, window, mod } = await page('<button id="before">Before</button><dialog id="dlg"><button id="in">In</button></dialog>');
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const closes = [];
+  document.addEventListener('ntn:toastclose', (e) => closes.push(e.detail.reason));
+  const regions = () => document.querySelectorAll('.ntn-toaster');
+  const live = (el) => el.isConnected && !el.hasAttribute('data-ntn-leaving');
+
+  check(regions().length === 0, 'importing the module creates no toast region');
+  const a = mod.toast({ title: EVIL, message: EVIL, tone: 'success' });
+  check(regions().length === 1 && a.element.parentElement === regions()[0], 'the first toast creates its region');
+  check(regions()[0].dataset.ntnPlacement === 'top-end' && regions()[0].getAttribute('aria-label') === 'Notifications', 'top-end by default, labelled Notifications');
+  check(!a.element.querySelector('img') && window.pwned === undefined, 'title and message are never parsed as HTML');
+  check(a.element.querySelector('.ntn-toast__title').textContent === EVIL && a.element.querySelector('.ntn-toast__message').textContent === EVIL, '...they are the literal text');
+  check(a.element.classList.contains('ntn-toast--success') && a.element.querySelector('.ntn-toast__icon.fa-circle-check'), 'a tone adds its modifier and icon');
+  const close = a.element.querySelector('.ntn-toast__close');
+  check(close && close.type === 'button' && close.getAttribute('aria-label') === 'Dismiss' && close.querySelector('.fa-xmark'), 'the close button is a labelled button drawn with the close icon');
+  const b = mod.toast('Saved');
+  check(regions().length === 1 && b.element.parentElement === regions()[0], 'a second toast reuses the region');
+  mod.toast({ message: 'x', placement: 'bottom-start' });
+  check(regions().length === 2 && document.querySelector('.ntn-toaster[data-ntn-placement="bottom-start"]'), 'each placement gets its own region');
+  await wait(80);
+  const polite = document.querySelector('.ntn-toaster__live[aria-live="polite"]');
+  check(polite && polite.textContent === 'x', `the polite live region announces the newest (${polite && polite.textContent})`);
+  const d = mod.toast({ message: 'Failed', tone: 'danger', duration: 0 });
+  await wait(80);
+  const assertive = document.querySelector('.ntn-toaster__live[aria-live="assertive"]');
+  check(assertive && assertive.textContent === 'Failed' && !d.element.hasAttribute('role'), 'a danger toast is announced assertively, once (the toast itself is not live)');
+
+  click(close);
+  check(closes.at(-1) === 'dismiss' && a.element.hasAttribute('data-ntn-leaving'), 'the close button dismisses (reason "dismiss")');
+  b.close();
+  check(closes.at(-1) === 'api', 'handle.close() closes (reason "api")');
+  await wait(220);
+  check(!a.element.isConnected && !b.element.isConnected, 'closed toasts leave the DOM after their exit');
+
+  const s = mod.toast({ message: 'slow', duration: 100 });
+  s.element.dispatchEvent(new window.MouseEvent('mouseenter'));
+  await wait(160);
+  check(live(s.element) && s.element.hasAttribute('data-ntn-paused'), 'hovering pauses the timer');
+  s.element.dispatchEvent(new window.MouseEvent('mouseleave'));
+  await wait(160);
+  check(!live(s.element) && closes.at(-1) === 'timeout', 'leaving resumes it, and it times out (reason "timeout")');
+
+  const f = mod.toast({ message: 'focus', duration: 100 });
+  const before = document.getElementById('before');
+  before.focus();
+  f.element.querySelector('.ntn-toast__close').focus();
+  await wait(160);
+  check(live(f.element), 'keyboard focus inside pauses the timer');
+  document.activeElement.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+  check(!live(f.element) && closes.at(-1) === 'dismiss', 'Escape closes the focused toast');
+  check(document.activeElement === before, 'focus goes back to where it was before the toast');
+
+  check(live(d.element), 'duration: 0 stays until dismissed');
+  closes.length = 0;
+  const many = Array.from({ length: 7 }, (_, i) => mod.toast({ message: 'n' + i, duration: 0 }));
+  const shown = [...regions()[0].querySelectorAll('.ntn-toast')].filter(live);
+  check(shown.length === 5 && !live(many[0].element) && !live(many[1].element) && live(many[6].element),
+    `the stack caps at 5 and drops the oldest (${shown.length} shown)`);
+  check(closes.filter((r) => r === 'overflow').length === 3, `the dropped ones close with reason "overflow" (${closes.join(',')})`);
+
+  // jsdom has no :modal, so stand in for showModal() / close() on this one dialog.
+  const dlg = document.getElementById('dlg');
+  const matches = window.Element.prototype.matches;
+  dlg.matches = (sel) => (sel === ':modal' ? dlg.open : matches.call(dlg, sel));
+  dlg.setAttribute('open', '');
+  const m = mod.toast({ message: 'in the modal', duration: 0 });
+  check(m.element.closest('dialog') === dlg, 'while a modal is open, the toast mounts inside it (outside is inert)');
+  check(dlg.querySelector('.ntn-toaster__live[aria-live="polite"]'), '...with its own live region, since the page is hidden from assistive tech');
+  dlg.removeAttribute('open');
+  dlg.dispatchEvent(new window.Event('close'));
+  check(live(m.element) && !m.element.closest('dialog') && m.element.closest('.ntn-toaster').parentElement === document.body,
+    'when the modal closes, its toasts move to the page');
+}
+
 console.log('Sidebar drawer on a phone (R11)');
 {
   const { document, window } = await page(

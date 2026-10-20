@@ -119,6 +119,7 @@
         <p class="ntn-sidebar__section">Feedback</p>
         <a class="ntn-sidebar__item" href="#badges"><i class="fa-light fa-tag"></i><span>Badges</span></a>
         <a class="ntn-sidebar__item" href="#alerts"><i class="fa-light fa-triangle-exclamation"></i><span>Alerts</span></a>
+        <a class="ntn-sidebar__item" href="#toast"><i class="fa-light fa-message-lines"></i><span>Toast</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#progress"><i class="fa-light fa-bars-progress"></i><span>Progress · Spinner</span></a>
         <a class="ntn-sidebar__item" href="#avatars"><i class="fa-light fa-user"></i><span>Avatars</span></a>
         <a class="ntn-sidebar__item" href="#tooltip"><i class="fa-light fa-message"></i><span>Tooltip</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
@@ -1259,6 +1260,64 @@
           </div></div>
         </section>
 
+        <!-- ── Toast ──────────────────────────────────────────────────── -->
+        <section class="sink" id="toast">
+          <header class="sink__head">
+            <h2 class="sink__title">Toast</h2>
+            <code class="sink__code">.ntn-toast</code>
+            <p class="sink__note"><code>toast({ message, title, tone, duration, placement })</code> from <code>nocturne.js</code>. Stacks in a corner, leaves after 4s, pauses on hover or keyboard focus, <code>Esc</code> closes the focused one. It opens in the top layer, and inside an open modal (try the Modal example's Send invite). Fires <code>ntn:toastclose</code> with a <code>reason</code>.</p>
+          </header>
+          <div class="ntn-card"><div class="ntn-card__body ntn-stack">
+            <span class="sink__label">Tones</span>
+            <div class="ntn-row" id="toast-tones">
+              <button class="ntn-btn ntn-btn--sm" type="button" data-sink-toast="neutral">Neutral</button>
+              <button class="ntn-btn ntn-btn--sm ntn-btn--success" type="button" data-sink-toast="success">Success</button>
+              <button class="ntn-btn ntn-btn--sm ntn-btn--warning" type="button" data-sink-toast="warning">Warning</button>
+              <button class="ntn-btn ntn-btn--sm ntn-btn--danger" type="button" data-sink-toast="danger">Danger</button>
+              <button class="ntn-btn ntn-btn--sm ntn-btn--info" type="button" data-sink-toast="info">Info</button>
+              <button class="ntn-btn ntn-btn--sm ntn-btn--subtle" type="button" data-sink-toast="sticky">Until dismissed</button>
+            </div>
+            <span class="sink__label">Placements</span>
+            <div class="ntn-row">
+              <button class="ntn-btn ntn-btn--sm" type="button" data-sink-toast-at="top-end">Top end</button>
+              <button class="ntn-btn ntn-btn--sm" type="button" data-sink-toast-at="top-start">Top start</button>
+              <button class="ntn-btn ntn-btn--sm" type="button" data-sink-toast-at="top-center">Top center</button>
+              <button class="ntn-btn ntn-btn--sm" type="button" data-sink-toast-at="bottom-end">Bottom end</button>
+              <button class="ntn-btn ntn-btn--sm" type="button" data-sink-toast-at="bottom-start">Bottom start</button>
+              <span class="sink__label" id="toast-log">no toast closed yet</span>
+            </div>
+            <hr class="ntn-divider">
+            <span class="sink__label">The markup toast() builds</span>
+            <div class="ntn-grid ntn-grid--2" style="max-width:760px">
+              <div class="ntn-toast" data-sink-example="Neutral, message only">
+                <div class="ntn-toast__body"><div class="ntn-toast__message">Draft saved</div></div>
+                <button type="button" class="ntn-toast__close" aria-label="Dismiss"><i class="fa-light fa-xmark"></i></button>
+              </div>
+              <div class="ntn-toast ntn-toast--success" data-sink-example="Success, with a title">
+                <i class="fa-light fa-circle-check ntn-toast__icon" aria-hidden="true"></i>
+                <div class="ntn-toast__body"><div class="ntn-toast__title">Post published</div><div class="ntn-toast__message">“Spring launch” is live on the site.</div></div>
+                <button type="button" class="ntn-toast__close" aria-label="Dismiss"><i class="fa-light fa-xmark"></i></button>
+              </div>
+              <div class="ntn-toast ntn-toast--warning" data-sink-example="Warning">
+                <i class="fa-light fa-triangle-exclamation ntn-toast__icon" aria-hidden="true"></i>
+                <div class="ntn-toast__body"><div class="ntn-toast__message">Image is larger than 2 MB and was resized.</div></div>
+                <button type="button" class="ntn-toast__close" aria-label="Dismiss"><i class="fa-light fa-xmark"></i></button>
+              </div>
+              <div class="ntn-toast ntn-toast--danger" data-sink-example="Danger">
+                <i class="fa-light fa-circle-exclamation ntn-toast__icon" aria-hidden="true"></i>
+                <div class="ntn-toast__body"><div class="ntn-toast__title">Couldn't save</div><div class="ntn-toast__message">The server didn't answer. Your changes are still here.</div></div>
+                <button type="button" class="ntn-toast__close" aria-label="Dismiss"><i class="fa-light fa-xmark"></i></button>
+              </div>
+              <div class="ntn-toast ntn-toast--info" style="--ntn-toast-duration: 60000ms" data-sink-example="Info, with its timer">
+                <i class="fa-light fa-circle-info ntn-toast__icon" aria-hidden="true"></i>
+                <div class="ntn-toast__body"><div class="ntn-toast__message">A new version is available.</div></div>
+                <button type="button" class="ntn-toast__close" aria-label="Dismiss"><i class="fa-light fa-xmark"></i></button>
+                <div class="ntn-toast__timer"></div>
+              </div>
+            </div>
+          </div></div>
+        </section>
+
         <!-- ── Progress ───────────────────────────────────────────────── -->
         <section class="sink" id="progress">
           <header class="sink__head">
@@ -1878,7 +1937,7 @@
             </div>
             <footer class="ntn-modal__foot">
               <button class="ntn-btn" data-ntn-close>Cancel</button>
-              <button class="ntn-btn ntn-btn--primary">Send invite</button>
+              <button class="ntn-btn ntn-btn--primary" type="button" id="invite-send">Send invite</button>
             </footer>
           </dialog>
         </section>
@@ -2166,8 +2225,26 @@
     if (e.target.id !== 'publish-picker') readout.textContent = e.detail.start ? `${e.detail.start} → ${e.detail.end}` : 'cleared';
   });
 
+  // Toasts: every tone and placement, the modal case, and what ntn:toastclose reports.
+  const { setDateRange, toast } = await import('../js/nocturne.js');
+  const TOAST_SAMPLES = {
+    neutral: { message: 'Draft saved' },
+    success: { title: 'Post published', message: '“Spring launch” is live on the site.', tone: 'success' },
+    warning: { message: 'Image is larger than 2 MB and was resized.', tone: 'warning' },
+    danger: { title: "Couldn't save", message: "The server didn't answer. Your changes are still here.", tone: 'danger' },
+    info: { message: 'A new version is available.', tone: 'info' },
+    sticky: { title: 'Stays until dismissed', message: 'duration: 0', duration: 0 },
+  };
+  document.addEventListener('click', (e) => {
+    const tone = e.target.closest('[data-sink-toast]');
+    if (tone) toast(TOAST_SAMPLES[tone.dataset.sinkToast]);
+    const at = e.target.closest('[data-sink-toast-at]');
+    if (at) toast({ message: 'Placed ' + at.dataset.sinkToastAt, placement: at.dataset.sinkToastAt, tone: 'info' });
+    if (e.target.closest('#invite-send')) toast({ title: 'Invite sent', message: 'Shown inside the open modal, so it can be dismissed.', tone: 'success' });
+  });
+  document.addEventListener('ntn:toastclose', (e) => { document.getElementById('toast-log').textContent = 'Last close: ' + e.detail.reason; });
+
   // The form-associated picker: show what it would post, and set it from code.
-  const { setDateRange } = await import('../js/nocturne.js');
   const publishForm = document.getElementById('publish-form');
   const posted = () => {
     const v = new FormData(publishForm).get('publish');

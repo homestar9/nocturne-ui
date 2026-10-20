@@ -17,12 +17,17 @@ function make(tag, attrs = {}, ...children) {
 }
 /* Icons the behaviours draw themselves, by SEMANTIC key. The default renders Font Awesome Light;
    an app with its own icon system calls configure({ icon: (key) => element }) and then refresh(). */
-const FA_ICONS = { close: 'xmark', prev: 'chevron-left', next: 'chevron-right', 'theme-light': 'sun', 'theme-dark': 'moon' };
+const FA_ICONS = {
+  close: 'xmark', prev: 'chevron-left', next: 'chevron-right', 'theme-light': 'sun', 'theme-dark': 'moon',
+  success: 'circle-check', warning: 'triangle-exclamation', danger: 'circle-exclamation', info: 'circle-info',
+};
 let renderIcon = (key) => make('i', { class: 'fa-light fa-' + (FA_ICONS[key] || key), 'aria-hidden': 'true' });
 
 /**
- * Swap how nocturne.js renders the icons it creates (chip remove, calendar arrows, theme toggle).
- * @param {{ icon?: (key: string) => Element }} options  Keys: close, prev, next, theme-light, theme-dark.
+ * Swap how nocturne.js renders the icons it creates (chip remove, calendar arrows, theme toggle,
+ * toasts).
+ * @param {{ icon?: (key: string) => Element }} options  Keys: close, prev, next, theme-light,
+ *   theme-dark, and the toast tones success, warning, danger, info.
  */
 export function configure({ icon } = {}) {
   if (typeof icon === 'function') renderIcon = icon;
@@ -1408,6 +1413,14 @@ function onKeyDown(e) {
   const t = e.target;
   const q = (sel) => (t && t.closest ? t.closest(sel) : null);
 
+  // Escape in a dismissible toast closes that toast only (preventDefault keeps a modal open).
+  const toastEl = q('.ntn-toast');
+  if (toastEl && e.key === 'Escape' && toastEl.querySelector('.ntn-toast__close')) {
+    e.preventDefault();
+    toastClose(toastEl, 'dismiss');
+    return;
+  }
+
   // A closed dropdown's trigger: arrow keys open it on the first / last item.
   const ddTrig = q('[data-ntn-dropdown] > [aria-haspopup], [data-ntn-dropdown] > [data-ntn-dropdown-trigger]');
   if (ddTrig && !ddIsOpen(ddRoot(ddTrig)) && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
@@ -1497,6 +1510,171 @@ function syncAvatar(el) {
   el.style.setProperty('--ntn-avatar-hue', String(avatarHue(el.dataset.ntnAvatarName)));
 }
 
+/* ── Toast ───────────────────────────────────────────────────────────────────
+   toast() builds a notice in a corner region, created on first use (one per placement and
+   container). The region opens in the top layer; while a modal is open it is mounted inside
+   that dialog, because everything outside a modal is inert. Announcements go through two hidden
+   live regions per container (polite, and assertive for danger), so each toast is read once.
+   Text is always set as text, never parsed as HTML. */
+
+const TOAST_PLACEMENTS = ['top-end', 'top-start', 'top-center', 'bottom-end', 'bottom-start'];
+const TOAST_TONES = ['primary', 'success', 'warning', 'danger', 'info'];
+const TOAST_ICONS = ['success', 'warning', 'danger', 'info'];
+const TOAST_MAX = 5;
+const TOAST_LEAVE_MS = 160;
+const toasts = new WeakMap();
+
+/* The topmost open modal, if any: toasts outside it could not be reached. */
+function toastHost() {
+  const modals = $$('dialog[open]').filter((d) => { try { return d.matches(':modal'); } catch (e) { return false; } });
+  return modals.pop() || document.body;
+}
+
+function toastLive(host, assertive) {
+  const sel = `:scope > .ntn-toaster__live[aria-live="${assertive ? 'assertive' : 'polite'}"]`;
+  let live = host.querySelector(sel);
+  if (!live) { live = make('div', { class: 'ntn-toaster__live', 'aria-live': assertive ? 'assertive' : 'polite', 'aria-atomic': 'true' }); host.append(live); }
+  return live;
+}
+
+function toastRegion(host, placement) {
+  let region = host.querySelector(`:scope > .ntn-toaster[data-ntn-placement="${placement}"]`);
+  if (!region) {
+    region = make('section', { class: 'ntn-toaster', 'data-ntn-placement': placement, 'aria-label': 'Notifications' });
+    if (typeof region.showPopover === 'function') region.setAttribute('popover', 'manual');
+    host.append(region);
+  }
+  return region;
+}
+
+const regionToasts = (region) => $$(':scope > .ntn-toast:not([data-ntn-leaving])', region);
+
+/* An empty region is hidden; re-opening it puts it on top of the top layer again, above any
+   menu or picker opened since. (A region already showing toasts is left alone, since re-opening
+   would replay their animations.) */
+function toastRaise(region) {
+  if (!region.hasAttribute('popover') || regionToasts(region).length) return;
+  try { region.hidePopover(); } catch (e) { /* not open */ }
+  try { region.showPopover(); } catch (e) { /* detached */ }
+}
+
+function toastSettle(region) {
+  if (region.querySelector(':scope > .ntn-toast')) return;
+  if (region.hasAttribute('popover')) { try { region.hidePopover(); } catch (e) { /* not open */ } }
+}
+
+function toastTick(el) {
+  const t = toasts.get(el);
+  if (!t || !t.duration) return;
+  const pause = t.hover || t.focus;
+  el.toggleAttribute('data-ntn-paused', pause);
+  if (pause && t.timer) {
+    clearTimeout(t.timer); t.timer = null;
+    t.left -= Date.now() - t.since;
+  } else if (!pause && !t.timer) {
+    t.since = Date.now();
+    t.timer = setTimeout(() => toastClose(el, 'timeout'), Math.max(0, t.left));
+  }
+}
+
+function toastClose(el, reason) {
+  const t = toasts.get(el);
+  if (!t || t.closed) return;
+  t.closed = true;
+  clearTimeout(t.timer);
+  const region = el.parentElement;
+  const hadFocus = el.contains(document.activeElement);
+  el.setAttribute('data-ntn-leaving', '');
+  el.dispatchEvent(new CustomEvent('ntn:toastclose', { bubbles: true, detail: { reason } }));
+  if (hadFocus) {
+    // Back to where the user was before tabbing in, or to the next toast.
+    const next = region && regionToasts(region).map((x) => x.querySelector('.ntn-toast__close')).find(Boolean);
+    const back = t.returnTo && t.returnTo.isConnected ? t.returnTo : next;
+    if (back) back.focus();
+  }
+  setTimeout(() => { el.remove(); if (region) toastSettle(region); }, TOAST_LEAVE_MS);
+}
+
+/**
+ * Shows a toast.
+ * @param {string | {
+ *   message?: string, title?: string, tone?: 'neutral'|'primary'|'success'|'warning'|'danger'|'info',
+ *   duration?: number, dismissible?: boolean, icon?: boolean,
+ *   placement?: 'top-end'|'top-start'|'top-center'|'bottom-end'|'bottom-start'
+ * }} options  A string is the message. duration is in ms (default 4000); 0 keeps it until
+ *   dismissed. Text is set as text, so it may carry user data.
+ * @returns {{ element: HTMLElement, close: () => void }}
+ */
+export function toast(options = {}) {
+  const o = typeof options === 'string' ? { message: options } : options;
+  const { message = '', title = '', duration = 4000, dismissible = true, icon = true } = o;
+  const tone = TOAST_TONES.includes(o.tone) ? o.tone : 'neutral';
+  const placement = TOAST_PLACEMENTS.includes(o.placement) ? o.placement : 'top-end';
+  const host = toastHost();
+  const region = toastRegion(host, placement);
+
+  const el = make('div', { class: 'ntn-toast' + (tone === 'neutral' ? '' : ' ntn-toast--' + tone) });
+  if (icon && TOAST_ICONS.includes(tone)) {
+    const glyph = renderIcon(tone);
+    glyph.classList.add('ntn-toast__icon');
+    glyph.setAttribute('aria-hidden', 'true');
+    el.append(glyph);
+  }
+  const body = make('div', { class: 'ntn-toast__body' });
+  if (title) body.append(make('div', { class: 'ntn-toast__title' }, String(title)));
+  if (message) body.append(make('div', { class: 'ntn-toast__message' }, String(message)));
+  el.append(body);
+  if (dismissible) el.append(make('button', { type: 'button', class: 'ntn-toast__close', 'aria-label': 'Dismiss' }, renderIcon('close')));
+  if (duration > 0) {
+    el.style.setProperty('--ntn-toast-duration', duration + 'ms');
+    el.append(make('div', { class: 'ntn-toast__timer' }));
+  }
+
+  const t = { duration: duration > 0 ? duration : 0, left: duration, since: 0, timer: null, hover: false, focus: false, returnTo: null, closed: false };
+  toasts.set(el, t);
+  el.addEventListener('mouseenter', () => { t.hover = true; toastTick(el); });
+  el.addEventListener('mouseleave', () => { t.hover = false; toastTick(el); });
+  el.addEventListener('focusin', (e) => {
+    if (!t.focus && e.relatedTarget && !el.contains(e.relatedTarget)) t.returnTo = e.relatedTarget;
+    t.focus = true; toastTick(el);
+  });
+  el.addEventListener('focusout', (e) => { if (!el.contains(e.relatedTarget)) { t.focus = false; toastTick(el); } });
+  el.addEventListener('click', (e) => { if (e.target.closest('.ntn-toast__close')) toastClose(el, 'dismiss'); });
+
+  toastRaise(region);
+  region.append(el);
+  regionToasts(region).slice(0, -TOAST_MAX).forEach((old) => toastClose(old, 'overflow'));
+  toastTick(el);
+
+  // Announce after a beat, so a live region created just now is in the tree before it changes.
+  const live = toastLive(host, tone === 'danger');
+  const words = [title, message].filter(Boolean).join('. ');
+  live.textContent = '';
+  setTimeout(() => { live.textContent = words; }, 60);
+
+  return { element: el, close: () => toastClose(el, 'api') };
+}
+
+/* A modal that closes takes its toasts' region with it: hand them to the page instead. */
+function toastOnDialogClose(e) {
+  const dialog = e.target;
+  if (!dialog || dialog.tagName !== 'DIALOG') return;
+  $$(':scope > .ntn-toaster', dialog).forEach((region) => {
+    const live = $$(':scope > .ntn-toast:not([data-ntn-leaving])', region);
+    region.remove();
+    if (!live.length) return;
+    const home = toastRegion(document.body, region.dataset.ntnPlacement);
+    toastRaise(home);
+    live.forEach((el) => {
+      const t = toasts.get(el);
+      // Re-inserting restarts the timer line; start it where the clock is.
+      const timer = el.querySelector('.ntn-toast__timer');
+      if (timer && t) timer.style.animationDelay = -(t.duration - (t.timer ? t.left - (Date.now() - t.since) : t.left)) + 'ms';
+      home.append(el);
+    });
+  });
+}
+
 /** Re-scan the DOM. Call after rendering new markup (framework updates, HTMX swaps). */
 export function refresh(root = document) {
   // Everything matching inside root, plus root itself when it matches (refresh(tabList) works).
@@ -1539,6 +1717,7 @@ export function start(options = {}) {
     if (sub) menuFlip(sub);
   });
   document.addEventListener('keydown', onKeyDown);
+  document.addEventListener('close', toastOnDialogClose, true);
   document.addEventListener('pointerdown', onTreePointerDown);
   document.addEventListener('pointerdown', ddOnPointerDown);
   document.addEventListener('focusout', ddOnFocusOut);
@@ -1559,4 +1738,4 @@ if (typeof document !== 'undefined') {
   else start();
 }
 
-export default { start, refresh, configure, open, close, toggle, setDateRange, avatarHue, getTheme, getThemePreference, setTheme, toggleTheme };
+export default { start, refresh, configure, open, close, toggle, toast, setDateRange, avatarHue, getTheme, getThemePreference, setTheme, toggleTheme };

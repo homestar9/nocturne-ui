@@ -607,6 +607,7 @@ Every toned block offers the same set: `--primary` (the accent), `--success`, `-
 | `ntn-btn` | primary | neutral is the default emphasis with no tone; tones combine with an emphasis |
 | `ntn-ambient` | primary | tints the glow |
 | `ntn-gradient` | primary | tints the wash |
+| `ntn-toast` | neutral | the four statuses add an icon |
 
 Avatar status names a presence, not a tone: `--online` (success), `--busy` (danger), `--away`
 (warning), and offline (neutral) by default.
@@ -641,6 +642,72 @@ Dismiss with `data-ntn-dismiss`.
   </div>
 </div>
 ```
+
+## Toast — `ntn-toast` · `ntn-toaster`
+
+A short notice about something that just happened ("Post published", "Couldn't save"). It
+stacks in a corner and leaves on its own. Use an alert for anything that must stay on the page,
+and a modal for anything the user must decide.
+
+Call `toast()` from `nocturne.js`. Don't write toasts by hand: the function builds the markup,
+the region, the timer and the announcements.
+
+```js
+import { toast } from '@homestar9/nocturne-ui/js';
+
+toast('Draft saved');                                      // neutral, top-end, 4s
+toast({ title: 'Post published', message: '“Spring launch” is live.', tone: 'success' });
+const t = toast({ message: 'Uploading…', duration: 0 });   // stays until dismissed
+t.close();
+```
+
+**Options**
+- `message`, `title`: plain text, set as text, so user data is safe in them.
+- `tone`: `neutral` (default), `primary`, `success`, `warning`, `danger` or `info`. The four
+  statuses add an icon; turn it off with `icon: false`.
+- `duration`: in ms, default `4000`. `0` keeps the toast until it is dismissed.
+- `dismissible`: default `true`, which draws the close button.
+- `placement`: `top-end` (default), `top-start`, `top-center`, `bottom-end` or `bottom-start`.
+
+**Behaviour**
+- **Regions.** Each placement has one region, created on first use. Importing the module creates
+  nothing.
+- **Order.** The newest toast sits nearest the edge. At most 5 show at once; the oldest is
+  dropped.
+- **Stacking.** The region opens in the top layer. While a modal is open the toast mounts inside
+  it, because everything outside a modal is inert. If the modal closes, its toasts move to the
+  page.
+- **Timer.** Hover or keyboard focus pauses it. Escape closes the focused toast and leaves the
+  modal open. Focus returns to where it was.
+- **Announcements.** Each toast is announced once, through a hidden polite live region, or an
+  assertive one for `danger`. The toasts themselves are not live regions.
+- **Event.** Closing fires `ntn:toastclose` with `detail.reason`: `timeout`, `dismiss`, `api`
+  (`close()`), or `overflow` (dropped by the cap).
+- **Icons.** They come from `configure({ icon })`, under the keys `close`, `success`, `warning`,
+  `danger` and `info`.
+- **Reduced motion.** The toast fades in and out, and the timer line is hidden.
+
+The markup `toast()` builds, for reference and for server-rendered flashes. A hand-written toast
+does nothing on its own, so put it in an `ntn-toaster` with `aria-live="polite"`:
+
+```html
+<section class="ntn-toaster" data-ntn-placement="top-end" aria-live="polite" aria-label="Notifications">
+  <div class="ntn-toast ntn-toast--success">
+    <i class="fa-light fa-circle-check ntn-toast__icon" aria-hidden="true"></i>
+    <div class="ntn-toast__body">
+      <div class="ntn-toast__title">Post published</div>
+      <div class="ntn-toast__message">“Spring launch” is live on the site.</div>
+    </div>
+    <button type="button" class="ntn-toast__close" aria-label="Dismiss"><i class="fa-light fa-xmark"></i></button>
+    <div class="ntn-toast__timer"></div>
+  </div>
+</section>
+```
+
+Elements: `__icon` `__body` `__title` `__message` `__close` `__timer`. Modifiers: `--neutral`
+(default) `--primary` `--success` `--warning` `--danger` `--info`. State: `data-ntn-paused` (the
+timer line stops), `data-ntn-leaving` (the exit). `--ntn-toast-duration` sets the timer line's
+length.
 
 ## Tooltip — `ntn-tooltip`
 

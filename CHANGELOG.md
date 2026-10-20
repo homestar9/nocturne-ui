@@ -48,6 +48,25 @@ renamed or removed class names and tokens.
   - `ntn-avatar--unknown` is a neutral disc for "no person".
   - The prefixed build renames `--ntn-avatar-hue` with the classes.
   - **Kitchen sink:** hued and unknown avatars in the Avatars section.
+- **Toast: `ntn-toaster` + `ntn-toast`, and `toast()` in `nocturne.js`** (NTN-23):
+  - `toast({ message, title, tone, duration, dismissible, placement, icon })` returns
+    `{ element, close }`.
+  - **Regions:** one per placement, created on first use. Importing the module creates none.
+  - **Placements:** `top-end` (default), `top-start`, `top-center`, `bottom-end` and
+    `bottom-start`. The newest sits nearest the edge, and at most 5 show at once.
+  - **Stacking:** the region opens in the top layer. While a modal is open, the toast mounts
+    inside it, and if the modal closes its toasts move to the page.
+  - **Timer:** pauses on hover and keyboard focus. Escape closes the focused toast without closing
+    a modal.
+  - **Announcements:** through hidden live regions, polite or assertive for danger, so each toast
+    is read once.
+  - **Event:** `ntn:toastclose` carries `reason`: `timeout`, `dismiss`, `api` or `overflow`.
+  - **Tones:** neutral (the default), `--primary` and the four statuses. Each tint lies over an
+    opaque surface.
+  - **Motion:** reduced motion fades it in and out and hides the timer line.
+  - **Icons:** new `configure({ icon })` keys `success`, `warning`, `danger` and `info`.
+  - **Kitchen sink:** a Toast section with every tone and placement, and the modal case on the
+    Modal example's Send invite button.
 
 ### Changed
 - **Breaking:** `--ntn-ambient-height` is now `--ntn-ambient-size`, since the band can sit on a
