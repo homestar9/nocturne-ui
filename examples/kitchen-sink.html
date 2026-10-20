@@ -51,6 +51,8 @@
     --ntn-ambient-size: 200px;
     display: grid; place-items: center; min-height: 140px;
   }
+  /* A tall card, to show the fixed fade depth against --full. */
+  .sink__tall { min-height: 300px; }
   .sink__label { font-size: var(--ntn-font-size-2xs); text-transform: uppercase; letter-spacing: var(--ntn-tracking-caps); color: var(--ntn-text-disabled); font-weight: var(--ntn-weight-medium); }
   /* The Code view (sink-code.js): a toggle in each head, and a panel of snippets under the examples. */
   .sink__codeview { display: flex; flex-direction: column; gap: var(--ntn-space-4); min-width: 0; }
@@ -120,6 +122,7 @@
         <a class="ntn-sidebar__item" href="#cards"><i class="fa-light fa-clone"></i><span>Cards</span></a>
         <a class="ntn-sidebar__item" href="#edges"><i class="fa-light fa-wand-magic-sparkles"></i><span>Border effects</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#glass"><i class="fa-light fa-droplet"></i><span>Glass</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#gradient"><i class="fa-light fa-fill-drip"></i><span>Gradient</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#accordion"><i class="fa-light fa-list"></i><span>Accordion</span></a>
         <a class="ntn-sidebar__item" href="#modal"><i class="fa-light fa-window-restore"></i><span>Modal</span></a>
       </div>
@@ -1619,6 +1622,102 @@
                   </div>
                 </header>
                 <div class="ntn-card__body">Each light fades over <code>--ntn-ambient-size</code>.</div>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Gradient ───────────────────────────────────────────────── -->
+        <section class="sink" id="gradient">
+          <header class="sink__head">
+            <h2 class="sink__title">Gradient</h2>
+            <code class="sink__code">.ntn-gradient</code>
+            <p class="sink__note">A wash for any surface: a tone fades from the top edge into the surface's own background, solid or glass. The accent by default, or any tone. <code>--strong</code> starts deeper, <code>--line</code> draws the border in the tone, and <code>--full</code> fades over the whole height instead of <code>--ntn-gradient-size</code>. Set <code>--ntn-gradient-color</code> to wash in any colour. Keep it quiet: neutral across a dashboard, and a status tone on the one card that needs attention.</p>
+          </header>
+          <div class="ntn-stack">
+            <p class="sink__label">Tones · <code>ntn-gradient--{tone}</code></p>
+            <div class="ntn-grid ntn-grid--3" data-sink-example="Tones">
+              <div class="ntn-stat ntn-gradient">
+                <div class="ntn-stat__head"><span class="ntn-stat__label">Accent (default)</span></div>
+                <div class="ntn-stat__figure"><span class="ntn-stat__value">42</span><span class="ntn-stat__delta">+12%</span></div>
+                <span class="ntn-stat__caption">ntn-gradient</span>
+              </div>
+              <div class="ntn-stat ntn-gradient ntn-gradient--success">
+                <div class="ntn-stat__head"><span class="ntn-stat__label">Success</span></div>
+                <div class="ntn-stat__figure"><span class="ntn-stat__value">99.9%</span></div>
+                <span class="ntn-stat__caption">--success</span>
+              </div>
+              <div class="ntn-stat ntn-gradient ntn-gradient--warning">
+                <div class="ntn-stat__head"><span class="ntn-stat__label">Warning</span></div>
+                <div class="ntn-stat__figure"><span class="ntn-stat__value">3</span></div>
+                <span class="ntn-stat__caption">--warning</span>
+              </div>
+              <div class="ntn-stat ntn-gradient ntn-gradient--danger">
+                <div class="ntn-stat__head"><span class="ntn-stat__label">Danger</span></div>
+                <div class="ntn-stat__figure"><span class="ntn-stat__value">1</span><span class="ntn-stat__delta ntn-stat__delta--down">+1</span></div>
+                <span class="ntn-stat__caption">--danger</span>
+              </div>
+              <div class="ntn-stat ntn-gradient ntn-gradient--info">
+                <div class="ntn-stat__head"><span class="ntn-stat__label">Info</span></div>
+                <div class="ntn-stat__figure"><span class="ntn-stat__value">12</span></div>
+                <span class="ntn-stat__caption">--info</span>
+              </div>
+              <div class="ntn-stat ntn-gradient ntn-gradient--neutral">
+                <div class="ntn-stat__head"><span class="ntn-stat__label">Neutral</span></div>
+                <div class="ntn-stat__figure"><span class="ntn-stat__value">128</span></div>
+                <span class="ntn-stat__caption">--neutral</span>
+              </div>
+            </div>
+          </div>
+          <div class="ntn-stack">
+            <p class="sink__label">A dashboard · neutral cards, one <code>--danger --strong --line</code></p>
+            <div class="ntn-grid ntn-grid--4" data-sink-example="A dashboard">
+              <section class="ntn-card ntn-gradient ntn-gradient--neutral">
+                <header class="ntn-card__head"><div class="ntn-card__heading"><h3 class="ntn-card__title">Traffic</h3></div></header>
+                <div class="ntn-card__body">18.2k visits this week, up 4%.</div>
+              </section>
+              <section class="ntn-card ntn-gradient ntn-gradient--neutral">
+                <header class="ntn-card__head"><div class="ntn-card__heading"><h3 class="ntn-card__title">Builds</h3></div></header>
+                <div class="ntn-card__body">214 builds, median 48 seconds.</div>
+              </section>
+              <section class="ntn-card ntn-gradient ntn-gradient--neutral">
+                <header class="ntn-card__head"><div class="ntn-card__heading"><h3 class="ntn-card__title">Storage</h3></div></header>
+                <div class="ntn-card__body">61% of 200 GB used.</div>
+              </section>
+              <section class="ntn-card ntn-gradient ntn-gradient--danger ntn-gradient--strong ntn-gradient--line">
+                <header class="ntn-card__head"><div class="ntn-card__heading"><h3 class="ntn-card__title">api is down</h3></div></header>
+                <div class="ntn-card__body">The last deploy failed its health check 4 minutes ago.</div>
+              </section>
+            </div>
+          </div>
+          <div class="ntn-stack">
+            <p class="sink__label">Depth · fixed <code>--ntn-gradient-size</code>, then <code>--full</code></p>
+            <div class="ntn-grid ntn-grid--2" data-sink-example="Depth">
+              <section class="ntn-card ntn-gradient sink__tall">
+                <header class="ntn-card__head"><div class="ntn-card__heading"><h3 class="ntn-card__title">Fixed depth</h3></div></header>
+                <div class="ntn-card__body">The wash fades out 160px down, whatever the card's height.</div>
+              </section>
+              <section class="ntn-card ntn-gradient ntn-gradient--full sink__tall">
+                <header class="ntn-card__head"><div class="ntn-card__heading"><h3 class="ntn-card__title">Full height</h3></div></header>
+                <div class="ntn-card__body">The wash fades over the whole card.</div>
+              </section>
+            </div>
+          </div>
+          <div class="ntn-stack">
+            <p class="sink__label">Over glass · <code>ntn-glass</code> + <code>ntn-ambient</code></p>
+            <div class="ntn-glass ntn-grid ntn-grid--3 sink__glass-stage" data-sink-example="Over glass">
+              <div class="ntn-ambient"></div>
+              <section class="ntn-card ntn-gradient ntn-gradient--neutral">
+                <header class="ntn-card__head"><div class="ntn-card__heading"><h3 class="ntn-card__title">Neutral</h3></div></header>
+                <div class="ntn-card__body">The wash lies on the translucent glass and fades into it.</div>
+              </section>
+              <section class="ntn-card ntn-gradient ntn-gradient--info">
+                <header class="ntn-card__head"><div class="ntn-card__heading"><h3 class="ntn-card__title">Info</h3></div></header>
+                <div class="ntn-card__body">The backdrop still shows through below the fade.</div>
+              </section>
+              <section class="ntn-card ntn-gradient ntn-gradient--warning ntn-gradient--line">
+                <header class="ntn-card__head"><div class="ntn-card__heading"><h3 class="ntn-card__title">Warning, lined</h3></div></header>
+                <div class="ntn-card__body">The tone's hairline replaces the glass border.</div>
               </section>
             </div>
           </div>

@@ -108,6 +108,11 @@
   --ntn-accent-fill-hover:  linear-gradient(180deg, color-mix(in oklab, var(--ntn-accent-500) 88%, white),
                                                     color-mix(in oklab, var(--ntn-accent-500) 75%, var(--ntn-accent-600)));
   --ntn-accent-halo:        color-mix(in srgb, var(--ntn-accent-500) 55%, transparent);
+  /* ntn-gradient (_gradient.scss): where the wash starts, where --strong starts, and the --line
+     border. Its tone modifiers set all three. */
+  --ntn-gradient-color:     var(--ntn-accent-soft);
+  --ntn-gradient-strong:    var(--ntn-accent-line);
+  --ntn-gradient-line:      var(--ntn-accent-line);
   /* The ramp's 800 stop sits between its neighbours, so a theme that sets 700 and 900 gets it. */
   --ntn-accent-800:         color-mix(in oklab, var(--ntn-accent-700), var(--ntn-accent-900));
 
