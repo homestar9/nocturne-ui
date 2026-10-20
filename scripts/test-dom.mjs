@@ -402,6 +402,56 @@ console.log('Toast (NTN-23)');
     'when the modal closes, its toasts move to the page');
 }
 
+console.log('Drop area (NTN-24)');
+{
+  const { document, window } = await page(
+    `<label class="ntn-dropzone" data-ntn-dropzone id="dz">
+       <input type="file" multiple id="dz-input">
+       <span class="ntn-dropzone__icon"><i class="fa-light fa-cloud-arrow-up"></i></span>
+       <span class="ntn-dropzone__title" id="dz-title">Drop files</span>
+     </label>
+     <label class="ntn-dropzone" data-ntn-dropzone aria-disabled="true" id="off"><span id="off-title">Off</span></label>`);
+  // jsdom has no DragEvent; a plain event with a dataTransfer stands in.
+  const drag = (el, type, types = ['Files'], files = []) => {
+    const e = new window.Event(type, { bubbles: true, cancelable: true });
+    Object.defineProperty(e, 'dataTransfer', { value: { types, files } });
+    el.dispatchEvent(e);
+    return e;
+  };
+  const dz = document.getElementById('dz');
+  const title = document.getElementById('dz-title');
+  const input = document.getElementById('dz-input');
+  const on = () => dz.hasAttribute('data-ntn-dragover');
+  const got = [];
+  document.addEventListener('ntn:files', (e) => got.push(e.detail.files.map((f) => f.name).join(',')));
+
+  drag(dz, 'dragenter');
+  check(on(), 'a file drag entering the area sets data-ntn-dragover');
+  drag(title, 'dragenter');
+  drag(dz, 'dragleave');
+  check(on(), 'moving onto a child (enter child, leave parent) keeps it');
+  drag(title, 'dragleave');
+  check(!on(), 'leaving the last one clears it');
+
+  drag(dz, 'dragenter', ['text/plain']);
+  check(!on(), 'a drag without files (a tree row) is ignored');
+  check(!drag(dz, 'dragover', ['text/plain']).defaultPrevented, '...and its dragover is left alone');
+  check(drag(dz, 'dragover').defaultPrevented, 'a file dragover is accepted, so a near miss never opens the file');
+
+  drag(dz, 'dragenter');
+  const dropped = drag(title, 'drop', ['Files'], [{ name: 'a.png' }, { name: 'b.pdf' }]);
+  check(!on() && dropped.defaultPrevented && got.at(-1) === 'a.png,b.pdf', `a drop beside the input clears the state and fires ntn:files (${got.at(-1)})`);
+  drag(dz, 'dragenter');
+  const native = drag(input, 'drop', ['Files'], [{ name: 'c.png' }]);
+  check(!on() && !native.defaultPrevented && got.length === 1, 'a drop on the input is left to the browser (its change fires ntn:files)');
+  input.dispatchEvent(new window.Event('change', { bubbles: true }));
+  check(got.length === 2 && got.at(-1) === '', 'picking files fires ntn:files once, with the input\'s files');
+
+  const off = document.getElementById('off');
+  drag(off, 'dragenter');
+  check(!off.hasAttribute('data-ntn-dragover'), 'an aria-disabled area ignores drags');
+}
+
 console.log('Sidebar drawer on a phone (R11)');
 {
   const { document, window } = await page(

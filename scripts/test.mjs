@@ -112,6 +112,15 @@ try {
     'the region lets clicks through; only the toasts take them');
   check(rules.some((r) => r.sel === '.ntn-toaster[popover]:not(:popover-open)' && /display:\s*none/.test(r.body)), 'a closed toaster popover stays hidden despite its display: flex');
 
+  console.log('Drop area and file rows (NTN-24)');
+  // The input covers the label, so click and drop work with no JS; the label draws its focus.
+  const dzInput = rules.find((r) => r.sel === '.ntn-dropzone input[type=file]' || r.sel === '.ntn-dropzone input[type="file"]');
+  check(dzInput && /inset:\s*0/.test(dzInput.body) && /opacity:\s*0/.test(dzInput.body), 'the file input is stretched invisibly over the drop area');
+  check(rules.some((r) => r.sel === '.ntn-dropzone:has(input:focus-visible)' && /box-shadow:\s*var\(--ntn-ring-focus\)/.test(r.body)), 'the drop area rings when its hidden input has keyboard focus');
+  const fileStates = [['.ntn-file:not([data-ntn-state=uploading]) .ntn-file__progress', 'progress outside uploading'], ['.ntn-file:not([data-ntn-state=error]) .ntn-file__error', 'the error outside the error state']];
+  const unhidden = fileStates.filter(([sel]) => !rules.some((r) => r.sel.replace(/"/g, '') === sel && /display:\s*none/.test(r.body)));
+  check(unhidden.length === 0, 'a file row hides its ' + fileStates.map(([, m]) => m).join(' and ') + (unhidden.length ? ': not ' + unhidden.map(([, m]) => m).join(', ') : ''));
+
   console.log('Progress steps (NTN-17)');
   // The connector runs under the markers, so the current marker's see-through tint needs an opaque base.
   const currentMarker = rules.find((r) => r.sel === '.ntn-steps__step[data-state=current] .ntn-steps__marker');

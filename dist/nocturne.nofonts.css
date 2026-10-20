@@ -3367,6 +3367,194 @@ i:is([class*=fa-], [data-icon], :empty) {
     }
   }
 }
+/* ── Drop area and file rows — ntn-dropzone · ntn-file ───────────────────────
+   The look of an upload, with no engine assumed: drive it from Dropzone, Uppy or a plain form.
+   The drop area is a <label> with a file input stretched over it, so click-to-browse and
+   dropping files on it work with no JS. data-ntn-dropzone adds the drag-over state and an
+   ntn:files event; an upload library can set data-ntn-dragover itself instead. */
+.ntn-dropzone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ntn-space-2);
+  padding: var(--ntn-space-8) var(--ntn-space-6);
+  text-align: center;
+  border: 1.5px dashed var(--ntn-border-strong);
+  border-radius: var(--ntn-radius-lg);
+  background: var(--ntn-alpha-ink-04);
+  color: var(--ntn-text-secondary);
+  font-size: var(--ntn-font-size-sm);
+  cursor: pointer;
+  transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard);
+}
+.ntn-dropzone input[type=file] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.ntn-dropzone__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  border-radius: var(--ntn-radius-full);
+  background: var(--ntn-surface-3);
+  color: var(--ntn-text-muted);
+  font-size: 18px;
+  transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard);
+}
+.ntn-dropzone__title {
+  color: var(--ntn-text-primary);
+  font-weight: var(--ntn-weight-medium);
+}
+.ntn-dropzone__hint {
+  font-size: var(--ntn-font-size-xs);
+  color: var(--ntn-text-muted);
+}
+.ntn-dropzone:hover:where(:not(:disabled, [aria-disabled=true])) {
+  border-color: var(--ntn-accent-line-strong);
+  background: var(--ntn-alpha-ink-06);
+}
+.ntn-dropzone:has(input:focus-visible) {
+  border-color: var(--ntn-accent-500);
+  box-shadow: var(--ntn-ring-focus);
+}
+@media (forced-colors: active) {
+  .ntn-dropzone:has(input:focus-visible) {
+    outline: 2px solid Highlight;
+  }
+}
+.ntn-dropzone[data-ntn-dragover] {
+  border-style: solid;
+  border-color: var(--ntn-accent);
+  background: var(--ntn-accent-soft);
+  color: var(--ntn-text-primary);
+}
+.ntn-dropzone[data-ntn-dragover] .ntn-dropzone__icon {
+  background: var(--ntn-accent);
+  color: var(--ntn-accent-fg);
+}
+.ntn-dropzone[aria-disabled=true] {
+  opacity: var(--ntn-disabled-opacity);
+  cursor: not-allowed;
+}
+.ntn-dropzone[aria-disabled=true] input[type=file] {
+  pointer-events: none;
+}
+.ntn-dropzone--compact {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: var(--ntn-space-3);
+  padding: 10px var(--ntn-space-4);
+  text-align: left;
+}
+.ntn-dropzone--compact .ntn-dropzone__icon {
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+}
+.ntn-dropzone--compact .ntn-dropzone__hint {
+  margin-left: auto;
+}
+
+.ntn-file-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntn-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* One file: a thumbnail, its name and size, then progress or an error under them. The progress
+   shows only while uploading and the error only in the error state, so an engine's template can
+   always carry both. No state is a file already stored. */
+.ntn-file {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  column-gap: var(--ntn-space-3);
+  align-items: center;
+  grid-template-areas: "thumb name actions" "thumb meta actions" "thumb progress progress" "thumb error error";
+  padding: 10px var(--ntn-space-3);
+  border: 1px solid var(--ntn-border-subtle);
+  border-radius: var(--ntn-radius-md);
+  background: var(--ntn-surface-1);
+}
+.ntn-file__thumb {
+  grid-area: thumb;
+  align-self: start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--ntn-radius-sm);
+  overflow: hidden;
+  background: var(--ntn-surface-3);
+  color: var(--ntn-text-muted);
+  font-size: 16px;
+}
+.ntn-file__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ntn-file img.ntn-file__thumb {
+  object-fit: cover;
+}
+.ntn-file__name {
+  grid-area: name;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--ntn-font-size-sm);
+  font-weight: var(--ntn-weight-medium);
+  color: var(--ntn-text-primary);
+}
+.ntn-file__meta {
+  grid-area: meta;
+  font-size: var(--ntn-font-size-xs);
+  color: var(--ntn-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.ntn-file__actions {
+  grid-area: actions;
+  display: flex;
+  align-items: center;
+  gap: var(--ntn-space-1);
+}
+.ntn-file__progress {
+  grid-area: progress;
+  margin-top: var(--ntn-space-2);
+}
+.ntn-file__error {
+  grid-area: error;
+  margin-top: var(--ntn-space-1);
+  font-size: var(--ntn-font-size-xs);
+  color: var(--ntn-danger-400);
+}
+.ntn-file:not([data-ntn-state=uploading]) .ntn-file__progress {
+  display: none;
+}
+.ntn-file:not([data-ntn-state=error]) .ntn-file__error {
+  display: none;
+}
+.ntn-file[data-ntn-state=error] {
+  border-color: var(--ntn-danger-line);
+  background: linear-gradient(var(--ntn-danger-soft), var(--ntn-danger-soft)), var(--ntn-surface-1);
+}
+.ntn-file[data-ntn-state=error] .ntn-file__thumb {
+  color: var(--ntn-danger-400);
+}
+
 /* ── Card, stat, modal, accordion, divider ────────────────────────────────── */
 /* A card does NOT clip its content, so a combobox panel, tooltip or date picker opened inside
    it can spill out. Children that paint a background at the card's edge round their own corners

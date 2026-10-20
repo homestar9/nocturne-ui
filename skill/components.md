@@ -917,6 +917,73 @@ Filter-form elements: `__field` `__actions` `__applied`, plus `ntn-filter-tag` /
 above any content block. The filter form is revealed by a button carrying
 `data-ntn-reveal="#id"`, and drops its own top rule when it follows a `--divided` toolbar.
 
+## Upload — `ntn-dropzone` · `ntn-file`
+
+The look of an upload, with no engine assumed. Nocturne bundles no upload library: drive these
+from Dropzone, Uppy or a plain form.
+
+**Drop area.** A `<label class="ntn-dropzone">` with a file input inside it. The kit stretches
+the input invisibly over the label, so click-to-browse and dropping files on it work with no JS,
+and the label draws the focus ring.
+
+- Elements: `__icon` (a disc holding an `<i>`), `__title`, `__hint` (limits and accepted types).
+- Modifier: `--compact`, a single line for a tight form.
+- State: `data-ntn-dragover` while files are held over it. `aria-disabled="true"` also needs
+  `disabled` on the input.
+
+```html
+<label class="ntn-dropzone" data-ntn-dropzone>
+  <input type="file" name="files" multiple accept="image/*,application/pdf">
+  <span class="ntn-dropzone__icon"><i class="fa-light fa-cloud-arrow-up"></i></span>
+  <span class="ntn-dropzone__title">Drop files here or click to browse</span>
+  <span class="ntn-dropzone__hint">PNG, JPG or PDF, up to 10 MB each</span>
+</label>
+```
+
+**`data-ntn-dropzone`** (optional, `nocturne.js`):
+- **Drag-over state.** It sets `data-ntn-dragover` while files are dragged over the area. Enters
+  and leaves are counted, so moving over a child doesn't flicker it. Only drags that carry files
+  count.
+- **`ntn:files`.** It fires `ntn:files` with `detail.files` (an array of `File`) on a drop or a
+  pick.
+
+An upload library that runs its own drag handling (Dropzone) doesn't need the attribute. Toggle
+`data-ntn-dragover` from the library's `dragenter` / `dragleave` / `drop` events instead, and
+leave out the input if the library adds its own.
+
+**File rows.** `ntn-file-list` (a `<ul>`) of `ntn-file` rows.
+
+- Elements: `__thumb` (an `<img>`, or a span holding an icon), `__name`, `__meta` (size and
+  status), `__actions` (icon buttons), `__progress` (an `ntn-progress--sm`) and `__error`.
+- State: `data-ntn-state` on the row.
+  - `uploading`: the only state that shows `__progress`.
+  - `done`
+  - `error`: the only state that shows `__error`, and it tints the row danger.
+  - No state means a file already stored.
+- An engine's template can therefore always carry both the progress bar and the error.
+
+```html
+<ul class="ntn-file-list">
+  <li class="ntn-file" data-ntn-state="uploading">
+    <img class="ntn-file__thumb" src="…" alt="">
+    <span class="ntn-file__name">launch-hero.png</span>
+    <span class="ntn-file__meta">2.4 MB</span>
+    <div class="ntn-file__actions">
+      <button class="ntn-icon-btn ntn-icon-btn--sm" type="button" aria-label="Remove launch-hero.png"><i class="fa-light fa-trash"></i></button>
+    </div>
+    <div class="ntn-progress ntn-progress--sm ntn-file__progress">
+      <div class="ntn-progress__track"><div class="ntn-progress__fill" style="width: 45%"></div></div>
+    </div>
+    <span class="ntn-file__error" role="alert"></span>
+  </li>
+</ul>
+```
+
+With Dropzone, use this row as `previewTemplate`:
+- Put `data-dz-thumbnail` on the `<img>`, `data-dz-name` on `__name`, `data-dz-size` on
+  `__meta`, `data-dz-uploadprogress` on `__fill` and `data-dz-errormessage` on `__error`.
+- Set `data-ntn-state` from the `sending` / `success` / `error` events.
+
 ## Date & range picker — `ntn-daterange`
 
 Elements: `__trigger` `__value` `__caret` `__panel` `__row` `__presets` `__preset` `__cals`
@@ -1301,6 +1368,7 @@ table, so header, toolbar, filter form and pager can sit anywhere in that wrappe
 | `data-ntn-table-empty` on a `<tr>` | Shown only when nothing matches |
 | `data-value` / `data-max` on `.ntn-progress__fill` | Sets the fill width |
 | `data-ntn-avatar-name="Ada Lovelace"` on `.ntn-avatar` | Sets `--ntn-avatar-hue` from `avatarHue(name)` |
+| `data-ntn-dropzone` on `.ntn-dropzone` | Sets `data-ntn-dragover` while files are dragged over it; fires `ntn:files` on a drop or pick |
 | `data-ntn-theme-toggle` | Flips dark ⇄ light, persists, swaps the icon |
 | `data-ntn-theme-set="dark\|light\|auto"` | Sets a specific theme preference |
 | `data-ntn-daterange` on `.ntn-daterange` | Renders the month grids, owns selection, opens the panel in the top layer; fires `ntn:daterangechange` on Apply or Clear |

@@ -67,6 +67,17 @@ renamed or removed class names and tokens.
   - **Icons:** new `configure({ icon })` keys `success`, `warning`, `danger` and `info`.
   - **Kitchen sink:** a Toast section with every tone and placement, and the modal case on the
     Modal example's Send invite button.
+- **Upload look: `ntn-dropzone`, `ntn-file-list` and `ntn-file`** (NTN-24). No engine is bundled.
+  - **Drop area:** a `<label>` with a file input stretched over it, so click and drop work with
+    no JS.
+    - Elements: `__icon`, `__title` and `__hint`.
+    - States: `data-ntn-dragover` and `aria-disabled`.
+    - Modifier: `--compact`.
+  - **File rows:** `__thumb`, `__name`, `__meta`, `__actions`, `__progress` (shown only while
+    `data-ntn-state="uploading"`) and `__error` (shown only in `error`).
+  - **Optional `data-ntn-dropzone`:** counts drag enters and leaves (file drags only) to set
+    `data-ntn-dragover`, and fires `ntn:files` on a drop or a pick.
+  - **Kitchen sink:** an Upload section with every drop-area and file-row state.
 
 ### Changed
 - **Breaking:** `--ntn-ambient-height` is now `--ntn-ambient-size`, since the band can sit on a

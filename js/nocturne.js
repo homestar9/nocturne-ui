@@ -1469,6 +1469,10 @@ function onChange(e) {
     }
     syncTable(table);
   }
+  if (e.type === 'change' && el.matches('[data-ntn-dropzone] input[type="file"]')) {
+    const zone = el.closest('[data-ntn-dropzone]');
+    if (zone.getAttribute('aria-disabled') !== 'true') dzFire(zone, el.files);
+  }
   if (el.matches('[data-ntn-daterange-time]')) {
     const root = el.closest('[data-ntn-daterange]');
     if (root) { drState(root).time = el.value; drRender(root); }
@@ -1508,6 +1512,59 @@ export function avatarHue(name) {
 /* data-ntn-avatar-name="Ada Lovelace" on an .ntn-avatar sets its hue from the name. */
 function syncAvatar(el) {
   el.style.setProperty('--ntn-avatar-hue', String(avatarHue(el.dataset.ntnAvatarName)));
+}
+
+/* ── Drop area ───────────────────────────────────────────────────────────────
+   <label class="ntn-dropzone" data-ntn-dropzone> with a file input stretched over it. The
+   browser already takes a drop on that input; this adds data-ntn-dragover while files are held
+   over the area, and fires ntn:files { files } on a drop or a pick, for apps with no upload
+   library. Enters and leaves are counted, because moving over a child fires both. Only drags
+   that carry files count, so a tree row dragged across the page passes it by. */
+
+const dzDepth = new WeakMap();
+const dzFiles = (e) => !!e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files');
+
+function dzZone(e) {
+  const zone = e.target.closest && e.target.closest('[data-ntn-dropzone]');
+  return zone && zone.getAttribute('aria-disabled') !== 'true' && dzFiles(e) ? zone : null;
+}
+
+function dzFire(zone, files) {
+  zone.dispatchEvent(new CustomEvent('ntn:files', { bubbles: true, detail: { files: Array.from(files || []) } }));
+}
+
+function dzReset(zone) {
+  dzDepth.delete(zone);
+  zone.removeAttribute('data-ntn-dragover');
+}
+
+function onDzEnter(e) {
+  const zone = dzZone(e);
+  if (!zone) return;
+  dzDepth.set(zone, (dzDepth.get(zone) || 0) + 1);
+  zone.setAttribute('data-ntn-dragover', '');
+}
+
+function onDzLeave(e) {
+  const zone = dzZone(e);
+  if (!zone) return;
+  const depth = (dzDepth.get(zone) || 1) - 1;
+  if (depth > 0) dzDepth.set(zone, depth); else dzReset(zone);
+}
+
+/* Without this, a drop that misses the input would make the browser open the file. */
+function onDzOver(e) {
+  if (dzZone(e)) e.preventDefault();
+}
+
+function onDzDrop(e) {
+  const zone = dzZone(e);
+  if (!zone) return;
+  dzReset(zone);
+  // A drop on the input sets its files natively, and the change that follows fires ntn:files.
+  if (e.target.matches && e.target.matches('input[type="file"]')) return;
+  e.preventDefault();
+  dzFire(zone, e.dataTransfer.files);
 }
 
 /* ── Toast ───────────────────────────────────────────────────────────────────
@@ -1727,6 +1784,10 @@ export function start(options = {}) {
   document.addEventListener('dragover', onTreeDragOver);
   document.addEventListener('drop', onTreeDrop);
   document.addEventListener('dragend', onTreeDragEnd);
+  document.addEventListener('dragenter', onDzEnter);
+  document.addEventListener('dragleave', onDzLeave);
+  document.addEventListener('dragover', onDzOver);
+  document.addEventListener('drop', onDzDrop);
   addEventListener('resize', reInk);
   addEventListener('load', reInk);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(reInk);
