@@ -1,4 +1,4 @@
-/*! Nocturne nocturne.css v1.10.0 — dark-first SaaS design system.
+/*! Nocturne nocturne.css v1.11.0 — dark-first SaaS design system.
  *  Compiled from src/*.scss. Edit files in src/, never in dist/. */
 
 @import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap");
@@ -70,9 +70,13 @@
   --ntn-alpha-ink-04: rgba(255,255,255,0.04);
   --ntn-alpha-ink-06: rgba(255,255,255,0.06);
   --ntn-alpha-ink-10: rgba(255,255,255,0.10);
+  /* A per-person avatar (--ntn-avatar-hue): the OKLCH lightness its gradient starts from */
+  --ntn-avatar-lightness: 0.78;
 }
 
 :root {
+  /* ...and its chroma. themes/mono.css sets 0, so per-person avatars turn grey there. */
+  --ntn-avatar-chroma: 0.12;
   --ntn-success-soft: rgba(34,197,138,0.14);
   --ntn-success-line: rgba(34,197,138,0.30);
   --ntn-warning-soft: rgba(241,169,22,0.15);
@@ -119,6 +123,11 @@
   --ntn-accent-fill-hover: linear-gradient(180deg, color-mix(in oklab, var(--ntn-accent-500) 88%, white),
                                                     color-mix(in oklab, var(--ntn-accent-500) 75%, var(--ntn-accent-600)));
   --ntn-accent-halo: color-mix(in srgb, var(--ntn-accent-500) 55%, transparent);
+  /* ntn-gradient (_gradient.scss): where the wash starts, where --strong starts, and the --line
+     border. Its tone modifiers set all three. */
+  --ntn-gradient-color: var(--ntn-accent-soft);
+  --ntn-gradient-strong: var(--ntn-accent-line);
+  --ntn-gradient-line: var(--ntn-accent-line);
   /* The ramp's 800 stop sits between its neighbours, so a theme that sets 700 and 900 gets it. */
   --ntn-accent-800: color-mix(in oklab, var(--ntn-accent-700), var(--ntn-accent-900));
   /* ── Semantic aliases: use these in components ─────────────────────────── */
@@ -254,6 +263,8 @@
   --ntn-shine-color: var(--ntn-accent-500);
   /* The bright glint in the processing ring, just ahead of the accent stops */
   --ntn-processing-glint: var(--ntn-cyan-400);
+  /* The ntn-ambient glow; its tone modifiers set it too */
+  --ntn-ambient-glow: var(--ntn-accent-glow);
 }
 
 :root {
@@ -265,11 +276,14 @@
   --ntn-pop-filter: none;
   /* ntn-glass and ntn-ambient (_glass.scss). An app points these at its own artwork with a
      root-relative url(...) or a gradient: --ntn-background-image at full strength, or
-     --ntn-ambient-image as a dimmed band that fades out. */
+     --ntn-ambient-image as a dimmed band that fades out. --ntn-ambient-size is that band's depth
+     from its edge: a corner's side, or the spotlight's diameter. */
   --ntn-glass-blur: blur(20px) saturate(140%);
   --ntn-background-image: none;
   --ntn-ambient-image: none;
-  --ntn-ambient-height: 760px;
+  --ntn-ambient-size: 760px;
+  /* ntn-gradient (_gradient.scss): how far down the wash fades out */
+  --ntn-gradient-size: 160px;
   /* ntn-edge--shine (_effects.scss): one lap per --ntn-shine-speed; --ntn-shine-length is the
      light's trail, of which only the ring shows */
   --ntn-shine-speed: 20s;
@@ -328,6 +342,8 @@
   --ntn-alpha-ink-04: rgba(16,20,27,0.035);
   --ntn-alpha-ink-06: rgba(16,20,27,0.055);
   --ntn-alpha-ink-10: rgba(16,20,27,0.10);
+  /* A per-person avatar starts a touch deeper, so it holds its shape on white */
+  --ntn-avatar-lightness: 0.76;
   /* Surfaces are set outright: grey canvas, white paper, grey recesses. */
   --ntn-bg-app: #F6F7F9;
   --ntn-bg-sunken: #FFFFFF;
@@ -499,10 +515,12 @@ i:is([class*=fa-], [data-icon], :empty) {
   display: flex;
   flex-direction: column;
 }
+.ntn-app {
+  /* The page scrolls, not this pane. No overflow here: a scroll container would capture every
+     position: sticky inside it, and the pane never scrolls (the app is only min-height tall). */
+}
 .ntn-app__scroll {
   flex: 1;
-  min-height: 0;
-  overflow-y: auto;
 }
 
 .ntn-page {
@@ -1987,6 +2005,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   display: flex;
   flex-direction: column;
   width: max-content;
+  color: var(--ntn-text-primary);
   background: var(--ntn-surface-2);
   border: 1px solid var(--ntn-border-default);
   border-radius: var(--ntn-radius-lg);
@@ -1994,6 +2013,17 @@ i:is([class*=fa-], [data-icon], :empty) {
   animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out);
   backdrop-filter: var(--ntn-pop-filter);
   overflow: hidden;
+  /* nocturne.js makes the panel a popover, so it opens in the top layer (above any modal,
+     clipped by no overflow ancestor) and sets left/top from the trigger. */
+}
+.ntn-daterange__panel[popover] {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  padding: 0;
+}
+.ntn-daterange__panel[popover]:not(:popover-open) {
+  display: none;
 }
 .ntn-daterange__row {
   display: flex;
@@ -2227,14 +2257,9 @@ i:is([class*=fa-], [data-icon], :empty) {
   padding-right: var(--ntn-space-5);
 }
 
-/* A --flush card clips its content; let a picker inside it out while it is open. */
-.ntn-card:has(.ntn-daterange__panel:not([hidden])) {
-  overflow: visible;
-}
-
 /* Narrow: presets become a chip row and the second month drops. nocturne.js adds
-   --narrow when the panel cannot fit its clipping container, which is the case the
-   viewport media query below cannot see (a narrow column in a wide window). */
+   --narrow when the full panel cannot fit the window; the media query below covers
+   phones before the script measures. */
 .ntn-daterange__panel--narrow {
   width: min(320px, 100vw - 32px);
 }
@@ -3071,6 +3096,18 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-avatar--ring {
   border: 2px solid var(--ntn-surface-1);
 }
+.ntn-avatar[style*="--ntn-avatar-hue"] {
+  /* A colour per person: the app sets --ntn-avatar-hue (0–359, e.g. avatarHue(name) from
+     nocturne.js) inline. Lightness and chroma stay the kit's, so every hue carries the same
+     weight and the dark ink reads on all of them. */
+  background: linear-gradient(140deg, oklch(var(--ntn-avatar-lightness) var(--ntn-avatar-chroma) var(--ntn-avatar-hue)), oklch(calc(var(--ntn-avatar-lightness) - 0.12) calc(var(--ntn-avatar-chroma) * 1.25) var(--ntn-avatar-hue)));
+  color: oklch(0.24 calc(var(--ntn-avatar-chroma) * 0.4) var(--ntn-avatar-hue));
+}
+.ntn-avatar.ntn-avatar--unknown {
+  background: var(--ntn-surface-3);
+  border-color: var(--ntn-border-default);
+  color: var(--ntn-text-muted);
+}
 .ntn-avatar__status {
   position: absolute;
   right: -1px;
@@ -3114,6 +3151,410 @@ i:is([class*=fa-], [data-icon], :empty) {
   color: var(--ntn-text-secondary);
   font-size: 9px;
   font-weight: var(--ntn-weight-medium);
+}
+
+/* ── Toast — ntn-toaster + ntn-toast ─────────────────────────────────────────
+   A short notice that stacks in a corner and leaves on its own. toast() in nocturne.js builds
+   both, opens the region in the top layer (inside an open modal when there is one) and runs the
+   timer; written by hand, a region with aria-live="polite" works too. */
+.ntn-toaster {
+  position: fixed;
+  z-index: var(--ntn-z-toast);
+  top: var(--ntn-space-4);
+  right: var(--ntn-space-4);
+  bottom: auto;
+  left: auto;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--ntn-space-2);
+  width: min(360px, 100vw - 32px);
+  max-height: calc(100vh - 32px);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+  pointer-events: none;
+}
+.ntn-toaster[data-ntn-placement=top-start] {
+  right: auto;
+  left: var(--ntn-space-4);
+}
+.ntn-toaster[data-ntn-placement=top-center] {
+  right: 0;
+  left: 0;
+  margin-inline: auto;
+}
+.ntn-toaster[data-ntn-placement=bottom-end] {
+  top: auto;
+  bottom: var(--ntn-space-4);
+  flex-direction: column;
+}
+.ntn-toaster[data-ntn-placement=bottom-start] {
+  top: auto;
+  right: auto;
+  bottom: var(--ntn-space-4);
+  left: var(--ntn-space-4);
+  flex-direction: column;
+}
+.ntn-toaster[popover]:not(:popover-open) {
+  display: none;
+}
+.ntn-toaster__live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.ntn-toast {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ntn-space-3);
+  padding: 12px 12px 12px 14px;
+  overflow: hidden;
+  border: 1px solid var(--ntn-border-default);
+  border-radius: var(--ntn-radius-lg);
+  background: var(--ntn-surface-2);
+  box-shadow: var(--ntn-shadow-lg);
+  backdrop-filter: var(--ntn-pop-filter);
+  color: var(--ntn-text-primary);
+  font-size: var(--ntn-font-size-sm);
+  line-height: var(--ntn-leading-normal);
+  pointer-events: auto;
+  animation: ntn-rise var(--ntn-dur-base) var(--ntn-ease-out);
+}
+.ntn-toast__icon {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  font-size: 16px;
+  color: var(--ntn-text-muted);
+}
+.ntn-toast__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-wrap: anywhere;
+}
+.ntn-toast__title {
+  font-weight: var(--ntn-weight-semibold);
+}
+.ntn-toast__title ~ .ntn-toast__message {
+  font-size: var(--ntn-font-size-xs);
+  color: var(--ntn-text-secondary);
+}
+.ntn-toast__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  margin: -2px -2px -2px 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ntn-radius-sm);
+  background: transparent;
+  color: var(--ntn-text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard);
+}
+.ntn-toast__close:hover {
+  background: var(--ntn-surface-hover);
+  color: var(--ntn-text-primary);
+}
+.ntn-toast__timer {
+  /* Time left, as a line along the bottom edge. --ntn-toast-duration is set by toast(). */
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--ntn-text-disabled);
+  transform-origin: left;
+  animation: ntn-toast-timer var(--ntn-toast-duration, 4000ms) linear forwards;
+}
+.ntn-toast[data-ntn-paused] .ntn-toast__timer {
+  animation-play-state: paused;
+}
+.ntn-toast[data-ntn-leaving] {
+  animation: ntn-toast-leave var(--ntn-dur-fast) var(--ntn-ease-in-out) forwards;
+}
+.ntn-toast--neutral {
+  border-color: var(--ntn-border-default);
+}
+.ntn-toast--primary {
+  background: linear-gradient(var(--ntn-accent-soft), var(--ntn-accent-soft)), var(--ntn-surface-2);
+  border-color: var(--ntn-accent-line);
+}
+.ntn-toast--primary .ntn-toast__icon {
+  color: var(--ntn-accent-300);
+}
+.ntn-toast--primary .ntn-toast__timer {
+  background: var(--ntn-accent-400);
+}
+.ntn-toast--success {
+  background: linear-gradient(var(--ntn-success-soft), var(--ntn-success-soft)), var(--ntn-surface-2);
+  border-color: var(--ntn-success-line);
+}
+.ntn-toast--success .ntn-toast__icon {
+  color: var(--ntn-success-400);
+}
+.ntn-toast--success .ntn-toast__timer {
+  background: var(--ntn-success-400);
+}
+.ntn-toast--warning {
+  background: linear-gradient(var(--ntn-warning-soft), var(--ntn-warning-soft)), var(--ntn-surface-2);
+  border-color: var(--ntn-warning-line);
+}
+.ntn-toast--warning .ntn-toast__icon {
+  color: var(--ntn-warning-400);
+}
+.ntn-toast--warning .ntn-toast__timer {
+  background: var(--ntn-warning-400);
+}
+.ntn-toast--danger {
+  background: linear-gradient(var(--ntn-danger-soft), var(--ntn-danger-soft)), var(--ntn-surface-2);
+  border-color: var(--ntn-danger-line);
+}
+.ntn-toast--danger .ntn-toast__icon {
+  color: var(--ntn-danger-400);
+}
+.ntn-toast--danger .ntn-toast__timer {
+  background: var(--ntn-danger-400);
+}
+.ntn-toast--info {
+  background: linear-gradient(var(--ntn-info-soft), var(--ntn-info-soft)), var(--ntn-surface-2);
+  border-color: var(--ntn-info-line);
+}
+.ntn-toast--info .ntn-toast__icon {
+  color: var(--ntn-info-400);
+}
+.ntn-toast--info .ntn-toast__timer {
+  background: var(--ntn-info-400);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ntn-toast__timer {
+    display: none;
+  }
+}
+
+@keyframes ntn-toast-timer {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+@keyframes ntn-toast-leave {
+  to {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  @keyframes ntn-toast-leave {
+    to {
+      opacity: 0;
+    }
+  }
+}
+/* ── Drop area and file rows — ntn-dropzone · ntn-file ───────────────────────
+   The look of an upload, with no engine assumed: drive it from Dropzone, Uppy or a plain form.
+   The drop area is a <label> with a file input stretched over it, so click-to-browse and
+   dropping files on it work with no JS. data-ntn-dropzone adds the drag-over state and an
+   ntn:files event; an upload library can set data-ntn-dragover itself instead. */
+.ntn-dropzone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ntn-space-2);
+  padding: var(--ntn-space-8) var(--ntn-space-6);
+  text-align: center;
+  border: 1.5px dashed var(--ntn-border-strong);
+  border-radius: var(--ntn-radius-lg);
+  background: var(--ntn-alpha-ink-04);
+  color: var(--ntn-text-secondary);
+  font-size: var(--ntn-font-size-sm);
+  cursor: pointer;
+  transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard);
+}
+.ntn-dropzone input[type=file] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.ntn-dropzone__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  border-radius: var(--ntn-radius-full);
+  background: var(--ntn-surface-3);
+  color: var(--ntn-text-muted);
+  font-size: 18px;
+  transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard);
+}
+.ntn-dropzone__title {
+  color: var(--ntn-text-primary);
+  font-weight: var(--ntn-weight-medium);
+}
+.ntn-dropzone__hint {
+  font-size: var(--ntn-font-size-xs);
+  color: var(--ntn-text-muted);
+}
+.ntn-dropzone:hover:where(:not(:disabled, [aria-disabled=true])) {
+  border-color: var(--ntn-accent-line-strong);
+  background: var(--ntn-alpha-ink-06);
+}
+.ntn-dropzone:has(input:focus-visible) {
+  border-color: var(--ntn-accent-500);
+  box-shadow: var(--ntn-ring-focus);
+}
+@media (forced-colors: active) {
+  .ntn-dropzone:has(input:focus-visible) {
+    outline: 2px solid Highlight;
+  }
+}
+.ntn-dropzone[data-ntn-dragover] {
+  border-style: solid;
+  border-color: var(--ntn-accent);
+  background: var(--ntn-accent-soft);
+  color: var(--ntn-text-primary);
+}
+.ntn-dropzone[data-ntn-dragover] .ntn-dropzone__icon {
+  background: var(--ntn-accent);
+  color: var(--ntn-accent-fg);
+}
+.ntn-dropzone[aria-disabled=true] {
+  opacity: var(--ntn-disabled-opacity);
+  cursor: not-allowed;
+}
+.ntn-dropzone[aria-disabled=true] input[type=file] {
+  pointer-events: none;
+}
+.ntn-dropzone--compact {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: var(--ntn-space-3);
+  padding: 10px var(--ntn-space-4);
+  text-align: left;
+}
+.ntn-dropzone--compact .ntn-dropzone__icon {
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+}
+.ntn-dropzone--compact .ntn-dropzone__hint {
+  margin-left: auto;
+}
+
+.ntn-file-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ntn-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* One file: a thumbnail, its name and size, then progress or an error under them. The progress
+   shows only while uploading and the error only in the error state, so an engine's template can
+   always carry both. No state is a file already stored. */
+.ntn-file {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  column-gap: var(--ntn-space-3);
+  align-items: center;
+  grid-template-areas: "thumb name actions" "thumb meta actions" "thumb progress progress" "thumb error error";
+  padding: 10px var(--ntn-space-3);
+  border: 1px solid var(--ntn-border-subtle);
+  border-radius: var(--ntn-radius-md);
+  background: var(--ntn-surface-1);
+}
+.ntn-file__thumb {
+  grid-area: thumb;
+  align-self: start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--ntn-radius-sm);
+  overflow: hidden;
+  background: var(--ntn-surface-3);
+  color: var(--ntn-text-muted);
+  font-size: 16px;
+}
+.ntn-file__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ntn-file img.ntn-file__thumb {
+  object-fit: cover;
+}
+.ntn-file__name {
+  grid-area: name;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--ntn-font-size-sm);
+  font-weight: var(--ntn-weight-medium);
+  color: var(--ntn-text-primary);
+}
+.ntn-file__meta {
+  grid-area: meta;
+  font-size: var(--ntn-font-size-xs);
+  color: var(--ntn-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.ntn-file__actions {
+  grid-area: actions;
+  display: flex;
+  align-items: center;
+  gap: var(--ntn-space-1);
+}
+.ntn-file__progress {
+  grid-area: progress;
+  margin-top: var(--ntn-space-2);
+}
+.ntn-file__error {
+  grid-area: error;
+  margin-top: var(--ntn-space-1);
+  font-size: var(--ntn-font-size-xs);
+  color: var(--ntn-danger-400);
+}
+.ntn-file:not([data-ntn-state=uploading]) .ntn-file__progress {
+  display: none;
+}
+.ntn-file:not([data-ntn-state=error]) .ntn-file__error {
+  display: none;
+}
+.ntn-file[data-ntn-state=error] {
+  border-color: var(--ntn-danger-line);
+  background: linear-gradient(var(--ntn-danger-soft), var(--ntn-danger-soft)), var(--ntn-surface-1);
+}
+.ntn-file[data-ntn-state=error] .ntn-file__thumb {
+  color: var(--ntn-danger-400);
 }
 
 /* ── Card, stat, modal, accordion, divider ────────────────────────────────── */
@@ -3451,9 +3892,13 @@ i:is([class*=fa-], [data-icon], :empty) {
                 layers, bottom to top:
                 --ntn-background-image  the app's artwork at full strength, filling the
                                         container. None by default.
-                accent glow             a soft glow at the top.
-                --ntn-ambient-image     artwork as atmosphere: dimmed by --ntn-ambient-opacity
-                                        and faded out over --ntn-ambient-height.
+                glow                    a soft --ntn-ambient-glow, the accent's by default.
+                --ntn-ambient-image     artwork as atmosphere: dimmed by --ntn-ambient-opacity.
+                The glow and the ambient image share a band that fades out over
+                --ntn-ambient-size. It sits at the top; --bottom, --left, --right, the four
+                corners (--top-left …) and --center move it, and the background image anchors to
+                the same side. The tones (--success …) tint the glow. Ambients stack: each later
+                one adds its band over the first, and only the first draws the background image.
    ntn-glass    Translucent, blurred surfaces. On a card, stat, accordion or sidebar it makes
                 that surface glass; on any other element it makes every such surface inside it
                 glass. Inputs, buttons, badges and menus stay solid so they stay readable.
@@ -3483,16 +3928,164 @@ i:is([class*=fa-], [data-icon], :empty) {
   content: "";
   position: absolute;
   inset: 0 0 auto;
-  height: var(--ntn-ambient-height);
+  height: var(--ntn-ambient-size);
   -webkit-mask-image: linear-gradient(to bottom, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
   mask-image: linear-gradient(to bottom, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
 }
 .ntn-ambient::before {
-  background: radial-gradient(1100px 520px at 50% -12%, var(--ntn-accent-glow), transparent 70%);
+  background: radial-gradient(1100px 520px at 50% -12%, var(--ntn-ambient-glow), transparent 70%);
 }
 .ntn-ambient::after {
   background: var(--ntn-ambient-image) center top/cover no-repeat;
   opacity: var(--ntn-ambient-opacity);
+}
+.ntn-ambient--bottom {
+  background-position: center bottom;
+}
+.ntn-ambient--bottom::before, .ntn-ambient--bottom::after {
+  inset: auto 0 0;
+  width: auto;
+  height: var(--ntn-ambient-size);
+  -webkit-mask-image: linear-gradient(to top, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+  mask-image: linear-gradient(to top, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+}
+.ntn-ambient--bottom::before {
+  background-image: radial-gradient(1100px 520px at 50% 112%, var(--ntn-ambient-glow), transparent 70%);
+}
+.ntn-ambient--bottom::after {
+  background-position: center bottom;
+}
+.ntn-ambient--left {
+  background-position: left center;
+}
+.ntn-ambient--left::before, .ntn-ambient--left::after {
+  inset: 0 auto 0 0;
+  width: var(--ntn-ambient-size);
+  height: auto;
+  -webkit-mask-image: linear-gradient(to right, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+  mask-image: linear-gradient(to right, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+}
+.ntn-ambient--left::before {
+  background-image: radial-gradient(520px 1100px at -12% 50%, var(--ntn-ambient-glow), transparent 70%);
+}
+.ntn-ambient--left::after {
+  background-position: left center;
+}
+.ntn-ambient--right {
+  background-position: right center;
+}
+.ntn-ambient--right::before, .ntn-ambient--right::after {
+  inset: 0 0 0 auto;
+  width: var(--ntn-ambient-size);
+  height: auto;
+  -webkit-mask-image: linear-gradient(to left, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+  mask-image: linear-gradient(to left, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+}
+.ntn-ambient--right::before {
+  background-image: radial-gradient(520px 1100px at 112% 50%, var(--ntn-ambient-glow), transparent 70%);
+}
+.ntn-ambient--right::after {
+  background-position: right center;
+}
+.ntn-ambient--top-left {
+  background-position: left top;
+}
+.ntn-ambient--top-left::before, .ntn-ambient--top-left::after {
+  inset: 0 auto auto 0;
+  width: var(--ntn-ambient-size);
+  height: var(--ntn-ambient-size);
+  -webkit-mask-image: radial-gradient(farthest-side at left top, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+  mask-image: radial-gradient(farthest-side at left top, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+}
+.ntn-ambient--top-left::before {
+  background-image: radial-gradient(farthest-side at left top, var(--ntn-ambient-glow), transparent 70%);
+}
+.ntn-ambient--top-left::after {
+  background-position: left top;
+}
+.ntn-ambient--top-right {
+  background-position: right top;
+}
+.ntn-ambient--top-right::before, .ntn-ambient--top-right::after {
+  inset: 0 0 auto auto;
+  width: var(--ntn-ambient-size);
+  height: var(--ntn-ambient-size);
+  -webkit-mask-image: radial-gradient(farthest-side at right top, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+  mask-image: radial-gradient(farthest-side at right top, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+}
+.ntn-ambient--top-right::before {
+  background-image: radial-gradient(farthest-side at right top, var(--ntn-ambient-glow), transparent 70%);
+}
+.ntn-ambient--top-right::after {
+  background-position: right top;
+}
+.ntn-ambient--bottom-left {
+  background-position: left bottom;
+}
+.ntn-ambient--bottom-left::before, .ntn-ambient--bottom-left::after {
+  inset: auto auto 0 0;
+  width: var(--ntn-ambient-size);
+  height: var(--ntn-ambient-size);
+  -webkit-mask-image: radial-gradient(farthest-side at left bottom, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+  mask-image: radial-gradient(farthest-side at left bottom, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+}
+.ntn-ambient--bottom-left::before {
+  background-image: radial-gradient(farthest-side at left bottom, var(--ntn-ambient-glow), transparent 70%);
+}
+.ntn-ambient--bottom-left::after {
+  background-position: left bottom;
+}
+.ntn-ambient--bottom-right {
+  background-position: right bottom;
+}
+.ntn-ambient--bottom-right::before, .ntn-ambient--bottom-right::after {
+  inset: auto 0 0 auto;
+  width: var(--ntn-ambient-size);
+  height: var(--ntn-ambient-size);
+  -webkit-mask-image: radial-gradient(farthest-side at right bottom, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+  mask-image: radial-gradient(farthest-side at right bottom, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+}
+.ntn-ambient--bottom-right::before {
+  background-image: radial-gradient(farthest-side at right bottom, var(--ntn-ambient-glow), transparent 70%);
+}
+.ntn-ambient--bottom-right::after {
+  background-position: right bottom;
+}
+.ntn-ambient--center {
+  background-position: center;
+}
+.ntn-ambient--center::before, .ntn-ambient--center::after {
+  inset: calc(50% - var(--ntn-ambient-size) / 2) auto auto calc(50% - var(--ntn-ambient-size) / 2);
+  width: var(--ntn-ambient-size);
+  height: var(--ntn-ambient-size);
+  -webkit-mask-image: radial-gradient(closest-side, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+  mask-image: radial-gradient(closest-side, #000, rgba(0, 0, 0, 0.55) 45%, transparent);
+}
+.ntn-ambient--center::before {
+  background-image: radial-gradient(closest-side, var(--ntn-ambient-glow), transparent 70%);
+}
+.ntn-ambient--center::after {
+  background-position: center;
+}
+.ntn-ambient--success {
+  --ntn-ambient-glow: color-mix(in srgb, var(--ntn-success-500) 35%, transparent);
+}
+.ntn-ambient--warning {
+  --ntn-ambient-glow: color-mix(in srgb, var(--ntn-warning-500) 35%, transparent);
+}
+.ntn-ambient--danger {
+  --ntn-ambient-glow: color-mix(in srgb, var(--ntn-danger-500) 35%, transparent);
+}
+.ntn-ambient--info {
+  --ntn-ambient-glow: color-mix(in srgb, var(--ntn-info-500) 35%, transparent);
+}
+.ntn-ambient--neutral {
+  --ntn-ambient-glow: color-mix(in srgb, var(--ntn-n-600) 35%, transparent);
+}
+
+/* Stacked ambients: the first draws the background image, the rest only add their band. */
+.ntn-ambient ~ .ntn-ambient {
+  background: none;
 }
 
 /* Glass surfaces */
@@ -4955,4 +5548,51 @@ i:is([class*=fa-], [data-icon], :empty) {
   .ntn-steps__desc {
     display: none;
   }
+}
+/* ── Gradient — ntn-gradient ─────────────────────────────────────────────────
+   A wash that composes onto any surface: a card, a stat, a panel, a bare div. A tone fades
+   from the top edge to transparent over --ntn-gradient-size, on top of the surface's own
+   background, so it fades into a solid card and into glass alike. Accent by default; the tones
+   recolour it, --strong starts it deeper, --full runs it the whole height, and --line draws
+   the border in the tone.
+
+   Last in the cascade: cards, the sidebar and the table set `background` as a shorthand, and
+   ntn-edge--glow sets a background-image, so the wash must follow them all to win at the same
+   specificity. On a glow card it replaces the colour bleed; the border and halo stay. */
+.ntn-gradient {
+  background-image: linear-gradient(to bottom, var(--ntn-gradient-color), transparent var(--ntn-gradient-size));
+}
+.ntn-gradient--success {
+  --ntn-gradient-color: var(--ntn-success-soft);
+  --ntn-gradient-strong: var(--ntn-success-line);
+  --ntn-gradient-line: var(--ntn-success-line);
+}
+.ntn-gradient--warning {
+  --ntn-gradient-color: var(--ntn-warning-soft);
+  --ntn-gradient-strong: var(--ntn-warning-line);
+  --ntn-gradient-line: var(--ntn-warning-line);
+}
+.ntn-gradient--danger {
+  --ntn-gradient-color: var(--ntn-danger-soft);
+  --ntn-gradient-strong: var(--ntn-danger-line);
+  --ntn-gradient-line: var(--ntn-danger-line);
+}
+.ntn-gradient--info {
+  --ntn-gradient-color: var(--ntn-info-soft);
+  --ntn-gradient-strong: var(--ntn-info-line);
+  --ntn-gradient-line: var(--ntn-info-line);
+}
+.ntn-gradient--neutral {
+  --ntn-gradient-color: var(--ntn-alpha-ink-06);
+  --ntn-gradient-strong: var(--ntn-alpha-ink-10);
+  --ntn-gradient-line: var(--ntn-border-strong);
+}
+.ntn-gradient--strong {
+  --ntn-gradient-color: var(--ntn-gradient-strong);
+}
+.ntn-gradient--full {
+  --ntn-gradient-size: 100%;
+}
+.ntn-gradient--line {
+  border-color: var(--ntn-gradient-line);
 }

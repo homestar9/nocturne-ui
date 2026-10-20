@@ -6,6 +6,105 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.11.0 — 2026-10-20
+
+### Added
+- **`ntn-ambient` placements** (NTN-18):
+  - `--bottom`, `--left` and `--right` move the glow's band to that edge.
+  - `--top-left`, `--top-right`, `--bottom-left` and `--bottom-right` make it a square in that
+    corner.
+  - `--center` makes it a spotlight.
+  - The ambient image follows the band, and the background image anchors to the same side.
+- **`ntn-ambient` tones:** `--success`, `--warning`, `--danger`, `--info` and `--neutral` tint
+  the glow. The accent stays the default.
+- **Token:** `--ntn-ambient-glow`, the glow colour. It defaults to `--ntn-accent-glow`.
+- **Stacked ambients:** several `ntn-ambient` elements layer their lights, and only the first
+  draws `--ntn-background-image`.
+- **Kitchen sink:** placement, tone and layered examples in the Glass section.
+- **`ntn-gradient`** (NTN-19): a wash for any surface. A tone fades from the top edge into the
+  surface's own background, solid or glass. The accent is the default.
+  - Tones: `--success`, `--warning`, `--danger`, `--info` and `--neutral`.
+  - `--strong` starts from a deeper colour.
+  - `--full` fades over the whole height instead of `--ntn-gradient-size`.
+  - `--line` draws the border in the tone.
+- **Tokens:** `--ntn-gradient-color`, `-strong`, `-line` and `-size`.
+- **Kitchen sink:** a Gradient section with tone, dashboard, depth and glass examples.
+- **`ntn-daterange` additions** (NTN-21):
+  - **Set from code:** a `setDateRange(root, { start, end, time })` export. Changing
+    `data-ntn-start`, `-end` or `-time` and calling `refresh(root)` works too. Neither fires an
+    event.
+  - **Clear:** a `data-ntn-daterange-clear` button commits an empty value, time included, and
+    fires `ntn:daterangechange` with null dates.
+  - **Forms:** `data-ntn-name="x"` posts `x` (the ISO start, plus the time) and, for a range,
+    `x-end` through hidden inputs. Every commit fires a bubbling `change`, and `form.reset()`
+    restores the first value.
+  - **Kitchen sink:** a clearable picker in a form, with Set from code and Reset buttons, and a
+    picker inside the Modal example.
+- **A colour per person on `ntn-avatar`** (NTN-22):
+  - `--ntn-avatar-hue`, set inline, turns the accent gradient into an OKLCH gradient at that hue,
+    at the kit's lightness and chroma, with dark ink. Without it nothing changes.
+  - Tokens: `--ntn-avatar-lightness` (per mode) and `--ntn-avatar-chroma`. Mono sets the chroma
+    to 0.
+  - `avatarHue(name)` is the documented hash, with test vectors for server-side twins, and
+    `data-ntn-avatar-name` applies it.
+  - `ntn-avatar--unknown` is a neutral disc for "no person".
+  - The prefixed build renames `--ntn-avatar-hue` with the classes.
+  - **Kitchen sink:** hued and unknown avatars in the Avatars section.
+- **Toast: `ntn-toaster` + `ntn-toast`, and `toast()` in `nocturne.js`** (NTN-23):
+  - `toast({ message, title, tone, duration, dismissible, placement, icon })` returns
+    `{ element, close }`.
+  - **Regions:** one per placement, created on first use. Importing the module creates none.
+  - **Placements:** `top-end` (default), `top-start`, `top-center`, `bottom-end` and
+    `bottom-start`. The newest sits nearest the edge, and at most 5 show at once.
+  - **Stacking:** the region opens in the top layer. While a modal is open, the toast mounts
+    inside it, and if the modal closes its toasts move to the page.
+  - **Timer:** pauses on hover and keyboard focus. Escape closes the focused toast without closing
+    a modal.
+  - **Announcements:** through hidden live regions, polite or assertive for danger, so each toast
+    is read once.
+  - **Event:** `ntn:toastclose` carries `reason`: `timeout`, `dismiss`, `api` or `overflow`.
+  - **Tones:** neutral (the default), `--primary` and the four statuses. Each tint lies over an
+    opaque surface.
+  - **Motion:** reduced motion fades it in and out and hides the timer line.
+  - **Icons:** new `configure({ icon })` keys `success`, `warning`, `danger` and `info`.
+  - **Kitchen sink:** a Toast section with every tone and placement, and the modal case on the
+    Modal example's Send invite button.
+- **Upload look: `ntn-dropzone`, `ntn-file-list` and `ntn-file`** (NTN-24). No engine is bundled.
+  - **Drop area:** a `<label>` with a file input stretched over it, so click and drop work with
+    no JS.
+    - Elements: `__icon`, `__title` and `__hint`.
+    - States: `data-ntn-dragover` and `aria-disabled`.
+    - Modifier: `--compact`.
+  - **File rows:** `__thumb`, `__name`, `__meta`, `__actions`, `__progress` (shown only while
+    `data-ntn-state="uploading"`) and `__error` (shown only in `error`).
+  - **Optional `data-ntn-dropzone`:** counts drag enters and leaves (file drags only) to set
+    `data-ntn-dragover`, and fires `ntn:files` on a drop or a pick.
+  - **Kitchen sink:** an Upload section with every drop-area and file-row state.
+
+### Changed
+- **Breaking:** `--ntn-ambient-height` is now `--ntn-ambient-size`, since the band can sit on a
+  side.
+
+- **`ntn-daterange` opens in the top layer** (NTN-21):
+  - The panel is a `popover="manual"`, so no `overflow` ancestor clips it, and inside a modal it
+    sits above the dialog.
+  - It is placed against the trigger with the dropdown's flip-and-clamp logic, and follows it on
+    scroll and resize.
+  - `__panel--narrow` is now chosen from the window width.
+  - The `.ntn-card:has(…panel)` overflow workaround is gone.
+- **Locale time:** the date picker's trigger shows the time the way the user's locale writes it
+  (`2:05 PM` in en-US). Before, it showed the raw `14:05`.
+
+### Fixed
+- **The date picker's time can now be emptied.** Apply with an empty time input used to keep the
+  old `data-ntn-time`.
+- **The app shell no longer traps `position: sticky`** (NTN-20). `.ntn-app` is only `min-height`
+  tall, so `.ntn-app__scroll` never scrolled. Its `overflow-y: auto` still made it a scroll
+  container, so every sticky inside the content stuck to a pane that never moved.
+  - The overflow is gone, and the page is the one scroller.
+  - The kitchen sink has an App shell section with a sticky save bar. Its scrollspy and smooth
+    scrolling now follow the page.
+
 ## 1.10.0 — 2026-10-19
 
 ### Added

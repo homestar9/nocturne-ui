@@ -35,7 +35,9 @@ wide soft drop (`--ntn-shadow-md`), never a bright glow or heavy blur. The only 
 `ntn-btn--glow` and `ntn-edge--glow`, each kept to the one element a page wants read first.
 Gradients appear in exactly five places: the brand mark tile, avatar initials, slider/progress
 fill, chart area fills, and filled accent buttons (primary button, primary icon button, FAB),
-which are lit from the top.
+which are lit from the top. One opt-in exception: `ntn-gradient` washes a surface in a tone that
+fades down into it. Keep washes quiet: neutral across a set of cards, and a status tone
+(`--strong --line` at most) only on the one card that needs attention. Never a rainbow of tones.
 
 Transparency and blur exist in two places only: the sticky top bar (72% app colour + 20px blur)
 and the modal scrim (72% black + 6px blur). Cards are opaque, with one opt-in exception:

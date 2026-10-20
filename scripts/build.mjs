@@ -38,7 +38,7 @@ export function hoistRemoteImports(css) {
      - state vars: written by nocturne.js (--ntn-tab-x, --ntn-slider-pct, --ntn-progress …),
        discovered from its setProperty('--ntn-…') calls so the list can't drift;
      - public knobs: set by consumers on a block to tune it. Listed here by hand. */
-export const KNOBS = ['tree-indent'];
+export const KNOBS = ['tree-indent', 'avatar-hue'];
 const STATE_VAR_CALL = /setProperty\(\s*['"]--ntn-([a-zA-Z0-9-]+)['"]/g;
 
 /** Names (without the "--ntn-" part) of the custom properties that follow the class prefix. */

@@ -6,9 +6,13 @@
                 layers, bottom to top:
                 --ntn-background-image  the app's artwork at full strength, filling the
                                         container. None by default.
-                accent glow             a soft glow at the top.
-                --ntn-ambient-image     artwork as atmosphere: dimmed by --ntn-ambient-opacity
-                                        and faded out over --ntn-ambient-height.
+                glow                    a soft --ntn-ambient-glow, the accent's by default.
+                --ntn-ambient-image     artwork as atmosphere: dimmed by --ntn-ambient-opacity.
+                The glow and the ambient image share a band that fades out over
+                --ntn-ambient-size. It sits at the top; --bottom, --left, --right, the four
+                corners (--top-left …) and --center move it, and the background image anchors to
+                the same side. The tones (--success …) tint the glow. Ambients stack: each later
+                one adds its band over the first, and only the first draws the background image.
    ntn-glass    Translucent, blurred surfaces. On a card, stat, accordion or sidebar it makes
                 that surface glass; on any other element it makes every such surface inside it
                 glass. Inputs, buttons, badges and menus stay solid so they stay readable.
@@ -19,12 +23,31 @@
    so they beat the base background while state modifiers (an interactive card's hover, the
    glow and processing edges) still win. The sidebar and table head come later in the cascade,
    so their rules carry one more class. */
+@use "sass:list";
 @use "../abstracts" as *;
 
 // The surfaces glass applies to.
 $-surfaces: ".ntn-card, .ntn-stat, .ntn-accordion";
 $-glass-surface: ":where(.ntn-glass):is(#{$-surfaces}), :where(.ntn-glass) :is(#{$-surfaces})";
 $-glass-sidebar: ".ntn-glass.ntn-sidebar, .ntn-glass .ntn-sidebar";
+
+// The band's fade, from its edge outward, the same for every placement.
+$-fade: #000, rgb(0 0 0 / 0.55) 45%, transparent;
+$-size: var(--ntn-ambient-size);
+$-mid: calc(50% - var(--ntn-ambient-size) / 2);
+
+// A placement: the band's box, its fade, the glow's shape and where the artwork anchors.
+@mixin -place($inset, $width, $height, $mask, $glow, $at) {
+  background-position: $at;
+
+  &::before, &::after {
+    inset: $inset; width: $width; height: $height;
+    -webkit-mask-image: $mask;
+    mask-image: $mask;
+  }
+  &::before { background-image: radial-gradient($glow, var(--ntn-ambient-glow), transparent 70%); }
+  &::after { background-position: $at; }
+}
 
 /* Ambient — static on purpose: glass over a moving backdrop re-blurs every frame. */
 .ntn-app:has(> .ntn-ambient) { position: relative; isolation: isolate; }
@@ -34,16 +57,36 @@ $-glass-sidebar: ".ntn-glass.ntn-sidebar, .ntn-glass .ntn-sidebar";
 
   &::before, &::after {
     /* The glow and the ambient image share the band: the top of the container, fading out. */
-    content: ""; position: absolute; inset: 0 0 auto; height: var(--ntn-ambient-height);
-    -webkit-mask-image: linear-gradient(to bottom, #000, rgb(0 0 0 / 0.55) 45%, transparent);
-    mask-image: linear-gradient(to bottom, #000, rgb(0 0 0 / 0.55) 45%, transparent);
+    content: ""; position: absolute; inset: 0 0 auto; height: $-size;
+    -webkit-mask-image: linear-gradient(to bottom, $-fade);
+    mask-image: linear-gradient(to bottom, $-fade);
   }
-  &::before { background: radial-gradient(1100px 520px at 50% -12%, var(--ntn-accent-glow), transparent 70%); }
+  &::before { background: radial-gradient(1100px 520px at 50% -12%, var(--ntn-ambient-glow), transparent 70%); }
   &::after {
     background: var(--ntn-ambient-image) center top / cover no-repeat;
     opacity: var(--ntn-ambient-opacity);
   }
+
+  // Edges: a band along that side. Corners: a square in that corner, fading out radially.
+  // Center: a spotlight, --ntn-ambient-size across.
+  &--bottom { @include -place(auto 0 0, auto, $-size, linear-gradient(to top, $-fade), 1100px 520px at 50% 112%, center bottom); }
+  &--left   { @include -place(0 auto 0 0, $-size, auto, linear-gradient(to right, $-fade), 520px 1100px at -12% 50%, left center); }
+  &--right  { @include -place(0 0 0 auto, $-size, auto, linear-gradient(to left, $-fade), 520px 1100px at 112% 50%, right center); }
+  @each $y, $x, $inset in (top, left, 0 auto auto 0), (top, right, 0 0 auto auto),
+                          (bottom, left, auto auto 0 0), (bottom, right, auto 0 0 auto) {
+    &--#{$y}-#{$x} {
+      @include -place($inset, $-size, $-size, radial-gradient(farthest-side at $x $y, $-fade), farthest-side at $x $y, $x $y);
+    }
+  }
+  &--center { @include -place($-mid auto auto $-mid, $-size, $-size, radial-gradient(closest-side, $-fade), closest-side, center); }
+
+  // Tones tint the glow; the default is the accent.
+  @each $tone in list.join($statuses, neutral) {
+    &--#{$tone} { --ntn-ambient-glow: color-mix(in srgb, #{tone($tone, solid)} 35%, transparent); }
+  }
 }
+/* Stacked ambients: the first draws the background image, the rest only add their band. */
+.ntn-ambient ~ .ntn-ambient { background: none; }
 
 /* Glass surfaces */
 #{$-glass-surface} {

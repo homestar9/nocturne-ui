@@ -2,7 +2,8 @@
 
 // @use emits each module once, in the order listed, and that order is the cascade: the light
 // theme follows the token blocks it remaps, glass follows the containers it restyles, effects
-// follow containers so their modifiers win, and the table and sidebar come after glass.
+// follow containers so their modifiers win, the table and sidebar come after glass, and the
+// gradient wash comes last so it lies over every surface's own background.
 @use "tokens/fonts";
 @use "tokens/colors";
 @use "tokens/typography";
@@ -18,6 +19,8 @@
 @use "components/daterange";
 @use "components/selection";
 @use "components/feedback";
+@use "components/toast";
+@use "components/upload";
 @use "components/containers";
 @use "components/glass";
 @use "components/effects";
@@ -25,3 +28,4 @@
 @use "components/tree";
 @use "components/navigation";
 @use "components/steps";
+@use "components/gradient";

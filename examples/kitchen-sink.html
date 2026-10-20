@@ -23,8 +23,15 @@
   .fa-light { font-family: "Font Awesome 6 Free"; font-weight: 900; font-style: normal }
 
   /* Page chrome for this browser only — not part of the library. */
-  .ntn-app__scroll { scroll-behavior: smooth; }
-  .sink { display: flex; flex-direction: column; gap: var(--ntn-space-4); scroll-margin-top: var(--ntn-space-4); }
+  html { scroll-behavior: smooth; }
+  .sink { display: flex; flex-direction: column; gap: var(--ntn-space-4); scroll-margin-top: calc(var(--ntn-topbar-h) + var(--ntn-space-4)); }
+  /* The sticky check for the app shell: a save bar pinned to the bottom of the viewport. */
+  .sink__savebar {
+    position: sticky; bottom: var(--ntn-space-4); z-index: var(--ntn-z-sticky);
+    display: flex; align-items: center; justify-content: space-between; gap: var(--ntn-space-3);
+    padding: var(--ntn-space-3) var(--ntn-space-4); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg);
+    background: var(--ntn-surface-2); box-shadow: var(--ntn-shadow-lg);
+  }
   .sink__head {
     display: flex; align-items: baseline; gap: var(--ntn-space-3); flex-wrap: wrap;
     padding-top: var(--ntn-space-6); border-top: 1px solid var(--ntn-border-subtle);
@@ -46,6 +53,13 @@
     padding: var(--ntn-space-6); border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-xl);
     background: var(--ntn-bg-app);
   }
+  /* A small stage for one ambient placement or tone, with a band sized to fit it. */
+  .sink__ambient-tile {
+    --ntn-ambient-size: 200px;
+    display: grid; place-items: center; min-height: 140px;
+  }
+  /* A tall card, to show the fixed fade depth against --full. */
+  .sink__tall { min-height: 300px; }
   .sink__label { font-size: var(--ntn-font-size-2xs); text-transform: uppercase; letter-spacing: var(--ntn-tracking-caps); color: var(--ntn-text-disabled); font-weight: var(--ntn-weight-medium); }
   /* The Code view (sink-code.js): a toggle in each head, and a panel of snippets under the examples. */
   .sink__codeview { display: flex; flex-direction: column; gap: var(--ntn-space-4); min-width: 0; }
@@ -91,6 +105,7 @@
         <a class="ntn-sidebar__item" href="#combo"><i class="fa-light fa-square-caret-down"></i><span>Dropdown · Multi-select</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#search"><i class="fa-light fa-magnifying-glass"></i><span>Search</span></a>
         <a class="ntn-sidebar__item" href="#slider"><i class="fa-light fa-sliders"></i><span>Slider</span></a>
+        <a class="ntn-sidebar__item" href="#upload"><i class="fa-light fa-cloud-arrow-up"></i><span>Upload</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#daterange"><i class="fa-light fa-calendar-range"></i><span>Date &amp; range</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#selection"><i class="fa-light fa-square-check"></i><span>Checkbox · Radio · Switch</span></a>
       </div>
@@ -105,6 +120,7 @@
         <p class="ntn-sidebar__section">Feedback</p>
         <a class="ntn-sidebar__item" href="#badges"><i class="fa-light fa-tag"></i><span>Badges</span></a>
         <a class="ntn-sidebar__item" href="#alerts"><i class="fa-light fa-triangle-exclamation"></i><span>Alerts</span></a>
+        <a class="ntn-sidebar__item" href="#toast"><i class="fa-light fa-message-lines"></i><span>Toast</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#progress"><i class="fa-light fa-bars-progress"></i><span>Progress · Spinner</span></a>
         <a class="ntn-sidebar__item" href="#avatars"><i class="fa-light fa-user"></i><span>Avatars</span></a>
         <a class="ntn-sidebar__item" href="#tooltip"><i class="fa-light fa-message"></i><span>Tooltip</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
@@ -112,9 +128,11 @@
       </div>
       <div class="ntn-sidebar__group">
         <p class="ntn-sidebar__section">Containers</p>
+        <a class="ntn-sidebar__item" href="#shell"><i class="fa-light fa-browser"></i><span>App shell</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#cards"><i class="fa-light fa-clone"></i><span>Cards</span></a>
         <a class="ntn-sidebar__item" href="#edges"><i class="fa-light fa-wand-magic-sparkles"></i><span>Border effects</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#glass"><i class="fa-light fa-droplet"></i><span>Glass</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#gradient"><i class="fa-light fa-fill-drip"></i><span>Gradient</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#accordion"><i class="fa-light fa-list"></i><span>Accordion</span></a>
         <a class="ntn-sidebar__item" href="#modal"><i class="fa-light fa-window-restore"></i><span>Modal</span></a>
       </div>
@@ -477,12 +495,77 @@
           </div></div>
         </section>
 
+        <!-- ── Upload ─────────────────────────────────────────────────── -->
+        <section class="sink" id="upload">
+          <header class="sink__head">
+            <h2 class="sink__title">Upload</h2>
+            <code class="sink__code">.ntn-dropzone .ntn-file</code>
+            <p class="sink__note">The look of an upload, with no engine assumed. The drop area is a <code>&lt;label&gt;</code> over a file input, so click-to-browse and dropping work without JS; <code>data-ntn-dropzone</code> adds <code>data-ntn-dragover</code> and fires <code>ntn:files</code>. File rows take <code>data-ntn-state="uploading|done|error"</code>. Drop files on the first area to see rows appear.</p>
+          </header>
+          <div class="ntn-card"><div class="ntn-card__body ntn-stack">
+            <label class="ntn-dropzone" data-ntn-dropzone id="sink-dropzone" data-sink-example="Drop area">
+              <input type="file" multiple>
+              <span class="ntn-dropzone__icon"><i class="fa-light fa-cloud-arrow-up"></i></span>
+              <span class="ntn-dropzone__title">Drop files here or click to browse</span>
+              <span class="ntn-dropzone__hint">PNG, JPG or PDF, up to 10 MB each</span>
+            </label>
+            <div class="ntn-grid ntn-grid--2">
+              <div class="ntn-stack">
+                <span class="sink__label">Dragged over (data-ntn-dragover)</span>
+                <label class="ntn-dropzone ntn-dropzone--compact" data-ntn-dragover data-sink-example="Dragged over, compact">
+                  <input type="file" tabindex="-1">
+                  <span class="ntn-dropzone__icon"><i class="fa-light fa-cloud-arrow-up"></i></span>
+                  <span class="ntn-dropzone__title">Release to upload</span>
+                </label>
+              </div>
+              <div class="ntn-stack">
+                <span class="sink__label">Disabled (aria-disabled)</span>
+                <label class="ntn-dropzone ntn-dropzone--compact" data-ntn-dropzone aria-disabled="true" data-sink-example="Disabled, compact">
+                  <input type="file" disabled>
+                  <span class="ntn-dropzone__icon"><i class="fa-light fa-cloud-arrow-up"></i></span>
+                  <span class="ntn-dropzone__title">Add a file</span>
+                  <span class="ntn-dropzone__hint">Limit reached</span>
+                </label>
+              </div>
+            </div>
+            <ul class="ntn-file-list" id="sink-files" data-sink-example="File rows">
+              <li class="ntn-file" data-ntn-state="uploading">
+                <span class="ntn-file__thumb"><i class="fa-light fa-file-image"></i></span>
+                <span class="ntn-file__name">launch-hero.png</span>
+                <span class="ntn-file__meta">2.4 MB · uploading</span>
+                <div class="ntn-file__actions"><button class="ntn-icon-btn ntn-icon-btn--sm" type="button" aria-label="Cancel upload of launch-hero.png"><i class="fa-light fa-xmark"></i></button></div>
+                <div class="ntn-progress ntn-progress--sm ntn-file__progress"><div class="ntn-progress__track"><div class="ntn-progress__fill" data-value="45"></div></div></div>
+              </li>
+              <li class="ntn-file" data-ntn-state="done">
+                <span class="ntn-file__thumb"><i class="fa-light fa-file-pdf"></i></span>
+                <span class="ntn-file__name">press-kit-2026.pdf</span>
+                <span class="ntn-file__meta">880 KB · uploaded</span>
+                <div class="ntn-file__actions"><button class="ntn-icon-btn ntn-icon-btn--sm" type="button" aria-label="Remove press-kit-2026.pdf"><i class="fa-light fa-trash"></i></button></div>
+                <div class="ntn-progress ntn-progress--sm ntn-file__progress"><div class="ntn-progress__track"><div class="ntn-progress__fill" data-value="100"></div></div></div>
+              </li>
+              <li class="ntn-file" data-ntn-state="error">
+                <span class="ntn-file__thumb"><i class="fa-light fa-file-video"></i></span>
+                <span class="ntn-file__name">teaser-final-final.mov</span>
+                <span class="ntn-file__meta">148 MB</span>
+                <div class="ntn-file__actions"><button class="ntn-icon-btn ntn-icon-btn--sm" type="button" aria-label="Retry teaser-final-final.mov"><i class="fa-light fa-rotate-right"></i></button><button class="ntn-icon-btn ntn-icon-btn--sm" type="button" aria-label="Remove teaser-final-final.mov"><i class="fa-light fa-trash"></i></button></div>
+                <span class="ntn-file__error" role="alert">Too large: the limit is 10 MB.</span>
+              </li>
+              <li class="ntn-file">
+                <span class="ntn-file__thumb"><i class="fa-light fa-file"></i></span>
+                <span class="ntn-file__name">notes.txt</span>
+                <span class="ntn-file__meta">4 KB · stored</span>
+                <div class="ntn-file__actions"><button class="ntn-icon-btn ntn-icon-btn--sm" type="button" aria-label="Remove notes.txt"><i class="fa-light fa-trash"></i></button></div>
+              </li>
+            </ul>
+          </div></div>
+        </section>
+
         <!-- ── Date range ─────────────────────────────────────────────── -->
         <section class="sink" id="daterange">
           <header class="sink__head">
             <h2 class="sink__title">Date &amp; range picker</h2>
             <code class="sink__code">.ntn-daterange</code>
-            <p class="sink__note">Presets, two months, draft-then-apply. Nothing leaves the component until <b>Apply</b>, which fires <code>ntn:daterangechange</code>. <code>data-ntn-single</code> turns the same component into a single-date picker; add <code>data-ntn-time</code> and a footer time input for date + time.</p>
+            <p class="sink__note">Presets, two months, draft-then-apply. Nothing leaves the component until <b>Apply</b>, which fires <code>ntn:daterangechange</code>. <code>data-ntn-single</code> turns the same component into a single-date picker; add <code>data-ntn-time</code> and a footer time input for date + time. A <code>data-ntn-daterange-clear</code> button empties it, <code>data-ntn-name</code> posts it with a form, and <code>setDateRange()</code> sets it from code. The panel opens in the top layer: try one at the bottom of the window, inside a card, or in the Modal example.</p>
           </header>
           <div class="ntn-card"><div class="ntn-card__body ntn-stack">
             <div class="ntn-row">
@@ -604,6 +687,38 @@
                 </div>
               </div>
             </div>
+            <hr class="ntn-divider">
+            <form class="ntn-row" style="flex-wrap:wrap;gap:var(--ntn-space-3)" id="publish-form">
+              <span class="sink__label" style="min-width:64px">In a form</span>
+              <div class="ntn-daterange ntn-daterange--single" data-ntn-daterange data-ntn-single data-ntn-name="publish" data-ntn-start="2026-10-02" data-ntn-time="17:45" id="publish-picker" data-sink-example="Clearable, posted with a form">
+                <button class="ntn-daterange__trigger" type="button" aria-expanded="false">
+                  <i class="fa-light fa-clock"></i>
+                  <span class="ntn-daterange__value" data-ntn-daterange-label data-ntn-placeholder="Not scheduled"></span>
+                  <i class="fa-light fa-chevron-down ntn-daterange__caret"></i>
+                </button>
+                <div class="ntn-daterange__panel" hidden>
+                  <div class="ntn-daterange__row">
+                    <div class="ntn-daterange__cals">
+                      <div class="ntn-daterange__cal" data-ntn-cal="0"></div>
+                    </div>
+                  </div>
+                  <footer class="ntn-daterange__foot">
+                    <label class="ntn-daterange__time">
+                      <span>Time</span>
+                      <input type="time" value="17:45" step="900" data-ntn-daterange-time>
+                    </label>
+                    <div class="ntn-daterange__actions">
+                      <button class="ntn-btn ntn-btn--subtle ntn-btn--sm" type="button" data-ntn-daterange-clear>Clear</button>
+                      <button class="ntn-btn ntn-btn--subtle ntn-btn--sm" type="button" data-ntn-daterange-cancel>Cancel</button>
+                      <button class="ntn-btn ntn-btn--primary ntn-btn--sm" type="button" data-ntn-daterange-apply>Apply</button>
+                    </div>
+                  </footer>
+                </div>
+              </div>
+              <button class="ntn-btn ntn-btn--sm" type="button" id="publish-set">Set from code</button>
+              <button class="ntn-btn ntn-btn--subtle ntn-btn--sm" type="reset">Reset</button>
+              <span class="sink__label">Posts <code id="publish-posted"></code></span>
+            </form>
           </div></div>
         </section>
 
@@ -1211,6 +1326,64 @@
           </div></div>
         </section>
 
+        <!-- ── Toast ──────────────────────────────────────────────────── -->
+        <section class="sink" id="toast">
+          <header class="sink__head">
+            <h2 class="sink__title">Toast</h2>
+            <code class="sink__code">.ntn-toast</code>
+            <p class="sink__note"><code>toast({ message, title, tone, duration, placement })</code> from <code>nocturne.js</code>. Stacks in a corner, leaves after 4s, pauses on hover or keyboard focus, <code>Esc</code> closes the focused one. It opens in the top layer, and inside an open modal (try the Modal example's Send invite). Fires <code>ntn:toastclose</code> with a <code>reason</code>.</p>
+          </header>
+          <div class="ntn-card"><div class="ntn-card__body ntn-stack">
+            <span class="sink__label">Tones</span>
+            <div class="ntn-row" id="toast-tones">
+              <button class="ntn-btn ntn-btn--sm" type="button" data-sink-toast="neutral">Neutral</button>
+              <button class="ntn-btn ntn-btn--sm ntn-btn--success" type="button" data-sink-toast="success">Success</button>
+              <button class="ntn-btn ntn-btn--sm ntn-btn--warning" type="button" data-sink-toast="warning">Warning</button>
+              <button class="ntn-btn ntn-btn--sm ntn-btn--danger" type="button" data-sink-toast="danger">Danger</button>
+              <button class="ntn-btn ntn-btn--sm ntn-btn--info" type="button" data-sink-toast="info">Info</button>
+              <button class="ntn-btn ntn-btn--sm ntn-btn--subtle" type="button" data-sink-toast="sticky">Until dismissed</button>
+            </div>
+            <span class="sink__label">Placements</span>
+            <div class="ntn-row">
+              <button class="ntn-btn ntn-btn--sm" type="button" data-sink-toast-at="top-end">Top end</button>
+              <button class="ntn-btn ntn-btn--sm" type="button" data-sink-toast-at="top-start">Top start</button>
+              <button class="ntn-btn ntn-btn--sm" type="button" data-sink-toast-at="top-center">Top center</button>
+              <button class="ntn-btn ntn-btn--sm" type="button" data-sink-toast-at="bottom-end">Bottom end</button>
+              <button class="ntn-btn ntn-btn--sm" type="button" data-sink-toast-at="bottom-start">Bottom start</button>
+              <span class="sink__label" id="toast-log">no toast closed yet</span>
+            </div>
+            <hr class="ntn-divider">
+            <span class="sink__label">The markup toast() builds</span>
+            <div class="ntn-grid ntn-grid--2" style="max-width:760px">
+              <div class="ntn-toast" data-sink-example="Neutral, message only">
+                <div class="ntn-toast__body"><div class="ntn-toast__message">Draft saved</div></div>
+                <button type="button" class="ntn-toast__close" aria-label="Dismiss"><i class="fa-light fa-xmark"></i></button>
+              </div>
+              <div class="ntn-toast ntn-toast--success" data-sink-example="Success, with a title">
+                <i class="fa-light fa-circle-check ntn-toast__icon" aria-hidden="true"></i>
+                <div class="ntn-toast__body"><div class="ntn-toast__title">Post published</div><div class="ntn-toast__message">“Spring launch” is live on the site.</div></div>
+                <button type="button" class="ntn-toast__close" aria-label="Dismiss"><i class="fa-light fa-xmark"></i></button>
+              </div>
+              <div class="ntn-toast ntn-toast--warning" data-sink-example="Warning">
+                <i class="fa-light fa-triangle-exclamation ntn-toast__icon" aria-hidden="true"></i>
+                <div class="ntn-toast__body"><div class="ntn-toast__message">Image is larger than 2 MB and was resized.</div></div>
+                <button type="button" class="ntn-toast__close" aria-label="Dismiss"><i class="fa-light fa-xmark"></i></button>
+              </div>
+              <div class="ntn-toast ntn-toast--danger" data-sink-example="Danger">
+                <i class="fa-light fa-circle-exclamation ntn-toast__icon" aria-hidden="true"></i>
+                <div class="ntn-toast__body"><div class="ntn-toast__title">Couldn't save</div><div class="ntn-toast__message">The server didn't answer. Your changes are still here.</div></div>
+                <button type="button" class="ntn-toast__close" aria-label="Dismiss"><i class="fa-light fa-xmark"></i></button>
+              </div>
+              <div class="ntn-toast ntn-toast--info" style="--ntn-toast-duration: 60000ms" data-sink-example="Info, with its timer">
+                <i class="fa-light fa-circle-info ntn-toast__icon" aria-hidden="true"></i>
+                <div class="ntn-toast__body"><div class="ntn-toast__message">A new version is available.</div></div>
+                <button type="button" class="ntn-toast__close" aria-label="Dismiss"><i class="fa-light fa-xmark"></i></button>
+                <div class="ntn-toast__timer"></div>
+              </div>
+            </div>
+          </div></div>
+        </section>
+
         <!-- ── Progress ───────────────────────────────────────────────── -->
         <section class="sink" id="progress">
           <header class="sink__head">
@@ -1239,9 +1412,21 @@
           <header class="sink__head">
             <h2 class="sink__title">Avatars</h2>
             <code class="sink__code">.ntn-avatar</code>
-            <p class="sink__note">Five sizes, optional status dot. Stack them in <code>.ntn-avatars</code>.</p>
+            <p class="sink__note">Five sizes, optional status dot. Stack them in <code>.ntn-avatars</code>. A colour per person: set <code>--ntn-avatar-hue</code> inline (or <code>data-ntn-avatar-name</code>, which hashes the name). Mono turns them grey. <code>--unknown</code> is the no-person disc.</p>
           </header>
-          <div class="ntn-card"><div class="ntn-card__body">
+          <div class="ntn-card"><div class="ntn-card__body ntn-stack">
+            <div class="ntn-row" data-sink-example="A colour per person">
+              <span class="ntn-avatar" data-ntn-avatar-name="Ada Lovelace">AL</span>
+              <span class="ntn-avatar" data-ntn-avatar-name="Grace Hopper">GH</span>
+              <span class="ntn-avatar" data-ntn-avatar-name="Alan Turing">AT</span>
+              <span class="ntn-avatar" data-ntn-avatar-name="Katherine Johnson">KJ</span>
+              <span class="ntn-avatar" style="--ntn-avatar-hue: 30">MR</span>
+              <span class="ntn-avatar" style="--ntn-avatar-hue: 150">JT</span>
+              <span class="ntn-avatar ntn-avatar--lg" style="--ntn-avatar-hue: 200">AK</span>
+              <span class="ntn-avatar ntn-avatar--unknown" role="img" aria-label="Unknown user">?</span>
+              <span class="ntn-avatar ntn-avatar--sm ntn-avatar--unknown" role="img" aria-label="Unassigned"><i class="fa-light fa-user"></i></span>
+            </div>
+            <hr class="ntn-divider">
             <div class="ntn-row ntn-row--between">
               <span class="ntn-avatars" data-sink-example="A stack">
                 <span class="ntn-avatar ntn-avatar--sm">MR</span>
@@ -1317,6 +1502,33 @@
               <span class="ntn-empty__title">No invoices yet</span>
               <span>Your first invoice is issued on the first of next month.</span>
               <button class="ntn-btn ntn-btn--sm">View plan</button>
+            </div>
+          </section>
+        </section>
+
+        <!-- ── App shell: sticky ──────────────────────────────────────── -->
+        <section class="sink" id="shell">
+          <header class="sink__head">
+            <h2 class="sink__title">App shell</h2>
+            <code class="sink__code">.ntn-app__scroll</code>
+            <p class="sink__note">The page scrolls, not the content area, so <code>position: sticky</code> inside it sticks to the viewport. Scroll through this card: the save bar stays pinned to the bottom of the window until the card's end.</p>
+          </header>
+          <section class="ntn-card" data-sink-example="Sticky save bar">
+            <header class="ntn-card__head">
+              <div class="ntn-card__heading">
+                <h3 class="ntn-card__title">Edit post</h3>
+                <p class="ntn-card__sub">A long form with a sticky save bar.</p>
+              </div>
+            </header>
+            <div class="ntn-card__body ntn-stack">
+              <div style="min-height:900px; display:grid; place-items:center; color:var(--ntn-text-muted)">Long content</div>
+              <div class="sink__savebar">
+                <span class="ntn-page__sub" style="margin:0">Unsaved changes</span>
+                <div class="ntn-row">
+                  <button class="ntn-btn ntn-btn--sm">Discard</button>
+                  <button class="ntn-btn ntn-btn--primary ntn-btn--sm">Save</button>
+                </div>
+              </div>
             </div>
           </section>
         </section>
@@ -1418,7 +1630,7 @@
             <code class="sink__code">.ntn-glass</code>
             <code class="sink__code">.ntn-glass--flat</code>
             <code class="sink__code">.ntn-ambient</code>
-            <p class="sink__note">Translucent, blurred surfaces for a page that sits over artwork or a gradient. On a card, stat, accordion or sidebar it glazes that surface; on a wrapper it glazes every surface inside. <code>ntn-ambient</code>, first inside <code>.ntn-app</code>, is a static accent glow to sit them on; point <code>--ntn-ambient-image</code> at your own artwork. <code>ntn-glass--flat</code> drops the lit top edge, which suits the plain glow. Below, flat glass over the glow alone, then glass over a photo as <code>--ntn-ambient-image</code> (dimmed and faded, for a page where text also sits on the backdrop), and over the same photo as <code>--ntn-background-image</code> (full strength). The droplet in the top bar turns glass on for this whole page, with the photo as the ambient image.</p>
+            <p class="sink__note">Translucent, blurred surfaces for a page that sits over artwork or a gradient. On a card, stat, accordion or sidebar it glazes that surface; on a wrapper it glazes every surface inside. <code>ntn-ambient</code>, first inside <code>.ntn-app</code>, is a static accent glow to sit them on; point <code>--ntn-ambient-image</code> at your own artwork. <code>ntn-glass--flat</code> drops the lit top edge, which suits the plain glow. Below, flat glass over the glow alone, then glass over a photo as <code>--ntn-ambient-image</code> (dimmed and faded, for a page where text also sits on the backdrop), and over the same photo as <code>--ntn-background-image</code> (full strength). Then the placements, which move the glow to an edge, a corner or the centre; the tones, which tint it (or set <code>--ntn-ambient-glow</code>); and two ambients stacked for two lights. The droplet in the top bar turns glass on for this whole page, with the photo as the ambient image.</p>
           </header>
           <!-- Three stages, each with its own ntn-ambient and ntn-glass on the wrapper, so every surface
                inside is glazed. The second sets --ntn-ambient-image, the third --ntn-background-image. -->
@@ -1559,6 +1771,160 @@
               </section>
             </div>
           </div>
+          <div class="ntn-stack">
+            <p class="sink__label">Placement · <code>ntn-ambient--{edge|corner|center}</code>, top by default</p>
+            <div class="ntn-grid ntn-grid--3" data-sink-example="Placement">
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--top-left"></div><code>--top-left</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient"></div><code>(default)</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--top-right"></div><code>--top-right</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--left"></div><code>--left</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--center"></div><code>--center</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--right"></div><code>--right</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--bottom-left"></div><code>--bottom-left</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--bottom"></div><code>--bottom</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--bottom-right"></div><code>--bottom-right</code></div>
+            </div>
+          </div>
+          <div class="ntn-stack">
+            <p class="sink__label">Tones · <code>ntn-ambient--{tone}</code>, or any colour as <code>--ntn-ambient-glow</code></p>
+            <div class="ntn-grid ntn-grid--3" data-sink-example="Tones">
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient"></div><code>(accent)</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--success"></div><code>--success</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--warning"></div><code>--warning</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--danger"></div><code>--danger</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--info"></div><code>--info</code></div>
+              <div class="sink__glass-stage sink__ambient-tile"><div class="ntn-ambient ntn-ambient--neutral"></div><code>--neutral</code></div>
+            </div>
+          </div>
+          <div class="ntn-stack">
+            <p class="sink__label">Two lights · stacked <code>ntn-ambient</code>s</p>
+            <div class="ntn-glass ntn-glass--flat ntn-grid ntn-grid--3 sink__glass-stage" data-sink-example="Two lights">
+              <!-- Each ambient adds its own band; only the first draws --ntn-background-image. -->
+              <div class="ntn-ambient ntn-ambient--top-left"></div>
+              <div class="ntn-ambient ntn-ambient--bottom-right ntn-ambient--info"></div>
+              <section class="ntn-card">
+                <header class="ntn-card__head">
+                  <div class="ntn-card__heading">
+                    <h3 class="ntn-card__title">Glass card</h3>
+                    <p class="ntn-card__sub">The accent from the top left.</p>
+                  </div>
+                </header>
+                <div class="ntn-card__body">Stack ambients with different placements and tones to build your own backdrop.</div>
+              </section>
+              <div class="ntn-stack">
+                <div class="ntn-stat">
+                  <div class="ntn-stat__head"><span class="ntn-stat__label">Deploys today</span></div>
+                  <div class="ntn-stat__figure"><span class="ntn-stat__value">42</span><span class="ntn-stat__delta">+12%</span></div>
+                  <span class="ntn-stat__caption">vs. yesterday</span>
+                </div>
+              </div>
+              <section class="ntn-card">
+                <header class="ntn-card__head">
+                  <div class="ntn-card__heading">
+                    <h3 class="ntn-card__title">Glass card</h3>
+                    <p class="ntn-card__sub">Info from the bottom right.</p>
+                  </div>
+                </header>
+                <div class="ntn-card__body">Each light fades over <code>--ntn-ambient-size</code>.</div>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Gradient ───────────────────────────────────────────────── -->
+        <section class="sink" id="gradient">
+          <header class="sink__head">
+            <h2 class="sink__title">Gradient</h2>
+            <code class="sink__code">.ntn-gradient</code>
+            <p class="sink__note">A wash for any surface: a tone fades from the top edge into the surface's own background, solid or glass. The accent by default, or any tone. <code>--strong</code> starts deeper, <code>--line</code> draws the border in the tone, and <code>--full</code> fades over the whole height instead of <code>--ntn-gradient-size</code>. Set <code>--ntn-gradient-color</code> to wash in any colour. Keep it quiet: neutral across a dashboard, and a status tone on the one card that needs attention.</p>
+          </header>
+          <div class="ntn-stack">
+            <p class="sink__label">Tones · <code>ntn-gradient--{tone}</code></p>
+            <div class="ntn-grid ntn-grid--3" data-sink-example="Tones">
+              <div class="ntn-stat ntn-gradient">
+                <div class="ntn-stat__head"><span class="ntn-stat__label">Accent (default)</span></div>
+                <div class="ntn-stat__figure"><span class="ntn-stat__value">42</span><span class="ntn-stat__delta">+12%</span></div>
+                <span class="ntn-stat__caption">ntn-gradient</span>
+              </div>
+              <div class="ntn-stat ntn-gradient ntn-gradient--success">
+                <div class="ntn-stat__head"><span class="ntn-stat__label">Success</span></div>
+                <div class="ntn-stat__figure"><span class="ntn-stat__value">99.9%</span></div>
+                <span class="ntn-stat__caption">--success</span>
+              </div>
+              <div class="ntn-stat ntn-gradient ntn-gradient--warning">
+                <div class="ntn-stat__head"><span class="ntn-stat__label">Warning</span></div>
+                <div class="ntn-stat__figure"><span class="ntn-stat__value">3</span></div>
+                <span class="ntn-stat__caption">--warning</span>
+              </div>
+              <div class="ntn-stat ntn-gradient ntn-gradient--danger">
+                <div class="ntn-stat__head"><span class="ntn-stat__label">Danger</span></div>
+                <div class="ntn-stat__figure"><span class="ntn-stat__value">1</span><span class="ntn-stat__delta ntn-stat__delta--down">+1</span></div>
+                <span class="ntn-stat__caption">--danger</span>
+              </div>
+              <div class="ntn-stat ntn-gradient ntn-gradient--info">
+                <div class="ntn-stat__head"><span class="ntn-stat__label">Info</span></div>
+                <div class="ntn-stat__figure"><span class="ntn-stat__value">12</span></div>
+                <span class="ntn-stat__caption">--info</span>
+              </div>
+              <div class="ntn-stat ntn-gradient ntn-gradient--neutral">
+                <div class="ntn-stat__head"><span class="ntn-stat__label">Neutral</span></div>
+                <div class="ntn-stat__figure"><span class="ntn-stat__value">128</span></div>
+                <span class="ntn-stat__caption">--neutral</span>
+              </div>
+            </div>
+          </div>
+          <div class="ntn-stack">
+            <p class="sink__label">A dashboard · neutral cards, one <code>--danger --strong --line</code></p>
+            <div class="ntn-grid ntn-grid--4" data-sink-example="A dashboard">
+              <section class="ntn-card ntn-gradient ntn-gradient--neutral">
+                <header class="ntn-card__head"><div class="ntn-card__heading"><h3 class="ntn-card__title">Traffic</h3></div></header>
+                <div class="ntn-card__body">18.2k visits this week, up 4%.</div>
+              </section>
+              <section class="ntn-card ntn-gradient ntn-gradient--neutral">
+                <header class="ntn-card__head"><div class="ntn-card__heading"><h3 class="ntn-card__title">Builds</h3></div></header>
+                <div class="ntn-card__body">214 builds, median 48 seconds.</div>
+              </section>
+              <section class="ntn-card ntn-gradient ntn-gradient--neutral">
+                <header class="ntn-card__head"><div class="ntn-card__heading"><h3 class="ntn-card__title">Storage</h3></div></header>
+                <div class="ntn-card__body">61% of 200 GB used.</div>
+              </section>
+              <section class="ntn-card ntn-gradient ntn-gradient--danger ntn-gradient--strong ntn-gradient--line">
+                <header class="ntn-card__head"><div class="ntn-card__heading"><h3 class="ntn-card__title">api is down</h3></div></header>
+                <div class="ntn-card__body">The last deploy failed its health check 4 minutes ago.</div>
+              </section>
+            </div>
+          </div>
+          <div class="ntn-stack">
+            <p class="sink__label">Depth · fixed <code>--ntn-gradient-size</code>, then <code>--full</code></p>
+            <div class="ntn-grid ntn-grid--2" data-sink-example="Depth">
+              <section class="ntn-card ntn-gradient sink__tall">
+                <header class="ntn-card__head"><div class="ntn-card__heading"><h3 class="ntn-card__title">Fixed depth</h3></div></header>
+                <div class="ntn-card__body">The wash fades out 160px down, whatever the card's height.</div>
+              </section>
+              <section class="ntn-card ntn-gradient ntn-gradient--full sink__tall">
+                <header class="ntn-card__head"><div class="ntn-card__heading"><h3 class="ntn-card__title">Full height</h3></div></header>
+                <div class="ntn-card__body">The wash fades over the whole card.</div>
+              </section>
+            </div>
+          </div>
+          <div class="ntn-stack">
+            <p class="sink__label">Over glass · <code>ntn-glass</code> + <code>ntn-ambient</code></p>
+            <div class="ntn-glass ntn-grid ntn-grid--3 sink__glass-stage" data-sink-example="Over glass">
+              <div class="ntn-ambient"></div>
+              <section class="ntn-card ntn-gradient ntn-gradient--neutral">
+                <header class="ntn-card__head"><div class="ntn-card__heading"><h3 class="ntn-card__title">Neutral</h3></div></header>
+                <div class="ntn-card__body">The wash lies on the translucent glass and fades into it.</div>
+              </section>
+              <section class="ntn-card ntn-gradient ntn-gradient--info">
+                <header class="ntn-card__head"><div class="ntn-card__heading"><h3 class="ntn-card__title">Info</h3></div></header>
+                <div class="ntn-card__body">The backdrop still shows through below the fade.</div>
+              </section>
+              <section class="ntn-card ntn-gradient ntn-gradient--warning ntn-gradient--line">
+                <header class="ntn-card__head"><div class="ntn-card__heading"><h3 class="ntn-card__title">Warning, lined</h3></div></header>
+                <div class="ntn-card__body">The tone's hairline replaces the glass border.</div>
+              </section>
+            </div>
+          </div>
         </section>
 
         <!-- ── Accordion ──────────────────────────────────────────────── -->
@@ -1611,10 +1977,33 @@
                 <span class="ntn-select__label">Role</span>
                 <span class="ntn-select__control"><select><option>Member</option><option>Admin</option></select></span>
               </label>
+              <!-- The picker's panel opens in the top layer, above this dialog. -->
+              <div class="ntn-daterange ntn-daterange--single ntn-daterange--block" data-ntn-daterange data-ntn-single>
+                <span class="ntn-daterange__label">Access expires</span>
+                <button class="ntn-daterange__trigger" type="button" aria-expanded="false">
+                  <i class="fa-light fa-calendar"></i>
+                  <span class="ntn-daterange__value" data-ntn-daterange-label data-ntn-placeholder="Never"></span>
+                  <i class="fa-light fa-chevron-down ntn-daterange__caret"></i>
+                </button>
+                <div class="ntn-daterange__panel" hidden>
+                  <div class="ntn-daterange__row">
+                    <div class="ntn-daterange__cals">
+                      <div class="ntn-daterange__cal" data-ntn-cal="0"></div>
+                    </div>
+                  </div>
+                  <footer class="ntn-daterange__foot">
+                    <span class="ntn-daterange__summary" data-ntn-daterange-summary></span>
+                    <div class="ntn-daterange__actions">
+                      <button class="ntn-btn ntn-btn--subtle ntn-btn--sm" type="button" data-ntn-daterange-clear>Clear</button>
+                      <button class="ntn-btn ntn-btn--primary ntn-btn--sm" type="button" data-ntn-daterange-apply>Apply</button>
+                    </div>
+                  </footer>
+                </div>
+              </div>
             </div>
             <footer class="ntn-modal__foot">
               <button class="ntn-btn" data-ntn-close>Cancel</button>
-              <button class="ntn-btn ntn-btn--primary">Send invite</button>
+              <button class="ntn-btn ntn-btn--primary" type="button" id="invite-send">Send invite</button>
             </footer>
           </dialog>
         </section>
@@ -1894,13 +2283,67 @@
     entries.forEach((e) => e.isIntersecting ? seen.add(e.target.id) : seen.delete(e.target.id));
     const first = Array.from(byId.keys()).find((id) => seen.has(id));
     if (first) mark(first);
-  }, { root: document.querySelector('.ntn-app__scroll'), rootMargin: '0px 0px -70% 0px' });
+  }, { rootMargin: '0px 0px -70% 0px' });
   document.querySelectorAll('.sink').forEach((s) => io.observe(s));
 
   const readout = document.getElementById('daterange-readout');
   document.addEventListener('ntn:daterangechange', (e) => {
-    readout.textContent = e.detail.start ? `${e.detail.start} → ${e.detail.end}` : 'cleared';
+    if (e.target.id !== 'publish-picker') readout.textContent = e.detail.start ? `${e.detail.start} → ${e.detail.end}` : 'cleared';
   });
+
+  // Toasts: every tone and placement, the modal case, and what ntn:toastclose reports.
+  const { setDateRange, toast } = await import('../js/nocturne.js');
+  const TOAST_SAMPLES = {
+    neutral: { message: 'Draft saved' },
+    success: { title: 'Post published', message: '“Spring launch” is live on the site.', tone: 'success' },
+    warning: { message: 'Image is larger than 2 MB and was resized.', tone: 'warning' },
+    danger: { title: "Couldn't save", message: "The server didn't answer. Your changes are still here.", tone: 'danger' },
+    info: { message: 'A new version is available.', tone: 'info' },
+    sticky: { title: 'Stays until dismissed', message: 'duration: 0', duration: 0 },
+  };
+  document.addEventListener('click', (e) => {
+    const tone = e.target.closest('[data-sink-toast]');
+    if (tone) toast(TOAST_SAMPLES[tone.dataset.sinkToast]);
+    const at = e.target.closest('[data-sink-toast-at]');
+    if (at) toast({ message: 'Placed ' + at.dataset.sinkToastAt, placement: at.dataset.sinkToastAt, tone: 'info' });
+    if (e.target.closest('#invite-send')) toast({ title: 'Invite sent', message: 'Shown inside the open modal, so it can be dismissed.', tone: 'success' });
+  });
+  document.addEventListener('ntn:toastclose', (e) => { document.getElementById('toast-log').textContent = 'Last close: ' + e.detail.reason; });
+
+  // Upload: no engine here, so ntn:files just lists what arrived as stored rows.
+  document.getElementById('sink-dropzone').addEventListener('ntn:files', (e) => {
+    const kb = (n) => (n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB');
+    for (const file of e.detail.files) {
+      const row = document.createElement('li');
+      row.className = 'ntn-file';
+      row.setAttribute('data-ntn-state', 'done');
+      const thumb = document.createElement('span');
+      thumb.className = 'ntn-file__thumb';
+      thumb.innerHTML = '<i class="fa-light fa-file"></i>';
+      const name = document.createElement('span');
+      name.className = 'ntn-file__name';
+      name.textContent = file.name;
+      const meta = document.createElement('span');
+      meta.className = 'ntn-file__meta';
+      meta.textContent = kb(file.size) + ' · dropped';
+      row.append(thumb, name, meta);
+      document.getElementById('sink-files').prepend(row);
+    }
+  });
+
+  // The form-associated picker: show what it would post, and set it from code.
+  const publishForm = document.getElementById('publish-form');
+  const posted = () => {
+    const v = new FormData(publishForm).get('publish');
+    document.getElementById('publish-posted').textContent = `publish=${v ? v : '""'}`;
+  };
+  publishForm.addEventListener('change', posted);
+  publishForm.addEventListener('reset', () => setTimeout(posted));
+  document.getElementById('publish-set').addEventListener('click', () => {
+    setDateRange(document.getElementById('publish-picker'), { start: '2026-12-01', time: '08:15' });
+    posted();
+  });
+  posted();
 
   document.getElementById('accent-picker').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-accent]');

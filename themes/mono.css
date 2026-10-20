@@ -114,4 +114,6 @@
   --ntn-chart-3: var(--ntn-n-700);
   /* The processing ring's glint is the ink: white in dark mode, black in light */
   --ntn-processing-glint: var(--ntn-n-1000);
+  /* Per-person avatars (--ntn-avatar-hue) keep their lightness and lose their hue */
+  --ntn-avatar-chroma: 0;
 }

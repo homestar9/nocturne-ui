@@ -1,0 +1,3 @@
+# The build writes dist/ with LF, and npm test checks it byte for byte against a fresh build,
+# so checkouts must write LF too whatever core.autocrlf says.
+dist/** text eol=lf

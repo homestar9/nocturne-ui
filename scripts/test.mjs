@@ -69,7 +69,7 @@ try {
   console.log('Glass hooks (R15)');
   check(/--ntn-surface-filter:\s*none;/.test(css) && /--ntn-pop-filter:\s*none;/.test(css), 'both hooks default to none');
   const HOOKS = { 'ntn-card': 'surface', 'ntn-sidebar': 'surface', 'ntn-modal': 'pop', 'ntn-menu': 'pop',
-    'ntn-popover': 'pop', 'ntn-daterange__panel': 'pop', 'ntn-tooltip__bubble': 'pop' };
+    'ntn-popover': 'pop', 'ntn-daterange__panel': 'pop', 'ntn-tooltip__bubble': 'pop', 'ntn-toast': 'pop' };
   for (const [block, hook] of Object.entries(HOOKS)) {
     const rule = css.match(new RegExp(`(?:^|\\n)\\.${block} \\{([^}]*)\\}`));
     check(rule && rule[1].includes(`backdrop-filter: var(--ntn-${hook}-filter)`), `.${block} reads --ntn-${hook}-filter`);
@@ -96,12 +96,57 @@ try {
   console.log('Reduced motion');
   const calmRise = css.match(/@media \(prefers-reduced-motion: reduce\) \{\s*@keyframes ntn-rise \{((?:[^{}]*\{[^{}]*\})*)[^{}]*\}/);
   check(calmRise && !/transform/.test(calmRise[1]), 'under reduced motion, entrances (ntn-rise) fade without moving');
+  const calmLeave = css.match(/@media \(prefers-reduced-motion: reduce\) \{\s*@keyframes ntn-toast-leave \{((?:[^{}]*\{[^{}]*\})*)[^{}]*\}/);
+  check(calmLeave && !/transform/.test(calmLeave[1]), 'under reduced motion, a toast leaves by fading only');
+  check(/@media \(prefers-reduced-motion: reduce\) \{\s*\.ntn-toast__timer \{\s*display: none;/.test(css), 'under reduced motion, the shrinking toast timer is hidden');
+
+  console.log('Toast (NTN-23)');
+  // The tones are translucent, and a toast floats over anything: each tint needs an opaque base.
+  const seeThrough = ['primary', 'success', 'warning', 'danger', 'info'].filter((t) => {
+    const r = rules.find((x) => x.sel === `.ntn-toast--${t}`);
+    return !(r && /background:[^;]*,\s*var\(--ntn-surface-2\)\s*;/.test(r.body));
+  });
+  check(seeThrough.length === 0, 'every toast tone paints its tint over an opaque --ntn-surface-2' + (seeThrough.length ? ': ' + seeThrough.join(' ') : ''));
+  const toaster = rules.find((r) => r.sel === '.ntn-toaster');
+  check(toaster && /pointer-events:\s*none/.test(toaster.body) && rules.some((r) => r.sel === '.ntn-toast' && /pointer-events:\s*auto/.test(r.body)),
+    'the region lets clicks through; only the toasts take them');
+  check(rules.some((r) => r.sel === '.ntn-toaster[popover]:not(:popover-open)' && /display:\s*none/.test(r.body)), 'a closed toaster popover stays hidden despite its display: flex');
+
+  console.log('Drop area and file rows (NTN-24)');
+  // The input covers the label, so click and drop work with no JS; the label draws its focus.
+  const dzInput = rules.find((r) => r.sel === '.ntn-dropzone input[type=file]' || r.sel === '.ntn-dropzone input[type="file"]');
+  check(dzInput && /inset:\s*0/.test(dzInput.body) && /opacity:\s*0/.test(dzInput.body), 'the file input is stretched invisibly over the drop area');
+  check(rules.some((r) => r.sel === '.ntn-dropzone:has(input:focus-visible)' && /box-shadow:\s*var\(--ntn-ring-focus\)/.test(r.body)), 'the drop area rings when its hidden input has keyboard focus');
+  const fileStates = [['.ntn-file:not([data-ntn-state=uploading]) .ntn-file__progress', 'progress outside uploading'], ['.ntn-file:not([data-ntn-state=error]) .ntn-file__error', 'the error outside the error state']];
+  const unhidden = fileStates.filter(([sel]) => !rules.some((r) => r.sel.replace(/"/g, '') === sel && /display:\s*none/.test(r.body)));
+  check(unhidden.length === 0, 'a file row hides its ' + fileStates.map(([, m]) => m).join(' and ') + (unhidden.length ? ': not ' + unhidden.map(([, m]) => m).join(', ') : ''));
 
   console.log('Progress steps (NTN-17)');
   // The connector runs under the markers, so the current marker's see-through tint needs an opaque base.
   const currentMarker = rules.find((r) => r.sel === '.ntn-steps__step[data-state=current] .ntn-steps__marker');
   check(currentMarker && /background:[^;]*,\s*var\(--ntn-surface-2\)\s*;/.test(currentMarker.body),
     'the current step marker paints its tint over an opaque --ntn-surface-2 base');
+
+  console.log('Ambient (NTN-18)');
+  const PLACEMENTS = ['bottom', 'left', 'right', 'top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'];
+  const unplaced = PLACEMENTS.filter((p) => !rules.some((r) => r.sel.split(/\s*,\s*/).includes(`.ntn-ambient--${p}::before`)));
+  check(unplaced.length === 0, 'ntn-ambient offers every placement' + (unplaced.length ? ': missing ' + unplaced.join(' ') : ''));
+  const ambientGlow = rules.find((r) => r.sel === '.ntn-ambient::before');
+  check(ambientGlow && /var\(--ntn-ambient-glow\)/.test(ambientGlow.body), 'the ambient glow reads --ntn-ambient-glow');
+  const stacked = rules.find((r) => r.sel === '.ntn-ambient ~ .ntn-ambient');
+  check(stacked && /background:\s*none\s*;/.test(stacked.body), 'a stacked ambient leaves the background image to the first');
+
+  console.log('Gradient (NTN-19)');
+  const washAt = rules.findIndex((r) => r.sel === '.ntn-gradient');
+  const wash = rules[washAt];
+  check(wash && /var\(--ntn-gradient-color\)/.test(wash.body) && /var\(--ntn-gradient-size\)/.test(wash.body), 'the wash reads --ntn-gradient-color and --ntn-gradient-size');
+  const noWashMod = ['strong', 'full', 'line'].filter((m) => !rules.some((r) => r.sel === `.ntn-gradient--${m}`));
+  check(noWashMod.length === 0, 'ntn-gradient offers --strong, --full and --line' + (noWashMod.length ? ': missing ' + noWashMod.join(' ') : ''));
+  // The wash must follow every surface background it lies over, or a shorthand wipes it out.
+  const lastAt = (re) => rules.reduce((at, r, i) => (re.test(r.sel) ? i : at), -1);
+  const before = { '.ntn-card': /(^|,\s*)\.ntn-card(,|$)/, '.ntn-sidebar': /(^|,\s*)\.ntn-sidebar(,|$)/, '.ntn-edge--glow': /\.ntn-edge--glow(,|$)/ };
+  const washFirst = Object.entries(before).filter(([, re]) => lastAt(re) > washAt).map(([n]) => n);
+  check(washAt >= 0 && washFirst.length === 0, 'the wash comes after the surfaces it lies over' + (washFirst.length ? ': ' + washFirst.join(' ') : ''));
 
   console.log('One disabled treatment');
   const disabledRules = rules.filter((r) => /:disabled|\[aria-disabled=("?)true\1\]/.test(r.sel) && /(?:^|[;\s])opacity:/.test(r.body));
@@ -119,7 +164,7 @@ try {
   console.log('One tone set');
   // Every toned block offers primary, the four statuses and neutral; its default needs no class.
   const TONE_SET = ['primary', 'success', 'warning', 'danger', 'info', 'neutral'];
-  const DEFAULT_TONE = { 'ntn-badge': 'neutral', 'ntn-alert': null, 'ntn-progress': 'primary', 'ntn-btn': ['primary', 'neutral'] };
+  const DEFAULT_TONE = { 'ntn-badge': 'neutral', 'ntn-alert': null, 'ntn-progress': 'primary', 'ntn-btn': ['primary', 'neutral'], 'ntn-ambient': 'primary', 'ntn-gradient': 'primary', 'ntn-toast': 'neutral' };
   for (const [block, dflt] of Object.entries(DEFAULT_TONE)) {
     const missing = TONE_SET.filter((t) => ![].concat(dflt).includes(t) && !css.includes(`.${block}--${t}`));
     check(missing.length === 0, `.${block} offers every tone` + (missing.length ? ': missing ' + missing.join(' ') : ''));
@@ -139,6 +184,13 @@ try {
   console.log('Layout follows its tokens');
   const pageRule = css.match(/(?:^|\n)\.ntn-page \{([^}]*)\}/);
   check(pageRule && /max-width:\s*var\(--ntn-page-max\)/.test(pageRule[1]), '.ntn-page is as wide as --ntn-page-max');
+  // NTN-21: the date panel opens in the top layer; its own display must not override the closed popover.
+  const drClosed = rules.find((r) => r.sel === '.ntn-daterange__panel[popover]:not(:popover-open)');
+  check(drClosed && /display:\s*none/.test(drClosed.body), 'a closed date-picker popover stays hidden despite the panel\'s display: flex');
+  check(!rules.some((r) => /^\.ntn-card:has\(\.ntn-daterange__panel/.test(r.sel)), 'no card overflow workaround for the date panel (the top layer is never clipped)');
+  // NTN-20: the page scrolls. A scroll container here would capture every sticky inside the content.
+  const appScroll = rules.find((r) => r.sel === '.ntn-app__scroll');
+  check(appScroll && !/overflow/.test(appScroll.body), '.ntn-app__scroll is not a scroll container, so stickies inside it stick to the viewport');
   const flushLevels = new Set([...css.matchAll(/\.ntn-tree--flush((?: \.ntn-tree__group)+) \.ntn-tree__row \{[^}]*var\(--ntn-tree-indent\) \* (\d+)/g)]
     .filter((m) => m[1].split('.ntn-tree__group').length - 1 === Number(m[2])).map((m) => Number(m[2])));
   check([...Array(8)].every((_, i) => flushLevels.has(i + 1)), `a --flush tree indents each level by its depth (levels ${[...flushLevels].sort((a, b) => a - b).join(',')})`);
@@ -209,6 +261,10 @@ try {
       .map(([n]) => `${n} (${light ? 'light' : 'dark'})`);
   });
   check(leaks.length === 0, 'mono sets again every non-status colour Nocturne declares, in the same mode' + (leaks.length ? ': ' + [...new Set(leaks)].join(' ') : ''));
+
+  // NTN-22: a per-person avatar hue is colour, so mono drops its chroma.
+  check(monoBlocks.some((b) => /\[data-theme\]/.test(b.sel) && b.decls.some(([n, v]) => n === '--ntn-avatar-chroma' && v === '0')),
+    'mono sets --ntn-avatar-chroma to 0 on every data-theme element, so per-person avatars stay grey');
 
   const RAMP = ['100', '200', '300', '400', '500', '600', '700', '900'].map((s) => `--ntn-accent-${s}`).concat('--ntn-accent-fg');
   const unset = RAMP.flatMap((n) => [[monoDark, 'dark'], [monoLight, 'light']].filter(([set]) => !set.has(n)).map(([, mode]) => `${n} (${mode})`));

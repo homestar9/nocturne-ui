@@ -143,6 +143,18 @@
     &--#{$size} { width: $box; height: $box; font-size: $text; }
   }
   &--ring { border: 2px solid var(--ntn-surface-1); }
+  &[style*="--ntn-avatar-hue"] {
+    /* A colour per person: the app sets --ntn-avatar-hue (0–359, e.g. avatarHue(name) from
+       nocturne.js) inline. Lightness and chroma stay the kit's, so every hue carries the same
+       weight and the dark ink reads on all of them. */
+    background: linear-gradient(140deg,
+      oklch(var(--ntn-avatar-lightness) var(--ntn-avatar-chroma) var(--ntn-avatar-hue)),
+      oklch(calc(var(--ntn-avatar-lightness) - 0.12) calc(var(--ntn-avatar-chroma) * 1.25) var(--ntn-avatar-hue)));
+    color: oklch(0.24 calc(var(--ntn-avatar-chroma) * 0.4) var(--ntn-avatar-hue));
+  }
+  // No person (deleted, system, unassigned): a flat neutral disc. Put a "?" or an icon inside.
+  // Doubled class, so it also wins over a hue.
+  &#{&}--unknown { background: var(--ntn-surface-3); border-color: var(--ntn-border-default); color: var(--ntn-text-muted); }
   &__status {
     position: absolute; right: -1px; bottom: -1px; width: 9px; height: 9px; border-radius: 50%; background: var(--ntn-n-600); border: 2px solid var(--ntn-surface-1);
 
