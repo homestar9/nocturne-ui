@@ -484,6 +484,33 @@ console.log('Sidebar drawer on a phone (R11)');
   delete globalThis.matchMedia;
 }
 
+console.log('Tree keyboard moves are handle-gated (NTN-25)');
+{
+  const item = (id, grip) => `<div class="ntn-tree__item" role="treeitem" data-ntn-id="${id}"><div class="ntn-tree__row">` +
+    (grip ? '<span class="ntn-tree__grip" aria-hidden="true"></span>' : '') + `<span class="ntn-tree__label">${id}</span></div></div>`;
+  const { document, window } = await page(
+    `<div class="ntn-tree" role="tree" id="ro" data-ntn-tree>${item('a', false)}${item('b', false)}</div>
+     <div class="ntn-tree" role="tree" id="rw" data-ntn-tree>${item('c', true)}${item('d', true)}</div>`);
+  const moves = [];
+  document.addEventListener('ntn:treemove', (e) => moves.push(e.detail));
+  const order = (id) => [...document.querySelectorAll(`#${id} > .ntn-tree__item`)].map((i) => i.dataset.ntnId).join('');
+  const altDown = (el) => {
+    el.focus();
+    const e = new window.KeyboardEvent('keydown', { key: 'ArrowDown', altKey: true, bubbles: true, cancelable: true });
+    el.dispatchEvent(e);
+    return e;
+  };
+
+  const ro = altDown(document.querySelector('[data-ntn-id="a"]'));
+  check(order('ro') === 'ab' && moves.length === 0, 'alt+↓ on a grip-less tree leaves the order alone and fires no ntn:treemove');
+  check(!ro.defaultPrevented, '...and leaves the key to the browser');
+  const c = document.querySelector('[data-ntn-id="c"]');
+  const rw = altDown(c);
+  check(order('rw') === 'dc' && moves.length === 1 && moves[0].position === 'after' && rw.defaultPrevented,
+    `with grips, alt+↓ still moves (${order('rw')}, ${moves.length} event)`);
+  check(document.activeElement === c, 'the moved item keeps focus');
+}
+
 console.log('Generated buttons never submit a form');
 {
   const rows = Array.from({ length: 12 }, (_, i) => `<tr><td>${i}</td></tr>`).join('');

@@ -6,6 +6,11 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+### Changed
+- **`ntn-tree` keyboard moves are handle-gated** (NTN-25). `alt`+arrows only move an item whose
+  row has a `__grip`, the same rule as drag. A tree without grips is read-only: no reorder and no
+  `ntn:treemove`.
+
 ## 1.11.0 — 2026-10-20
 
 ### Added

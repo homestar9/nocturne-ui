@@ -395,8 +395,9 @@ function onTreeKey(item, e) {
   const items = treeVisible(root);
   const i = items.indexOf(item);
 
-  /* Alt+arrows reorder — a keyboard equivalent of the drag handle. */
+  /* Alt+arrows reorder — a keyboard equivalent of the drag handle, so only where there is one. */
   if (e.altKey) {
+    if (!item.querySelector(':scope > .ntn-tree__row .ntn-tree__grip')) return;
     const holder = item.parentElement;
     const sibs = $$(':scope > .ntn-tree__item', holder);
     const at = sibs.indexOf(item);
