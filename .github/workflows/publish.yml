@@ -32,7 +32,7 @@ jobs:
       - name: The tag names the version in package.json
         run: test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
 
-      - name: The tag is on master (gitflow: master holds only released versions)
+      - name: 'The tag is on master (gitflow: master holds only released versions)'
         run: git merge-base --is-ancestor "$GITHUB_SHA" origin/master
 
       - run: npm ci
