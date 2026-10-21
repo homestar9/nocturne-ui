@@ -1,6 +1,6 @@
 {
   "name": "@homestar9/nocturne-ui",
-  "version": "1.12.0",
+  "version": "1.12.1",
   "description": "Nocturne — a dark-first SaaS design system. CSS tokens, BEM component classes, and a bundled Claude Code skill.",
   "license": "MIT",
   "author": "David Levin",
