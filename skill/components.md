@@ -1247,7 +1247,8 @@ moved for you — mirror the event into your own model.
 **A tree of links** (navigation): make the `__label` an `<a href>` with `tabindex="-1"`, so the
 item stays the tree's single tab stop. `↵` on the item clicks the link, which selects it,
 toggles a folder and navigates, the same as a mouse click. ⌘/ctrl+`↵` still multi-selects.
-Leave out the grips to keep the tree read-only:
+A link label takes the row's colour, like a `<span>` label. Leave out the grips to keep the tree
+read-only:
 
 ```html
 <div class="ntn-tree" role="tree" aria-label="Pages" data-ntn-tree>

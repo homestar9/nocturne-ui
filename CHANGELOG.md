@@ -6,6 +6,14 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.12.1 — 2026-10-21
+
+### Fixed
+- **`ntn-search` matches the other form controls** (NTN-27): it draws `--ntn-border-default` and
+  the `--ntn-shadow-xs` lift, like the field, select or toggle group beside it in a toolbar.
+- **`ntn-tree` link labels take the row's colour** (NTN-28): an `<a>` `__label` no longer paints
+  in the accent link colour, at rest or on hover.
+
 ## 1.12.0 — 2026-10-20
 
 ### Added
