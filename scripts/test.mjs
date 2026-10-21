@@ -170,6 +170,23 @@ try {
     check(missing.length === 0, `.${block} offers every tone` + (missing.length ? ': missing ' + missing.join(' ') : ''));
   }
 
+  console.log('One control face (NTN-27)');
+  // Controls that sit side by side in a toolbar draw the same border and lift (the control-surface mixin).
+  const CONTROL_FACES = ['.ntn-field__control', '.ntn-select__control select', '.ntn-combo__trigger', '.ntn-daterange__trigger', '.ntn-toggle-group', '.ntn-radio-group--segmented', '.ntn-search'];
+  const oddFaces = CONTROL_FACES.filter((sel) => {
+    const r = rules.find((x) => x.sel === sel);
+    return !(r && /border:\s*1px solid var\(--ntn-border-default\)/.test(r.body) && /box-shadow:\s*var\(--ntn-shadow-xs\)/.test(r.body));
+  });
+  check(oddFaces.length === 0, 'every form control face draws --ntn-border-default and --ntn-shadow-xs' + (oddFaces.length ? ': ' + oddFaces.join(' ') : ''));
+
+  console.log('Tree link labels (NTN-28)');
+  // An <a> label takes the row's colour. The :hover half is what beats the base a:hover.
+  const labelInherits = rules.some((r) => {
+    const sels = r.sel.split(/\s*,\s*/);
+    return sels.includes('.ntn-tree__label') && sels.includes('.ntn-tree__label:hover') && /color:\s*inherit/.test(r.body);
+  });
+  check(labelInherits, 'a tree link label inherits the row colour, at rest and on hover');
+
   console.log('Cascade');
   // Specificity and source order settle every conflict; the reset's [hidden] is the one exception.
   const importantRules = rules.filter((r) => /!important/.test(r.body) && r.sel !== '[hidden]').map((r) => r.sel);

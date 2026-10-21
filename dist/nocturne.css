@@ -1378,8 +1378,9 @@ i:is([class*=fa-], [data-icon], :empty) {
   height: var(--ntn-control-md);
   padding: 0 var(--ntn-space-3);
   background: var(--ntn-surface-2);
-  border: 1px solid var(--ntn-border-subtle);
+  border: 1px solid var(--ntn-border-default);
   border-radius: var(--ntn-radius-md);
+  box-shadow: var(--ntn-shadow-xs);
   transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
 }
 .ntn-search i {
@@ -4633,9 +4634,13 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-tree__label {
   flex: 1;
   min-width: 0;
+  text-decoration: none;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.ntn-tree__label, .ntn-tree__label:hover {
+  color: inherit;
 }
 .ntn-tree__meta {
   flex: 0 0 auto;

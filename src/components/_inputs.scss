@@ -138,7 +138,7 @@
 
 .ntn-search {
   display: flex; align-items: center; gap: 9px; width: 100%; height: var(--ntn-control-md); padding: 0 var(--ntn-space-3);
-  background: var(--ntn-surface-2); border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-md);
+  @include control-surface;
   @include transition(border-color, box-shadow);
 
   i { font-size: 15px; color: var(--ntn-text-muted); flex: 0 0 auto; }
