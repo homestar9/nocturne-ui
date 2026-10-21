@@ -6,6 +6,8 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.12.0 — 2026-10-20
+
 ### Added
 - **`ntn-tree` link rows** (NTN-26): `↵` on an item whose `__label` is an `<a href>` clicks the
   link. The click selects the item, toggles a folder and navigates, the same as a mouse click.
