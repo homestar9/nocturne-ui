@@ -6,6 +6,18 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.12.0 — 2026-10-20
+
+### Added
+- **`ntn-tree` link rows** (NTN-26): `↵` on an item whose `__label` is an `<a href>` clicks the
+  link. The click selects the item, toggles a folder and navigates, the same as a mouse click.
+  Give the link `tabindex="-1"` so the item stays the single tab stop.
+
+### Changed
+- **`ntn-tree` keyboard moves are handle-gated** (NTN-25). `alt`+arrows only move an item whose
+  row has a `__grip`, the same rule as drag. A tree without grips is read-only: no reorder and no
+  `ntn:treemove`.
+
 ## 1.11.0 — 2026-10-20
 
 ### Added

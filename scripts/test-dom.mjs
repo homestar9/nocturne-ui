@@ -484,6 +484,70 @@ console.log('Sidebar drawer on a phone (R11)');
   delete globalThis.matchMedia;
 }
 
+console.log('Tree keyboard moves are handle-gated (NTN-25)');
+{
+  const item = (id, grip) => `<div class="ntn-tree__item" role="treeitem" data-ntn-id="${id}"><div class="ntn-tree__row">` +
+    (grip ? '<span class="ntn-tree__grip" aria-hidden="true"></span>' : '') + `<span class="ntn-tree__label">${id}</span></div></div>`;
+  const { document, window } = await page(
+    `<div class="ntn-tree" role="tree" id="ro" data-ntn-tree>${item('a', false)}${item('b', false)}</div>
+     <div class="ntn-tree" role="tree" id="rw" data-ntn-tree>${item('c', true)}${item('d', true)}</div>`);
+  const moves = [];
+  document.addEventListener('ntn:treemove', (e) => moves.push(e.detail));
+  const order = (id) => [...document.querySelectorAll(`#${id} > .ntn-tree__item`)].map((i) => i.dataset.ntnId).join('');
+  const altDown = (el) => {
+    el.focus();
+    const e = new window.KeyboardEvent('keydown', { key: 'ArrowDown', altKey: true, bubbles: true, cancelable: true });
+    el.dispatchEvent(e);
+    return e;
+  };
+
+  const ro = altDown(document.querySelector('[data-ntn-id="a"]'));
+  check(order('ro') === 'ab' && moves.length === 0, 'alt+↓ on a grip-less tree leaves the order alone and fires no ntn:treemove');
+  check(!ro.defaultPrevented, '...and leaves the key to the browser');
+  const c = document.querySelector('[data-ntn-id="c"]');
+  const rw = altDown(c);
+  check(order('rw') === 'dc' && moves.length === 1 && moves[0].position === 'after' && rw.defaultPrevented,
+    `with grips, alt+↓ still moves (${order('rw')}, ${moves.length} event)`);
+  check(document.activeElement === c, 'the moved item keeps focus');
+}
+
+console.log('Tree Enter follows a label link (NTN-26)');
+{
+  const { document, window } = await page(
+    `<div class="ntn-tree" role="tree" data-ntn-tree>
+       <div class="ntn-tree__item" role="treeitem" aria-expanded="false" data-ntn-id="a">
+         <div class="ntn-tree__row"><a class="ntn-tree__label" href="#a" tabindex="-1">A</a></div>
+         <div class="ntn-tree__group" role="group">
+           <div class="ntn-tree__item" role="treeitem" data-ntn-id="a1"><div class="ntn-tree__row"><span class="ntn-tree__label">A1</span></div></div>
+         </div>
+       </div>
+       <div class="ntn-tree__item" role="treeitem" aria-expanded="false" data-ntn-id="b">
+         <div class="ntn-tree__row"><span class="ntn-tree__label">B</span></div>
+         <div class="ntn-tree__group" role="group">
+           <div class="ntn-tree__item" role="treeitem" data-ntn-id="b1"><div class="ntn-tree__row"><span class="ntn-tree__label">B1</span></div></div>
+         </div>
+       </div>
+     </div>`);
+  const enter = (el) => {
+    el.focus();
+    el.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+  };
+  const a = document.querySelector('[data-ntn-id="a"]');
+  const b = document.querySelector('[data-ntn-id="b"]');
+  let clicks = 0;
+  document.querySelector('a.ntn-tree__label').addEventListener('click', () => clicks++);
+  let toggles = 0;
+  document.addEventListener('ntn:treetoggle', () => toggles++);
+
+  enter(a);
+  check(clicks === 1, `↵ clicks the row's label link once (${clicks})`);
+  check(a.getAttribute('aria-selected') === 'true' && a.getAttribute('aria-expanded') === 'true' && toggles === 1,
+    `...which selects the item and opens the folder exactly once (${toggles} toggle)`);
+  enter(b);
+  check(clicks === 1 && b.getAttribute('aria-selected') === 'true' && b.getAttribute('aria-expanded') === 'true',
+    'a row without a link still selects and toggles on ↵');
+}
+
 console.log('Generated buttons never submit a form');
 {
   const rows = Array.from({ length: 12 }, (_, i) => `<tr><td>${i}</td></tr>`).join('');

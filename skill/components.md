@@ -1232,15 +1232,33 @@ Depth is real DOM nesting: an `__item` holds its `__row` and, when it has childr
 
 `data-ntn-tree` turns on behaviour: click or `↵` selects (`data-ntn-multi` + ⌘/ctrl for
 multi-select), clicking a folder row or `←`/`→` opens and closes it, `↑`/`↓` `home` `end` move
-focus. Drag is handle-gated — an item only becomes draggable while the pointer is down on its
+focus. Moves are handle-gated — an item only becomes draggable while the pointer is down on its
 `__grip`, so labels stay selectable. Drop intent comes from where in the row the pointer sits:
 the outer thirds insert above or below (an insertion line), the middle drops inside (the row
 fills). `alt`+`↑`/`↓` reorders among siblings and `alt`+`→`/`←` indents and outdents, the
-keyboard equivalent of a drag. Add `data-ntn-nest` to let leaves accept children too.
+keyboard equivalent of a drag, and also only for an item whose row has a `__grip`. Leave the
+grips out and the tree is read-only navigation. Add `data-ntn-nest` to let leaves accept
+children too.
 
 Events: `ntn:treemove` `{ id, position, targetId, parentId, index, item }`,
 `ntn:treeselect` `{ id, ids, item }`, `ntn:treetoggle` `{ id, expanded, item }`. The DOM is
 moved for you — mirror the event into your own model.
+
+**A tree of links** (navigation): make the `__label` an `<a href>` with `tabindex="-1"`, so the
+item stays the tree's single tab stop. `↵` on the item clicks the link, which selects it,
+toggles a folder and navigates, the same as a mouse click. ⌘/ctrl+`↵` still multi-selects.
+Leave out the grips to keep the tree read-only:
+
+```html
+<div class="ntn-tree" role="tree" aria-label="Pages" data-ntn-tree>
+  <div class="ntn-tree__item" role="treeitem" data-ntn-id="about">
+    <div class="ntn-tree__row">
+      <span class="ntn-tree__twisty ntn-tree__twisty--leaf" aria-hidden="true"></span>
+      <a class="ntn-tree__label" href="/pages/about" tabindex="-1">About</a>
+    </div>
+  </div>
+</div>
+```
 
 ```html
 <div class="ntn-tree" role="tree" aria-label="Files" data-ntn-tree data-ntn-nest>
@@ -1348,7 +1366,7 @@ table, so header, toolbar, filter form and pager can sit anywhere in that wrappe
 | `data-ntn-dismiss` | Removes the enclosing `.ntn-alert` |
 | `data-ntn-toggle="<selector>"` | Toggles `data-collapsed` (sidebar rail); on a sidebar at 720px and below, toggles `data-open` (drawer) |
 | `data-ntn-panel="#id"` on a tab | Tab switching; the tablist also gets keyboard nav and a sliding indicator, and fires `ntn:tabchange` |
-| `data-ntn-tree` on `.ntn-tree` | Selection, expand/collapse, keyboard nav and handle-gated drag; fires `ntn:treemove`, `ntn:treeselect`, `ntn:treetoggle` |
+| `data-ntn-tree` on `.ntn-tree` | Selection, expand/collapse, keyboard nav and handle-gated moves (drag and `alt`+arrows); fires `ntn:treemove`, `ntn:treeselect`, `ntn:treetoggle` |
 | `data-ntn-nest` on `.ntn-tree` | Lets leaf rows accept a child on drop |
 | `data-ntn-multi` on `.ntn-tree` | ⌘/ctrl-click selects several rows |
 | `data-ntn-combo` on `.ntn-combo` | Owns the listbox: open/close, filtering, keyboard, chips; fires `ntn:combochange` |
