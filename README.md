@@ -23,11 +23,11 @@ npm install @homestar9/nocturne-ui
 No bundler? Load it from a CDN, or vendor the one file — `dist/nocturne.css` is self-contained:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.12.0/dist/nocturne.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.12.1/dist/nocturne.css">
 ```
 
 ```bash
-curl -O https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.12.0/dist/nocturne.css
+curl -O https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.12.1/dist/nocturne.css
 ```
 
 ## Use
