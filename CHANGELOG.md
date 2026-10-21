@@ -6,6 +6,10 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+### Fixed
+- **`ntn-search` matches the other form controls** (NTN-27): it draws `--ntn-border-default` and
+  the `--ntn-shadow-xs` lift, like the field, select or toggle group beside it in a toolbar.
+
 ## 1.12.0 — 2026-10-20
 
 ### Added

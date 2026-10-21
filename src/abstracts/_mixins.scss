@@ -44,7 +44,8 @@
   i { color: var(--ntn-accent-300); }
 }
 
-/// The bordered, raised face of a form control: field, select, combobox, date trigger, toggle group.
+/// The bordered, raised face of a form control: field, select, search, combobox, date trigger,
+/// toggle group, segmented radio.
 @mixin control-surface {
   background: var(--ntn-surface-2);
   border: 1px solid var(--ntn-border-default);

@@ -1378,8 +1378,9 @@ i:is([class*=fa-], [data-icon], :empty) {
   height: var(--ntn-control-md);
   padding: 0 var(--ntn-space-3);
   background: var(--ntn-surface-2);
-  border: 1px solid var(--ntn-border-subtle);
+  border: 1px solid var(--ntn-border-default);
   border-radius: var(--ntn-radius-md);
+  box-shadow: var(--ntn-shadow-xs);
   transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
 }
 .ntn-search i {
