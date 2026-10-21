@@ -4632,9 +4632,13 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-tree__label {
   flex: 1;
   min-width: 0;
+  text-decoration: none;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.ntn-tree__label, .ntn-tree__label:hover {
+  color: inherit;
 }
 .ntn-tree__meta {
   flex: 0 0 auto;

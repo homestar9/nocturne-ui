@@ -179,6 +179,14 @@ try {
   });
   check(oddFaces.length === 0, 'every form control face draws --ntn-border-default and --ntn-shadow-xs' + (oddFaces.length ? ': ' + oddFaces.join(' ') : ''));
 
+  console.log('Tree link labels (NTN-28)');
+  // An <a> label takes the row's colour. The :hover half is what beats the base a:hover.
+  const labelInherits = rules.some((r) => {
+    const sels = r.sel.split(/\s*,\s*/);
+    return sels.includes('.ntn-tree__label') && sels.includes('.ntn-tree__label:hover') && /color:\s*inherit/.test(r.body);
+  });
+  check(labelInherits, 'a tree link label inherits the row colour, at rest and on hover');
+
   console.log('Cascade');
   // Specificity and source order settle every conflict; the reset's [hidden] is the one exception.
   const importantRules = rules.filter((r) => /!important/.test(r.body) && r.sel !== '[hidden]').map((r) => r.sel);
