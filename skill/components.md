@@ -1244,6 +1244,22 @@ Events: `ntn:treemove` `{ id, position, targetId, parentId, index, item }`,
 `ntn:treeselect` `{ id, ids, item }`, `ntn:treetoggle` `{ id, expanded, item }`. The DOM is
 moved for you — mirror the event into your own model.
 
+**A tree of links** (navigation): make the `__label` an `<a href>` with `tabindex="-1"`, so the
+item stays the tree's single tab stop. `↵` on the item clicks the link, which selects it,
+toggles a folder and navigates, the same as a mouse click. ⌘/ctrl+`↵` still multi-selects.
+Leave out the grips to keep the tree read-only:
+
+```html
+<div class="ntn-tree" role="tree" aria-label="Pages" data-ntn-tree>
+  <div class="ntn-tree__item" role="treeitem" data-ntn-id="about">
+    <div class="ntn-tree__row">
+      <span class="ntn-tree__twisty ntn-tree__twisty--leaf" aria-hidden="true"></span>
+      <a class="ntn-tree__label" href="/pages/about" tabindex="-1">About</a>
+    </div>
+  </div>
+</div>
+```
+
 ```html
 <div class="ntn-tree" role="tree" aria-label="Files" data-ntn-tree data-ntn-nest>
   <div class="ntn-tree__item" role="treeitem" aria-expanded="true" data-ntn-id="design">

@@ -431,6 +431,10 @@ function onTreeKey(item, e) {
     }
     return;
   }
+  /* A label link: ↵ clicks it, and the click path selects and toggles, as a mouse click does. */
+  const link = e.key === 'Enter' && !e.metaKey && !e.ctrlKey
+    && item.querySelector(':scope > .ntn-tree__row a.ntn-tree__label[href]');
+  if (link) { e.preventDefault(); link.click(); return; }
   if (e.key === 'Enter' || e.key === ' ') {
     e.preventDefault();
     treeSelect(item, e.metaKey || e.ctrlKey);

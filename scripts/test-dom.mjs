@@ -511,6 +511,43 @@ console.log('Tree keyboard moves are handle-gated (NTN-25)');
   check(document.activeElement === c, 'the moved item keeps focus');
 }
 
+console.log('Tree Enter follows a label link (NTN-26)');
+{
+  const { document, window } = await page(
+    `<div class="ntn-tree" role="tree" data-ntn-tree>
+       <div class="ntn-tree__item" role="treeitem" aria-expanded="false" data-ntn-id="a">
+         <div class="ntn-tree__row"><a class="ntn-tree__label" href="#a" tabindex="-1">A</a></div>
+         <div class="ntn-tree__group" role="group">
+           <div class="ntn-tree__item" role="treeitem" data-ntn-id="a1"><div class="ntn-tree__row"><span class="ntn-tree__label">A1</span></div></div>
+         </div>
+       </div>
+       <div class="ntn-tree__item" role="treeitem" aria-expanded="false" data-ntn-id="b">
+         <div class="ntn-tree__row"><span class="ntn-tree__label">B</span></div>
+         <div class="ntn-tree__group" role="group">
+           <div class="ntn-tree__item" role="treeitem" data-ntn-id="b1"><div class="ntn-tree__row"><span class="ntn-tree__label">B1</span></div></div>
+         </div>
+       </div>
+     </div>`);
+  const enter = (el) => {
+    el.focus();
+    el.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+  };
+  const a = document.querySelector('[data-ntn-id="a"]');
+  const b = document.querySelector('[data-ntn-id="b"]');
+  let clicks = 0;
+  document.querySelector('a.ntn-tree__label').addEventListener('click', () => clicks++);
+  let toggles = 0;
+  document.addEventListener('ntn:treetoggle', () => toggles++);
+
+  enter(a);
+  check(clicks === 1, `↵ clicks the row's label link once (${clicks})`);
+  check(a.getAttribute('aria-selected') === 'true' && a.getAttribute('aria-expanded') === 'true' && toggles === 1,
+    `...which selects the item and opens the folder exactly once (${toggles} toggle)`);
+  enter(b);
+  check(clicks === 1 && b.getAttribute('aria-selected') === 'true' && b.getAttribute('aria-expanded') === 'true',
+    'a row without a link still selects and toggles on ↵');
+}
+
 console.log('Generated buttons never submit a form');
 {
   const rows = Array.from({ length: 12 }, (_, i) => `<tr><td>${i}</td></tr>`).join('');
