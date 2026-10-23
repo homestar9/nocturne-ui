@@ -129,6 +129,7 @@
       <div class="ntn-sidebar__group">
         <p class="ntn-sidebar__section">Containers</p>
         <a class="ntn-sidebar__item" href="#shell"><i class="fa-light fa-browser"></i><span>App shell</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#density"><i class="fa-light fa-compress"></i><span>Density</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#cards"><i class="fa-light fa-clone"></i><span>Cards</span></a>
         <a class="ntn-sidebar__item" href="#edges"><i class="fa-light fa-wand-magic-sparkles"></i><span>Border effects</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#glass"><i class="fa-light fa-droplet"></i><span>Glass</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
@@ -167,6 +168,7 @@
         </div>
         <button class="ntn-icon-btn" aria-label="Show all code" aria-pressed="false" id="code-toggle"><i class="fa-light fa-code"></i></button>
         <button class="ntn-icon-btn" aria-label="Glass surfaces" aria-pressed="false" id="glass-toggle"><i class="fa-light fa-droplet"></i></button>
+        <button class="ntn-icon-btn" aria-label="Compact density" aria-pressed="false" id="density-toggle"><i class="fa-light fa-compress"></i></button>
         <button class="ntn-icon-btn" aria-label="Toggle light theme" data-ntn-theme-toggle><i class="fa-light fa-sun" data-ntn-theme-icon></i></button>
         <button class="ntn-icon-btn" aria-label="Notifications"><i class="fa-light fa-bell"></i></button>
         <span class="ntn-avatar ntn-avatar--sm">MR<span class="ntn-avatar__status ntn-avatar__status--online"></span></span>
@@ -1570,6 +1572,77 @@
           </section>
         </section>
 
+        <!-- ── Density ──────────────────────────────────────────────────── -->
+        <section class="sink" id="density">
+          <header class="sink__head">
+            <h2 class="sink__title">Density</h2>
+            <code class="sink__code">data-density</code>
+            <p class="sink__note"><code>compact</code> on <code>&lt;html&gt;</code> tightens the whole app; the arrows in the top bar switch it. It also works on a subtree, and <code>comfortable</code> resets one. Controls, rows, items and surfaces tighten; type, radii and widths stay. A menu follows the region it opens from. A toast mounts on the page, so it follows the page.</p>
+          </header>
+          <section class="ntn-card" data-density="compact" data-sink-example="Compact, comfortable inside it, compact again">
+            <header class="ntn-card__head">
+              <div class="ntn-card__heading">
+                <h3 class="ntn-card__title">Compact</h3>
+                <p class="ntn-card__sub">data-density="compact"</p>
+              </div>
+              <div class="ntn-card__actions">
+                <div class="ntn-dropdown" data-ntn-dropdown>
+                  <button type="button" class="ntn-btn ntn-btn--sm" aria-haspopup="menu" aria-expanded="false">Actions<i class="fa-light fa-chevron-down"></i></button>
+                  <div class="ntn-menu" role="menu" data-ntn-placement="bottom-end">
+                    <button type="button" class="ntn-menu__item" role="menuitem"><span><i class="fa-light fa-pen"></i> Edit</span></button>
+                    <button type="button" class="ntn-menu__item" role="menuitem"><span><i class="fa-light fa-copy"></i> Duplicate</span></button>
+                  </div>
+                </div>
+              </div>
+            </header>
+            <div class="ntn-card__body ntn-stack">
+              <div class="ntn-row" style="align-items:flex-end">
+                <label class="ntn-field" style="flex:1 1 200px"><span class="ntn-field__label">Title</span><span class="ntn-field__control"><input type="text" placeholder=" " value="Spring launch"></span></label>
+                <button class="ntn-btn" type="button">Cancel</button>
+                <button class="ntn-btn ntn-btn--primary" type="button">Save</button>
+              </div>
+              <section class="ntn-card" data-density="comfortable">
+                <header class="ntn-card__head">
+                  <div class="ntn-card__heading">
+                    <h3 class="ntn-card__title">Comfortable inside it</h3>
+                    <p class="ntn-card__sub">data-density="comfortable"</p>
+                  </div>
+                  <div class="ntn-card__actions">
+                    <div class="ntn-dropdown" data-ntn-dropdown>
+                      <button type="button" class="ntn-btn ntn-btn--sm" aria-haspopup="menu" aria-expanded="false">Actions<i class="fa-light fa-chevron-down"></i></button>
+                      <div class="ntn-menu" role="menu" data-ntn-placement="bottom-end">
+                        <button type="button" class="ntn-menu__item" role="menuitem"><span><i class="fa-light fa-pen"></i> Edit</span></button>
+                        <button type="button" class="ntn-menu__item" role="menuitem"><span><i class="fa-light fa-copy"></i> Duplicate</span></button>
+                      </div>
+                    </div>
+                  </div>
+                </header>
+                <div class="ntn-card__body ntn-stack">
+                  <div class="ntn-row" style="align-items:flex-end">
+                    <label class="ntn-field" style="flex:1 1 200px"><span class="ntn-field__label">Title</span><span class="ntn-field__control"><input type="text" placeholder=" " value="Spring launch"></span></label>
+                    <button class="ntn-btn" type="button">Cancel</button>
+                    <button class="ntn-btn ntn-btn--primary" type="button">Save</button>
+                  </div>
+                  <section class="ntn-card" data-density="compact">
+                    <header class="ntn-card__head">
+                      <div class="ntn-card__heading">
+                        <h3 class="ntn-card__title">Compact again</h3>
+                        <p class="ntn-card__sub">The toast still follows the page.</p>
+                      </div>
+                    </header>
+                    <div class="ntn-card__body">
+                      <div class="ntn-row" style="align-items:flex-end">
+                        <label class="ntn-field" style="flex:1 1 200px"><span class="ntn-field__label">Title</span><span class="ntn-field__control"><input type="text" placeholder=" " value="Spring launch"></span></label>
+                        <button class="ntn-btn" type="button" data-sink-toast="info">Show a toast</button>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              </section>
+            </div>
+          </section>
+        </section>
+
         <!-- ── Cards ──────────────────────────────────────────────────── -->
         <section class="sink" id="cards">
           <header class="sink__head">
@@ -2387,6 +2460,13 @@
     if (!btn) return;
     document.querySelectorAll('link[data-sink-accent]').forEach((l) => { l.disabled = l.dataset.sinkAccent !== btn.dataset.accent; });
     document.querySelectorAll('#accent-picker [data-accent]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+  });
+
+  document.getElementById('density-toggle').addEventListener('click', (e) => {
+    const on = e.currentTarget.getAttribute('aria-pressed') !== 'true';
+    e.currentTarget.setAttribute('aria-pressed', String(on));
+    if (on) document.documentElement.setAttribute('data-density', 'compact');
+    else document.documentElement.removeAttribute('data-density');
   });
 
   document.getElementById('glass-toggle').addEventListener('click', (e) => {

@@ -195,6 +195,6 @@ $-emphases: modifiers(".ntn-btn", (primary, secondary, subtle));
     &:disabled, &[aria-disabled="true"] { @include disabled; }
     .ntn-badge { margin-left: 2px; }
   }
-  &--sm &__btn { height: calc(var(--ntn-control-sm) - 2px); padding: 0 10px; font-size: var(--ntn-font-size-xs); }
-  &--lg &__btn { height: calc(var(--ntn-control-lg) - 2px); padding: 0 15px; }
+  &--sm &__btn { height: max(var(--ntn-target-min), calc(var(--ntn-control-sm) - 2px)); padding: 0 10px; font-size: var(--ntn-font-size-xs); }
+  &--lg &__btn { height: max(var(--ntn-target-min), calc(var(--ntn-control-lg) - 2px)); padding: 0 15px; }
 }

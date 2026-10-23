@@ -267,6 +267,36 @@ try {
   const stale = rootOnly.filter(([, v]) => [...v.matchAll(/var\((--ntn-[a-z0-9-]+)/g)].some((m) => lightNames.has(m[1]))).map(([n]) => n);
   check(stale.length === 0, 'no :root-only token reads a mode token (it would resolve once, at the root)' + (stale.length ? ': ' + stale.join(' ') : ''));
 
+  console.log('data-density works on a subtree (NTN-31)');
+  // The touch block sits in an @media, which parseBlocks would read as a second compact block.
+  const tokensText = (await readFile(join(base, 'tokens.css'), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '');
+  const coarse = tokensText.match(/@media \(pointer: coarse\) \{\s*\[data-density="?compact"?\] \{([^}]*)\}\s*\}/);
+  const densityBlocks = parseBlocks(coarse ? tokensText.replace(coarse[0], '') : tokensText);
+  const densityDecls = (re) => densityBlocks.filter((b) => re.test(b.sel)).flatMap((b) => b.decls);
+  const comfortable = new Map(densityDecls(/^:root, \[data-density="?comfortable"?\]$/));
+  const compact = new Map(densityDecls(/^\[data-density="?compact"?\]$/));
+  const missingComfy = [...compact.keys()].filter((n) => !comfortable.has(n));
+  check(compact.size >= 10 && missingComfy.length === 0,
+    `each of the ${compact.size} tokens compact remaps also has a comfortable value, so a comfortable subtree resets it` + (missingComfy.length ? ': ' + missingComfy.join(' ') : ''));
+  const densityRaw = [...tokensText.matchAll(/\[data-density[^{]*\{([^}]*)\}/g)].flatMap((m) => m[1].split(';').map((d) => d.trim()).filter(Boolean));
+  const notTokens = densityRaw.filter((d) => !d.startsWith('--ntn-'));
+  check(densityRaw.length > 0 && notTokens.length === 0, 'density blocks set token values only, never a component property' + (notTokens.length ? ': ' + notTokens.join('; ') : ''));
+  const derived = [...comfortable, ...compact].filter(([, v]) => /var\(/.test(v)).map(([n]) => n);
+  check(derived.length === 0, 'both density levels state literal values (nesting either way needs no recomputation)' + (derived.length ? ': ' + derived.join(' ') : ''));
+  const densityStale = rootOnly.filter(([, v]) => [...v.matchAll(/var\((--ntn-[a-z0-9-]+)/g)].some((m) => compact.has(m[1]))).map(([n]) => n);
+  check(densityStale.length === 0, 'no :root-only token reads a density token' + (densityStale.length ? ': ' + densityStale.join(' ') : ''));
+  const px = (v) => parseFloat(v);
+  const targetMin = px(rootOnly.find(([n]) => n === '--ntn-target-min')?.[1] ?? 'NaN');
+  check(targetMin === 24 && ['sm', 'md', 'lg'].every((s) => px(compact.get(`--ntn-control-${s}`)) >= targetMin),
+    `compact control heights stay at or above --ntn-target-min (${targetMin}px, WCAG 2.2 SC 2.5.8)`);
+  const touch = coarse ? new Map([...coarse[1].matchAll(/(--ntn-[a-z0-9-]+)\s*:([^;]*);/g)].map((d) => [d[1], d[2].trim()])) : new Map();
+  check(['sm', 'md', 'lg'].every((s) => touch.get(`--ntn-control-${s}`) === comfortable.get(`--ntn-control-${s}`)),
+    'on a coarse pointer compact keeps the comfortable control heights');
+  // A size derived from a control height (a segment, an inline action) floors at the target minimum.
+  const unfloored = [...css.matchAll(/(.{0,32})calc\(var\(--ntn-control-(?:sm|md|lg)\) - [^)]*\)/g)]
+    .filter((m) => !m[1].endsWith('max(var(--ntn-target-min), ')).map((m) => m[0].trim());
+  check(unfloored.length === 0, 'every height derived from --ntn-control-* is floored with max(var(--ntn-target-min), …)' + (unfloored.length ? ': ' + unfloored.join(' | ') : ''));
+
   console.log('Chart hues stay in charts');
   // Magenta and cyan are chart series two and three (skill/brand.md). Chrome reads a token a theme can retint.
   const chartHues = [];

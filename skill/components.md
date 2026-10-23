@@ -1351,6 +1351,39 @@ Tokens that carry theme meaning, when you need them directly:
 | `--ntn-bg-blur` | Translucent fill behind the sticky top bar |
 | `--ntn-accent-line`, `--ntn-success-line`, `--ntn-warning-line`, `--ntn-danger-line`, `--ntn-info-line` | Hairlines for tinted surfaces |
 
+## Density
+
+`data-density` on `<html>`: `"comfortable"` (the default, same as no attribute) or `"compact"`.
+It also works on any subtree, for one dense region in a roomy app, and `"comfortable"` resets a
+subtree. CSS only, no script. Never write a density selector in product code; both densities are
+the same class names with different token values.
+
+Compact tightens control heights, the vertical padding of rows, items and callouts, the surface
+gutter, and the field and layout gaps. Type, radii, borders, icons and widths never change.
+`--sm`/`--lg` stay relative: a compact `--sm` button is 24px. On a touch screen
+(`pointer: coarse`) controls keep their comfortable heights; rows and surfaces still tighten.
+
+A menu or popover follows the region it opens from (it stays a child of its trigger's block).
+A toast mounts on `<body>`, so it follows the page.
+
+The tokens density sets, when a custom block needs to follow it:
+
+| Token | Comfortable | Compact | Role |
+| --- | --- | --- | --- |
+| `--ntn-control-sm/md/lg` | 28/34/40px | 24/28/34px | Control heights |
+| `--ntn-control-pad-y` | 5px | 2px | Vertical padding of a trigger that wraps (combobox) |
+| `--ntn-row-pad-y` | 12px | 8px | Table cell padding (header cell: 2px less) |
+| `--ntn-row-min-h` | 30px | 24px | Tree row height |
+| `--ntn-item-pad-y` | 7px | 4px | Menu item, combobox option, sidebar item, tab, date preset, pager step |
+| `--ntn-gutter` | 20px | 16px | Card and modal padding; the flush table, toolbar and filters align to it |
+| `--ntn-box-pad-y` | 14px | 10px | Alert, toast, accordion summary, modal foot |
+| `--ntn-field-gap` | 6px | 4px | Label to control |
+| `--ntn-layout-gap` | 14px | 10px | Page and grid gaps |
+| `--ntn-topbar-h` | 56px | 48px | Navbar height |
+
+`--ntn-target-min` (24px) is the floor for any size derived from a control height, in both
+densities (WCAG 2.2 SC 2.5.8).
+
 ## JS hooks
 
 `js/nocturne.js` is optional and dependency-free. It listens at the document level, so markup

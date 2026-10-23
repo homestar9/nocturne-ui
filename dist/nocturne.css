@@ -216,22 +216,12 @@
   --ntn-radius-xl: 14px;
   --ntn-radius-2xl: 18px;
   --ntn-radius-full: 999px;
-  --ntn-control-sm: 28px;
-  --ntn-control-md: 34px;
-  --ntn-control-lg: 40px;
-  /* Role sizes: the vertical rhythm of controls, rows and surfaces. Components read these instead
-     of a literal; a rule that needs a near value keeps the offset (calc(var(--ntn-item-pad-y) + 2px)). */
-  --ntn-control-pad-y: 5px; /* a trigger that wraps its content (combobox) */
-  --ntn-row-pad-y: 12px; /* table cell; the header cell is 2px less */
-  --ntn-row-min-h: 30px; /* tree row */
-  --ntn-item-pad-y: 7px; /* menu item, combobox option, sidebar item, tab, date preset, pager step */
-  --ntn-gutter: 20px; /* card and modal padding (stat, popover: 4px less); the flush table, toolbar and filters align to it */
-  --ntn-box-pad-y: 14px; /* alert, toast, accordion summary, modal foot */
-  --ntn-field-gap: 6px; /* a form control's label to its control */
-  --ntn-layout-gap: 14px; /* page and grid gaps; the page's own padding is 10px more */
+  /* The smallest hit target (WCAG 2.2 SC 2.5.8). A size derived from a control height never goes
+     below it, whatever the density. */
+  --ntn-target-min: 24px;
+  /* Control heights, role sizes and --ntn-topbar-h follow data-density: see _density.scss. */
   --ntn-sidebar-w: 244px;
   --ntn-rail-w: 56px;
-  --ntn-topbar-h: 56px;
   --ntn-page-max: 1440px;
 }
 
@@ -388,6 +378,58 @@
   --ntn-scrim: rgba(16,20,27,0.42);
 }
 
+/* ── Nocturne density ────────────────────────────────────────────────────────
+   Applied with data-density="compact" on <html> (or on any subtree, for one dense region in a
+   roomy app). "comfortable" is the default and resets a subtree. Like the light theme, this file
+   remaps token VALUES only: no component rule is overridden.
+
+   Both levels state literal values, so nesting works either way. Components derive any near size
+   in their own rule (the header cell is calc(var(--ntn-row-pad-y) - 2px)), never here: a token
+   computed on :root would resolve once, at the root, and ignore a subtree.
+
+   What changes: control heights, the vertical padding of rows, items and callouts, the surface
+   gutter, and the field and layout gaps. What never does: type, radii, borders, icons, widths. */
+:root, [data-density=comfortable] {
+  --ntn-control-sm: 28px;
+  --ntn-control-md: 34px;
+  --ntn-control-lg: 40px;
+  /* Role sizes: the vertical rhythm of controls, rows and surfaces. Components read these instead
+     of a literal; a rule that needs a near value keeps the offset (calc(var(--ntn-item-pad-y) + 2px)). */
+  --ntn-control-pad-y: 5px; /* a trigger that wraps its content (combobox) */
+  --ntn-row-pad-y: 12px; /* table cell; the header cell is 2px less */
+  --ntn-row-min-h: 30px; /* tree row */
+  --ntn-item-pad-y: 7px; /* menu item, combobox option, sidebar item, tab, date preset, pager step */
+  --ntn-gutter: 20px; /* card and modal padding (stat, popover: 4px less); the flush table, toolbar and filters align to it */
+  --ntn-box-pad-y: 14px; /* alert, toast, accordion summary, modal foot */
+  --ntn-field-gap: 6px; /* a form control's label to its control */
+  --ntn-layout-gap: 14px; /* page and grid gaps; the page's own padding is 10px more */
+  --ntn-topbar-h: 56px;
+}
+
+[data-density=compact] {
+  --ntn-control-sm: 24px;
+  --ntn-control-md: 28px;
+  --ntn-control-lg: 34px;
+  --ntn-control-pad-y: 2px;
+  --ntn-row-pad-y: 8px;
+  --ntn-row-min-h: 24px;
+  --ntn-item-pad-y: 4px;
+  --ntn-gutter: 16px;
+  --ntn-box-pad-y: 10px;
+  --ntn-field-gap: 4px;
+  --ntn-layout-gap: 10px;
+  --ntn-topbar-h: 48px;
+}
+
+/* Compact is a pointer choice. On a touch screen controls keep their comfortable height; rows,
+   items and surfaces still tighten. */
+@media (pointer: coarse) {
+  [data-density=compact] {
+    --ntn-control-sm: 28px;
+    --ntn-control-md: 34px;
+    --ntn-control-lg: 40px;
+  }
+}
 /* Minimal global reset. Consumers link nocturne.css and get this for free. */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -1023,7 +1065,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   line-height: 1;
   align-items: center;
   gap: 6px;
-  height: calc(var(--ntn-control-md) - 2px);
+  height: max(var(--ntn-target-min), var(--ntn-control-md) - 2px);
   padding: 0 var(--ntn-space-3);
   border-left: 1px solid var(--ntn-border-subtle);
   color: var(--ntn-text-muted);
@@ -1058,12 +1100,12 @@ i:is([class*=fa-], [data-icon], :empty) {
   margin-left: 2px;
 }
 .ntn-toggle-group--sm .ntn-toggle-group__btn {
-  height: calc(var(--ntn-control-sm) - 2px);
+  height: max(var(--ntn-target-min), var(--ntn-control-sm) - 2px);
   padding: 0 10px;
   font-size: var(--ntn-font-size-xs);
 }
 .ntn-toggle-group--lg .ntn-toggle-group__btn {
-  height: calc(var(--ntn-control-lg) - 2px);
+  height: max(var(--ntn-target-min), var(--ntn-control-lg) - 2px);
   padding: 0 15px;
 }
 
@@ -1138,7 +1180,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   justify-content: center;
   flex: 0 0 auto;
   width: var(--ntn-control-sm);
-  height: calc(var(--ntn-control-sm) - 4px);
+  height: max(var(--ntn-target-min), var(--ntn-control-sm) - 4px);
   margin-right: -6px;
   border: 0;
   border-radius: var(--ntn-radius-sm);
@@ -2574,7 +2616,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   position: relative;
   align-items: center;
   gap: 6px;
-  height: calc(var(--ntn-control-md) - 2px);
+  height: max(var(--ntn-target-min), var(--ntn-control-md) - 2px);
   padding: 0 var(--ntn-space-3);
   border-left: 1px solid var(--ntn-border-subtle);
   color: var(--ntn-text-muted);
@@ -4715,7 +4757,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   --ntn-tree-indent: 18px;
 }
 .ntn-tree--sm .ntn-tree__row {
-  min-height: calc(var(--ntn-row-min-h) - 4px);
+  min-height: max(var(--ntn-target-min), var(--ntn-row-min-h) - 4px);
 }
 
 .ntn-tree--flush {
@@ -5061,6 +5103,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   flex: 0 0 auto;
   margin: 0 var(--ntn-space-2) -1px;
   padding: 0 2px calc(var(--ntn-item-pad-y) + 3px);
+  min-height: var(--ntn-target-min);
   background: transparent;
   border: 0;
   border-bottom: 2px solid transparent;

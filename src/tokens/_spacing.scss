@@ -21,23 +21,12 @@
   --ntn-radius-2xl:  18px;
   --ntn-radius-full: 999px;
 
-  --ntn-control-sm: 28px;
-  --ntn-control-md: 34px;
-  --ntn-control-lg: 40px;
+  /* The smallest hit target (WCAG 2.2 SC 2.5.8). A size derived from a control height never goes
+     below it, whatever the density. */
+  --ntn-target-min: 24px;
 
-  /* Role sizes: the vertical rhythm of controls, rows and surfaces. Components read these instead
-     of a literal; a rule that needs a near value keeps the offset (calc(var(--ntn-item-pad-y) + 2px)). */
-  --ntn-control-pad-y: 5px;   /* a trigger that wraps its content (combobox) */
-  --ntn-row-pad-y:     12px;  /* table cell; the header cell is 2px less */
-  --ntn-row-min-h:     30px;  /* tree row */
-  --ntn-item-pad-y:    7px;   /* menu item, combobox option, sidebar item, tab, date preset, pager step */
-  --ntn-gutter:        20px;  /* card and modal padding (stat, popover: 4px less); the flush table, toolbar and filters align to it */
-  --ntn-box-pad-y:     14px;  /* alert, toast, accordion summary, modal foot */
-  --ntn-field-gap:     6px;   /* a form control's label to its control */
-  --ntn-layout-gap:    14px;  /* page and grid gaps; the page's own padding is 10px more */
-
+  /* Control heights, role sizes and --ntn-topbar-h follow data-density: see _density.scss. */
   --ntn-sidebar-w:  244px;
   --ntn-rail-w:     56px;
-  --ntn-topbar-h:   56px;
   --ntn-page-max:   1440px;
 }

@@ -7,6 +7,16 @@ renamed or removed class names and tokens.
 ## [Unreleased]
 
 ### Added
+- **Density** (NTN-31): `data-density="compact"` on `<html>`, or on any subtree, tightens the kit.
+  `"comfortable"` is the default and resets a subtree. CSS only.
+  - What changes: control heights drop to 24/28/34px, and rows, items, callouts, the card gutter,
+    the field and layout gaps and the navbar tighten. Type, radii and widths stay.
+  - On a touch screen (`pointer: coarse`) controls keep their comfortable heights.
+  - **Token:** `--ntn-target-min` (24px). Sizes derived from a control height (toggle-group
+    segments, the field's inline action, the small tree row) floor at it, and tabs never go below
+    it.
+  - The control heights, role sizes and `--ntn-topbar-h` moved to `src/tokens/_density.scss`.
+  - Kitchen sink: a density switch in the top bar, and a compact / comfortable / compact demo.
 - **Role size tokens** (NTN-30): the vertical rhythm of controls, rows and surfaces now comes from
   eight tokens, at the values the components used before, so nothing moves:
   - `--ntn-control-pad-y` (combobox trigger);

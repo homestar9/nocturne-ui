@@ -29,7 +29,7 @@
   &__suffix { font-family: var(--ntn-font-mono); font-size: var(--ntn-font-size-xs); color: var(--ntn-text-muted); flex: 0 0 auto; }
   &__action {
     display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
-    width: var(--ntn-control-sm); height: calc(var(--ntn-control-sm) - 4px); margin-right: -6px;
+    width: var(--ntn-control-sm); height: max(var(--ntn-target-min), calc(var(--ntn-control-sm) - 4px)); margin-right: -6px;
     border: 0; border-radius: var(--ntn-radius-sm); background: transparent; color: var(--ntn-text-muted); cursor: pointer;
     @include transition(background, color);
 

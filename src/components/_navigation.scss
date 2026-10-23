@@ -112,6 +112,7 @@
   &::-webkit-scrollbar { display: none; }
   &__tab {
     display: inline-flex; align-items: center; gap: 7px; flex: 0 0 auto; margin: 0 var(--ntn-space-2) -1px; padding: 0 2px calc(var(--ntn-item-pad-y) + 3px);
+    min-height: var(--ntn-target-min);
     background: transparent; border: 0; border-bottom: 2px solid transparent; border-radius: 0;
     color: var(--ntn-text-muted); font-family: var(--ntn-font-sans); font-size: var(--ntn-font-size-sm); font-weight: var(--ntn-weight-medium);
     white-space: nowrap; cursor: pointer;

@@ -24,6 +24,8 @@ Non-negotiable:
 - Icons are Font Awesome Light as bare `<i class="fa-light fa-name">`.
 - Light and dark come from `data-theme` on `<html>`. Never write a `[data-theme]` selector or a
   `prefers-color-scheme` query in product code — both themes are the same markup.
+- Density comes from `data-density` (`comfortable` or `compact`) on `<html>` or a subtree. Never
+  write a `[data-density]` selector; both densities are the same markup.
 - If the system lacks something, say so — propose it as a change to the Nocturne package,
   do not work around it locally.
 

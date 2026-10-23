@@ -125,7 +125,7 @@ $-flush-depth: 12;
 .ntn-tree--sm {
   font-size: var(--ntn-font-size-xs); --ntn-tree-indent: 18px;
 
-  .ntn-tree__row { min-height: calc(var(--ntn-row-min-h) - 4px); }
+  .ntn-tree__row { min-height: max(var(--ntn-target-min), calc(var(--ntn-row-min-h) - 4px)); }
 }
 .ntn-tree--flush {
   /* Full-bleed inside a flush card: rows run edge to edge, no rounding. */
