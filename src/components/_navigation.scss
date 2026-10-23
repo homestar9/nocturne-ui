@@ -136,8 +136,10 @@
   }
 
   &--pill {
-    /* Segmented control. The ink becomes the moving pill behind the labels. */
-    gap: 3px; padding: 3px; background: var(--ntn-surface-2); border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-lg); overflow: visible;
+    /* Tabs drawn as a pill track; they still switch panels (to pick a value, use ntn-toggle-group).
+       The ink becomes the moving pill behind the labels. */
+    @include pill-track;
+    overflow: visible;
 
     .ntn-tabs__tab {
       position: relative; z-index: 1; margin: 0; padding: calc(var(--ntn-item-pad-y) - 1px) 12px; border-bottom: 0; border-radius: var(--ntn-radius-md);
@@ -145,10 +147,7 @@
       &[aria-selected="true"] { background: var(--ntn-surface-3); }
     }
     &[data-ntn-ink] {
-      &::after {
-        top: 3px; bottom: 3px; height: auto; z-index: 0;
-        background: var(--ntn-surface-3); border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-md);
-      }
+      &::after { @include pill-ink; }
       .ntn-tabs__tab[aria-selected="true"] { background: transparent; }
     }
   }

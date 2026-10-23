@@ -1082,10 +1082,17 @@ value).
 
 ## Toggle group — `ntn-toggle-group`
 
-Segmented control — the left-hand filter in a table toolbar, or a range switch above a chart.
-Element: `__btn`. Modifiers: `--sm` `--lg`. State lives on `aria-pressed`; the group is
+Segmented control for picking a value: the left-hand filter in a table toolbar, a range switch
+above a chart, a list/grid view switch. If each option shows different content, use tabs.
+Element: `__btn`. Modifiers: `--sm` `--lg` `--pill`. State lives on `aria-pressed`; the group is
 exclusive unless it carries `data-multi`. `nocturne.js` moves the pressed state and fires
 `ntn:toggle`.
+
+`--pill` draws the pressed button as a raised pill on a recessed track, the same look as
+`ntn-tabs--pill`, and `nocturne.js` slides one pill between choices (it sets `--ntn-toggle-x/-w`
+and flags the group `data-ntn-ink`; without the script the pressed button is the pill). Single
+choice only: on a `data-multi` group each pressed button keeps its own pill and nothing slides.
+It combines with `--sm` and `--lg`, and stays that size's control height.
 
 ```html
 <div class="ntn-toggle-group">
@@ -1147,8 +1154,12 @@ returning focus to the toggle. Without the script, set `data-open` yourself.
 
 ## Tabs — `ntn-tabs`
 
-Elements: `__tab`, optional `__label` around the tab text. Modifiers: `--pill` (segmented) `--fill` (equal
-widths) `--sm`. Vertical: `aria-orientation="vertical"` on the list (the `--vertical` modifier still works).
+Every tab switches a panel. To pick a value instead (a date range, list or grid, a filter), use
+the toggle group, or the segmented radio group inside a form: a tablist without panels tells a
+screen reader "tab, 1 of 3" and promises content that never changes.
+
+Elements: `__tab`, optional `__label` around the tab text. Modifiers: `--pill` (a pill track, for
+views inside a card head) `--fill` (equal widths) `--sm`. Vertical: `aria-orientation="vertical"` on the list (the `--vertical` modifier still works).
 Selected: `aria-selected="true"`; disable one with `disabled`. Add `data-ntn-panel="#id"` to let
 `nocturne.js` show and hide panels — it also wires `aria-controls`/`aria-labelledby` and
 `role="tabpanel"`.
