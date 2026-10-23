@@ -12,6 +12,7 @@ import { tmpdir } from 'node:os';
 import { join, relative, resolve } from 'node:path';
 import { build, applyPrefix, vocabularyVars, stripBanner, root } from './build.mjs';
 import { compile } from './compile.mjs';
+import { releaseNotes } from './release-notes.mjs';
 
 let failures = 0;
 const check = (ok, msg) => { if (ok) { console.log('  ok   ' + msg); } else { failures++; console.error('  FAIL ' + msg); } };
@@ -436,6 +437,14 @@ try {
     try { await build({ cssDir, prefix: bad, outDir: join(tmp, 'bad') }); } catch { threw = true; }
     check(threw, `rejects prefix ${JSON.stringify(bad)}`);
   }
+
+  console.log('Release notes');
+  // The publish workflow builds the GitHub release from this section; a release without one fails
+  // here, in prepack, before anything reaches npm.
+  const { version } = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'));
+  const notes = await releaseNotes(version).catch((err) => err);
+  check(typeof notes === 'string' && notes.includes(`@homestar9/nocturne-ui@${version}`) && /^### /m.test(notes),
+    `CHANGELOG.md has release notes for ${version}, the package.json version` + (notes instanceof Error ? ': ' + notes.message : ''));
 } finally {
   await rm(tmp, { recursive: true, force: true });
 }
