@@ -128,6 +128,16 @@ the bottom of the page.
 - **Error:** `ntn-alert ntn-alert--danger` inside the card that failed, never a page-level
   takeover. Name what failed and what the user can do.
 
+## Tabs or toggle group?
+
+Ask what changes when the user picks an option.
+- **Different content** (Members, Billing, Audit log; Overview, Referrers): `ntn-tabs`. Every
+  tab has a panel (`data-ntn-panel`). Use `--pill` for views inside a card head and `--fill` for
+  two or three top-level views.
+- **The same content, filtered, ranged or laid out differently** (Day / Week / Month, List /
+  Grid, All / Admins): `ntn-toggle-group`, with `aria-pressed`.
+- **A value the form posts**: the segmented radio group (`ntn-radio-group--segmented`).
+
 ## Density
 
 Comfortable is the default. Compact (`data-density="compact"` on `<html>`) is an app-wide or

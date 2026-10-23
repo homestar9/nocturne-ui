@@ -6,6 +6,13 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+### Changed
+- **Tabs switch panels; a toggle group picks a value** (NTN-34). The kitchen sink showed pill and
+  fill tabs as value pickers (Day / Week / Month, List / Grid, Production / Staging / Preview)
+  with no panels. Those are now toggle groups in the Toggle group section. The Tabs section's
+  pill and fill examples switch real panels. `skill/components.md` says so for both blocks, and
+  `skill/patterns.md` gains a "Tabs or toggle group?" rule.
+
 ## 1.13.0 — 2026-10-23
 
 ### Added

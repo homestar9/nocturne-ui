@@ -275,7 +275,7 @@
           <header class="sink__head">
             <h2 class="sink__title">Toggle group</h2>
             <code class="sink__code">.ntn-toggle-group</code>
-            <p class="sink__note">Segmented control for mutually exclusive filters. Each button carries <code>aria-pressed</code>; add <code>data-multi</code> to the group for independent toggles.</p>
+            <p class="sink__note">Segmented control for picking a value: a filter, a date range, a view of the same content. Each button carries <code>aria-pressed</code>; add <code>data-multi</code> to the group for independent toggles. If each option shows different content, that is <a href="#tabs">tabs</a>; inside a form, use the segmented radio group.</p>
           </header>
           <div class="ntn-card"><div class="ntn-card__body ntn-stack">
             <div class="ntn-row">
@@ -284,6 +284,17 @@
                 <button class="ntn-toggle-group__btn" aria-pressed="false">30 days</button>
                 <button class="ntn-toggle-group__btn" aria-pressed="false">7 days</button>
                 <button class="ntn-toggle-group__btn" aria-pressed="false">24 hours</button>
+              </div>
+            </div>
+            <div class="ntn-row">
+              <div class="ntn-toggle-group" role="group" aria-label="Range" data-sink-example="Range above a chart">
+                <button class="ntn-toggle-group__btn" aria-pressed="true">Day</button>
+                <button class="ntn-toggle-group__btn" aria-pressed="false">Week</button>
+                <button class="ntn-toggle-group__btn" aria-pressed="false">Month</button>
+              </div>
+              <div class="ntn-toggle-group ntn-toggle-group--sm" role="group" aria-label="View" data-sink-example="View switch, small, icons and labels">
+                <button class="ntn-toggle-group__btn" aria-pressed="false"><i class="fa-light fa-list"></i>List</button>
+                <button class="ntn-toggle-group__btn" aria-pressed="true"><i class="fa-light fa-table-cells-large"></i>Grid</button>
               </div>
             </div>
             <div class="ntn-row">
@@ -2123,7 +2134,7 @@
           <header class="sink__head">
             <h2 class="sink__title">Tabs</h2>
             <code class="sink__code">.ntn-tabs</code>
-            <p class="sink__note">Roving tabindex: one tab is in the tab order and <code>← →</code> (<code>↑ ↓</code> when vertical) moves between them, <code>home</code>/<code>end</code> jump to the ends. <code>data-ntn-panel="#id"</code> points a tab at its panel; the indicator is one element that slides. Overflowing tabs scroll, and the selected one is kept in view.</p>
+            <p class="sink__note">Roving tabindex: one tab is in the tab order and <code>← →</code> (<code>↑ ↓</code> when vertical) moves between them, <code>home</code>/<code>end</code> jump to the ends. <code>data-ntn-panel="#id"</code> points a tab at its panel; the indicator is one element that slides. Overflowing tabs scroll, and the selected one is kept in view. Every tab switches a panel; to pick a value (a range, a view, a filter), use a <a href="#toggle-group">toggle group</a>.</p>
           </header>
           <div class="ntn-stack">
             <div class="ntn-tabs" role="tablist" aria-label="Workspace settings" data-sink-example="Underline, with panels">
@@ -2162,21 +2173,35 @@
             <section id="tab-billing" class="ntn-card" hidden data-sink-example="Underline, with panels">
               <div class="ntn-card__body">Next invoice of <span class="ntn-num">$24,678.81</span> is issued on 1 October.</div>
             </section>
-            <div class="ntn-row" style="gap:var(--ntn-space-4); flex-wrap:wrap">
-              <div class="ntn-tabs ntn-tabs--pill" role="tablist" aria-label="Range" data-sink-example="Pill">
-                <button class="ntn-tabs__tab" role="tab" aria-selected="true">Day</button>
-                <button class="ntn-tabs__tab" role="tab" aria-selected="false">Week</button>
-                <button class="ntn-tabs__tab" role="tab" aria-selected="false">Month</button>
+            <section class="ntn-card" data-sink-example="Pill, with panels">
+              <header class="ntn-card__head">
+                <div class="ntn-card__heading">
+                  <h3 class="ntn-card__title">Traffic</h3>
+                  <p class="ntn-card__sub">Pill tabs switch between views, each with its own content.</p>
+                </div>
+                <div class="ntn-card__actions">
+                  <div class="ntn-tabs ntn-tabs--pill ntn-tabs--sm" role="tablist" aria-label="Traffic">
+                    <button class="ntn-tabs__tab" role="tab" aria-selected="true" data-ntn-panel="#tab-traffic-overview"><i class="fa-light fa-chart-line"></i>Overview</button>
+                    <button class="ntn-tabs__tab" role="tab" aria-selected="false" data-ntn-panel="#tab-traffic-referrers"><i class="fa-light fa-link"></i>Referrers</button>
+                    <button class="ntn-tabs__tab" role="tab" aria-selected="false" data-ntn-panel="#tab-traffic-pages"><i class="fa-light fa-file-lines"></i>Pages</button>
+                  </div>
+                </div>
+              </header>
+              <div class="ntn-card__body">
+                <div id="tab-traffic-overview">12,480 visits this week, up <span class="ntn-num">8%</span> on last week.</div>
+                <div id="tab-traffic-referrers" hidden>Search 61% · Direct 24% · Newsletter 9% · Other 6%</div>
+                <div id="tab-traffic-pages" hidden>Top page: <span class="ntn-num">/pricing</span>, 3,102 visits.</div>
               </div>
-              <div class="ntn-tabs ntn-tabs--pill ntn-tabs--sm" role="tablist" aria-label="View" data-sink-example="Pill, small, with icons">
-                <button class="ntn-tabs__tab" role="tab" aria-selected="false"><i class="fa-light fa-list"></i>List</button>
-                <button class="ntn-tabs__tab" role="tab" aria-selected="true"><i class="fa-light fa-table-cells-large"></i>Grid</button>
+            </section>
+            <div data-sink-example="Fill, with panels">
+              <div class="ntn-tabs ntn-tabs--fill" role="tablist" aria-label="Environments">
+                <button class="ntn-tabs__tab" role="tab" aria-selected="true" data-ntn-panel="#tab-env-production">Production</button>
+                <button class="ntn-tabs__tab" role="tab" aria-selected="false" data-ntn-panel="#tab-env-staging">Staging</button>
+                <button class="ntn-tabs__tab" role="tab" aria-selected="false" data-ntn-panel="#tab-env-preview">Preview</button>
               </div>
-            </div>
-            <div class="ntn-tabs ntn-tabs--fill" role="tablist" aria-label="Deploy target" data-sink-example="Fill">
-              <button class="ntn-tabs__tab" role="tab" aria-selected="true">Production</button>
-              <button class="ntn-tabs__tab" role="tab" aria-selected="false">Staging</button>
-              <button class="ntn-tabs__tab" role="tab" aria-selected="false">Preview</button>
+              <div id="tab-env-production" class="ntn-card" style="margin-top:var(--ntn-space-3)"><div class="ntn-card__body">3 instances healthy. Last deploy 2 hours ago.</div></div>
+              <div id="tab-env-staging" class="ntn-card" style="margin-top:var(--ntn-space-3)" hidden><div class="ntn-card__body">1 instance. Deploying <span class="ntn-num">a34d3c3</span>.</div></div>
+              <div id="tab-env-preview" class="ntn-card" style="margin-top:var(--ntn-space-3)" hidden><div class="ntn-card__body">4 preview builds, one per open pull request.</div></div>
             </div>
             <div class="ntn-row" style="align-items:stretch; gap:var(--ntn-space-5); flex-wrap:wrap">
               <div class="ntn-tabs ntn-tabs--vertical" role="tablist" aria-label="Account" style="flex:0 0 172px" data-sink-example="Vertical, with panels">

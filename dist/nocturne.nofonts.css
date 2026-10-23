@@ -5147,7 +5147,8 @@ i:is([class*=fa-], [data-icon], :empty) {
   border-bottom-color: transparent;
 }
 .ntn-tabs--pill {
-  /* Segmented control. The ink becomes the moving pill behind the labels. */
+  /* Tabs drawn as a pill track; they still switch panels (to pick a value, use ntn-toggle-group).
+     The ink becomes the moving pill behind the labels. */
   gap: 3px;
   padding: 3px;
   background: var(--ntn-surface-2);

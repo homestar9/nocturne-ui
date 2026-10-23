@@ -627,6 +627,18 @@ console.log('Kitchen sink code view (NTN-1)');
   window.close();
 }
 
+console.log('Kitchen sink tabs switch panels (NTN-34)');
+{
+  // A tablist with no panels picks a value, which is a toggle group's job. Every enabled tab in the
+  // kitchen sink names a panel that exists, so the examples never teach the other use.
+  const raw = await readFile(resolve(root, 'examples/kitchen-sink.html'), 'utf8');
+  const { document } = new JSDOM(raw.replace(/<script\b[\s\S]*?<\/script>/g, '')).window;
+  const tabs = [...document.querySelectorAll('.ntn-tabs__tab')].filter((t) => !t.disabled && t.getAttribute('aria-disabled') !== 'true');
+  const orphans = tabs.filter((t) => { const sel = t.getAttribute('data-ntn-panel'); return !sel || !document.querySelector(sel); });
+  check(tabs.length > 0 && orphans.length === 0,
+    `each of the ${tabs.length} enabled tabs switches a panel that exists` + (orphans.length ? ': ' + orphans.map((t) => t.textContent.trim()).join(', ') : ''));
+}
+
 console.log('Source guard');
 {
   const src = await readFile(resolve(root, 'js/nocturne.js'), 'utf8');
