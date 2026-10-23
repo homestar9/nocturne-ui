@@ -6,6 +6,34 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.14.0 — 2026-10-23
+
+### Added
+- **`ntn-toggle-group--pill`** (NTN-35): a single-choice toggle group drawn like the pill tabs.
+  The pressed button is a raised pill on a recessed track, and `nocturne.js` slides one pill
+  between choices (`--ntn-toggle-x/-w`, flagged `data-ntn-ink`, re-measured when anything
+  resizes).
+  - With `data-multi`, each pressed button keeps its own pill and nothing slides.
+  - It combines with `--sm` and `--lg` at the control height. In compact, the buttons hit the
+    24px floor, so the group is 32px tall, not 28px.
+  - The track and pill face are now shared mixins with `ntn-tabs--pill`, whose output is
+    unchanged.
+  - Kitchen sink: Day / Week / Month is the pill demo (the duplicate range example is gone).
+    Every Toggle group and Tabs example has a caption matching its code-view label.
+
+### Changed
+- **Tabs switch panels; a toggle group picks a value** (NTN-34). The kitchen sink showed pill and
+  fill tabs as value pickers (Day / Week / Month, List / Grid, Production / Staging / Preview)
+  with no panels. Those are now toggle groups in the Toggle group section. The Tabs section's
+  pill and fill examples switch real panels. `skill/components.md` says so for both blocks, and
+  `skill/patterns.md` gains a "Tabs or toggle group?" rule.
+
+### Fixed
+- **Tests:** the NTN-31 guard that every height derived from `--ntn-control-*` floors at
+  `--ntn-target-min` never matched anything, because Sass drops the `calc()` inside `max()`. It
+  now matches the subtraction itself and requires at least four hits (NTN-35). The floors were
+  all in place.
+
 ## 1.13.0 — 2026-10-23
 
 ### Added

@@ -294,9 +294,11 @@ try {
   check(['sm', 'md', 'lg'].every((s) => touch.get(`--ntn-control-${s}`) === comfortable.get(`--ntn-control-${s}`)),
     'on a coarse pointer compact keeps the comfortable control heights');
   // A size derived from a control height (a segment, an inline action) floors at the target minimum.
-  const unfloored = [...css.matchAll(/(.{0,32})calc\(var\(--ntn-control-(?:sm|md|lg)\) - [^)]*\)/g)]
-    .filter((m) => !m[1].endsWith('max(var(--ntn-target-min), ')).map((m) => m[0].trim());
-  check(unfloored.length === 0, 'every height derived from --ntn-control-* is floored with max(var(--ntn-target-min), …)' + (unfloored.length ? ': ' + unfloored.join(' | ') : ''));
+  // Sass drops the calc() inside max(), so match the subtraction itself, with or without calc().
+  const derivedSizes = [...css.matchAll(/([a-z-]+):\s*([^;{}]*var\(--ntn-control-(?:sm|md|lg)\)\s*-\s*[^;{}]*)/g)];
+  const unfloored = derivedSizes.filter((m) => !/^max\(var\(--ntn-target-min\),/.test(m[2].trim())).map((m) => `${m[1]}: ${m[2].trim()}`);
+  check(derivedSizes.length >= 4 && unfloored.length === 0,
+    `each of the ${derivedSizes.length} sizes derived from --ntn-control-* is floored with max(var(--ntn-target-min), …)` + (unfloored.length ? ': ' + unfloored.join(' | ') : ''));
   // NTN-33: "compact" names the density, so no block keeps a --compact modifier of its own.
   const compactMods = [...new Set([...css.matchAll(/\.ntn-[a-z-]+--compact\b/g)].map((m) => m[0]))];
   check(compactMods.length === 0, 'no block has a --compact modifier (density is data-density)' + (compactMods.length ? ': ' + compactMods.join(' ') : ''));

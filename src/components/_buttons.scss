@@ -197,4 +197,33 @@ $-emphases: modifiers(".ntn-btn", (primary, secondary, subtle));
   }
   &--sm &__btn { height: max(var(--ntn-target-min), calc(var(--ntn-control-sm) - 2px)); padding: 0 10px; font-size: var(--ntn-font-size-xs); }
   &--lg &__btn { height: max(var(--ntn-target-min), calc(var(--ntn-control-lg) - 2px)); padding: 0 15px; }
+
+  &--pill {
+    /* The pressed button is a raised pill on a recessed track, the pill tabs' look, and with
+       nocturne.js one pill slides between choices (--ntn-toggle-x/-w, flagged data-ntn-ink).
+       Single choice only: with data-multi every pressed button keeps its own pill and nothing
+       slides. The buttons sit inside the 3px track, so the group stays its size's control height. */
+    position: relative; box-shadow: none;
+    @include pill-track;
+
+    .ntn-toggle-group__btn {
+      position: relative; z-index: 1; border-left: 0; border-radius: var(--ntn-radius-md);
+      height: max(var(--ntn-target-min), calc(var(--ntn-control-md) - 8px));
+
+      &[aria-pressed="true"] { box-shadow: inset 0 0 0 1px var(--ntn-border-subtle); }
+    }
+    &.ntn-toggle-group--sm .ntn-toggle-group__btn { height: max(var(--ntn-target-min), calc(var(--ntn-control-sm) - 8px)); }
+    &.ntn-toggle-group--lg .ntn-toggle-group__btn { height: max(var(--ntn-target-min), calc(var(--ntn-control-lg) - 8px)); }
+    &[data-ntn-ink] {
+      &::after {
+        content: ""; position: absolute; left: 0; pointer-events: none;
+        width: var(--ntn-toggle-w, 0); transform: translateX(var(--ntn-toggle-x, 0));
+        @include pill-ink;
+        transition: tr(transform, base, out), tr(width, base, out);
+
+        @include reduced-motion { transition: none; }
+      }
+      .ntn-toggle-group__btn[aria-pressed="true"] { background: transparent; box-shadow: none; }
+    }
+  }
 }

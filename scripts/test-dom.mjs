@@ -627,6 +627,43 @@ console.log('Kitchen sink code view (NTN-1)');
   window.close();
 }
 
+console.log('Pill toggle group slides one pill (NTN-35)');
+{
+  // jsdom has no layout: give each button a box, then press one and read the ink it publishes.
+  const { document } = await page(
+    `<div class="ntn-toggle-group ntn-toggle-group--pill" id="g">
+       <button class="ntn-toggle-group__btn" aria-pressed="true">Day</button>
+       <button class="ntn-toggle-group__btn" aria-pressed="false">Week</button>
+     </div>
+     <div class="ntn-toggle-group ntn-toggle-group--pill" id="m" data-multi>
+       <button class="ntn-toggle-group__btn" aria-pressed="true">A</button>
+     </div>`);
+  const group = document.getElementById('g');
+  const [day, week] = group.querySelectorAll('.ntn-toggle-group__btn');
+  [[day, 3, 50], [week, 56, 60]].forEach(([b, left, width]) => {
+    Object.defineProperty(b, 'offsetLeft', { configurable: true, get: () => left });
+    Object.defineProperty(b, 'offsetWidth', { configurable: true, get: () => width });
+  });
+  click(week);
+  check(week.getAttribute('aria-pressed') === 'true' && group.hasAttribute('data-ntn-ink')
+    && group.style.getPropertyValue('--ntn-toggle-x') === '56px' && group.style.getPropertyValue('--ntn-toggle-w') === '60px',
+    `pressing a choice moves the pill to it (x ${group.style.getPropertyValue('--ntn-toggle-x') || 'unset'}, w ${group.style.getPropertyValue('--ntn-toggle-w') || 'unset'})`);
+  const multi = document.getElementById('m');
+  check(!multi.hasAttribute('data-ntn-ink') && !multi.style.getPropertyValue('--ntn-toggle-w'), 'a data-multi pill group publishes no sliding pill');
+}
+
+console.log('Kitchen sink tabs switch panels (NTN-34)');
+{
+  // A tablist with no panels picks a value, which is a toggle group's job. Every enabled tab in the
+  // kitchen sink names a panel that exists, so the examples never teach the other use.
+  const raw = await readFile(resolve(root, 'examples/kitchen-sink.html'), 'utf8');
+  const { document } = new JSDOM(raw.replace(/<script\b[\s\S]*?<\/script>/g, '')).window;
+  const tabs = [...document.querySelectorAll('.ntn-tabs__tab')].filter((t) => !t.disabled && t.getAttribute('aria-disabled') !== 'true');
+  const orphans = tabs.filter((t) => { const sel = t.getAttribute('data-ntn-panel'); return !sel || !document.querySelector(sel); });
+  check(tabs.length > 0 && orphans.length === 0,
+    `each of the ${tabs.length} enabled tabs switches a panel that exists` + (orphans.length ? ': ' + orphans.map((t) => t.textContent.trim()).join(', ') : ''));
+}
+
 console.log('Source guard');
 {
   const src = await readFile(resolve(root, 'js/nocturne.js'), 'utf8');
