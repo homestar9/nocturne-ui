@@ -164,17 +164,21 @@ function tabInk(list) {
   list.setAttribute('data-ntn-ink', '');
 }
 
-/* Tabs can change size with no window resize: density switched live, a container resizing, a
-   label changing. Watching each list and its tabs re-measures the ink whenever one does. */
-let tabResize;
-function observeTabs(list, tabs) {
+/* An ink (the tabs' indicator, a pill toggle group's sliding pill) can change size with no window
+   resize: density switched live, a container resizing, a label changing. Watching each host and
+   its items re-measures the ink whenever one does. */
+const INK_HOSTS = '.ntn-tabs, .ntn-toggle-group--pill';
+let inkResize;
+function observeInk(host, items) {
   if (typeof ResizeObserver !== 'function') return;
-  if (!tabResize) {
-    tabResize = new ResizeObserver((entries) => {
-      new Set(entries.map((e) => e.target.closest('.ntn-tabs'))).forEach((l) => { if (l) tabInk(l); });
+  if (!inkResize) {
+    inkResize = new ResizeObserver((entries) => {
+      new Set(entries.map((e) => e.target.closest(INK_HOSTS))).forEach((h) => {
+        if (h) (h.classList.contains('ntn-tabs') ? tabInk : toggleInk)(h);
+      });
     });
   }
-  [list, ...tabs].forEach((el) => tabResize.observe(el));
+  [host, ...items].forEach((el) => inkResize.observe(el));
 }
 
 /* Tab lists already announced once, so a later refresh() never re-fires ntn:tabchange. */
@@ -220,7 +224,7 @@ function setupTabs(list) {
     if (t.tagName === 'BUTTON' && !t.hasAttribute('type')) t.type = 'button';
     t.tabIndex = t.getAttribute('aria-selected') === 'true' ? 0 : -1;
   });
-  observeTabs(list, tabs);
+  observeInk(list, tabs);
   const sel = list.querySelector('.ntn-tabs__tab[aria-selected="true"]');
   const first = !announcedTabs.has(list);
   announcedTabs.add(list);
@@ -933,7 +937,25 @@ function pressToggle(btn) {
   } else {
     $$('.ntn-toggle-group__btn', group).forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
   }
+  toggleInk(group);
   group.dispatchEvent(new CustomEvent('ntn:toggle', { bubbles: true, detail: { value: btn.dataset.value || btn.textContent.trim(), pressed: btn.getAttribute('aria-pressed') === 'true' } }));
+}
+
+/* Pill toggle group: one pill slides behind the pressed button, as the pill tabs' ink does. Only
+   an exclusive group slides; with data-multi each pressed button keeps its own raised fill (the
+   no-script look too). With nothing pressed, or before layout, the flag comes off. */
+function toggleInk(group) {
+  if (!group.classList.contains('ntn-toggle-group--pill') || group.hasAttribute('data-multi')) return;
+  const btn = group.querySelector('.ntn-toggle-group__btn[aria-pressed="true"]');
+  if (!btn || !btn.offsetWidth) { group.removeAttribute('data-ntn-ink'); return; }
+  group.style.setProperty('--ntn-toggle-x', btn.offsetLeft + 'px');
+  group.style.setProperty('--ntn-toggle-w', btn.offsetWidth + 'px');
+  group.setAttribute('data-ntn-ink', '');
+}
+
+function setupToggleInk(group) {
+  observeInk(group, $$('.ntn-toggle-group__btn', group));
+  toggleInk(group);
 }
 
 /* ── Date range picker ───────────────────────────────────────────────────────
@@ -1760,6 +1782,7 @@ export function refresh(root = document) {
   within('.ntn-table').forEach(syncTable);
   within('.ntn-table[data-ntn-paginate]').forEach(applyTable);
   within('.ntn-tabs').forEach(setupTabs);
+  within('.ntn-toggle-group--pill').forEach(setupToggleInk);
   within('[data-ntn-tree]').forEach(treeSync);
   within('[data-ntn-combo]').forEach(comboRender);
   within('[data-ntn-daterange]').forEach(drRefresh);
@@ -1768,7 +1791,10 @@ export function refresh(root = document) {
   if (themeManaged) syncThemeControls(getTheme());
 }
 
-const reInk = () => $$('.ntn-tabs').forEach(tabInk);
+const reInk = () => {
+  $$('.ntn-tabs').forEach(tabInk);
+  $$('.ntn-toggle-group--pill').forEach(toggleInk);
+};
 
 let started = false;
 /**

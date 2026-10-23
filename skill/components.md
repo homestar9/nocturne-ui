@@ -1084,9 +1084,15 @@ value).
 
 Segmented control for picking a value: the left-hand filter in a table toolbar, a range switch
 above a chart, a list/grid view switch. If each option shows different content, use tabs.
-Element: `__btn`. Modifiers: `--sm` `--lg`. State lives on `aria-pressed`; the group is
+Element: `__btn`. Modifiers: `--sm` `--lg` `--pill`. State lives on `aria-pressed`; the group is
 exclusive unless it carries `data-multi`. `nocturne.js` moves the pressed state and fires
 `ntn:toggle`.
+
+`--pill` draws the pressed button as a raised pill on a recessed track, the same look as
+`ntn-tabs--pill`, and `nocturne.js` slides one pill between choices (it sets `--ntn-toggle-x/-w`
+and flags the group `data-ntn-ink`; without the script the pressed button is the pill). Single
+choice only: on a `data-multi` group each pressed button keeps its own pill and nothing slides.
+It combines with `--sm` and `--lg`, and stays that size's control height.
 
 ```html
 <div class="ntn-toggle-group">
