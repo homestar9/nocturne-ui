@@ -6,6 +6,8 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.13.0 — 2026-10-23
+
 ### Added
 - **Density** (NTN-31): `data-density="compact"` on `<html>`, or on any subtree, tightens the kit.
   `"comfortable"` is the default and resets a subtree. CSS only.
