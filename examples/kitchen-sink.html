@@ -514,7 +514,7 @@
             <div class="ntn-grid ntn-grid--2">
               <div class="ntn-stack">
                 <span class="sink__label">Dragged over (data-ntn-dragover)</span>
-                <label class="ntn-dropzone ntn-dropzone--compact" data-ntn-dragover data-sink-example="Dragged over, compact">
+                <label class="ntn-dropzone ntn-dropzone--inline" data-ntn-dragover data-sink-example="Dragged over, inline">
                   <input type="file" tabindex="-1">
                   <span class="ntn-dropzone__icon"><i class="fa-light fa-cloud-arrow-up"></i></span>
                   <span class="ntn-dropzone__title">Release to upload</span>
@@ -522,7 +522,7 @@
               </div>
               <div class="ntn-stack">
                 <span class="sink__label">Disabled (aria-disabled)</span>
-                <label class="ntn-dropzone ntn-dropzone--compact" data-ntn-dropzone aria-disabled="true" data-sink-example="Disabled, compact">
+                <label class="ntn-dropzone ntn-dropzone--inline" data-ntn-dropzone aria-disabled="true" data-sink-example="Disabled, inline">
                   <input type="file" disabled>
                   <span class="ntn-dropzone__icon"><i class="fa-light fa-cloud-arrow-up"></i></span>
                   <span class="ntn-dropzone__title">Add a file</span>
@@ -1007,8 +1007,8 @@
             </footer>
           </section>
 
-          <p class="sink__label">Striped · compact</p>
-          <section class="ntn-card ntn-card--flush" data-sink-example="Striped, compact">
+          <p class="sink__label">Striped · data-density="compact"</p>
+          <section class="ntn-card ntn-card--flush" data-sink-example="Striped, compact density">
             <header class="ntn-card__head">
               <div class="ntn-card__heading">
                 <h3 class="ntn-card__title">Recent invoices</h3>
@@ -1018,7 +1018,7 @@
                 <button class="ntn-btn ntn-btn--sm"><i class="fa-light fa-download"></i>Download all</button>
               </div>
             </header>
-            <div class="ntn-table ntn-table--zebra ntn-table--compact">
+            <div class="ntn-table ntn-table--zebra" data-density="compact">
               <table>
                 <thead>
                   <tr>

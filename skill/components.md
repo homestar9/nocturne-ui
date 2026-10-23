@@ -808,7 +808,8 @@ the `?` means nothing to a screen reader:
 
 A wrapper block; `table`, `th`, `td` are styled by tag. Cell classes: `__num` (right-aligned
 mono), `__primary` (emphasised first column), `__actions` (right-aligned button cell),
-`__empty` (empty-state cell). Modifiers: `--compact` `--zebra`.
+`__empty` (empty-state cell). Modifier: `--zebra`. For a denser table, put
+`data-density="compact"` on the `.ntn-table` (see Density).
 The header row is a filled band (`--ntn-surface-2`) with a stronger rule under it, so it separates
 the table from whatever sits above it. Reach for `--zebra` on long, number-heavy lists; leave
 it off when rows carry badges and avatars.
@@ -927,7 +928,7 @@ the input invisibly over the label, so click-to-browse and dropping files on it 
 and the label draws the focus ring.
 
 - Elements: `__icon` (a disc holding an `<i>`), `__title`, `__hint` (limits and accepted types).
-- Modifier: `--compact`, a single line for a tight form.
+- Modifier: `--inline`, a single line for a tight form.
 - State: `data-ntn-dragover` while files are held over it. `aria-disabled="true"` also needs
   `disabled` on the input.
 

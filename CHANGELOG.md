@@ -30,6 +30,12 @@ renamed or removed class names and tokens.
 
 ### Changed
 - **`ntn-pager__page` is `--ntn-control-sm` square** (NTN-30), the same 28px it hard-coded before.
+- **"Compact" now only means density** (NTN-33):
+  - `ntn-table--compact` is removed. Put `data-density="compact"` on the `.ntn-table` instead.
+    The header row and any controls in the cells tighten with the body rows.
+  - `ntn-dropzone--compact` is renamed `ntn-dropzone--inline` (the one-line drop area), matching
+    the other `--inline` modifiers.
+  - The Density guidance in `skill/patterns.md` now covers app, user and region choices.
 
 ### Fixed
 - **The tab ink follows a tab that changes size** (NTN-32). `nocturne.js` watches each tab list

@@ -296,6 +296,9 @@ try {
   const unfloored = [...css.matchAll(/(.{0,32})calc\(var\(--ntn-control-(?:sm|md|lg)\) - [^)]*\)/g)]
     .filter((m) => !m[1].endsWith('max(var(--ntn-target-min), ')).map((m) => m[0].trim());
   check(unfloored.length === 0, 'every height derived from --ntn-control-* is floored with max(var(--ntn-target-min), …)' + (unfloored.length ? ': ' + unfloored.join(' | ') : ''));
+  // NTN-33: "compact" names the density, so no block keeps a --compact modifier of its own.
+  const compactMods = [...new Set([...css.matchAll(/\.ntn-[a-z-]+--compact\b/g)].map((m) => m[0]))];
+  check(compactMods.length === 0, 'no block has a --compact modifier (density is data-density)' + (compactMods.length ? ': ' + compactMods.join(' ') : ''));
 
   console.log('Chart hues stay in charts');
   // Magenta and cyan are chart series two and three (skill/brand.md). Chrome reads a token a theme can retint.

@@ -3502,19 +3502,19 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-dropzone[aria-disabled=true] input[type=file] {
   pointer-events: none;
 }
-.ntn-dropzone--compact {
+.ntn-dropzone--inline {
   flex-direction: row;
   justify-content: flex-start;
   gap: var(--ntn-space-3);
   padding: 10px var(--ntn-space-4);
   text-align: left;
 }
-.ntn-dropzone--compact .ntn-dropzone__icon {
+.ntn-dropzone--inline .ntn-dropzone__icon {
   width: 28px;
   height: 28px;
   font-size: 14px;
 }
-.ntn-dropzone--compact .ntn-dropzone__hint {
+.ntn-dropzone--inline .ntn-dropzone__hint {
   margin-left: auto;
 }
 
@@ -4393,9 +4393,6 @@ i:is([class*=fa-], [data-icon], :empty) {
   padding: 34px var(--ntn-space-4);
   text-align: center;
   color: var(--ntn-text-muted);
-}
-.ntn-table--compact td {
-  padding: var(--ntn-space-2) var(--ntn-space-4);
 }
 .ntn-table--zebra tbody tr:nth-child(even) {
   background: var(--ntn-alpha-ink-04);

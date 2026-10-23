@@ -30,7 +30,6 @@
   &__primary { color: var(--ntn-text-primary); font-weight: var(--ntn-weight-medium); }
   &__actions { text-align: right; white-space: nowrap; }
   &__empty { padding: 34px var(--ntn-space-4); text-align: center; color: var(--ntn-text-muted); }
-  &--compact td { padding: var(--ntn-space-2) var(--ntn-space-4); }
   &--zebra tbody {
     tr:nth-child(even) {
       background: var(--ntn-alpha-ink-04);
