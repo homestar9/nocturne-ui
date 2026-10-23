@@ -36,8 +36,8 @@
     input[type="file"] { pointer-events: none; }
   }
 
-  // Compact: one line, for a field in a tight form.
-  &--compact {
+  // Inline: one line, for a field in a tight form.
+  &--inline {
     flex-direction: row; justify-content: flex-start; gap: var(--ntn-space-3);
     padding: 10px var(--ntn-space-4); text-align: left;
 

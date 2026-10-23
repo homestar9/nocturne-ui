@@ -41,7 +41,7 @@ $-flush-depth: 12;
 
   &__row {
     position: relative; display: flex; align-items: center; gap: var(--ntn-space-1);
-    min-height: 30px; padding: 0 8px 0 2px;
+    min-height: var(--ntn-row-min-h); padding: 0 8px 0 2px;
     border: 1px solid transparent; border-radius: var(--ntn-radius-sm);
     background: transparent; color: inherit; text-align: left; cursor: pointer;
     font-family: var(--ntn-font-sans); font-size: inherit; width: 100%;
@@ -125,7 +125,7 @@ $-flush-depth: 12;
 .ntn-tree--sm {
   font-size: var(--ntn-font-size-xs); --ntn-tree-indent: 18px;
 
-  .ntn-tree__row { min-height: 26px; }
+  .ntn-tree__row { min-height: max(var(--ntn-target-min), calc(var(--ntn-row-min-h) - 4px)); }
 }
 .ntn-tree--flush {
   /* Full-bleed inside a flush card: rows run edge to edge, no rounding. */

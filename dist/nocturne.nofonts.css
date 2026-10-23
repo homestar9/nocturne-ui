@@ -214,12 +214,12 @@
   --ntn-radius-xl: 14px;
   --ntn-radius-2xl: 18px;
   --ntn-radius-full: 999px;
-  --ntn-control-sm: 28px;
-  --ntn-control-md: 34px;
-  --ntn-control-lg: 40px;
+  /* The smallest hit target (WCAG 2.2 SC 2.5.8). A size derived from a control height never goes
+     below it, whatever the density. */
+  --ntn-target-min: 24px;
+  /* Control heights, role sizes and --ntn-topbar-h follow data-density: see _density.scss. */
   --ntn-sidebar-w: 244px;
   --ntn-rail-w: 56px;
-  --ntn-topbar-h: 56px;
   --ntn-page-max: 1440px;
 }
 
@@ -376,6 +376,58 @@
   --ntn-scrim: rgba(16,20,27,0.42);
 }
 
+/* ── Nocturne density ────────────────────────────────────────────────────────
+   Applied with data-density="compact" on <html> (or on any subtree, for one dense region in a
+   roomy app). "comfortable" is the default and resets a subtree. Like the light theme, this file
+   remaps token VALUES only: no component rule is overridden.
+
+   Both levels state literal values, so nesting works either way. Components derive any near size
+   in their own rule (the header cell is calc(var(--ntn-row-pad-y) - 2px)), never here: a token
+   computed on :root would resolve once, at the root, and ignore a subtree.
+
+   What changes: control heights, the vertical padding of rows, items and callouts, the surface
+   gutter, and the field and layout gaps. What never does: type, radii, borders, icons, widths. */
+:root, [data-density=comfortable] {
+  --ntn-control-sm: 28px;
+  --ntn-control-md: 34px;
+  --ntn-control-lg: 40px;
+  /* Role sizes: the vertical rhythm of controls, rows and surfaces. Components read these instead
+     of a literal; a rule that needs a near value keeps the offset (calc(var(--ntn-item-pad-y) + 2px)). */
+  --ntn-control-pad-y: 5px; /* a trigger that wraps its content (combobox) */
+  --ntn-row-pad-y: 12px; /* table cell; the header cell is 2px less */
+  --ntn-row-min-h: 30px; /* tree row */
+  --ntn-item-pad-y: 7px; /* menu item, combobox option, sidebar item, tab, date preset, pager step */
+  --ntn-gutter: 20px; /* card and modal padding (stat, popover: 4px less); the flush table, toolbar and filters align to it */
+  --ntn-box-pad-y: 14px; /* alert, toast, accordion summary, modal foot */
+  --ntn-field-gap: 6px; /* a form control's label to its control */
+  --ntn-layout-gap: 14px; /* page and grid gaps; the page's own padding is 10px more */
+  --ntn-topbar-h: 56px;
+}
+
+[data-density=compact] {
+  --ntn-control-sm: 24px;
+  --ntn-control-md: 28px;
+  --ntn-control-lg: 34px;
+  --ntn-control-pad-y: 2px;
+  --ntn-row-pad-y: 8px;
+  --ntn-row-min-h: 24px;
+  --ntn-item-pad-y: 4px;
+  --ntn-gutter: 16px;
+  --ntn-box-pad-y: 10px;
+  --ntn-field-gap: 4px;
+  --ntn-layout-gap: 10px;
+  --ntn-topbar-h: 48px;
+}
+
+/* Compact is a pointer choice. On a touch screen controls keep their comfortable height; rows,
+   items and surfaces still tighten. */
+@media (pointer: coarse) {
+  [data-density=compact] {
+    --ntn-control-sm: 28px;
+    --ntn-control-md: 34px;
+    --ntn-control-lg: 40px;
+  }
+}
 /* Minimal global reset. Consumers link nocturne.css and get this for free. */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -525,10 +577,10 @@ i:is([class*=fa-], [data-icon], :empty) {
   width: 100%;
   max-width: var(--ntn-page-max);
   margin: 0 auto;
-  padding: var(--ntn-space-6);
+  padding: calc(var(--ntn-layout-gap) + 10px);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--ntn-layout-gap);
 }
 .ntn-page__head {
   display: flex;
@@ -559,7 +611,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 
 .ntn-grid {
   display: grid;
-  gap: 14px;
+  gap: var(--ntn-layout-gap);
 }
 .ntn-grid--2 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1011,7 +1063,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   line-height: 1;
   align-items: center;
   gap: 6px;
-  height: calc(var(--ntn-control-md) - 2px);
+  height: max(var(--ntn-target-min), var(--ntn-control-md) - 2px);
   padding: 0 var(--ntn-space-3);
   border-left: 1px solid var(--ntn-border-subtle);
   color: var(--ntn-text-muted);
@@ -1046,12 +1098,12 @@ i:is([class*=fa-], [data-icon], :empty) {
   margin-left: 2px;
 }
 .ntn-toggle-group--sm .ntn-toggle-group__btn {
-  height: calc(var(--ntn-control-sm) - 2px);
+  height: max(var(--ntn-target-min), var(--ntn-control-sm) - 2px);
   padding: 0 10px;
   font-size: var(--ntn-font-size-xs);
 }
 .ntn-toggle-group--lg .ntn-toggle-group__btn {
-  height: calc(var(--ntn-control-lg) - 2px);
+  height: max(var(--ntn-target-min), var(--ntn-control-lg) - 2px);
   padding: 0 15px;
 }
 
@@ -1064,7 +1116,7 @@ i:is([class*=fa-], [data-icon], :empty) {
      themes float the label with :placeholder-shown. */
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--ntn-field-gap);
   width: 100%;
 }
 .ntn-field__label {
@@ -1126,7 +1178,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   justify-content: center;
   flex: 0 0 auto;
   width: var(--ntn-control-sm);
-  height: calc(var(--ntn-control-sm) - 4px);
+  height: max(var(--ntn-target-min), var(--ntn-control-sm) - 4px);
   margin-right: -6px;
   border: 0;
   border-radius: var(--ntn-radius-sm);
@@ -1191,7 +1243,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-select {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--ntn-field-gap);
   width: 100%;
 }
 .ntn-select__label {
@@ -1461,7 +1513,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-popover {
   min-width: 240px;
   max-width: min(420px, 100vw - 16px);
-  padding: var(--ntn-space-4);
+  padding: calc(var(--ntn-gutter) - 4px);
   display: flex;
   flex-direction: column;
   gap: var(--ntn-space-3);
@@ -1497,7 +1549,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   justify-content: space-between;
   gap: var(--ntn-space-2);
   width: 100%;
-  padding: 7px 10px;
+  padding: var(--ntn-item-pad-y) 10px;
   border: 0;
   border-radius: var(--ntn-radius-sm);
   background: transparent;
@@ -1541,7 +1593,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 }
 .ntn-menu__label { /* Section heading inside a long menu. */
   margin: 0;
-  padding: 7px 10px 4px;
+  padding: var(--ntn-item-pad-y) 10px 4px;
   font-size: var(--ntn-font-size-2xs);
   font-weight: var(--ntn-weight-medium);
   letter-spacing: var(--ntn-tracking-caps);
@@ -1615,7 +1667,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--ntn-field-gap);
   width: 100%;
 }
 .ntn-combo__label {
@@ -1629,7 +1681,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   gap: var(--ntn-space-2);
   width: 100%;
   min-height: var(--ntn-control-md);
-  padding: 5px 10px 5px 12px;
+  padding: var(--ntn-control-pad-y) 10px var(--ntn-control-pad-y) 12px;
   background: var(--ntn-surface-2);
   border: 1px solid var(--ntn-border-default);
   border-radius: var(--ntn-radius-md);
@@ -1796,7 +1848,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   align-items: center;
   gap: var(--ntn-space-2);
   width: 100%;
-  padding: 7px 9px;
+  padding: var(--ntn-item-pad-y) 9px;
   border: 0;
   border-radius: var(--ntn-radius-sm);
   background: transparent;
@@ -1891,7 +1943,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-combo--sm .ntn-combo__trigger {
   min-height: var(--ntn-control-sm);
   font-size: var(--ntn-font-size-xs);
-  padding: 4px 8px 4px 10px;
+  padding: calc(var(--ntn-control-pad-y) - 1px) 8px calc(var(--ntn-control-pad-y) - 1px) 10px;
 }
 .ntn-combo--lg .ntn-combo__trigger {
   min-height: var(--ntn-control-lg);
@@ -1924,7 +1976,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   position: relative;
   display: inline-flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--ntn-field-gap);
 }
 .ntn-daterange__label {
   font-size: var(--ntn-font-size-xs);
@@ -2039,7 +2091,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   background: var(--ntn-alpha-ink-04);
 }
 .ntn-daterange__preset {
-  padding: 7px 10px;
+  padding: var(--ntn-item-pad-y) 10px;
   border: 0;
   border-radius: var(--ntn-radius-sm);
   background: transparent;
@@ -2562,7 +2614,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   position: relative;
   align-items: center;
   gap: 6px;
-  height: calc(var(--ntn-control-md) - 2px);
+  height: max(var(--ntn-target-min), var(--ntn-control-md) - 2px);
   padding: 0 var(--ntn-space-3);
   border-left: 1px solid var(--ntn-border-subtle);
   color: var(--ntn-text-muted);
@@ -2740,7 +2792,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   align-items: flex-start;
   flex-wrap: wrap;
   gap: var(--ntn-space-3);
-  padding: 14px var(--ntn-space-4);
+  padding: var(--ntn-box-pad-y) var(--ntn-space-4);
   background: var(--ntn-info-soft);
   border: 1px solid var(--ntn-info-line);
   border-radius: var(--ntn-radius-lg);
@@ -2821,7 +2873,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   border-radius: 0;
   border-left: 0;
   border-right: 0;
-  padding: var(--ntn-space-3) var(--ntn-space-4);
+  padding: calc(var(--ntn-box-pad-y) - 2px) var(--ntn-space-4);
 }
 
 /* Tooltip — CSS only. Wrap the trigger, add the bubble as a sibling.
@@ -3216,7 +3268,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   display: flex;
   align-items: flex-start;
   gap: var(--ntn-space-3);
-  padding: 12px 12px 12px 14px;
+  padding: calc(var(--ntn-box-pad-y) - 2px) 12px calc(var(--ntn-box-pad-y) - 2px) 14px;
   overflow: hidden;
   border: 1px solid var(--ntn-border-default);
   border-radius: var(--ntn-radius-lg);
@@ -3450,19 +3502,19 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-dropzone[aria-disabled=true] input[type=file] {
   pointer-events: none;
 }
-.ntn-dropzone--compact {
+.ntn-dropzone--inline {
   flex-direction: row;
   justify-content: flex-start;
   gap: var(--ntn-space-3);
   padding: 10px var(--ntn-space-4);
   text-align: left;
 }
-.ntn-dropzone--compact .ntn-dropzone__icon {
+.ntn-dropzone--inline .ntn-dropzone__icon {
   width: 28px;
   height: 28px;
   font-size: 14px;
 }
-.ntn-dropzone--compact .ntn-dropzone__hint {
+.ntn-dropzone--inline .ntn-dropzone__hint {
   margin-left: auto;
 }
 
@@ -3581,7 +3633,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--ntn-space-4);
-  padding: var(--ntn-space-5) var(--ntn-space-5) 0;
+  padding: var(--ntn-gutter) var(--ntn-gutter) 0;
 }
 .ntn-card__title {
   margin: 0;
@@ -3602,12 +3654,12 @@ i:is([class*=fa-], [data-icon], :empty) {
   flex: 0 0 auto;
 }
 .ntn-card__body {
-  padding: var(--ntn-space-5);
+  padding: var(--ntn-gutter);
   flex: 1;
   min-height: 0;
 }
 .ntn-card__foot {
-  padding: var(--ntn-space-3) var(--ntn-space-5);
+  padding: var(--ntn-space-3) var(--ntn-gutter);
   border-top: 1px solid var(--ntn-border-subtle);
   background: var(--ntn-alpha-ink-04);
   font-size: var(--ntn-font-size-xs);
@@ -3623,12 +3675,12 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-card--flush > .ntn-card__head {
   /* A flush card is the table/list shell: its head always needs a rule under it,
      otherwise the head, the toolbar and the first row run together. */
-  padding-bottom: var(--ntn-space-4);
+  padding-bottom: calc(var(--ntn-gutter) - 4px);
   border-bottom: 1px solid var(--ntn-border-default);
 }
 .ntn-card__head--divided {
   border-bottom: 1px solid var(--ntn-border-subtle);
-  padding-bottom: var(--ntn-space-4);
+  padding-bottom: calc(var(--ntn-gutter) - 4px);
 }
 .ntn-card__heading {
   display: flex;
@@ -3659,7 +3711,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: var(--ntn-space-4) 18px;
+  padding: calc(var(--ntn-gutter) - 4px) calc(var(--ntn-gutter) - 2px);
   background: var(--ntn-surface-1);
   border: 1px solid var(--ntn-border-default);
   border-radius: var(--ntn-radius-lg);
@@ -3728,7 +3780,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--ntn-space-4);
-  padding: var(--ntn-space-5) var(--ntn-space-5) 0;
+  padding: var(--ntn-gutter) var(--ntn-gutter) 0;
 }
 .ntn-modal__title {
   margin: 0;
@@ -3766,16 +3818,16 @@ i:is([class*=fa-], [data-icon], :empty) {
   line-height: var(--ntn-leading-normal);
 }
 .ntn-modal__body {
-  padding: var(--ntn-space-5);
+  padding: var(--ntn-gutter);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--ntn-layout-gap);
 }
 .ntn-modal__foot {
   display: flex;
   justify-content: flex-end;
   gap: var(--ntn-space-2);
-  padding: 14px var(--ntn-space-5);
+  padding: var(--ntn-box-pad-y) var(--ntn-gutter);
   border-top: 1px solid var(--ntn-border-subtle);
   background: var(--ntn-alpha-ink-04);
 }
@@ -3808,7 +3860,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px var(--ntn-space-4);
+  padding: var(--ntn-box-pad-y) var(--ntn-space-4);
   cursor: pointer;
   list-style: none;
   font-size: var(--ntn-font-size-sm);
@@ -4287,7 +4339,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   background: var(--ntn-surface-2);
 }
 .ntn-table th {
-  padding: 10px var(--ntn-space-4);
+  padding: calc(var(--ntn-row-pad-y) - 2px) var(--ntn-space-4);
   text-align: left;
   white-space: nowrap;
   user-select: none;
@@ -4309,7 +4361,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   color: var(--ntn-accent-300);
 }
 .ntn-table td {
-  padding: var(--ntn-space-3) var(--ntn-space-4);
+  padding: var(--ntn-row-pad-y) var(--ntn-space-4);
   border-bottom: 1px solid var(--ntn-border-subtle);
   color: var(--ntn-text-secondary);
   vertical-align: middle;
@@ -4342,9 +4394,6 @@ i:is([class*=fa-], [data-icon], :empty) {
   text-align: center;
   color: var(--ntn-text-muted);
 }
-.ntn-table--compact td {
-  padding: var(--ntn-space-2) var(--ntn-space-4);
-}
 .ntn-table--zebra tbody tr:nth-child(even) {
   background: var(--ntn-alpha-ink-04);
 }
@@ -4358,12 +4407,12 @@ i:is([class*=fa-], [data-icon], :empty) {
   border-bottom: 1px solid var(--ntn-border-subtle);
 }
 
-/* Inside a card the outer cells line up with the card's own 20px gutter. */
+/* Inside a card the outer cells line up with the card's own gutter. */
 .ntn-card--flush .ntn-table th:first-child, .ntn-card--flush .ntn-table td:first-child {
-  padding-left: var(--ntn-space-5);
+  padding-left: var(--ntn-gutter);
 }
 .ntn-card--flush .ntn-table th:last-child, .ntn-card--flush .ntn-table td:last-child {
-  padding-right: var(--ntn-space-5);
+  padding-right: var(--ntn-gutter);
 }
 
 /* ── Table toolbar — the filter row above a table ─────────────────────────── */
@@ -4376,10 +4425,10 @@ i:is([class*=fa-], [data-icon], :empty) {
   align-items: center;
   gap: var(--ntn-space-3);
   flex-wrap: wrap;
-  padding: var(--ntn-space-4) var(--ntn-space-5);
+  padding: calc(var(--ntn-gutter) - 4px) var(--ntn-gutter);
 }
 .ntn-toolbar:first-child {
-  padding-top: var(--ntn-space-5);
+  padding-top: var(--ntn-gutter);
 }
 .ntn-toolbar--divided {
   border-bottom: 1px solid var(--ntn-border-default);
@@ -4421,7 +4470,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   align-items: flex-end;
   gap: var(--ntn-space-3);
   flex-wrap: wrap;
-  padding: var(--ntn-space-4) var(--ntn-space-5);
+  padding: calc(var(--ntn-gutter) - 4px) var(--ntn-gutter);
   border-top: 1px solid var(--ntn-border-subtle);
   background: var(--ntn-alpha-ink-04);
   animation: ntn-rise var(--ntn-dur-base) var(--ntn-ease-out);
@@ -4526,7 +4575,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   display: flex;
   align-items: center;
   gap: var(--ntn-space-1);
-  min-height: 30px;
+  min-height: var(--ntn-row-min-h);
   padding: 0 8px 0 2px;
   border: 1px solid transparent;
   border-radius: var(--ntn-radius-sm);
@@ -4703,7 +4752,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   --ntn-tree-indent: 18px;
 }
 .ntn-tree--sm .ntn-tree__row {
-  min-height: 26px;
+  min-height: max(var(--ntn-target-min), var(--ntn-row-min-h) - 4px);
 }
 
 .ntn-tree--flush {
@@ -4894,7 +4943,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 9px 10px;
+  padding: calc(var(--ntn-item-pad-y) + 2px) 10px;
   border: 1px solid transparent;
   border-radius: var(--ntn-radius-md);
   background: transparent;
@@ -4942,7 +4991,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   border-left: 1px solid var(--ntn-border-subtle);
 }
 .ntn-sidebar__sub .ntn-sidebar__item {
-  padding: 7px 10px 7px 20px;
+  padding: var(--ntn-item-pad-y) 10px var(--ntn-item-pad-y) 20px;
 }
 .ntn-sidebar__foot {
   margin-top: var(--ntn-space-3);
@@ -4956,7 +5005,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   }
   .ntn-sidebar[data-collapsed] .ntn-sidebar__item {
     justify-content: center;
-    padding: 9px 0;
+    padding: calc(var(--ntn-item-pad-y) + 2px) 0;
   }
   .ntn-sidebar[data-collapsed] .ntn-sidebar__item > span,
   .ntn-sidebar[data-collapsed] .ntn-sidebar__label,
@@ -5048,7 +5097,8 @@ i:is([class*=fa-], [data-icon], :empty) {
   gap: 7px;
   flex: 0 0 auto;
   margin: 0 var(--ntn-space-2) -1px;
-  padding: 0 2px 10px;
+  padding: 0 2px calc(var(--ntn-item-pad-y) + 3px);
+  min-height: var(--ntn-target-min);
   background: transparent;
   border: 0;
   border-bottom: 2px solid transparent;
@@ -5109,7 +5159,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   position: relative;
   z-index: 1;
   margin: 0;
-  padding: 6px 12px;
+  padding: calc(var(--ntn-item-pad-y) - 1px) 12px;
   border-bottom: 0;
   border-radius: var(--ntn-radius-md);
 }
@@ -5149,7 +5199,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 }
 :is(.ntn-tabs--vertical, .ntn-tabs[aria-orientation=vertical]) .ntn-tabs__tab {
   margin: 0 -1px 0 0;
-  padding: var(--ntn-space-2) var(--ntn-space-3);
+  padding: calc(var(--ntn-item-pad-y) + 1px) var(--ntn-space-3);
   border-bottom: 0;
   border-right: 2px solid transparent;
   justify-content: flex-start;
@@ -5253,7 +5303,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 11px;
+  padding: calc(var(--ntn-item-pad-y) - 1px) 11px;
   background: transparent;
   border: 1px solid var(--ntn-border-subtle);
   border-radius: var(--ntn-radius-md);
@@ -5280,8 +5330,8 @@ i:is([class*=fa-], [data-icon], :empty) {
   gap: 2px;
 }
 .ntn-pager__page {
-  min-width: 28px;
-  height: 28px;
+  min-width: var(--ntn-control-sm);
+  height: var(--ntn-control-sm);
   padding: 0 6px;
   border: 1px solid transparent;
   border-radius: var(--ntn-radius-sm);

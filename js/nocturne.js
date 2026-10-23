@@ -164,6 +164,19 @@ function tabInk(list) {
   list.setAttribute('data-ntn-ink', '');
 }
 
+/* Tabs can change size with no window resize: density switched live, a container resizing, a
+   label changing. Watching each list and its tabs re-measures the ink whenever one does. */
+let tabResize;
+function observeTabs(list, tabs) {
+  if (typeof ResizeObserver !== 'function') return;
+  if (!tabResize) {
+    tabResize = new ResizeObserver((entries) => {
+      new Set(entries.map((e) => e.target.closest('.ntn-tabs'))).forEach((l) => { if (l) tabInk(l); });
+    });
+  }
+  [list, ...tabs].forEach((el) => tabResize.observe(el));
+}
+
 /* Tab lists already announced once, so a later refresh() never re-fires ntn:tabchange. */
 const announcedTabs = new WeakSet();
 
@@ -207,6 +220,7 @@ function setupTabs(list) {
     if (t.tagName === 'BUTTON' && !t.hasAttribute('type')) t.type = 'button';
     t.tabIndex = t.getAttribute('aria-selected') === 'true' ? 0 : -1;
   });
+  observeTabs(list, tabs);
   const sel = list.querySelector('.ntn-tabs__tab[aria-selected="true"]');
   const first = !announcedTabs.has(list);
   announcedTabs.add(list);

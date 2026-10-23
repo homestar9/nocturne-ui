@@ -132,6 +132,42 @@ listener, and ignores its own theme controls. The CSS still follows `data-theme`
 sets. `setTheme()` and `toggleTheme()` still work if you call them. Put the attribute in the
 server-rendered HTML: `nocturne.js` starts itself as soon as it is imported and reads it then.
 
+## Density
+
+Comfortable is the default. For a denser app, set `data-density` on `<html>`:
+
+```html
+<html data-theme="dark" data-density="compact">   <!-- or "comfortable", the default -->
+```
+
+Compact tightens control heights (34px buttons become 28px), the vertical padding of table rows,
+menu items, tabs and callouts, the card gutter, and the field and layout gaps. Type, radii and
+widths stay the same, and `--sm`/`--lg` stay relative to the new base. It is CSS only: no script,
+no storage key. If your users choose, store their choice yourself and print the attribute on the
+server, as with `data-theme`.
+
+Like `data-theme`, it works on a subtree. A dense data region can sit in a roomy app, and
+`data-density="comfortable"` resets a region inside a compact one:
+
+```html
+<div class="ntn-table" data-density="compact">…</div>
+```
+
+A menu or popover follows the region it opens from. A toast mounts on `<body>`, so it follows the
+page.
+
+Two rules keep it accessible:
+- **24px floor.** No control, and no size derived from one, goes below `--ntn-target-min` (24px,
+  WCAG 2.2 target size).
+- **Touch.** On a touch screen (`pointer: coarse`) compact keeps comfortable control heights;
+  rows and surfaces still tighten.
+
+The tokens it sets are listed in [`skill/components.md`](skill/components.md#density). They are
+spacing, which products share rather than fork (see Accent below): read them in a custom block so
+it follows density, but don't set them. A `:root` override would also beat compact on `<html>`
+(same specificity, later rule), and a theme scoped more tightly than `[data-density]` would pin
+one value for every density.
+
 ## Accent
 
 Accent is the main channel a product may override, and it applies to both themes. Violet is the
