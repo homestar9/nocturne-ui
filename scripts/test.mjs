@@ -212,6 +212,31 @@ try {
     .filter((m) => m[1].split('.ntn-tree__group').length - 1 === Number(m[2])).map((m) => Number(m[2])));
   check([...Array(8)].every((_, i) => flushLevels.has(i + 1)), `a --flush tree indents each level by its depth (levels ${[...flushLevels].sort((a, b) => a - b).join(',')})`);
 
+  console.log('Role sizes (NTN-30)');
+  // These rules size themselves from a role token, never a literal, so retuning the token (density)
+  // moves them all. Selector → token it must read.
+  const ROLE_SIZES = {
+    '.ntn-combo__trigger': 'control-pad-y', '.ntn-combo--sm .ntn-combo__trigger': 'control-pad-y',
+    '.ntn-table th': 'row-pad-y', '.ntn-table td': 'row-pad-y',
+    '.ntn-tree__row': 'row-min-h', '.ntn-tree--sm .ntn-tree__row': 'row-min-h',
+    '.ntn-menu__item': 'item-pad-y', '.ntn-menu__label': 'item-pad-y', '.ntn-combo__option': 'item-pad-y',
+    '.ntn-daterange__preset': 'item-pad-y', '.ntn-sidebar__item': 'item-pad-y',
+    '.ntn-sidebar__sub .ntn-sidebar__item': 'item-pad-y', '.ntn-sidebar[data-collapsed] .ntn-sidebar__item': 'item-pad-y',
+    '.ntn-tabs__tab': 'item-pad-y', '.ntn-tabs--pill .ntn-tabs__tab': 'item-pad-y', '.ntn-pager__step': 'item-pad-y',
+    '.ntn-card__head': 'gutter', '.ntn-card__body': 'gutter', '.ntn-card__foot': 'gutter', '.ntn-stat': 'gutter',
+    '.ntn-modal__head': 'gutter', '.ntn-modal__body': 'gutter', '.ntn-modal__foot': 'gutter', '.ntn-popover': 'gutter',
+    '.ntn-toolbar': 'gutter', '.ntn-filters': 'gutter',
+    '.ntn-card--flush .ntn-table th:first-child, .ntn-card--flush .ntn-table td:first-child': 'gutter',
+    '.ntn-card--flush .ntn-table th:last-child, .ntn-card--flush .ntn-table td:last-child': 'gutter',
+    '.ntn-alert': 'box-pad-y', '.ntn-toast': 'box-pad-y', '.ntn-accordion__item > summary': 'box-pad-y',
+    '.ntn-field': 'field-gap', '.ntn-select': 'field-gap', '.ntn-combo': 'field-gap', '.ntn-daterange': 'field-gap',
+    '.ntn-page': 'layout-gap', '.ntn-grid': 'layout-gap', '.ntn-pager__page': 'control-sm',
+  };
+  const roleMisses = Object.entries(ROLE_SIZES)
+    .filter(([sel, token]) => !rules.some((r) => r.sel === sel && r.body.includes(`var(--ntn-${token})`)))
+    .map(([sel, token]) => `${sel} (--ntn-${token})`);
+  check(roleMisses.length === 0, `each of ${Object.keys(ROLE_SIZES).length} rules reads its role size token` + (roleMisses.length ? ': ' + roleMisses.join(', ') : ''));
+
   console.log('Component shadows follow the theme');
   // A raw black shadow never softens in the light theme; components read the --ntn-shadow-* tokens.
   const componentsDir = resolve(root, 'src', 'components');
@@ -241,6 +266,39 @@ try {
   const rootOnly = blocks.filter((b) => b.sel === ':root').flatMap((b) => b.decls);
   const stale = rootOnly.filter(([, v]) => [...v.matchAll(/var\((--ntn-[a-z0-9-]+)/g)].some((m) => lightNames.has(m[1]))).map(([n]) => n);
   check(stale.length === 0, 'no :root-only token reads a mode token (it would resolve once, at the root)' + (stale.length ? ': ' + stale.join(' ') : ''));
+
+  console.log('data-density works on a subtree (NTN-31)');
+  // The touch block sits in an @media, which parseBlocks would read as a second compact block.
+  const tokensText = (await readFile(join(base, 'tokens.css'), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '');
+  const coarse = tokensText.match(/@media \(pointer: coarse\) \{\s*\[data-density="?compact"?\] \{([^}]*)\}\s*\}/);
+  const densityBlocks = parseBlocks(coarse ? tokensText.replace(coarse[0], '') : tokensText);
+  const densityDecls = (re) => densityBlocks.filter((b) => re.test(b.sel)).flatMap((b) => b.decls);
+  const comfortable = new Map(densityDecls(/^:root, \[data-density="?comfortable"?\]$/));
+  const compact = new Map(densityDecls(/^\[data-density="?compact"?\]$/));
+  const missingComfy = [...compact.keys()].filter((n) => !comfortable.has(n));
+  check(compact.size >= 10 && missingComfy.length === 0,
+    `each of the ${compact.size} tokens compact remaps also has a comfortable value, so a comfortable subtree resets it` + (missingComfy.length ? ': ' + missingComfy.join(' ') : ''));
+  const densityRaw = [...tokensText.matchAll(/\[data-density[^{]*\{([^}]*)\}/g)].flatMap((m) => m[1].split(';').map((d) => d.trim()).filter(Boolean));
+  const notTokens = densityRaw.filter((d) => !d.startsWith('--ntn-'));
+  check(densityRaw.length > 0 && notTokens.length === 0, 'density blocks set token values only, never a component property' + (notTokens.length ? ': ' + notTokens.join('; ') : ''));
+  const derived = [...comfortable, ...compact].filter(([, v]) => /var\(/.test(v)).map(([n]) => n);
+  check(derived.length === 0, 'both density levels state literal values (nesting either way needs no recomputation)' + (derived.length ? ': ' + derived.join(' ') : ''));
+  const densityStale = rootOnly.filter(([, v]) => [...v.matchAll(/var\((--ntn-[a-z0-9-]+)/g)].some((m) => compact.has(m[1]))).map(([n]) => n);
+  check(densityStale.length === 0, 'no :root-only token reads a density token' + (densityStale.length ? ': ' + densityStale.join(' ') : ''));
+  const px = (v) => parseFloat(v);
+  const targetMin = px(rootOnly.find(([n]) => n === '--ntn-target-min')?.[1] ?? 'NaN');
+  check(targetMin === 24 && ['sm', 'md', 'lg'].every((s) => px(compact.get(`--ntn-control-${s}`)) >= targetMin),
+    `compact control heights stay at or above --ntn-target-min (${targetMin}px, WCAG 2.2 SC 2.5.8)`);
+  const touch = coarse ? new Map([...coarse[1].matchAll(/(--ntn-[a-z0-9-]+)\s*:([^;]*);/g)].map((d) => [d[1], d[2].trim()])) : new Map();
+  check(['sm', 'md', 'lg'].every((s) => touch.get(`--ntn-control-${s}`) === comfortable.get(`--ntn-control-${s}`)),
+    'on a coarse pointer compact keeps the comfortable control heights');
+  // A size derived from a control height (a segment, an inline action) floors at the target minimum.
+  const unfloored = [...css.matchAll(/(.{0,32})calc\(var\(--ntn-control-(?:sm|md|lg)\) - [^)]*\)/g)]
+    .filter((m) => !m[1].endsWith('max(var(--ntn-target-min), ')).map((m) => m[0].trim());
+  check(unfloored.length === 0, 'every height derived from --ntn-control-* is floored with max(var(--ntn-target-min), …)' + (unfloored.length ? ': ' + unfloored.join(' | ') : ''));
+  // NTN-33: "compact" names the density, so no block keeps a --compact modifier of its own.
+  const compactMods = [...new Set([...css.matchAll(/\.ntn-[a-z-]+--compact\b/g)].map((m) => m[0]))];
+  check(compactMods.length === 0, 'no block has a --compact modifier (density is data-density)' + (compactMods.length ? ': ' + compactMods.join(' ') : ''));
 
   console.log('Chart hues stay in charts');
   // Magenta and cyan are chart series two and three (skill/brand.md). Chrome reads a token a theme can retint.

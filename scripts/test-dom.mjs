@@ -135,6 +135,28 @@ console.log('Tabs announce real changes only, and refresh() is quiet (R13)');
   check(events.join(',') === 'x:initial', `a newly rendered list is announced once with initial (events: ${events.join(',')})`);
 }
 
+console.log('Tab ink follows a tab that resizes on its own (NTN-32)');
+{
+  // jsdom has no layout and no ResizeObserver: stub both, then resize a tab without a window resize.
+  const observed = new Set();
+  let notify;
+  globalThis.ResizeObserver = class { constructor(cb) { notify = cb; } observe(el) { observed.add(el); } };
+  const { document } = await page(
+    `<div class="ntn-tabs" role="tablist" id="t">
+       <button class="ntn-tabs__tab" aria-selected="true">A</button>
+       <button class="ntn-tabs__tab">B</button>
+     </div>`);
+  delete globalThis.ResizeObserver;
+  const list = document.getElementById('t');
+  const [a, b] = list.querySelectorAll('.ntn-tabs__tab');
+  check(observed.has(list) && observed.has(a) && observed.has(b), 'the tab list and each of its tabs are observed');
+  const box = { offsetLeft: 12, offsetWidth: 64, offsetHeight: 24, offsetTop: 0 };
+  for (const [k, v] of Object.entries(box)) Object.defineProperty(a, k, { configurable: true, get: () => v });
+  notify([{ target: a }]);
+  check(list.style.getPropertyValue('--ntn-tab-w') === '64px' && list.style.getPropertyValue('--ntn-tab-x') === '12px',
+    `a resize re-measures the ink (x ${list.style.getPropertyValue('--ntn-tab-x') || 'unset'}, w ${list.style.getPropertyValue('--ntn-tab-w') || 'unset'})`);
+}
+
 console.log('Dropdown and popover (R1, R2)');
 {
   const { document, window, mod } = await page(

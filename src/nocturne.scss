@@ -1,7 +1,7 @@
 /* Nocturne — full stylesheet: tokens + reset + components. */
 
 // @use emits each module once, in the order listed, and that order is the cascade: the light
-// theme follows the token blocks it remaps, glass follows the containers it restyles, effects
+// theme and density follow the token blocks they remap, glass follows the containers it restyles, effects
 // follow containers so their modifiers win, the table and sidebar come after glass, and the
 // gradient wash comes last so it lies over every surface's own background.
 @use "tokens/fonts";
@@ -11,6 +11,7 @@
 @use "tokens/elevation";
 @use "tokens/motion";
 @use "tokens/theme-light";
+@use "tokens/density";
 @use "base/base";
 @use "components/layout";
 @use "components/buttons";

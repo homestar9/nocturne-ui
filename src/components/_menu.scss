@@ -18,7 +18,7 @@
 
 /* Popover: a panel for content that is not a menu (a filter form, a short editor), role="dialog". */
 .ntn-popover {
-  min-width: 240px; max-width: min(420px, calc(100vw - 16px)); padding: var(--ntn-space-4);
+  min-width: 240px; max-width: min(420px, calc(100vw - 16px)); padding: calc(var(--ntn-gutter) - 4px);
   display: flex; flex-direction: column; gap: var(--ntn-space-3);
   color: var(--ntn-text-primary);
   @include popover-surface;
@@ -32,7 +32,7 @@
 
   &__item {
     display: flex; align-items: center; justify-content: space-between; gap: var(--ntn-space-2);
-    width: 100%; padding: 7px 10px; border: 0; border-radius: var(--ntn-radius-sm);
+    width: 100%; padding: var(--ntn-item-pad-y) 10px; border: 0; border-radius: var(--ntn-radius-sm);
     background: transparent; color: var(--ntn-text-secondary);
     font-family: var(--ntn-font-sans); font-size: var(--ntn-font-size-sm); text-align: left; cursor: pointer;
 
@@ -51,7 +51,7 @@
       &#{$enabled-hover}, &[data-ntn-active] { background: var(--ntn-danger-soft); color: var(--ntn-danger-400); }
     }
   }
-  &__label { /* Section heading inside a long menu. */ margin: 0; padding: 7px 10px 4px; @include caps-label; }
+  &__label { /* Section heading inside a long menu. */ margin: 0; padding: var(--ntn-item-pad-y) 10px 4px; @include caps-label; }
   &__shortcut { flex: 0 0 auto; font-family: var(--ntn-font-mono); font-size: var(--ntn-font-size-2xs); color: var(--ntn-text-disabled); }
   .ntn-divider { margin: var(--ntn-space-1) 0; }
 }
@@ -99,12 +99,12 @@
    <div class="ntn-combo" data-ntn-combo [data-ntn-multi] [data-ntn-search]> */
 
 .ntn-combo {
-  position: relative; display: flex; flex-direction: column; gap: 6px; width: 100%;
+  position: relative; display: flex; flex-direction: column; gap: var(--ntn-field-gap); width: 100%;
 
   &__label { @include field-label; }
   &__trigger {
     display: flex; align-items: center; gap: var(--ntn-space-2); width: 100%;
-    min-height: var(--ntn-control-md); padding: 5px 10px 5px 12px;
+    min-height: var(--ntn-control-md); padding: var(--ntn-control-pad-y) 10px var(--ntn-control-pad-y) 12px;
     @include control-surface;
     color: var(--ntn-text-primary);
     font-family: var(--ntn-font-sans); font-size: var(--ntn-font-size-sm); font-weight: var(--ntn-weight-medium); text-align: left; cursor: pointer;
@@ -165,7 +165,7 @@
   &__list { display: flex; flex-direction: column; gap: 1px; max-height: 260px; overflow-y: auto; overscroll-behavior: contain; }
 
   &__option {
-    display: flex; align-items: center; gap: var(--ntn-space-2); width: 100%; padding: 7px 9px;
+    display: flex; align-items: center; gap: var(--ntn-space-2); width: 100%; padding: var(--ntn-item-pad-y) 9px;
     border: 0; border-radius: var(--ntn-radius-sm); background: transparent; color: var(--ntn-text-secondary);
     font-family: var(--ntn-font-sans); font-size: var(--ntn-font-size-sm); text-align: left; cursor: pointer;
 
@@ -198,7 +198,7 @@
   &__foot { display: flex; align-items: center; justify-content: space-between; gap: var(--ntn-space-2); margin-top: 2px; padding: 6px 4px 2px; border-top: 1px solid var(--ntn-border-subtle); }
   &__hint { font-size: var(--ntn-font-size-xs); color: var(--ntn-text-muted); }
 
-  &--sm &__trigger { min-height: var(--ntn-control-sm); font-size: var(--ntn-font-size-xs); padding: 4px 8px 4px 10px; }
+  &--sm &__trigger { min-height: var(--ntn-control-sm); font-size: var(--ntn-font-size-xs); padding: calc(var(--ntn-control-pad-y) - 1px) 8px calc(var(--ntn-control-pad-y) - 1px) 10px; }
   &--lg &__trigger { min-height: var(--ntn-control-lg); font-size: var(--ntn-font-size-md); }
   &--inline {
     flex-direction: row; align-items: center; gap: var(--ntn-space-2); width: auto;

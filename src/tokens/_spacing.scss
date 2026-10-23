@@ -21,12 +21,12 @@
   --ntn-radius-2xl:  18px;
   --ntn-radius-full: 999px;
 
-  --ntn-control-sm: 28px;
-  --ntn-control-md: 34px;
-  --ntn-control-lg: 40px;
+  /* The smallest hit target (WCAG 2.2 SC 2.5.8). A size derived from a control height never goes
+     below it, whatever the density. */
+  --ntn-target-min: 24px;
 
+  /* Control heights, role sizes and --ntn-topbar-h follow data-density: see _density.scss. */
   --ntn-sidebar-w:  244px;
   --ntn-rail-w:     56px;
-  --ntn-topbar-h:   56px;
   --ntn-page-max:   1440px;
 }

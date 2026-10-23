@@ -6,6 +6,45 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.13.0 — 2026-10-23
+
+### Added
+- **Density** (NTN-31): `data-density="compact"` on `<html>`, or on any subtree, tightens the kit.
+  `"comfortable"` is the default and resets a subtree. CSS only.
+  - What changes: control heights drop to 24/28/34px, and rows, items, callouts, the card gutter,
+    the field and layout gaps and the navbar tighten. Type, radii and widths stay.
+  - On a touch screen (`pointer: coarse`) controls keep their comfortable heights.
+  - **Token:** `--ntn-target-min` (24px). Sizes derived from a control height (toggle-group
+    segments, the field's inline action, the small tree row) floor at it, and tabs never go below
+    it.
+  - The control heights, role sizes and `--ntn-topbar-h` moved to `src/tokens/_density.scss`.
+  - Kitchen sink: a density switch in the top bar, and a compact / comfortable / compact demo.
+- **Role size tokens** (NTN-30): the vertical rhythm of controls, rows and surfaces now comes from
+  eight tokens, at the values the components used before, so nothing moves:
+  - `--ntn-control-pad-y` (combobox trigger);
+  - `--ntn-row-pad-y` (table cells) and `--ntn-row-min-h` (tree rows);
+  - `--ntn-item-pad-y` (menu items, combobox options, sidebar items, tabs, date presets, pager
+    steps);
+  - `--ntn-gutter` (card, modal, stat and popover padding; the flush table edges, toolbar and
+    filters line up with it);
+  - `--ntn-box-pad-y` (alert, toast, accordion summary, modal foot);
+  - `--ntn-field-gap` (label to control) and `--ntn-layout-gap` (page and grid gaps).
+
+### Changed
+- **`ntn-pager__page` is `--ntn-control-sm` square** (NTN-30), the same 28px it hard-coded before.
+- **"Compact" now only means density** (NTN-33):
+  - `ntn-table--compact` is removed. Put `data-density="compact"` on the `.ntn-table` instead.
+    The header row and any controls in the cells tighten with the body rows.
+  - `ntn-dropzone--compact` is renamed `ntn-dropzone--inline` (the one-line drop area), matching
+    the other `--inline` modifiers.
+  - The Density guidance in `skill/patterns.md` now covers app, user and region choices.
+
+### Fixed
+- **The tab ink follows a tab that changes size** (NTN-32). `nocturne.js` watches each tab list
+  and its tabs with a `ResizeObserver`, so switching density live, resizing a container or
+  changing a label no longer leaves the ink in the old place. Before, it only re-measured on a
+  window resize or once fonts loaded.
+
 ## 1.12.1 — 2026-10-21
 
 ### Fixed

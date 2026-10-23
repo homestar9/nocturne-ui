@@ -130,5 +130,8 @@ the bottom of the page.
 
 ## Density
 
-Comfortable is the default. Use `ntn-table--compact` only when a screen's job is scanning more
-than 25 rows at a time. Never mix densities on one page.
+Comfortable is the default. Compact (`data-density="compact"` on `<html>`) is an app-wide or
+per-user choice: for a tool people work in all day, or a user who asks for it. Never pick it for
+one component. A subtree override is for one dense region (a table whose job is scanning more
+than 25 rows at a time), set on the `.ntn-table` itself; the rest of the page keeps the app's
+density.

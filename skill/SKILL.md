@@ -49,6 +49,8 @@ page-level recipes.
   component. For an app with its own brand colour, `themes/mono.css` keeps the whole kit grey.
 - Themes: `data-theme="dark"` (default), `"light"`, or `"auto"`. `nocturne.js` resolves `auto`,
   persists the choice, and drives any `[data-ntn-theme-toggle]` button.
+- Density: `data-density="compact"` on `<html>` (or a subtree) tightens heights and padding;
+  `"comfortable"` is the default. Never write a `[data-density]` selector in product code.
 - Sizes exist as modifiers (`--sm`, `--lg`); if a size is not offered, the design wants the default.
 
 ## When asked to build a screen

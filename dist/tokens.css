@@ -1,4 +1,4 @@
-/*! Nocturne tokens.css v1.12.1 — dark-first SaaS design system.
+/*! Nocturne tokens.css v1.13.0 — dark-first SaaS design system.
  *  Compiled from src/*.scss. Edit files in src/, never in dist/. */
 
 @import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap");
@@ -216,12 +216,12 @@
   --ntn-radius-xl: 14px;
   --ntn-radius-2xl: 18px;
   --ntn-radius-full: 999px;
-  --ntn-control-sm: 28px;
-  --ntn-control-md: 34px;
-  --ntn-control-lg: 40px;
+  /* The smallest hit target (WCAG 2.2 SC 2.5.8). A size derived from a control height never goes
+     below it, whatever the density. */
+  --ntn-target-min: 24px;
+  /* Control heights, role sizes and --ntn-topbar-h follow data-density: see _density.scss. */
   --ntn-sidebar-w: 244px;
   --ntn-rail-w: 56px;
-  --ntn-topbar-h: 56px;
   --ntn-page-max: 1440px;
 }
 
@@ -376,4 +376,57 @@
   --ntn-shine-head: var(--ntn-accent-400);
   --ntn-shine-glow: 0.2;
   --ntn-scrim: rgba(16,20,27,0.42);
+}
+
+/* ── Nocturne density ────────────────────────────────────────────────────────
+   Applied with data-density="compact" on <html> (or on any subtree, for one dense region in a
+   roomy app). "comfortable" is the default and resets a subtree. Like the light theme, this file
+   remaps token VALUES only: no component rule is overridden.
+
+   Both levels state literal values, so nesting works either way. Components derive any near size
+   in their own rule (the header cell is calc(var(--ntn-row-pad-y) - 2px)), never here: a token
+   computed on :root would resolve once, at the root, and ignore a subtree.
+
+   What changes: control heights, the vertical padding of rows, items and callouts, the surface
+   gutter, and the field and layout gaps. What never does: type, radii, borders, icons, widths. */
+:root, [data-density=comfortable] {
+  --ntn-control-sm: 28px;
+  --ntn-control-md: 34px;
+  --ntn-control-lg: 40px;
+  /* Role sizes: the vertical rhythm of controls, rows and surfaces. Components read these instead
+     of a literal; a rule that needs a near value keeps the offset (calc(var(--ntn-item-pad-y) + 2px)). */
+  --ntn-control-pad-y: 5px; /* a trigger that wraps its content (combobox) */
+  --ntn-row-pad-y: 12px; /* table cell; the header cell is 2px less */
+  --ntn-row-min-h: 30px; /* tree row */
+  --ntn-item-pad-y: 7px; /* menu item, combobox option, sidebar item, tab, date preset, pager step */
+  --ntn-gutter: 20px; /* card and modal padding (stat, popover: 4px less); the flush table, toolbar and filters align to it */
+  --ntn-box-pad-y: 14px; /* alert, toast, accordion summary, modal foot */
+  --ntn-field-gap: 6px; /* a form control's label to its control */
+  --ntn-layout-gap: 14px; /* page and grid gaps; the page's own padding is 10px more */
+  --ntn-topbar-h: 56px;
+}
+
+[data-density=compact] {
+  --ntn-control-sm: 24px;
+  --ntn-control-md: 28px;
+  --ntn-control-lg: 34px;
+  --ntn-control-pad-y: 2px;
+  --ntn-row-pad-y: 8px;
+  --ntn-row-min-h: 24px;
+  --ntn-item-pad-y: 4px;
+  --ntn-gutter: 16px;
+  --ntn-box-pad-y: 10px;
+  --ntn-field-gap: 4px;
+  --ntn-layout-gap: 10px;
+  --ntn-topbar-h: 48px;
+}
+
+/* Compact is a pointer choice. On a touch screen controls keep their comfortable height; rows,
+   items and surfaces still tighten. */
+@media (pointer: coarse) {
+  [data-density=compact] {
+    --ntn-control-sm: 28px;
+    --ntn-control-md: 34px;
+    --ntn-control-lg: 40px;
+  }
 }
