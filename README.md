@@ -458,7 +458,13 @@ publishes through [npm trusted publishing](https://docs.npmjs.com/trusted-publis
 - GitHub's OIDC token replaces an npm token, so there is no `npm login` and no 2FA prompt.
 - npm attaches provenance.
 - The job checks that the tag matches `package.json` and is on `master`.
-- `prepack` rebuilds `dist/` and runs `npm test` before anything is uploaded.
+- `prepack` rebuilds `dist/` and runs `npm test` before anything is uploaded. The tests fail if
+  `CHANGELOG.md` has no section for the `package.json` version.
+- After publishing, it creates the GitHub release, titled "Nocturne X.Y.Z", with that CHANGELOG
+  section as its notes (`scripts/release-notes.mjs`). Add a subtitle or a lead paragraph by
+  editing the release afterwards. A release that already exists for the tag is left alone.
+- The registry can take a few minutes to show a new version after the job's
+  `+ @homestar9/nocturne-ui@X.Y.Z` line.
 
 Watch it under the repo's Actions tab. If it fails, fix the cause, then delete and re-push the
 tag:
