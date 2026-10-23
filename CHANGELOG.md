@@ -6,6 +6,8 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.14.0 — 2026-10-23
+
 ### Added
 - **`ntn-toggle-group--pill`** (NTN-35): a single-choice toggle group drawn like the pill tabs.
   The pressed button is a raised pill on a recessed track, and `nocturne.js` slides one pill
