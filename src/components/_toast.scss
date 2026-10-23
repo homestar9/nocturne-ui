@@ -31,7 +31,7 @@ $-edge: var(--ntn-space-4);
 
 .ntn-toast {
   position: relative; display: flex; align-items: flex-start; gap: var(--ntn-space-3);
-  padding: 12px 12px 12px 14px; overflow: hidden;
+  padding: calc(var(--ntn-box-pad-y) - 2px) 12px calc(var(--ntn-box-pad-y) - 2px) 14px; overflow: hidden;
   border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg);
   background: var(--ntn-surface-2); box-shadow: var(--ntn-shadow-lg); backdrop-filter: var(--ntn-pop-filter);
   color: var(--ntn-text-primary); font-size: var(--ntn-font-size-sm); line-height: var(--ntn-leading-normal);

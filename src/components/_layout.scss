@@ -11,7 +11,7 @@
 }
 
 .ntn-page {
-  width: 100%; max-width: var(--ntn-page-max); margin: 0 auto; padding: var(--ntn-space-6); display: flex; flex-direction: column; gap: 14px;
+  width: 100%; max-width: var(--ntn-page-max); margin: 0 auto; padding: calc(var(--ntn-layout-gap) + 10px); display: flex; flex-direction: column; gap: var(--ntn-layout-gap);
 
   &__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ntn-space-4); flex-wrap: wrap; }
   &__title { margin: 0; font-size: var(--ntn-font-size-2xl); font-weight: var(--ntn-weight-semibold); letter-spacing: var(--ntn-tracking-display); line-height: var(--ntn-leading-tight); color: var(--ntn-text-primary); }
@@ -20,7 +20,7 @@
 }
 
 .ntn-grid {
-  display: grid; gap: 14px;
+  display: grid; gap: var(--ntn-layout-gap);
 
   @each $n in 2, 3, 4 {
     &--#{$n} { grid-template-columns: repeat($n, minmax(0, 1fr)); }

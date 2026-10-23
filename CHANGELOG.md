@@ -6,6 +6,21 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+### Added
+- **Role size tokens** (NTN-30): the vertical rhythm of controls, rows and surfaces now comes from
+  eight tokens, at the values the components used before, so nothing moves:
+  - `--ntn-control-pad-y` (combobox trigger);
+  - `--ntn-row-pad-y` (table cells) and `--ntn-row-min-h` (tree rows);
+  - `--ntn-item-pad-y` (menu items, combobox options, sidebar items, tabs, date presets, pager
+    steps);
+  - `--ntn-gutter` (card, modal, stat and popover padding; the flush table edges, toolbar and
+    filters line up with it);
+  - `--ntn-box-pad-y` (alert, toast, accordion summary, modal foot);
+  - `--ntn-field-gap` (label to control) and `--ntn-layout-gap` (page and grid gaps).
+
+### Changed
+- **`ntn-pager__page` is `--ntn-control-sm` square** (NTN-30), the same 28px it hard-coded before.
+
 ## 1.12.1 — 2026-10-21
 
 ### Fixed

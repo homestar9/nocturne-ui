@@ -23,7 +23,7 @@
 }
 
 .ntn-alert {
-  display: flex; align-items: flex-start; flex-wrap: wrap; gap: var(--ntn-space-3); padding: 14px var(--ntn-space-4);
+  display: flex; align-items: flex-start; flex-wrap: wrap; gap: var(--ntn-space-3); padding: var(--ntn-box-pad-y) var(--ntn-space-4);
   background: tone(info, soft); border: 1px solid tone(info, line); border-radius: var(--ntn-radius-lg);
 
   > i { font-size: 16px; margin-top: 1px; flex: 0 0 auto; color: tone(info, ink); }
@@ -39,7 +39,7 @@
       > i { color: tone($tone, ink); }
     }
   }
-  &--banner { border-radius: 0; border-left: 0; border-right: 0; padding: var(--ntn-space-3) var(--ntn-space-4); }
+  &--banner { border-radius: 0; border-left: 0; border-right: 0; padding: calc(var(--ntn-box-pad-y) - 2px) var(--ntn-space-4); }
 }
 
 /* Tooltip — CSS only. Wrap the trigger, add the bubble as a sibling.

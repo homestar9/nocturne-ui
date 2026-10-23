@@ -212,6 +212,31 @@ try {
     .filter((m) => m[1].split('.ntn-tree__group').length - 1 === Number(m[2])).map((m) => Number(m[2])));
   check([...Array(8)].every((_, i) => flushLevels.has(i + 1)), `a --flush tree indents each level by its depth (levels ${[...flushLevels].sort((a, b) => a - b).join(',')})`);
 
+  console.log('Role sizes (NTN-30)');
+  // These rules size themselves from a role token, never a literal, so retuning the token (density)
+  // moves them all. Selector → token it must read.
+  const ROLE_SIZES = {
+    '.ntn-combo__trigger': 'control-pad-y', '.ntn-combo--sm .ntn-combo__trigger': 'control-pad-y',
+    '.ntn-table th': 'row-pad-y', '.ntn-table td': 'row-pad-y',
+    '.ntn-tree__row': 'row-min-h', '.ntn-tree--sm .ntn-tree__row': 'row-min-h',
+    '.ntn-menu__item': 'item-pad-y', '.ntn-menu__label': 'item-pad-y', '.ntn-combo__option': 'item-pad-y',
+    '.ntn-daterange__preset': 'item-pad-y', '.ntn-sidebar__item': 'item-pad-y',
+    '.ntn-sidebar__sub .ntn-sidebar__item': 'item-pad-y', '.ntn-sidebar[data-collapsed] .ntn-sidebar__item': 'item-pad-y',
+    '.ntn-tabs__tab': 'item-pad-y', '.ntn-tabs--pill .ntn-tabs__tab': 'item-pad-y', '.ntn-pager__step': 'item-pad-y',
+    '.ntn-card__head': 'gutter', '.ntn-card__body': 'gutter', '.ntn-card__foot': 'gutter', '.ntn-stat': 'gutter',
+    '.ntn-modal__head': 'gutter', '.ntn-modal__body': 'gutter', '.ntn-modal__foot': 'gutter', '.ntn-popover': 'gutter',
+    '.ntn-toolbar': 'gutter', '.ntn-filters': 'gutter',
+    '.ntn-card--flush .ntn-table th:first-child, .ntn-card--flush .ntn-table td:first-child': 'gutter',
+    '.ntn-card--flush .ntn-table th:last-child, .ntn-card--flush .ntn-table td:last-child': 'gutter',
+    '.ntn-alert': 'box-pad-y', '.ntn-toast': 'box-pad-y', '.ntn-accordion__item > summary': 'box-pad-y',
+    '.ntn-field': 'field-gap', '.ntn-select': 'field-gap', '.ntn-combo': 'field-gap', '.ntn-daterange': 'field-gap',
+    '.ntn-page': 'layout-gap', '.ntn-grid': 'layout-gap', '.ntn-pager__page': 'control-sm',
+  };
+  const roleMisses = Object.entries(ROLE_SIZES)
+    .filter(([sel, token]) => !rules.some((r) => r.sel === sel && r.body.includes(`var(--ntn-${token})`)))
+    .map(([sel, token]) => `${sel} (--ntn-${token})`);
+  check(roleMisses.length === 0, `each of ${Object.keys(ROLE_SIZES).length} rules reads its role size token` + (roleMisses.length ? ': ' + roleMisses.join(', ') : ''));
+
   console.log('Component shadows follow the theme');
   // A raw black shadow never softens in the light theme; components read the --ntn-shadow-* tokens.
   const componentsDir = resolve(root, 'src', 'components');

@@ -11,7 +11,7 @@
     background: var(--ntn-surface-2);
   }
   th {
-    padding: 10px var(--ntn-space-4); text-align: left; white-space: nowrap; user-select: none;
+    padding: calc(var(--ntn-row-pad-y) - 2px) var(--ntn-space-4); text-align: left; white-space: nowrap; user-select: none;
     border-bottom: 1px solid var(--ntn-border-default);
     font-size: var(--ntn-font-size-xs); font-weight: var(--ntn-weight-medium); color: var(--ntn-text-muted);
 
@@ -19,7 +19,7 @@
     &[aria-sort] { cursor: pointer; color: var(--ntn-text-secondary); }
     &[aria-sort="ascending"] i, &[aria-sort="descending"] i { color: var(--ntn-accent-300); }
   }
-  td { padding: var(--ntn-space-3) var(--ntn-space-4); border-bottom: 1px solid var(--ntn-border-subtle); color: var(--ntn-text-secondary); vertical-align: middle; }
+  td { padding: var(--ntn-row-pad-y) var(--ntn-space-4); border-bottom: 1px solid var(--ntn-border-subtle); color: var(--ntn-text-secondary); vertical-align: middle; }
   tbody tr {
     transition: tr(background);
 
@@ -41,10 +41,10 @@
     tr:last-child td { border-bottom: 1px solid var(--ntn-border-subtle); }
   }
 }
-/* Inside a card the outer cells line up with the card's own 20px gutter. */
+/* Inside a card the outer cells line up with the card's own gutter. */
 .ntn-card--flush .ntn-table {
-  th:first-child, td:first-child { padding-left: var(--ntn-space-5); }
-  th:last-child, td:last-child { padding-right: var(--ntn-space-5); }
+  th:first-child, td:first-child { padding-left: var(--ntn-gutter); }
+  th:last-child, td:last-child { padding-right: var(--ntn-gutter); }
 }
 
 /* ── Table toolbar — the filter row above a table ─────────────────────────── */
@@ -54,9 +54,9 @@
 /* Vertical rhythm: the toolbar is a band of its own between the card head and the
    table, so it carries padding on both sides and a rule underneath. */
 .ntn-toolbar {
-  display: flex; align-items: center; gap: var(--ntn-space-3); flex-wrap: wrap; padding: var(--ntn-space-4) var(--ntn-space-5);
+  display: flex; align-items: center; gap: var(--ntn-space-3); flex-wrap: wrap; padding: calc(var(--ntn-gutter) - 4px) var(--ntn-gutter);
 
-  &:first-child { padding-top: var(--ntn-space-5); }
+  &:first-child { padding-top: var(--ntn-gutter); }
   &--divided { border-bottom: 1px solid var(--ntn-border-default); }
   &--divided + .ntn-filters { /* A revealed filter panel brings its own top rule — never stack the two. */ border-top: 0; }
   &__start { display: flex; align-items: center; gap: var(--ntn-space-2); min-width: 0; flex-wrap: wrap; }
@@ -71,7 +71,7 @@
 /* Expandable filter form — hidden until its disclosure button reveals it. */
 .ntn-filters {
   display: flex; align-items: flex-end; gap: var(--ntn-space-3); flex-wrap: wrap;
-  padding: var(--ntn-space-4) var(--ntn-space-5);
+  padding: calc(var(--ntn-gutter) - 4px) var(--ntn-gutter);
   border-top: 1px solid var(--ntn-border-subtle); background: var(--ntn-alpha-ink-04);
   animation: ntn-rise var(--ntn-dur-base) var(--ntn-ease-out);
 

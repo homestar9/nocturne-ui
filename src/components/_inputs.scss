@@ -7,7 +7,7 @@
      aria-describedby at __error); data-invalid on the block still works. Use the required attribute
      for required fields, and give every text input a placeholder (" " if nothing to say), which lets
      themes float the label with :placeholder-shown. */
-  display: flex; flex-direction: column; gap: 6px; width: 100%;
+  display: flex; flex-direction: column; gap: var(--ntn-field-gap); width: 100%;
 
   &__label { @include field-label; }
   &__control {
@@ -60,7 +60,7 @@
 }
 
 .ntn-select {
-  display: flex; flex-direction: column; gap: 6px; width: 100%;
+  display: flex; flex-direction: column; gap: var(--ntn-field-gap); width: 100%;
 
   &__label { @include field-label; }
   &__control {
