@@ -31,6 +31,12 @@ renamed or removed class names and tokens.
 ### Changed
 - **`ntn-pager__page` is `--ntn-control-sm` square** (NTN-30), the same 28px it hard-coded before.
 
+### Fixed
+- **The tab ink follows a tab that changes size** (NTN-32). `nocturne.js` watches each tab list
+  and its tabs with a `ResizeObserver`, so switching density live, resizing a container or
+  changing a label no longer leaves the ink in the old place. Before, it only re-measured on a
+  window resize or once fonts loaded.
+
 ## 1.12.1 — 2026-10-21
 
 ### Fixed
