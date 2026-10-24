@@ -6,6 +6,24 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.15.0 — 2026-10-24
+
+### Added
+- **The kitchen sink is live** at <https://homestar9.github.io/nocturne-ui/>, redeployed from
+  `master` on every release (`.github/workflows/pages.yml`). Its "Read me" button now opens the
+  README on GitHub.
+- **`ntn-glass--clear`** and **`ntn-glass--frosted`**: a thinner or denser glass fill (50% or
+  88% instead of 72%). They apply to the element and everything inside it, like `--flat`.
+  Tokens: `--ntn-glass-bg-clear`, `--ntn-glass-bg-frosted`. The kitchen sink shows the three side
+  by side over the full-strength photo.
+- **`--ntn-glass-sheen`**: a faint top-lit gradient over dark glass (3% ink fading out), drawn as
+  a separate `background-image` so `ntn-edge--glow` and `ntn-gradient` keep the glass fill under
+  their own wash. `none` in light mode.
+
+### Changed
+- **Subtler glass edge.** `--ntn-glass-highlight` is a 1px hairline again (6% white in dark, 60%
+  in light), after DeployBot. The 10px, 30% inner glow read as a hard bevel.
+
 ## 1.14.0 — 2026-10-23
 
 ### Added

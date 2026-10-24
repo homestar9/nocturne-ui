@@ -23,11 +23,11 @@ npm install @homestar9/nocturne-ui
 No bundler? Load it from a CDN, or vendor the one file — `dist/nocturne.css` is self-contained:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.14.0/dist/nocturne.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.15.0/dist/nocturne.css">
 ```
 
 ```bash
-curl -O https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.14.0/dist/nocturne.css
+curl -O https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.15.0/dist/nocturne.css
 ```
 
 ## Use
@@ -223,7 +223,9 @@ For a page that sits over artwork or a gradient, two opt-in classes:
   and blurred, with a lit top edge. Put it on the surface itself, or on any wrapper (up to
   `.ntn-app`) to glaze every surface inside. Controls, menus and modals stay solid. Add
   **`ntn-glass--flat`** to drop the lit top edge: it looks cleaner over the plain glow, while the
-  edge helps surfaces stand off a photo.
+  edge helps surfaces stand off a photo. **`ntn-glass--clear`** thins the fill so more of the
+  artwork shows, and **`ntn-glass--frosted`** thickens it so text holds over a busy photo. Like
+  `--flat`, they apply to the element and everything inside it.
 - **`ntn-ambient`**, the first child of `.ntn-app`, is the backdrop: a static accent glow behind
   the top of the page that fades into the canvas. Add your own artwork one of two ways:
   - `--ntn-background-image` draws it at full strength, filling the app. Best when the content
@@ -396,7 +398,9 @@ npm run sink       # serves the repo and prints the kitchen sink URL
 Open the kitchen sink through `npm run sink`, not by double-clicking the file. Browsers block
 module scripts on `file://` pages, so `nocturne.js` never loads there: the CSS renders, but the
 theme toggle, tabs, dialogs and dropdowns do nothing. It loads `dist/`, so keep `npm run watch`
-running while you edit.
+running while you edit. The latest release's kitchen sink is also live at
+<https://homestar9.github.io/nocturne-ui/>, redeployed from `master` on every release; use
+`npm run sink` for work in progress.
 
 Each kitchen-sink section has a **Code** button that shows the markup of its examples, with a
 Copy button per snippet; the code button in the top bar opens every section at once. Code is off
@@ -481,6 +485,13 @@ The trusted publisher is set on npmjs.com under the package's Settings → Trust
 A manual `npm publish` (after `npm login`) still works as a fallback, unless publishing access is
 set to disallow tokens. Without a valid session it fails with a misleading
 `404 Not Found - PUT …/@homestar9%2fnocturne-ui`, not an auth error.
+
+**The master push redeploys the kitchen sink.** `.github/workflows/pages.yml` publishes the
+checkout to [GitHub Pages](https://homestar9.github.io/nocturne-ui/) whenever `master` moves:
+- It needs the repo's Settings → Pages → Source set to GitHub Actions.
+- If it fails, re-run it from the Actions tab (or run it by hand there). The tag doesn't need
+  re-pushing.
+- Pages caches files for about 10 minutes, so the new sink can take a little while to show.
 
 Bump before building: the
 `dist/` banners read the version from `package.json`, so building first commits a `dist/` that

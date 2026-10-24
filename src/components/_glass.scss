@@ -17,7 +17,8 @@
                 that surface glass; on any other element it makes every such surface inside it
                 glass. Inputs, buttons, badges and menus stay solid so they stay readable.
                 --flat drops the lit top edge: cleaner over the plain glow, while the edge
-                helps a surface stand off busy artwork.
+                helps a surface stand off busy artwork. --clear thins the fill for a quiet
+                backdrop; --frosted thickens it so text holds over a busy photo.
 
    The surface rules sit right after the components they restyle and match their specificity,
    so they beat the base background while state modifiers (an interactive card's hover, the
@@ -89,21 +90,28 @@ $-mid: calc(50% - var(--ntn-ambient-size) / 2);
 .ntn-ambient ~ .ntn-ambient { background: none; }
 
 /* Glass surfaces */
+/* The sheen is a separate image over the fill, so ntn-edge--glow and ntn-gradient, which set
+   their own background-image later in the cascade, replace the sheen but keep the fill. */
 #{$-glass-surface} {
   background-color: var(--ntn-glass-bg);
+  background-image: var(--ntn-glass-sheen);
   border-color: var(--ntn-glass-border);
   box-shadow: var(--ntn-glass-highlight), var(--ntn-glass-shadow);
   backdrop-filter: var(--ntn-glass-blur);
 }
 #{$-glass-sidebar} {
   background-color: var(--ntn-glass-bg);
+  background-image: var(--ntn-glass-sheen);
   border-color: var(--ntn-glass-border);
   backdrop-filter: var(--ntn-glass-blur);
 }
 
-/* Flat: no lit top edge, for this element and everything inside it. Re-declared on data-theme
-   subtrees, which set their own highlight. */
+/* Flat: no lit top edge. Clear and frosted: a thinner or denser fill. Each applies to this
+   element and everything inside it, and is re-declared on data-theme subtrees, which set their
+   own tokens. */
 .ntn-glass--flat, .ntn-glass--flat [data-theme] { --ntn-glass-highlight: 0 0 #0000; }
+.ntn-glass--clear, .ntn-glass--clear [data-theme] { --ntn-glass-bg: var(--ntn-glass-bg-clear); }
+.ntn-glass--frosted, .ntn-glass--frosted [data-theme] { --ntn-glass-bg: var(--ntn-glass-bg-frosted); }
 
 /* Nested surfaces stay quiet: no second blur, no second drop. */
 .ntn-glass:is(#{$-surfaces}) :is(#{$-surfaces}),
@@ -118,8 +126,8 @@ $-mid: calc(50% - var(--ntn-ambient-size) / 2);
 /* Back to solid when the user asks for less transparency, and for the phone drawer, which
    slides over page content rather than artwork. */
 @media (prefers-reduced-transparency: reduce) {
-  #{$-glass-surface} { background-color: var(--ntn-surface-1); backdrop-filter: none; }
+  #{$-glass-surface} { background-color: var(--ntn-surface-1); background-image: none; backdrop-filter: none; }
 }
 @media (prefers-reduced-transparency: reduce), #{below(md)} {
-  #{$-glass-sidebar} { background-color: var(--ntn-bg-sunken); backdrop-filter: none; }
+  #{$-glass-sidebar} { background-color: var(--ntn-bg-sunken); background-image: none; backdrop-filter: none; }
 }
