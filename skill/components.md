@@ -536,6 +536,8 @@ backdrop.
 | --- | --- |
 | `ntn-glass` | On a `ntn-card`, `ntn-stat`, `ntn-accordion` or `ntn-sidebar`: that surface turns translucent and blurred, with a lit top edge. On any other element: every such surface inside it does. Table heads and the sidebar brand inside turn to a faint tint. Nested surfaces keep the tint but drop the second blur and shadow |
 | `ntn-glass--flat` | With `ntn-glass`: no lit top edge, for that element and everything inside. Use it over the plain `ntn-ambient` glow; keep the edge over a photo |
+| `ntn-glass--clear` | With `ntn-glass`: a thinner fill, for that element and everything inside. Use it over a quiet backdrop where more of the artwork should show |
+| `ntn-glass--frosted` | With `ntn-glass`: a denser fill, for that element and everything inside. Use it where text sits over a busy, full-strength photo |
 | `ntn-ambient` | The backdrop: a static accent glow behind the top of the app that fades into the canvas. First child of `.ntn-app`, or of a panel with `position: relative; isolation: isolate; overflow: hidden`. Add artwork with a root-relative URL: `--ntn-background-image` at full strength (when everything on it is glass), or `--ntn-ambient-image` dimmed and faded (when text also sits on it) |
 | `ntn-ambient--bottom` `--left` `--right` | Move the glow's band to that edge. The default, with no class, is the top |
 | `ntn-ambient--top-left` `--top-right` `--bottom-left` `--bottom-right` | The band becomes a square in that corner, fading out radially |
@@ -564,7 +566,9 @@ first draws `--ntn-background-image`.
 
 Inputs, buttons, badges, menus, popovers and modals stay solid. Glass falls back to solid under
 `prefers-reduced-transparency`, and the sidebar does too as the phone drawer. Tune it with
-`--ntn-glass-bg`, `--ntn-glass-border`, `--ntn-glass-highlight`, `--ntn-glass-shadow` and
+`--ntn-glass-bg` (and `--ntn-glass-bg-clear` / `--ntn-glass-bg-frosted`, the modifiers' fills),
+`--ntn-glass-sheen` (a faint top-lit gradient over the fill in dark mode, `none` in light),
+`--ntn-glass-border`, `--ntn-glass-highlight` (the 1px lit top edge), `--ntn-glass-shadow` and
 `--ntn-glass-blur`; the backdrop with `--ntn-background-image`, `--ntn-ambient-image`,
 `--ntn-ambient-opacity`, `--ntn-ambient-size` (the band's depth from its edge) and
 `--ntn-ambient-glow` (any colour, ideally translucent: the accent's is 35%). Keep the backdrop static: blur over a moving one re-renders every frame.

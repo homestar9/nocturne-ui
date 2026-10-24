@@ -15,9 +15,9 @@
   --ntn-shadow-float:    0 2px 6px rgba(0,0,0,0.5);
   --ntn-shadow-inset:    inset 0 1px 2px rgba(0,0,0,0.4);
 
-  /* Glass (_glass.scss): a lit top edge and a wide soft drop; the strength of an app's
+  /* Glass (_glass.scss): a lit top hairline and a wide soft drop; the strength of an app's
      ambient image */
-  --ntn-glass-highlight: inset 0px 10px 10px -10px rgba(255,255,255,0.3);
+  --ntn-glass-highlight: inset 0 1px 0 rgba(255,255,255,0.06);
   --ntn-glass-shadow:    0 24px 60px -24px rgba(0,0,0,0.70);
   --ntn-ambient-opacity: 0.5;
 
