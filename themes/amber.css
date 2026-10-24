@@ -89,7 +89,10 @@
   --ntn-border-default: #DDDAD5; /* DB border */
   --ntn-border-strong:  #CAC7C0;
 
-  /* Glass (ntn-glass): DeployBot's surface at 72%, and a hairline at 9% ink */
-  --ntn-glass-bg:     color-mix(in srgb, var(--ntn-n-50) 72%, transparent);
-  --ntn-glass-border: color-mix(in srgb, var(--ntn-n-900) 9%, transparent);
+  /* Glass (ntn-glass): DeployBot's surface at 72% (50% clear, 88% frosted), and a hairline
+     at 9% ink */
+  --ntn-glass-bg-clear:   color-mix(in srgb, var(--ntn-n-50) 50%, transparent);
+  --ntn-glass-bg:         color-mix(in srgb, var(--ntn-n-50) 72%, transparent);
+  --ntn-glass-bg-frosted: color-mix(in srgb, var(--ntn-n-50) 88%, transparent);
+  --ntn-glass-border:     color-mix(in srgb, var(--ntn-n-900) 9%, transparent);
 }

@@ -133,9 +133,14 @@
   --ntn-surface-inset:  rgba(0,0,0,0.25);
   /* Translucent bar behind the sticky top bar's blur: the canvas at 72% */
   --ntn-bg-blur:        color-mix(in srgb, var(--ntn-n-50) 72%, transparent);
-  /* Glass surfaces (_glass.scss): a translucent card colour and a hairline drawn in the ink */
-  --ntn-glass-bg:       color-mix(in srgb, var(--ntn-n-100) 72%, transparent);
-  --ntn-glass-border:   color-mix(in srgb, var(--ntn-n-900) 8%, transparent);
+  /* Glass surfaces (_glass.scss): a translucent card colour, a faint sheen that lights it from
+     the top, and a hairline drawn in the ink. ntn-glass--clear and --frosted swap in the
+     lighter and denser fills. */
+  --ntn-glass-bg-clear:   color-mix(in srgb, var(--ntn-n-100) 50%, transparent);
+  --ntn-glass-bg:         color-mix(in srgb, var(--ntn-n-100) 72%, transparent);
+  --ntn-glass-bg-frosted: color-mix(in srgb, var(--ntn-n-100) 88%, transparent);
+  --ntn-glass-sheen:      linear-gradient(180deg, color-mix(in srgb, var(--ntn-n-900) 3%, transparent), transparent);
+  --ntn-glass-border:     color-mix(in srgb, var(--ntn-n-900) 8%, transparent);
 
   /* Inner hairlines sit halfway between the raised surfaces */
   --ntn-border-subtle:  color-mix(in srgb, var(--ntn-n-200), var(--ntn-n-300));

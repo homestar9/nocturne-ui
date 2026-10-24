@@ -1762,8 +1762,10 @@
             <h2 class="sink__title">Glass</h2>
             <code class="sink__code">.ntn-glass</code>
             <code class="sink__code">.ntn-glass--flat</code>
+            <code class="sink__code">.ntn-glass--clear</code>
+            <code class="sink__code">.ntn-glass--frosted</code>
             <code class="sink__code">.ntn-ambient</code>
-            <p class="sink__note">Translucent, blurred surfaces for a page that sits over artwork or a gradient. On a card, stat, accordion or sidebar it glazes that surface; on a wrapper it glazes every surface inside. <code>ntn-ambient</code>, first inside <code>.ntn-app</code>, is a static accent glow to sit them on; point <code>--ntn-ambient-image</code> at your own artwork. <code>ntn-glass--flat</code> drops the lit top edge, which suits the plain glow. Below, flat glass over the glow alone, then glass over a photo as <code>--ntn-ambient-image</code> (dimmed and faded, for a page where text also sits on the backdrop), and over the same photo as <code>--ntn-background-image</code> (full strength). Then the placements, which move the glow to an edge, a corner or the centre; the tones, which tint it (or set <code>--ntn-ambient-glow</code>); and two ambients stacked for two lights. The droplet in the top bar turns glass on for this whole page, with the photo as the ambient image.</p>
+            <p class="sink__note">Translucent, blurred surfaces for a page that sits over artwork or a gradient. On a card, stat, accordion or sidebar it glazes that surface; on a wrapper it glazes every surface inside. <code>ntn-ambient</code>, first inside <code>.ntn-app</code>, is a static accent glow to sit them on; point <code>--ntn-ambient-image</code> at your own artwork. <code>ntn-glass--flat</code> drops the lit top edge, which suits the plain glow. Below, flat glass over the glow alone, then glass over a photo as <code>--ntn-ambient-image</code> (dimmed and faded, for a page where text also sits on the backdrop), and over the same photo as <code>--ntn-background-image</code> (full strength), then <code>ntn-glass--clear</code> and <code>ntn-glass--frosted</code> beside the default, which thin or thicken the fill. Then the placements, which move the glow to an edge, a corner or the centre; the tones, which tint it (or set <code>--ntn-ambient-glow</code>); and two ambients stacked for two lights. The droplet in the top bar turns glass on for this whole page, with the photo as the ambient image.</p>
           </header>
           <!-- Three stages, each with its own ntn-ambient and ntn-glass on the wrapper, so every surface
                inside is glazed. The second sets --ntn-ambient-image, the third --ntn-background-image. -->
@@ -1901,6 +1903,39 @@
                     </table>
                   </div>
                 </div>
+              </section>
+            </div>
+          </div>
+          <div class="ntn-stack">
+            <p class="sink__label">Opacity over the same image · <code>ntn-glass--clear</code>, default, <code>ntn-glass--frosted</code></p>
+            <div class="ntn-glass ntn-grid ntn-grid--3 sink__glass-stage sink__backdrop" data-sink-example="Opacity">
+              <div class="ntn-ambient"></div>
+              <section class="ntn-card ntn-glass--clear">
+                <header class="ntn-card__head">
+                  <div class="ntn-card__heading">
+                    <h3 class="ntn-card__title">Clear</h3>
+                    <p class="ntn-card__sub"><code>ntn-glass--clear</code></p>
+                  </div>
+                </header>
+                <div class="ntn-card__body">A thinner fill, for a quiet backdrop where more of the artwork should show.</div>
+              </section>
+              <section class="ntn-card">
+                <header class="ntn-card__head">
+                  <div class="ntn-card__heading">
+                    <h3 class="ntn-card__title">Default</h3>
+                    <p class="ntn-card__sub"><code>ntn-glass</code></p>
+                  </div>
+                </header>
+                <div class="ntn-card__body">The standard fill: the backdrop shows through, softened by the blur.</div>
+              </section>
+              <section class="ntn-card ntn-glass--frosted">
+                <header class="ntn-card__head">
+                  <div class="ntn-card__heading">
+                    <h3 class="ntn-card__title">Frosted</h3>
+                    <p class="ntn-card__sub"><code>ntn-glass--frosted</code></p>
+                  </div>
+                </header>
+                <div class="ntn-card__body">A denser fill, so text holds up over a busy, full-strength photo.</div>
               </section>
             </div>
           </div>
