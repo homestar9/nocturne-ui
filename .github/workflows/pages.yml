@@ -1,0 +1,49 @@
+# Deploys the kitchen sink to GitHub Pages (https://homestar9.github.io/nocturne-ui/) whenever
+# master moves. In gitflow master only ever holds releases, so every release redeploys it. The
+# site is the checkout itself, as `npm run sink` serves it: dist/ is committed, so nothing builds.
+# It runs on master, not on the v* tag, because the github-pages environment only lets the default
+# branch deploy, and not on `release: published`, because publish.yml creates the release with
+# GITHUB_TOKEN, whose events start no workflows. Needs Settings → Pages → Source: GitHub Actions.
+name: Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write     # deploy to Pages
+  id-token: write  # OIDC, to prove the deploy comes from this workflow
+
+concurrency:
+  group: pages
+  cancel-in-progress: false  # never cut off a deploy that is already running
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+
+      # The site root sends visitors on to the sink; the sink's ../ paths need the repo layout.
+      - name: Point the site root at the kitchen sink
+        run: |
+          cat > index.html <<'EOF'
+          <!doctype html>
+          <meta charset="utf-8">
+          <title>Nocturne kitchen sink</title>
+          <meta http-equiv="refresh" content="0; url=examples/kitchen-sink.html">
+          <a href="examples/kitchen-sink.html">Nocturne kitchen sink</a>
+          EOF
+
+      # Leaves out .git, .github and every other dot-file.
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: .
+
+      - id: deployment
+        uses: actions/deploy-pages@v5
