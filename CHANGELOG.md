@@ -6,6 +6,8 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.15.0 — 2026-10-24
+
 ### Added
 - **The kitchen sink is live** at <https://homestar9.github.io/nocturne-ui/>, redeployed from
   `master` on every release (`.github/workflows/pages.yml`). Its "Read me" button now opens the
