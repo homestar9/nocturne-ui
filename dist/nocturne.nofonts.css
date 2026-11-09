@@ -4866,7 +4866,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 /* The lit rim: every raised surface catches the light along its top edge. It is the host's
    ::after, so the shine (whose halos are the host's pseudo-elements) and the glow (which has
    its own accent edge) go without. */
-:is(.ntn-card, .ntn-stat, .ntn-accordion, .ntn-modal, .ntn-edge, .ntn-frame, .ntn-frame__view):not(.ntn-edge--shine, .ntn-edge--glow, .ntn-card--glow)::after {
+:is(.ntn-card, .ntn-stat, .ntn-accordion, .ntn-modal, .ntn-edge, .ntn-frame, .ntn-frame__view):not(.ntn-edge--shine)::after {
   content: "";
   position: absolute;
   inset: calc(-1 * var(--ntn-hairline));
@@ -4884,7 +4884,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   position: relative;
   border-color: var(--ntn-accent-line);
   background-image: radial-gradient(120% 90% at 50% -25%, var(--ntn-accent-soft), transparent 62%);
-  box-shadow: 0 0 0 1px var(--ntn-accent-line), 0 0 26px -10px var(--ntn-accent-glow), 0 24px 60px -34px var(--ntn-accent-glow), var(--ntn-shadow-md);
+  box-shadow: inset 0 0 5px 0 var(--ntn-accent-line), 0 0 26px -10px var(--ntn-accent-glow), 0 24px 60px -34px var(--ntn-accent-glow), var(--ntn-shadow-md);
 }
 
 /* Processing — a light travels the edge while work is in flight, and an exterior
