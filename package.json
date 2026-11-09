@@ -32,6 +32,7 @@
     "js",
     "themes",
     "skill",
+    "examples/settings.html",
     "scripts/build.mjs",
     "README.md",
     "CHANGELOG.md"

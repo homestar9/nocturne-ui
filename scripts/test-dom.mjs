@@ -5,7 +5,7 @@
 import { JSDOM } from 'jsdom';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const moduleUrl = new URL('../js/nocturne.js', import.meta.url).href;
@@ -692,6 +692,17 @@ console.log('Kitchen sink covers the library (NTN-46)');
   check(!unlinked.length && !dangling.length,
     `each of the ${ids.length} sections has one index link, and every link a section` +
     (unlinked.length ? ` (unlinked: ${unlinked.join(', ')})` : '') + (dangling.length ? ` (dangling: ${dangling.join(', ')})` : ''));
+
+  // The example pages (NTN-48): library classes only, and each one linked from the sink's index.
+  const pages = (await readdir(resolve(root, 'examples'))).filter((f) => f.endsWith('.html') && f !== 'kitchen-sink.html');
+  for (const file of pages) {
+    const page = new JSDOM(await readFile(resolve(root, 'examples', file), 'utf8')).window.document;
+    const unknown = [...new Set([...page.querySelectorAll('[class]')].flatMap((e) => [...e.classList]))]
+      .filter((c) => !c.startsWith('fa-') && !dist.has(c));
+    check(!unknown.length, `${file} uses only classes from dist${unknown.length ? ' (unknown: ' + unknown.join(', ') + ')' : ''}`);
+    check(document.querySelector(`#index a[href="${file}"]`), `${file} is linked from the sink's index`);
+  }
+  check(pages.length >= 1, `${pages.length} example page(s) checked`);
 }
 
 console.log('Source guard');

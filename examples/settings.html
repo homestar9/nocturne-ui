@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Account settings — Nocturne example</title>
+<!--
+  A complete Nocturne page: skill/patterns.md §4 (Settings), with library classes only.
+  Copy it as a starting point. It loads ../dist and ../js so the kitchen sink previews your local
+  build; in your app, use the CDN lines from the kitchen sink's Get started section instead, here
+  and in the import at the bottom of the page.
+-->
+<script>try{var p=localStorage.getItem('ntn-theme')||'dark';document.documentElement.setAttribute('data-theme',p==='auto'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):p)}catch(e){}</script>
+<link rel="stylesheet" href="../dist/nocturne.css">
+<script type="module" src="../js/nocturne.js"></script>
+<!-- Icons: Font Awesome Free has no Light weight, so this rule draws Light classes with the Solid
+     faces. Swap both lines for your Pro kit if you have one. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+<style>.fa-light { font-family: "Font Awesome 6 Free"; font-weight: 900; font-style: normal }</style>
+</head>
+<body>
+
+<div class="ntn-app">
+  <aside class="ntn-sidebar">
+    <div class="ntn-sidebar__brand">
+      <span class="ntn-sidebar__mark"><i class="fa-light fa-cube"></i></span>
+      <span class="ntn-sidebar__brand-text">
+        <span class="ntn-sidebar__name">Cortex Labs</span>
+        <span class="ntn-sidebar__meta">Pro workspace</span>
+      </span>
+    </div>
+    <nav class="ntn-sidebar__nav">
+      <div class="ntn-sidebar__group">
+        <p class="ntn-sidebar__section">Platform</p>
+        <a class="ntn-sidebar__item" href="#"><i class="fa-light fa-gauge-high"></i><span class="ntn-sidebar__label">Overview</span></a>
+        <a class="ntn-sidebar__item" href="#"><i class="fa-light fa-folder"></i><span class="ntn-sidebar__label">Projects</span></a>
+        <a class="ntn-sidebar__item" href="#"><i class="fa-light fa-users"></i><span class="ntn-sidebar__label">Members</span><span class="ntn-badge ntn-badge--count">8</span></a>
+      </div>
+      <div class="ntn-sidebar__group">
+        <p class="ntn-sidebar__section">Account</p>
+        <a class="ntn-sidebar__item" href="settings.html" aria-current="page"><i class="fa-light fa-gear"></i><span class="ntn-sidebar__label">Settings</span></a>
+        <a class="ntn-sidebar__item" href="#"><i class="fa-light fa-key"></i><span class="ntn-sidebar__label">API keys</span></a>
+      </div>
+    </nav>
+  </aside>
+  <div class="ntn-sidebar__scrim"></div>
+
+  <div class="ntn-app__main">
+    <header class="ntn-navbar">
+      <button class="ntn-icon-btn" aria-label="Collapse navigation" data-ntn-toggle=".ntn-sidebar"><i class="fa-light fa-bars"></i></button>
+      <div class="ntn-navbar__center">
+        <div class="ntn-search ntn-search--sm">
+          <i class="fa-light fa-magnifying-glass"></i>
+          <input type="search" placeholder="Search settings ..." aria-label="Search settings">
+        </div>
+      </div>
+      <div class="ntn-navbar__right">
+        <button class="ntn-icon-btn" aria-label="Toggle light theme" data-ntn-theme-toggle><i class="fa-light fa-sun" data-ntn-theme-icon></i></button>
+        <button class="ntn-icon-btn" aria-label="Notifications"><i class="fa-light fa-bell"></i></button>
+        <span class="ntn-avatar ntn-avatar--sm" data-ntn-avatar-name="Ada Lovelace">AL</span>
+      </div>
+    </header>
+
+    <div class="ntn-app__scroll">
+      <main class="ntn-page">
+
+        <!-- Example chrome: delete this row in your app. -->
+        <div class="ntn-row ntn-row--between">
+          <a class="ntn-btn ntn-btn--sm ntn-btn--subtle" href="kitchen-sink.html"><i class="fa-light fa-arrow-left"></i>Components</a>
+          <a class="ntn-btn ntn-btn--sm ntn-btn--subtle" href="https://github.com/homestar9/nocturne-ui/blob/master/examples/settings.html"><i class="fa-light fa-code"></i>View source</a>
+        </div>
+
+        <div class="ntn-page__head">
+          <div>
+            <p class="ntn-eyebrow">Account</p>
+            <h1 class="ntn-page__title">Settings</h1>
+            <p class="ntn-page__sub">Your profile, sign-in, notifications and plan. Each card saves on its own.</p>
+          </div>
+        </div>
+
+        <div class="ntn-tabs" role="tablist" aria-label="Settings">
+          <button class="ntn-tabs__tab" role="tab" aria-selected="true" data-ntn-panel="#profile"><i class="fa-light fa-user"></i>Profile</button>
+          <button class="ntn-tabs__tab" role="tab" aria-selected="false" data-ntn-panel="#security"><i class="fa-light fa-shield"></i>Security</button>
+          <button class="ntn-tabs__tab" role="tab" aria-selected="false" data-ntn-panel="#notifications"><i class="fa-light fa-bell"></i>Notifications</button>
+          <button class="ntn-tabs__tab" role="tab" aria-selected="false" data-ntn-panel="#billing"><i class="fa-light fa-credit-card"></i>Billing</button>
+        </div>
+
+        <!-- ── Profile ─────────────────────────────────────────────────── -->
+        <div class="ntn-stack" id="profile">
+          <form class="ntn-card" data-save="Profile">
+            <header class="ntn-card__head">
+              <div class="ntn-card__heading">
+                <h2 class="ntn-card__title">Profile</h2>
+                <p class="ntn-card__sub">How you appear to everyone in this workspace.</p>
+              </div>
+            </header>
+            <div class="ntn-card__body ntn-stack">
+              <div class="ntn-row">
+                <span class="ntn-avatar ntn-avatar--xl" id="photo" data-ntn-avatar-name="Ada Lovelace">AL</span>
+                <label class="ntn-dropzone ntn-dropzone--inline" data-ntn-dropzone>
+                  <input type="file" name="photo" accept="image/*">
+                  <span class="ntn-dropzone__icon"><i class="fa-light fa-image"></i></span>
+                  <span class="ntn-dropzone__title">Drop a photo or click to browse</span>
+                  <span class="ntn-dropzone__hint">PNG or JPG, square, up to 2 MB</span>
+                </label>
+              </div>
+              <div class="ntn-grid ntn-grid--2">
+                <label class="ntn-field">
+                  <span class="ntn-field__label">Full name</span>
+                  <span class="ntn-field__control"><input type="text" name="name" value="Ada Lovelace" placeholder=" " required></span>
+                </label>
+                <label class="ntn-field">
+                  <span class="ntn-field__label">Username</span>
+                  <span class="ntn-field__control"><span class="ntn-field__prefix">@</span><input type="text" name="username" value="ada" placeholder=" " required></span>
+                </label>
+              </div>
+              <label class="ntn-field">
+                <span class="ntn-field__label">Email</span>
+                <span class="ntn-field__control"><i class="fa-light fa-envelope"></i><input type="email" name="email" value="ada@cortexlabs.dev" placeholder=" " required></span>
+                <span class="ntn-field__hint">We send sign-in links and receipts here.</span>
+              </label>
+              <label class="ntn-field ntn-field--textarea">
+                <span class="ntn-field__label">Bio</span>
+                <span class="ntn-field__control"><textarea name="bio" rows="3" placeholder="A line or two about you">Writes the engines that run the analysis.</textarea></span>
+              </label>
+              <div class="ntn-grid ntn-grid--2">
+                <!-- A combo posts like a <select> when it has data-ntn-name. -->
+                <div class="ntn-combo" data-ntn-combo data-ntn-name="team">
+                  <span class="ntn-combo__label">Team</span>
+                  <button type="button" class="ntn-combo__trigger" aria-haspopup="listbox" aria-expanded="false">
+                    <span class="ntn-combo__value" data-ntn-combo-value data-ntn-placeholder="Choose a team"></span>
+                    <i class="fa-light fa-chevron-down ntn-combo__caret"></i>
+                  </button>
+                  <div class="ntn-combo__panel ntn-menu" hidden>
+                    <div class="ntn-combo__list" role="listbox">
+                      <button type="button" class="ntn-combo__option" role="option" data-value="engine" aria-selected="true">
+                        <span class="ntn-combo__text"><span class="ntn-combo__option-title">Engine</span><span class="ntn-combo__option-desc">Runtime and compiler</span></span>
+                        <i class="fa-light fa-check ntn-combo__tick"></i>
+                      </button>
+                      <button type="button" class="ntn-combo__option" role="option" data-value="design" aria-selected="false">
+                        <span class="ntn-combo__text"><span class="ntn-combo__option-title">Design</span><span class="ntn-combo__option-desc">Product and brand</span></span>
+                        <i class="fa-light fa-check ntn-combo__tick"></i>
+                      </button>
+                      <button type="button" class="ntn-combo__option" role="option" data-value="research" aria-selected="false">
+                        <span class="ntn-combo__text"><span class="ntn-combo__option-title">Research</span><span class="ntn-combo__option-desc">Models and data</span></span>
+                        <i class="fa-light fa-check ntn-combo__tick"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <label class="ntn-select">
+                  <span class="ntn-select__label">Time zone</span>
+                  <span class="ntn-select__control">
+                    <select name="timezone">
+                      <option value="Europe/London" selected>London (GMT+0)</option>
+                      <option value="America/New_York">New York (GMT−5)</option>
+                      <option value="America/Los_Angeles">Los Angeles (GMT−8)</option>
+                      <option value="Asia/Tokyo">Tokyo (GMT+9)</option>
+                    </select>
+                  </span>
+                </label>
+              </div>
+            </div>
+            <footer class="ntn-card__foot ntn-row ntn-row--end">
+              <button type="reset" class="ntn-btn ntn-btn--sm">Discard</button>
+              <button type="submit" class="ntn-btn ntn-btn--primary ntn-btn--sm">Save profile</button>
+            </footer>
+          </form>
+        </div>
+
+        <!-- ── Security ────────────────────────────────────────────────── -->
+        <div class="ntn-stack" id="security" hidden>
+          <form class="ntn-card" data-save="Password">
+            <header class="ntn-card__head">
+              <div class="ntn-card__heading">
+                <h2 class="ntn-card__title">Password</h2>
+                <p class="ntn-card__sub">Changing it signs you out everywhere else.</p>
+              </div>
+            </header>
+            <div class="ntn-card__body ntn-stack">
+              <label class="ntn-field">
+                <span class="ntn-field__label">Current password</span>
+                <span class="ntn-field__control"><i class="fa-light fa-lock"></i><input type="password" name="current" autocomplete="current-password" placeholder=" " required></span>
+              </label>
+              <div class="ntn-grid ntn-grid--2">
+                <label class="ntn-field">
+                  <span class="ntn-field__label">New password</span>
+                  <span class="ntn-field__control"><input type="password" name="password" autocomplete="new-password" minlength="12" placeholder=" " required></span>
+                  <span class="ntn-field__hint">At least 12 characters.</span>
+                </label>
+                <label class="ntn-field">
+                  <span class="ntn-field__label">Repeat it</span>
+                  <span class="ntn-field__control"><input type="password" name="confirm" autocomplete="new-password" minlength="12" placeholder=" " required></span>
+                </label>
+              </div>
+            </div>
+            <footer class="ntn-card__foot ntn-row ntn-row--end">
+              <button type="submit" class="ntn-btn ntn-btn--primary ntn-btn--sm">Change password</button>
+            </footer>
+          </form>
+
+          <form class="ntn-card" data-save="Two-factor settings">
+            <header class="ntn-card__head">
+              <div class="ntn-card__heading">
+                <h2 class="ntn-card__title">Two-factor sign-in</h2>
+                <p class="ntn-card__sub">A second step after your password.</p>
+              </div>
+            </header>
+            <div class="ntn-card__body ntn-stack">
+              <label class="ntn-switch">
+                <input type="checkbox" role="switch" name="totp" checked>
+                <span class="ntn-switch__label">Authenticator app</span>
+              </label>
+              <label class="ntn-switch">
+                <input type="checkbox" role="switch" name="passkey">
+                <span class="ntn-switch__label">Passkey on this device</span>
+              </label>
+            </div>
+            <footer class="ntn-card__foot ntn-row ntn-row--end">
+              <button type="submit" class="ntn-btn ntn-btn--primary ntn-btn--sm">Save</button>
+            </footer>
+          </form>
+
+          <section class="ntn-card ntn-card--flush">
+            <header class="ntn-card__head">
+              <div class="ntn-card__heading">
+                <h2 class="ntn-card__title">Sessions</h2>
+                <p class="ntn-card__sub">Where you're signed in right now.</p>
+              </div>
+            </header>
+            <div class="ntn-table">
+              <table>
+                <thead><tr><th>Device</th><th>Location</th><th>Last active</th><th class="ntn-table__actions" aria-label="Actions"></th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td class="ntn-table__primary"><i class="fa-light fa-laptop"></i> Chrome on macOS <span class="ntn-badge ntn-badge--success ntn-badge--dot">This device</span></td>
+                    <td>London, UK</td><td>Now</td><td class="ntn-table__actions"></td>
+                  </tr>
+                  <tr>
+                    <td class="ntn-table__primary"><i class="fa-light fa-mobile"></i> Safari on iPhone</td>
+                    <td>London, UK</td><td>2 hours ago</td>
+                    <td class="ntn-table__actions"><button class="ntn-btn ntn-btn--sm ntn-btn--subtle">Sign out</button></td>
+                  </tr>
+                  <tr>
+                    <td class="ntn-table__primary"><i class="fa-light fa-terminal"></i> CLI token</td>
+                    <td>Frankfurt, DE</td><td>3 days ago</td>
+                    <td class="ntn-table__actions"><button class="ntn-btn ntn-btn--sm ntn-btn--subtle">Sign out</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="ntn-card">
+            <header class="ntn-card__head">
+              <div class="ntn-card__heading">
+                <h2 class="ntn-card__title">Delete account</h2>
+                <p class="ntn-card__sub">Removes your profile and your personal API keys. Workspace data stays.</p>
+              </div>
+            </header>
+            <footer class="ntn-card__foot ntn-row ntn-row--end">
+              <button class="ntn-btn ntn-btn--danger ntn-btn--sm" data-ntn-open="#confirm-delete">Delete account</button>
+            </footer>
+          </section>
+        </div>
+
+        <!-- ── Notifications ───────────────────────────────────────────── -->
+        <div class="ntn-stack" id="notifications" hidden>
+          <form class="ntn-card" data-save="Notification settings">
+            <header class="ntn-card__head">
+              <div class="ntn-card__heading">
+                <h2 class="ntn-card__title">Notifications</h2>
+                <p class="ntn-card__sub">What we tell you about, and where.</p>
+              </div>
+            </header>
+            <div class="ntn-card__body ntn-stack">
+              <label class="ntn-check">
+                <input type="checkbox" name="notify" value="deploys" checked>
+                <span class="ntn-check__label">Deploys
+                  <span class="ntn-check__desc">When a deploy you started finishes or fails.</span>
+                </span>
+              </label>
+              <label class="ntn-check">
+                <input type="checkbox" name="notify" value="mentions" checked>
+                <span class="ntn-check__label">Mentions
+                  <span class="ntn-check__desc">When someone mentions you in a comment.</span>
+                </span>
+              </label>
+              <label class="ntn-check">
+                <input type="checkbox" name="notify" value="billing">
+                <span class="ntn-check__label">Billing
+                  <span class="ntn-check__desc">Receipts, failed payments and plan changes.</span>
+                </span>
+              </label>
+              <hr class="ntn-divider">
+              <div class="ntn-combo" data-ntn-combo data-ntn-multi data-ntn-max="2" data-ntn-name="channels">
+                <span class="ntn-combo__label">Send to</span>
+                <button type="button" class="ntn-combo__trigger" aria-haspopup="listbox" aria-expanded="false">
+                  <span class="ntn-combo__value" data-ntn-combo-value data-ntn-placeholder="Nowhere"></span>
+                  <i class="fa-light fa-chevron-down ntn-combo__caret"></i>
+                </button>
+                <div class="ntn-combo__panel ntn-menu" hidden>
+                  <div class="ntn-combo__list" role="listbox" aria-multiselectable="true">
+                    <button type="button" class="ntn-combo__option" role="option" data-value="email" aria-selected="true">
+                      <span class="ntn-combo__box"></span>
+                      <span class="ntn-combo__text"><span class="ntn-combo__option-title">Email</span></span>
+                    </button>
+                    <button type="button" class="ntn-combo__option" role="option" data-value="slack" aria-selected="true">
+                      <span class="ntn-combo__box"></span>
+                      <span class="ntn-combo__text"><span class="ntn-combo__option-title">Slack</span><span class="ntn-combo__option-desc">#alerts-prod</span></span>
+                    </button>
+                    <button type="button" class="ntn-combo__option" role="option" data-value="push" aria-selected="false">
+                      <span class="ntn-combo__box"></span>
+                      <span class="ntn-combo__text"><span class="ntn-combo__option-title">Mobile push</span></span>
+                    </button>
+                  </div>
+                  <div class="ntn-combo__foot">
+                    <span class="ntn-combo__hint" data-ntn-combo-count></span>
+                    <button type="button" class="ntn-btn ntn-btn--subtle ntn-btn--sm" data-ntn-combo-none>Clear</button>
+                  </div>
+                </div>
+              </div>
+              <fieldset class="ntn-radio-group ntn-radio-group--segmented">
+                <legend>Digest</legend>
+                <label class="ntn-radio"><input type="radio" name="digest" value="off"><span class="ntn-radio__label">Off</span></label>
+                <label class="ntn-radio"><input type="radio" name="digest" value="daily" checked><span class="ntn-radio__label">Daily</span></label>
+                <label class="ntn-radio"><input type="radio" name="digest" value="weekly"><span class="ntn-radio__label">Weekly</span></label>
+              </fieldset>
+            </div>
+            <footer class="ntn-card__foot ntn-row ntn-row--end">
+              <button type="reset" class="ntn-btn ntn-btn--sm">Discard</button>
+              <button type="submit" class="ntn-btn ntn-btn--primary ntn-btn--sm">Save notifications</button>
+            </footer>
+          </form>
+        </div>
+
+        <!-- ── Billing ─────────────────────────────────────────────────── -->
+        <div class="ntn-stack" id="billing" hidden>
+          <div class="ntn-grid ntn-grid--split">
+            <section class="ntn-card">
+              <header class="ntn-card__head">
+                <div class="ntn-card__heading">
+                  <h2 class="ntn-card__title">Pro plan <span class="ntn-badge ntn-badge--primary ntn-badge--sm">Annual</span></h2>
+                  <p class="ntn-card__sub">Renews on 1 March 2027 for <span class="ntn-num">$2,400.00</span>.</p>
+                </div>
+                <div class="ntn-card__actions">
+                  <button class="ntn-btn ntn-btn--sm">Change plan</button>
+                </div>
+              </header>
+              <div class="ntn-card__body ntn-stack">
+                <div class="ntn-progress">
+                  <div class="ntn-progress__head">
+                    <span class="ntn-progress__label">Seats</span>
+                    <span class="ntn-progress__value">8 / 10</span>
+                  </div>
+                  <div class="ntn-progress__track"><div class="ntn-progress__fill" data-value="80"></div></div>
+                </div>
+                <div class="ntn-progress">
+                  <div class="ntn-progress__head">
+                    <span class="ntn-progress__label">Build minutes</span>
+                    <span class="ntn-progress__value">4,120 / 5,000</span>
+                  </div>
+                  <div class="ntn-progress__track"><div class="ntn-progress__fill" data-value="82"></div></div>
+                </div>
+              </div>
+            </section>
+            <section class="ntn-card">
+              <header class="ntn-card__head">
+                <div class="ntn-card__heading">
+                  <h2 class="ntn-card__title">Payment method</h2>
+                  <p class="ntn-card__sub">Visa ending <span class="ntn-num">4242</span>, expires 08/28.</p>
+                </div>
+              </header>
+              <footer class="ntn-card__foot ntn-row ntn-row--end">
+                <button class="ntn-btn ntn-btn--sm">Update card</button>
+              </footer>
+            </section>
+          </div>
+
+          <section class="ntn-card ntn-card--flush">
+            <header class="ntn-card__head">
+              <div class="ntn-card__heading">
+                <h2 class="ntn-card__title">Invoices</h2>
+                <p class="ntn-card__sub">Download a PDF for your records.</p>
+              </div>
+            </header>
+            <div class="ntn-table">
+              <table>
+                <thead><tr><th>Invoice</th><th>Date</th><th>Status</th><th class="ntn-table__num">Amount</th><th class="ntn-table__actions" aria-label="Download"></th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td class="ntn-table__primary">INV-2026-003</td><td>1 Mar 2026</td>
+                    <td><span class="ntn-badge ntn-badge--success ntn-badge--dot">Paid</span></td>
+                    <td class="ntn-table__num">$2,400.00</td>
+                    <td class="ntn-table__actions"><button class="ntn-icon-btn ntn-icon-btn--sm" aria-label="Download INV-2026-003"><i class="fa-light fa-download"></i></button></td>
+                  </tr>
+                  <tr>
+                    <td class="ntn-table__primary">INV-2025-014</td><td>12 Nov 2025</td>
+                    <td><span class="ntn-badge ntn-badge--success ntn-badge--dot">Paid</span></td>
+                    <td class="ntn-table__num">$480.00</td>
+                    <td class="ntn-table__actions"><button class="ntn-icon-btn ntn-icon-btn--sm" aria-label="Download INV-2025-014"><i class="fa-light fa-download"></i></button></td>
+                  </tr>
+                  <tr>
+                    <td class="ntn-table__primary">INV-2025-009</td><td>1 Mar 2025</td>
+                    <td><span class="ntn-badge ntn-badge--warning ntn-badge--dot">Refunded</span></td>
+                    <td class="ntn-table__num">$1,920.00</td>
+                    <td class="ntn-table__actions"><button class="ntn-icon-btn ntn-icon-btn--sm" aria-label="Download INV-2025-009"><i class="fa-light fa-download"></i></button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- A <form method="dialog"> closes the dialog natively; the button's value says which one. -->
+<dialog class="ntn-modal ntn-modal--sm" id="confirm-delete">
+  <form method="dialog">
+    <header class="ntn-modal__head">
+      <div>
+        <h2 class="ntn-modal__title">Delete your account?</h2>
+        <p class="ntn-modal__desc">You can't undo this.</p>
+      </div>
+      <button type="button" class="ntn-modal__close" aria-label="Close" data-ntn-close><i class="fa-light fa-xmark"></i></button>
+    </header>
+    <div class="ntn-modal__body">
+      <div class="ntn-alert ntn-alert--danger" role="alert">
+        <i class="fa-light fa-triangle-exclamation"></i>
+        <div class="ntn-alert__body">
+          <div class="ntn-alert__title">Your 3 personal API keys stop working at once</div>
+          <div class="ntn-alert__text">Anything that calls the API with them will fail.</div>
+        </div>
+      </div>
+    </div>
+    <footer class="ntn-modal__foot">
+      <button class="ntn-btn" value="cancel">Keep my account</button>
+      <button class="ntn-btn ntn-btn--danger" value="delete">Delete account</button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- The page's own behaviour. In your app, import from the CDN URL in Get started. -->
+<script type="module">
+  import { toast } from '../js/nocturne.js';
+
+  // Each card is its own form. Saving shows what it would post, the combo's value included.
+  document.addEventListener('submit', (e) => {
+    const form = e.target.closest('form[data-save]');
+    if (!form) return;
+    e.preventDefault();
+    const fields = [...new FormData(form)]
+      .filter(([name, value]) => typeof value === 'string' && !/password|current|confirm/.test(name))
+      .map(([name, value]) => `${name}=${value}`);
+    toast({ title: `${form.dataset.save} saved`, message: fields.join(', ') || 'Nothing to show.', tone: 'success' });
+  });
+
+  // Discard: form.reset() puts every control back, combos and their chips included.
+  document.addEventListener('reset', (e) => {
+    if (e.target.matches('form[data-save]')) toast({ message: 'Changes discarded' });
+  });
+
+  // ntn:files fires when a photo is dropped or picked; show it in the avatar.
+  document.addEventListener('ntn:files', (e) => {
+    const [file] = e.detail.files;
+    if (!file || !file.type.startsWith('image/')) return;
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(file);
+    img.alt = 'New photo';
+    document.getElementById('photo').replaceChildren(img);
+  });
+
+  document.getElementById('confirm-delete').addEventListener('close', (e) => {
+    if (e.target.returnValue === 'delete') toast({ title: 'Account scheduled for deletion', message: 'We emailed you a link to undo it within 7 days.', tone: 'danger' });
+  });
+</script>
+
+</body>
+</html>

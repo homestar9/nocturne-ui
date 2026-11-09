@@ -97,6 +97,11 @@ Tabs across the top, then stacked cards — one card per concern, each with a ti
 and its own save action in the card footer. Never one giant form with a single save button at
 the bottom of the page.
 
+A complete, working page of this pattern ships with the package: `examples/settings.html`
+(next to this `skill/` folder; live at <https://homestar9.github.io/nocturne-ui/examples/settings.html>).
+Each card is its own `<form>`, a combo with `data-ntn-name` posts with it, and Discard is a
+plain `type="reset"`.
+
 ```html
 <main class="ntn-page">
   <div class="ntn-page__head">…</div>

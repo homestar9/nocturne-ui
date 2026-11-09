@@ -26,6 +26,15 @@ renamed or removed class names and tokens.
   `package.json`, when the JavaScript section misses an event or export, or when a Reference link
   has no heading. The README opens with a link to the live sink, and `homepage` points there.
 
+### Examples
+- **`examples/settings.html`**: a complete account settings page, `skill/patterns.md` §4 built
+  with library classes only. Tabs switch Profile, Security, Notifications and Billing; each card
+  is its own `<form>` whose Save toasts what it would post (a `data-ntn-name` combo included) and
+  whose Discard is a plain reset. A dropped photo fills the avatar through `ntn:files`, and a
+  `<form method="dialog">` confirm closes the delete dialog. It ships in the package, so the
+  bundled skill can point agents at it, and the kitchen sink links it from its index and from
+  Get started. A test fails when an example page uses a class `dist/` lacks or isn't linked.
+
 ## 1.16.0 — 2026-11-09
 
 ### Added
