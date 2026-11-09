@@ -595,10 +595,17 @@ console.log('Kitchen sink code view (NTN-1)');
   window.eval(await readFile(resolve(root, 'examples/sink-code.js'), 'utf8'));
 
   const sections = [...document.querySelectorAll('.sink')];
-  const bare = sections.filter((s) => !s.querySelector('[data-sink-example]')).map((s) => s.id);
-  check(sections.length > 0 && !bare.length, `every section marks at least one example${bare.length ? ' (missing: ' + bare.join(', ') + ')' : ''}`);
-  const toggles = sections.map((s) => s.querySelectorAll('.sink__head .sink__codetoggle'));
-  check(toggles.every((t) => t.length === 1), 'every section head gets exactly one Code button');
+  const bare = sections.filter((s) => !s.querySelector('[data-sink-example], textarea[data-sink-source], .sink__snippet')).map((s) => s.id);
+  check(sections.length > 0 && !bare.length, `every section shows code: an example or a source${bare.length ? ' (missing: ' + bare.join(', ') + ')' : ''}`);
+  const inline = document.querySelectorAll('textarea[data-sink-inline]');
+  const shown = [...document.querySelectorAll('.sink__snippet')].filter((b) => !b.closest('.sink__codeview'));
+  check(!inline.length && shown.length >= 4, `inline sources are shown in place (${shown.length})`);
+  // Sections whose code is all inline (JavaScript) need no panel; every other one gets one button.
+  const coded = sections.filter((s) => document.getElementById(s.id + '-code'));
+  const strays = sections.filter((s) => !coded.includes(s) && s.querySelector('.sink__codetoggle')).map((s) => s.id);
+  const toggles = coded.map((s) => s.querySelectorAll('.sink__head .sink__codetoggle'));
+  check(coded.length >= sections.length - 2 && toggles.every((t) => t.length === 1) && !strays.length,
+    `every section with a Code panel gets exactly one Code button (${coded.length} of ${sections.length})`);
   const pairs = toggles.map((t) => [t[0], document.getElementById(t[0]?.getAttribute('aria-controls'))]);
   check(pairs.every(([b, p]) => p && b.getAttribute('aria-expanded') === 'false' && p.hidden), 'code is off by default: every panel starts hidden');
 

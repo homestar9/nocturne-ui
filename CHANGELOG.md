@@ -13,6 +13,18 @@ renamed or removed class names and tokens.
   section has an index link. The stale version and the permanent "new" badges are gone from the
   sidebar. A test now fails when a block in `dist/` has no example, when the sink uses a class that
   `dist/` lacks, or when a section and its index link don't match.
+- **Get started** opens the page: the two CDN lines, and in its Code a complete starter page
+  (theme script, Font Awesome Free with the Light shim, a dialog that proves the script loaded),
+  the npm install and bundler imports, and theme / accent / density. Links go to the component
+  reference and to building with Claude Code.
+- **JavaScript** closes it: `refresh(root)`, every export with an example call, and every
+  `ntn:*` event with its `detail`. The Toast section's Code leads with the `toast({...})` call.
+- **Reference** links: each section head links to its heading in `skill/components.md`.
+- Verbatim sources: a hidden `<textarea data-sink-source>` holds code that isn't markup on the
+  page; `data-sink-inline` shows it in place.
+- Tests fail when a pinned CDN link in the README or the sink names another version than
+  `package.json`, when the JavaScript section misses an event or export, or when a Reference link
+  has no heading. The README opens with a link to the live sink, and `homepage` points there.
 
 ## 1.16.0 — 2026-11-09
 
