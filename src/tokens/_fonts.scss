@@ -1,9 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@400..700&display=swap");
 
-/* Nocturne ships no licensed binaries. Geist / Geist Mono are loaded from Google Fonts.
+/* Nocturne ships no licensed binaries. Inter (variable, with its optical-size axis) and
+   JetBrains Mono are loaded from Google Fonts; both are SIL OFL.
    Self-hosting: load dist/nocturne.nofonts.css (the same stylesheet without this @import) and
-   declare @font-face rules for Geist and Geist Mono yourself. */
+   declare @font-face rules for Inter and JetBrains Mono yourself. Keep Inter's opsz axis: large
+   type switches to its display cut by itself (font-optical-sizing: auto). */
 :root {
-  --ntn-font-sans: "Geist", ui-sans-serif, -apple-system, "Segoe UI", Helvetica, sans-serif;
-  --ntn-font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --ntn-font-sans: "Inter", "SF Pro Display", -apple-system, "Segoe UI", Helvetica, sans-serif;
+  --ntn-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 }

@@ -408,6 +408,16 @@ automatically), `--interactive`. On any other card, add the rule yourself with
 Border effects are **not** card modifiers — see **Border effects** below. `ntn-card--glow` and
 `ntn-card--processing` remain as shorthands for the two most common cases.
 
+Every card, stat, accordion and modal is lit the same way: a translucent hairline frame
+(`--ntn-edge-line-strong`), a dark separation ring, the top-lit sheen (`--ntn-surface-sheen`)
+and a lit rim along the top edge. The rim is the host's `::after`, so don't put your own
+`::after` on these blocks. Move the light with `--ntn-edge-light-x` / `-y` (default
+`50% 0%`, the top centre) and its beam with `--ntn-edge-light-size` (default `200px 200px`,
+fixed so every surface lights the same length of edge); set `--ntn-edge-light:
+transparent` on one surface to switch it off there. A `--flush` card, an accordion and a modal
+clip their content with `overflow: clip` (plus a hairline of `overflow-clip-margin`, so the rim
+still paints), not `overflow: hidden`.
+
 ```html
 <section class="ntn-card">
   <header class="ntn-card__head">
@@ -494,6 +504,28 @@ Native `<details>`. Elements: `__item` `__panel`. The chevron is drawn by CSS.
 
 ---
 
+## Frame — `ntn-frame`
+
+An app pane set into a shell: a hero screenshot made of real
+markup, a product tour, an embedded preview. The shell is sunken (`--ntn-bg-sunken`) with the
+raised-surface edge and 8px of padding; `__view` inside it is barely lit (1% ink), framed in the
+5% hairline and set in by a dark ring (`--ntn-shadow-well`). Both carry the lit top rim. An
+optional `__aside` (a sidebar, a list) sits beside the view on the shell, `--ntn-frame-aside`
+wide (220px); below `md` it is hidden. `--fade-bottom` and `--fade-sides` dissolve the frame into
+the page (together, the masks intersect). Stand it on `ntn-ambient--floor`, with `ntn-grain` over
+the stage.
+
+```html
+<div style="position:relative; isolation:isolate; overflow:hidden; padding:24px 24px 96px">
+  <div class="ntn-ambient ntn-ambient--floor"></div>
+  <div class="ntn-grain" aria-hidden="true"></div>
+  <div class="ntn-frame ntn-frame--fade-bottom">
+    <nav class="ntn-frame__aside" aria-label="Workspace">…</nav>
+    <div class="ntn-frame__view">…</div>
+  </div>
+</div>
+```
+
 ## Border effects — `ntn-edge`
 
 A border treatment that composes onto anything — a card, a panel, a toolbar, a button, a bare
@@ -502,10 +534,10 @@ the effect. Set your own `border-radius` and the effect follows it.
 
 | Class | Effect |
 | --- | --- |
-| `ntn-edge` | Default hairline (`--ntn-border-default`, as on cards), `--ntn-radius-xl`. `--strong` for `--ntn-border-strong` |
-| `ntn-edge--glow` | Accent hairline, halo, and a colour bleed from the top edge. The one element on the page you want read first |
+| `ntn-edge` | The raised-surface frame, as on cards: translucent hairline, separation ring, sheen and the lit top rim, at `--ntn-radius-xl`. `--strong` for `--ntn-border-strong` |
+| `ntn-edge--glow` | Accent hairline, halo, and a colour bleed from the top edge. The one element on the page you want read first. Replaces the lit rim |
 | `ntn-edge--processing` | A light travels the edge and an exterior glow orbits with it. Pair with a `ntn-spinner` or an indeterminate `ntn-progress`; remove the class when the job lands |
-| `ntn-edge--shine` | The quiet one: two soft lights drift round the edge half a lap apart, each with a faint halo. Ambient rather than a state, so it can stay on — a prompt bar, a hero panel. Needs one `ntn-edge__shine` child |
+| `ntn-edge--shine` | The quiet one: two soft lights drift round the edge half a lap apart, each with a faint halo. Ambient rather than a state, so it can stay on — a prompt bar, a hero panel. Needs one `ntn-edge__shine` child. Replaces the lit rim (its halos are the host's pseudo-elements) |
 
 ```html
 <div class="ntn-edge ntn-edge--processing" style="padding:20px">…</div>
@@ -543,6 +575,8 @@ backdrop.
 | `ntn-ambient--top-left` `--top-right` `--bottom-left` `--bottom-right` | The band becomes a square in that corner, fading out radially |
 | `ntn-ambient--center` | A round spotlight in the middle, `--ntn-ambient-size` across: behind a hero or a sign-in card |
 | `ntn-ambient--success` `--warning` `--danger` `--info` `--neutral` | Tint the glow. The default is the accent. Combine with a placement |
+| `ntn-ambient--floor` | A lit stage instead of a glow: the canvas brightens toward the bottom edge (to `--ntn-ambient-floor`), and a vignette anchored at the bottom centre pulls the sides back. Put a hero, a framed pane (`ntn-frame`) or a sign-in card on it, with room below for the light to pool |
+| `ntn-grain` | Film noise over its positioned parent: `<div class="ntn-grain" aria-hidden="true"></div>`. Overlay-blended, so it adds texture without a tint; it sits over the parent's content and lets every click through. Strength: `--ntn-grain-opacity`. Gone under reduced transparency and forced colours |
 
 The `--ntn-ambient-image` follows the band, and `--ntn-background-image` anchors to the same side.
 Stack several ambients for more than one light. Each later one adds its own band, and only the
@@ -557,6 +591,12 @@ first draws `--ntn-background-image`.
 
 <section class="ntn-card ntn-glass">…</section>   <!-- one card over a hero image -->
 
+<div style="position:relative; isolation:isolate; overflow:hidden">   <!-- any positioned, isolated stage -->
+  <div class="ntn-ambient ntn-ambient--floor"></div>   <!-- the lit floor -->
+  <div class="ntn-grain" aria-hidden="true"></div>     <!-- grain over everything -->
+  …
+</div>
+
 <div class="ntn-app ntn-glass">          <!-- two lights: accent top left, info bottom right -->
   <div class="ntn-ambient ntn-ambient--top-left"></div>
   <div class="ntn-ambient ntn-ambient--bottom-right ntn-ambient--info"></div>
@@ -567,8 +607,8 @@ first draws `--ntn-background-image`.
 Inputs, buttons, badges, menus, popovers and modals stay solid. Glass falls back to solid under
 `prefers-reduced-transparency`, and the sidebar does too as the phone drawer. Tune it with
 `--ntn-glass-bg` (and `--ntn-glass-bg-clear` / `--ntn-glass-bg-frosted`, the modifiers' fills),
-`--ntn-glass-sheen` (a faint top-lit gradient over the fill in dark mode, `none` in light),
-`--ntn-glass-border`, `--ntn-glass-highlight` (the 1px lit top edge), `--ntn-glass-shadow` and
+`--ntn-surface-sheen` (the faint top-lit glow every raised surface carries in dark mode, `none` in light),
+`--ntn-glass-highlight` (the 1px lit top edge), `--ntn-glass-shadow` and
 `--ntn-glass-blur`; the backdrop with `--ntn-background-image`, `--ntn-ambient-image`,
 `--ntn-ambient-opacity`, `--ntn-ambient-size` (the band's depth from its edge) and
 `--ntn-ambient-glow` (any colour, ideally translucent: the accent's is 35%). Keep the backdrop static: blur over a moving one re-renders every frame.
@@ -619,12 +659,17 @@ Avatar status names a presence, not a tone: `--online` (success), `--busy` (dang
 ## Badge — `ntn-badge`
 
 Modifiers: `--neutral` (default) `--primary` `--success` `--warning` `--danger` `--info` · `--dot` (leading status dot)
-· `--sm` · `--count` (numeric pill). Text is a lowercase noun.
+· `--sm` · `--count` (numeric pill) · `--processing` (work in flight:
+a light sweeps round the hairline and a sheen crosses the label, then rests). Text is a
+lowercase noun. A `--processing` badge wraps its text in `__label`, so the sheen clips to the
+letters; set `--ntn-badge-ring-opacity` (0.4) for a stronger ring. Under reduced motion the ring
+and the label stand still. Remove the modifier when the work lands.
 
 ```html
 <span class="ntn-badge ntn-badge--success ntn-badge--dot">active</span>
 <span class="ntn-badge ntn-badge--danger">failed</span>
 <span class="ntn-badge ntn-badge--count">12</span>
+<span class="ntn-badge ntn-badge--processing"><span class="ntn-badge__label">Working…</span></span>
 ```
 
 ## Alert — `ntn-alert`

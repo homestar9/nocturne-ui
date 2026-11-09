@@ -16,18 +16,18 @@
 :root, [data-theme="dark"] {
   color-scheme: dark;
 
-  /* Neutral ramp — cool, slightly blue-shifted graphite */
-  --ntn-n-0:    #050609;
-  --ntn-n-50:   #0A0C10;
-  --ntn-n-100:  #0F1217;
-  --ntn-n-200:  #14181F;
-  --ntn-n-300:  #1B202A;
-  --ntn-n-400:  #242A36;
-  --ntn-n-500:  #39414F;
-  --ntn-n-600:  #5A6474;
-  --ntn-n-700:  #8A93A3;
-  --ntn-n-800:  #B9C0CC;
-  --ntn-n-900:  #E6E9EF;
+  /* Neutral ramp — near-neutral graphite */
+  --ntn-n-0:    #050506;
+  --ntn-n-50:   #08090A;
+  --ntn-n-100:  #0F1011;
+  --ntn-n-200:  #141516;
+  --ntn-n-300:  #191A1B;
+  --ntn-n-400:  #23252A;
+  --ntn-n-500:  #34343A;
+  --ntn-n-600:  #62666D;
+  --ntn-n-700:  #8A8F98;
+  --ntn-n-800:  #D0D6E0;
+  --ntn-n-900:  #F7F8F8;
   --ntn-n-1000: #FFFFFF;
 
   /* Accent — synthwave violet (the themeable channel) */
@@ -133,14 +133,27 @@
   --ntn-surface-inset:  rgba(0,0,0,0.25);
   /* Translucent bar behind the sticky top bar's blur: the canvas at 72% */
   --ntn-bg-blur:        color-mix(in srgb, var(--ntn-n-50) 72%, transparent);
-  /* Glass surfaces (_glass.scss): a translucent card colour, a faint sheen that lights it from
-     the top, and a hairline drawn in the ink. ntn-glass--clear and --frosted swap in the
-     lighter and denser fills. */
+  /* Glass surfaces (_glass.scss): a translucent card colour. ntn-glass--clear and --frosted
+     swap in the lighter and denser fills. */
   --ntn-glass-bg-clear:   color-mix(in srgb, var(--ntn-n-100) 50%, transparent);
   --ntn-glass-bg:         color-mix(in srgb, var(--ntn-n-100) 72%, transparent);
   --ntn-glass-bg-frosted: color-mix(in srgb, var(--ntn-n-100) 88%, transparent);
-  --ntn-glass-sheen:      linear-gradient(180deg, color-mix(in srgb, var(--ntn-n-900) 3%, transparent), transparent);
-  --ntn-glass-border:     color-mix(in srgb, var(--ntn-n-900) 8%, transparent);
+  /* The light a raised surface catches from above: a faint ink glow at the top centre, eased
+     out over several stops so the falloff doesn't band. A separate background-image, so a
+     wash (ntn-gradient) or a glow edge that sets its own image replaces it but keeps the fill. */
+  --ntn-surface-sheen:    radial-gradient(ellipse 100% 160px at 50% 0,
+                            color-mix(in srgb, var(--ntn-n-1000) 3.5%, transparent) 0%,
+                            color-mix(in srgb, var(--ntn-n-1000) 2.8%, transparent) 20%,
+                            color-mix(in srgb, var(--ntn-n-1000) 1.8%, transparent) 40%,
+                            color-mix(in srgb, var(--ntn-n-1000) 0.9%, transparent) 60%,
+                            color-mix(in srgb, var(--ntn-n-1000) 0.3%, transparent) 80%,
+                            transparent 100%);
+
+  /* Edges of raised surfaces (card, stat, accordion, modal, popover, toast): the ink at 8%
+     frames the surface, at 5% it rules inside one. Translucent, so the same edge works over
+     any fill, glass included, and a theme's ramp gives it its own tint. */
+  --ntn-edge-line:        color-mix(in srgb, var(--ntn-n-1000) 5%, transparent);
+  --ntn-edge-line-strong: color-mix(in srgb, var(--ntn-n-1000) 8%, transparent);
 
   /* Inner hairlines sit halfway between the raised surfaces */
   --ntn-border-subtle:  color-mix(in srgb, var(--ntn-n-200), var(--ntn-n-300));

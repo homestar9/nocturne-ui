@@ -53,6 +53,8 @@
     padding: var(--ntn-space-6); border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-xl);
     background: var(--ntn-bg-app);
   }
+  /* The floor stage: tall enough for the light to pool below the card. */
+  .sink__floor { padding-bottom: 96px; }
   /* A small stage for one ambient placement or tone, with a band sized to fit it. */
   .sink__ambient-tile {
     --ntn-ambient-size: 200px;
@@ -131,6 +133,7 @@
         <a class="ntn-sidebar__item" href="#shell"><i class="fa-light fa-browser"></i><span>App shell</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#density"><i class="fa-light fa-compress"></i><span>Density</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#cards"><i class="fa-light fa-clone"></i><span>Cards</span></a>
+        <a class="ntn-sidebar__item" href="#frame"><i class="fa-light fa-window-maximize"></i><span>Frame</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#edges"><i class="fa-light fa-wand-magic-sparkles"></i><span>Border effects</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#glass"><i class="fa-light fa-droplet"></i><span>Glass</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
         <a class="ntn-sidebar__item" href="#gradient"><i class="fa-light fa-fill-drip"></i><span>Gradient</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
@@ -167,6 +170,7 @@
           <button class="ntn-toggle-group__btn" aria-pressed="false" data-accent="synthwave">Synthwave</button>
         </div>
         <button class="ntn-icon-btn" aria-label="Show all code" aria-pressed="false" id="code-toggle"><i class="fa-light fa-code"></i></button>
+        <button class="ntn-icon-btn" aria-label="Mono font: Hack instead of JetBrains Mono" aria-pressed="false" id="mono-toggle" title="Mono A/B: JetBrains Mono / Hack"><i class="fa-light fa-terminal"></i></button>
         <button class="ntn-icon-btn" aria-label="Glass surfaces" aria-pressed="false" id="glass-toggle"><i class="fa-light fa-droplet"></i></button>
         <button class="ntn-icon-btn" aria-label="Compact density" aria-pressed="false" id="density-toggle"><i class="fa-light fa-compress"></i></button>
         <button class="ntn-icon-btn" aria-label="Toggle light theme" data-ntn-theme-toggle><i class="fa-light fa-sun" data-ntn-theme-icon></i></button>
@@ -1340,7 +1344,7 @@
           <header class="sink__head">
             <h2 class="sink__title">Badges</h2>
             <code class="sink__code">.ntn-badge</code>
-            <p class="sink__note">Status pills. <code>--dot</code> adds a leading indicator, <code>--count</code> makes a numeric chip.</p>
+            <p class="sink__note">Status pills. <code>--dot</code> adds a leading indicator, <code>--count</code> makes a numeric chip, <code>--processing</code> shows work in flight: a light sweeps the edge and a sheen crosses the label (wrap the text in <code>ntn-badge__label</code>).</p>
           </header>
           <div class="ntn-card"><div class="ntn-card__body">
             <div class="ntn-row" data-sink-example="">
@@ -1351,6 +1355,11 @@
               <span class="ntn-badge ntn-badge--info ntn-badge--sm">beta</span>
               <span class="ntn-badge">neutral</span>
               <span class="ntn-badge ntn-badge--count">12</span>
+            </div>
+            <div class="ntn-row" style="margin-top:var(--ntn-space-3)" data-sink-example="Processing">
+              <span class="ntn-badge ntn-badge--processing"><span class="ntn-badge__label">Working…</span></span>
+              <span class="ntn-badge ntn-badge--processing ntn-badge--sm"><span class="ntn-badge__label">Indexing</span></span>
+              <span class="ntn-badge ntn-badge--processing ntn-badge--dot"><span class="ntn-badge__label">Deploying</span></span>
             </div>
           </div></div>
         </section>
@@ -1707,6 +1716,42 @@
         </section>
 
         <!-- ── Border effects ───────────────────────────────────────────── -->
+        <section class="sink" id="frame">
+          <header class="sink__head">
+            <h2 class="sink__title">Frame</h2>
+            <code class="sink__code">.ntn-frame</code>
+            <code class="sink__code">.ntn-frame__view</code>
+            <code class="sink__code">.ntn-frame__aside</code>
+            <p class="sink__note">An app pane set into a shell: a sunken shell, 8px of padding, and a barely lit view set in by a dark ring. Both carry the lit top rim. <code>__aside</code> sits beside the view on the shell. <code>--fade-bottom</code> and <code>--fade-sides</code> dissolve it into the page.</p>
+          </header>
+          <div class="ntn-frame" style="min-height:420px" data-sink-example="A frame with an aside">
+            <nav class="ntn-frame__aside" aria-label="Workspace">
+              <a class="ntn-btn ntn-btn--subtle ntn-btn--sm" href="#frame" style="justify-content:flex-start"><i class="fa-light fa-inbox"></i>Inbox</a>
+              <a class="ntn-btn ntn-btn--subtle ntn-btn--sm" href="#frame" style="justify-content:flex-start"><i class="fa-light fa-circle-half-stroke"></i>My issues</a>
+              <a class="ntn-btn ntn-btn--subtle ntn-btn--sm" href="#frame" style="justify-content:flex-start"><i class="fa-light fa-chart-simple"></i>Insights</a>
+              <a class="ntn-btn ntn-btn--subtle ntn-btn--sm" href="#frame" style="justify-content:flex-start"><i class="fa-light fa-folder"></i>Projects</a>
+            </nav>
+            <div class="ntn-frame__view">
+              <div class="ntn-card__head ntn-card__head--divided">
+                <div class="ntn-card__heading">
+                  <h3 class="ntn-card__title">Faster app launch</h3>
+                  <p class="ntn-card__sub">Render the shell before the data lands.</p>
+                </div>
+              </div>
+              <div class="ntn-grid ntn-grid--2" style="padding:var(--ntn-gutter)">
+                <section class="ntn-card">
+                  <div class="ntn-card__body">Cold start is down to <span class="ntn-num">1.2s</span> on the median device.</div>
+                </section>
+                <div class="ntn-stat">
+                  <div class="ntn-stat__head"><span class="ntn-stat__label">Launch time</span></div>
+                  <div class="ntn-stat__figure"><span class="ntn-stat__value">1.2s</span><span class="ntn-stat__delta">-38%</span></div>
+                  <span class="ntn-stat__caption">p50, last 7 days</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section class="sink" id="edges">
           <header class="sink__head">
             <h2 class="sink__title">Border effects</h2>
@@ -1811,6 +1856,23 @@
                     </table>
                   </div>
                 </div>
+              </section>
+            </div>
+          </div>
+          <div class="ntn-stack">
+            <p class="sink__label">A lit floor with grain · <code>ntn-ambient--floor</code> + <code>ntn-grain</code></p>
+            <div class="ntn-grid ntn-grid--3 sink__glass-stage sink__floor" data-sink-example="A lit floor with grain">
+              <div class="ntn-ambient ntn-ambient--floor"></div>
+              <div class="ntn-grain" aria-hidden="true"></div>
+              <span></span>
+              <section class="ntn-card">
+                <header class="ntn-card__head">
+                  <div class="ntn-card__heading">
+                    <h3 class="ntn-card__title">On the floor</h3>
+                    <p class="ntn-card__sub">Light pools under the card.</p>
+                  </div>
+                </header>
+                <div class="ntn-card__body">The stage brightens toward its bottom edge; a vignette pulls the sides back into the canvas. The grain sits over everything.</div>
               </section>
             </div>
           </div>
@@ -2544,6 +2606,21 @@
     if (on) document.documentElement.setAttribute('data-density', 'compact');
     else document.documentElement.removeAttribute('data-density');
   });
+
+  /* Mono A/B: Hack (loaded on first use) in place of JetBrains Mono. Remembered per browser. */
+  const monoToggle = document.getElementById('mono-toggle');
+  const setMono = (hack) => {
+    monoToggle.setAttribute('aria-pressed', String(hack));
+    if (hack && !document.getElementById('sink-hack')) {
+      const link = Object.assign(document.createElement('link'), { id: 'sink-hack', rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/hack-font@3.3.0/build/web/hack-subset.css' });
+      document.head.append(link);
+    }
+    document.documentElement.style.setProperty('--ntn-font-mono', hack ? '"Hack", ui-monospace, "SF Mono", Menlo, monospace' : '');
+    if (!hack) document.documentElement.style.removeProperty('--ntn-font-mono');
+    try { localStorage.setItem('sink-mono', hack ? 'hack' : 'jetbrains'); } catch (err) {}
+  };
+  try { if (localStorage.getItem('sink-mono') === 'hack') setMono(true); } catch (err) {}
+  monoToggle.addEventListener('click', () => setMono(monoToggle.getAttribute('aria-pressed') !== 'true'));
 
   document.getElementById('glass-toggle').addEventListener('click', (e) => {
     const on = e.currentTarget.getAttribute('aria-pressed') !== 'true';

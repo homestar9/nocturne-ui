@@ -18,9 +18,16 @@ $-shine-parts: ".ntn-edge__shine::before, .ntn-edge__shine::after, .ntn-edge--sh
 @keyframes ntn-border-spin { to { --ntn-spin: 360deg; } }
 
 .ntn-edge {
-  position: relative; border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-xl);
+  position: relative; @include edge-surface($drop: false); border-radius: var(--ntn-radius-xl);
 
   &--strong { border-color: var(--ntn-border-strong); }
+}
+
+/* The lit rim: every raised surface catches the light along its top edge. It is the host's
+   ::after, so the shine (whose halos are the host's pseudo-elements) and the glow (which has
+   its own accent edge) go without. */
+:is(.ntn-card, .ntn-stat, .ntn-accordion, .ntn-modal, .ntn-edge, .ntn-frame, .ntn-frame__view):not(.ntn-edge--shine, #{$-glow})::after {
+  @include edge-light;
 }
 
 /* Glow — the one element on the page you want read first. Accent hairline, a
@@ -37,7 +44,7 @@ $-shine-parts: ".ntn-edge__shine::before, .ntn-edge__shine::after, .ntn-edge--sh
    glow orbits with it. Both read the same --ntn-spin, so they never drift. */
 #{$-processing} {
   position: relative;
-  border-color: var(--ntn-border-default);
+  border-color: var(--ntn-edge-line-strong);
   /* Static fallback first, for engines without trigonometric functions. */
   box-shadow: 0 0 24px -12px var(--ntn-accent-glow), var(--ntn-shadow-md);
   box-shadow: calc(cos(var(--ntn-spin)) * 9px) calc(sin(var(--ntn-spin)) * 9px) 26px -8px var(--ntn-accent-glow),
@@ -66,8 +73,8 @@ $-shine-parts: ".ntn-edge__shine::before, .ntn-edge__shine::after, .ntn-edge--sh
 
 @supports (offset-path: border-box) {
   .ntn-edge__shine {
-    /* The frame sits on the 1px border and is masked to a ring of --ntn-shine-thickness. */
-    position: absolute; inset: -1px; z-index: 2; pointer-events: none;
+    /* The frame sits on the hairline border and is masked to a ring of --ntn-shine-thickness. */
+    position: absolute; inset: calc(-1 * var(--ntn-hairline)); z-index: 2; pointer-events: none;
     border-radius: inherit; padding: var(--ntn-shine-thickness);
     @include ring-mask;
   }

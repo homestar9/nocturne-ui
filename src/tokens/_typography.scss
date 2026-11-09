@@ -17,13 +17,15 @@
 
   --ntn-weight-light:    300;
   --ntn-weight-regular:  400;
-  --ntn-weight-medium:   500;
-  --ntn-weight-semibold: 600;
+  /* Off-grid stops on Inter's variable weight axis: a touch heavier than 500 / 600
+     so medium labels and semibold titles hold up on dark grounds. */
+  --ntn-weight-medium:   510;
+  --ntn-weight-semibold: 590;
   --ntn-weight-bold:     700;
 
   --ntn-tracking-display: -0.022em;
-  --ntn-tracking-heading: -0.014em;
-  --ntn-tracking-body:    -0.004em;
+  --ntn-tracking-heading: -0.012em;
+  --ntn-tracking-body:    -0.011em;
   --ntn-tracking-wide:    0.06em;
   --ntn-tracking-caps:    0.09em;
 }
