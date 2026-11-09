@@ -1535,9 +1535,21 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-select__control:not([data-ntn-dropdown]):has(> select[multiple])::after {
   content: none;
 }
-.ntn-select__control option {
-  background: var(--ntn-surface-2);
-  color: var(--ntn-text-primary);
+.ntn-select__control select option, .ntn-select__control select optgroup {
+  background: var(--ntn-picker-bg);
+  color: var(--ntn-picker-option);
+}
+.ntn-select__control select optgroup {
+  color: var(--ntn-text-disabled);
+}
+.ntn-select__control select option:disabled {
+  color: var(--ntn-picker-empty);
+}
+.ntn-select__control select[multiple] option, .ntn-select__control select[multiple] optgroup {
+  background: transparent;
+}
+.ntn-select__control select[multiple] option:not(:disabled) {
+  color: var(--ntn-face-text);
 }
 .ntn-select__control[data-ntn-dropdown] > select {
   position: absolute;

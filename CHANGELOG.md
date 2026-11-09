@@ -29,6 +29,10 @@ renamed or removed class names and tokens.
   synthwave set them in both modes.
 - Without the script, a `<select multiple>` in `.ntn-select` is the platform's list box (it grows,
   no chevron) instead of a one-row control.
+- A native select's own list takes the enhanced panel's colours: options and optgroups on
+  `--ntn-picker-bg` in `--ntn-picker-option` ink, group headings in the caps-label grey, disabled
+  options in `--ntn-picker-empty`. Before, an `<optgroup>` painted the browser's white in dark
+  mode. A multiple select's rows keep the face's fill.
 - Kitchen sink: the Select section shows the enhanced, searchable, small inline, multiple and
   grouped selects (the last two native and enhanced), and a new **Form controls in both themes**
   section puts a dark and a light panel side by side.

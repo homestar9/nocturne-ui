@@ -235,6 +235,10 @@ try {
   });
   check(pressed.length === 0, 'buttons give to 97% when pressed, and stay put under reduced motion (NTN-38)' + (pressed.length ? ': ' + pressed.join(' ') : ''));
   check(oddFaces.length === 0, 'every form control face is the raised face: --ntn-face-bg, a transparent border, --ntn-shadow-face' + (oddFaces.length ? ': ' + oddFaces.join(' ') : ''));
+  // A native select's own list uses the enhanced panel's colours. An <optgroup> left out paints the
+  // browser's white, even in dark mode.
+  const nativeList = rules.find((r) => r.sel.split(/\s*,\s*/).includes('.ntn-select__control select optgroup') && /background:\s*var\(--ntn-picker-bg\)/.test(r.body));
+  check(nativeList && nativeList.sel.includes('.ntn-select__control select option'), "a native select's options and optgroups take the picker panel's fill");
   // The face's hover lifts the fill; a border colour on hover would draw a line round a borderless face.
   const borderHovers = rules.filter((r) => CONTROL_FACES.some((f) => r.sel.startsWith(f + ':hover')) && /border-color/.test(r.body)).map((r) => r.sel);
   check(borderHovers.length === 0, 'no control face colours its border on hover' + (borderHovers.length ? ': ' + borderHovers.join(' | ') : ''));

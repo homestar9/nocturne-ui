@@ -94,7 +94,19 @@ $tick-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
     // Without the script a multiple select is the platform's list box: let it grow, no chevron.
     select[multiple] { height: auto; padding: 4px; }
     &:not([data-ntn-dropdown]):has(> select[multiple])::after { content: none; }
-    option { background: var(--ntn-surface-2); color: var(--ntn-text-primary); }
+    // The platform's own list, in the enhanced panel's colours as far as browsers allow: the
+    // panel fill and option ink, group headings in the caps-label grey, disabled options faded.
+    // An <optgroup> left unstyled paints the browser's white, even in dark mode.
+    // A multiple select's list box is the face itself, so its rows keep the face's fill.
+    select {
+      option, optgroup { background: var(--ntn-picker-bg); color: var(--ntn-picker-option); }
+      optgroup { color: var(--ntn-text-disabled); }
+      option:disabled { color: var(--ntn-picker-empty); }
+    }
+    select[multiple] {
+      option, optgroup { background: transparent; }
+      option:not(:disabled) { color: var(--ntn-face-text); }
+    }
 
     // Enhanced (data-ntn-select): the native select stays in the form, invisible under the trigger,
     // where the browser's required message still points.
