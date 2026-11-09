@@ -74,6 +74,14 @@
   --ntn-alpha-ink-10: rgba(255,255,255,0.10);
   /* A per-person avatar (--ntn-avatar-hue): the OKLCH lightness its gradient starts from */
   --ntn-avatar-lightness: 0.78;
+  /* The raised control face (control-surface): field, select, search, combo and date triggers,
+     segmented controls. Measured values, kept exact as lch(); the light estimates live in one
+     block at the end of _theme-light.scss. The ring and drop are --ntn-shadow-face. */
+  --ntn-face-bg: lch(13.861 1.139 272);
+  --ntn-face-bg-hover: lch(18.49 1.525 272);
+  --ntn-face-text: lch(90.826 1.425 272);
+  --ntn-face-muted: lch(63.304 1.425 272); /* chevron, leading icon */
+  --ntn-face-placeholder: lch(52 1.425 272);
 }
 
 :root {
@@ -204,6 +212,8 @@
   --ntn-leading-loose: 1.65;
   --ntn-weight-light: 300;
   --ntn-weight-regular: 400;
+  /* Typed text and values in a control face: a touch above regular */
+  --ntn-weight-book: 450;
   /* Off-grid stops on Inter's variable weight axis: a touch heavier than 500 / 600
      so medium labels and semibold titles hold up on dark grounds. */
   --ntn-weight-medium: 510;
@@ -268,9 +278,13 @@
   --ntn-shadow-well: 0 0 0 2px rgba(0,0,0,0.2);
   --ntn-shadow-float: 0 2px 6px rgba(0,0,0,0.5);
   --ntn-shadow-inset: inset 0 1px 2px rgba(0,0,0,0.4);
-  /* The bevel of a control face (button, field, select, toggle group): a lit
-     top inside the border, a dark ring outside it and a short drop. */
+  /* The bevel of a button face: a lit top inside the border, a dark ring outside it and a
+     short drop. */
   --ntn-shadow-bevel: inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 1px rgba(0,0,0,0.5), 0 4px 4px rgba(0,0,0,0.1);
+  /* The raised control face (control-surface): a translucent ink ring just outside the border
+     and a short, tight drop. Brighter under the pointer. Light values: _theme-light.scss. */
+  --ntn-shadow-face: 0 0 0 1px rgba(255,255,255,0.095), 0 0.5px 1px 1px rgba(0,0,0,0.3);
+  --ntn-shadow-face-hover: 0 0 0 1px rgba(255,255,255,0.119), 0 0.5px 1px 1px rgba(0,0,0,0.3);
   /* Glass (_glass.scss): a lit top hairline and a wide soft drop; the strength of an app's
      ambient image */
   --ntn-glass-highlight: inset 0 1px 0 rgba(255,255,255,0.06);
@@ -444,6 +458,17 @@
   --ntn-shine-head: var(--ntn-accent-400);
   --ntn-shine-glow: 0.2;
   --ntn-scrim: rgba(0,0,0,0.42);
+  /* ── Raised controls: estimated, tune here ─────────────────────────────────
+     Every light value of the control face lives in this block. The dark values are measured
+     and stay where they are (_colors.scss, _elevation.scss). Aliases of the light ramp follow a
+     theme's light mode by themselves; swap one for a literal to tune it. */
+  --ntn-face-bg: var(--ntn-n-0);
+  --ntn-face-bg-hover: var(--ntn-n-100);
+  --ntn-face-text: var(--ntn-n-900);
+  --ntn-face-muted: var(--ntn-n-700);
+  --ntn-face-placeholder: var(--ntn-n-600);
+  --ntn-shadow-face: 0 0 0 1px rgba(0,0,0,0.10), 0 0.5px 1px 0 rgba(0,0,0,0.08);
+  --ntn-shadow-face-hover: 0 0 0 1px rgba(0,0,0,0.15), 0 0.5px 1px 0 rgba(0,0,0,0.08);
 }
 
 /* ── Nocturne density ────────────────────────────────────────────────────────

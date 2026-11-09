@@ -6,6 +6,25 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+### Changed
+- **Raised control faces.** Field, select, search, the combobox and date triggers, the toggle
+  group and the segmented radio drop the bordered bevel for a raised face (the `control-surface`
+  mixin): a fill one step above the surface (`--ntn-face-bg`, `lch(13.861 1.139 272)` in dark), a
+  transparent 1px border (drawn in forced-colours mode, and coloured by focus and invalid), and a
+  translucent 1px ring with a tight drop (`--ntn-shadow-face`). Hover lifts the fill and brightens
+  the ring (`--ntn-face-bg-hover`, `--ntn-shadow-face-hover`) instead of colouring the border, and
+  skips disabled controls. Text in a face is `--ntn-face-text` at weight 450 (`--ntn-weight-book`,
+  new), with `--ntn-face-placeholder` placeholders, `--ntn-face-muted` icons and chevrons, and an
+  accent caret. The dark values are exact; the light ones are estimates, kept together at the end
+  of `_theme-light.scss` (mostly aliases of the light ramp, so themes' light modes follow).
+- A disabled field is only the 45% fade (no `surface-1` fill). The textarea pads 7px 10px with an
+  18px line. The select pads `0 28px 0 10px`. A selected segment sits on `--ntn-face-bg-hover`,
+  and segment dividers are the 8% ink hairline. `chevron()` takes a colour.
+- `themes/mono.css` sets the face in grey (the same lightness, no chroma), and
+  `themes/synthwave.css` sets it from its purple ramp, in both modes.
+- Tests: the one-control-face guard checks the raised face, no face colours its border on hover,
+  every face token has a light value, and the mono guard reads `lch()` colours.
+
 ### Kitchen sink
 - **Every block is shown.** A Layout section (page head, `ntn-grid --2/3/4/split/split-reverse`,
   `ntn-row --between/--end`, `ntn-stack`, the text helpers and dividers, `ntn-divider-label`), and

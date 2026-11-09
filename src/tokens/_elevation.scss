@@ -20,9 +20,13 @@
   --ntn-shadow-well:     0 0 0 2px rgba(0,0,0,0.2);
   --ntn-shadow-float:    0 2px 6px rgba(0,0,0,0.5);
   --ntn-shadow-inset:    inset 0 1px 2px rgba(0,0,0,0.4);
-  /* The bevel of a control face (button, field, select, toggle group): a lit
-     top inside the border, a dark ring outside it and a short drop. */
+  /* The bevel of a button face: a lit top inside the border, a dark ring outside it and a
+     short drop. */
   --ntn-shadow-bevel:   inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 1px rgba(0,0,0,0.5), 0 4px 4px rgba(0,0,0,0.1);
+  /* The raised control face (control-surface): a translucent ink ring just outside the border
+     and a short, tight drop. Brighter under the pointer. Light values: _theme-light.scss. */
+  --ntn-shadow-face:       0 0 0 1px rgba(255,255,255,0.095), 0 0.5px 1px 1px rgba(0,0,0,0.3);
+  --ntn-shadow-face-hover: 0 0 0 1px rgba(255,255,255,0.119), 0 0.5px 1px 1px rgba(0,0,0,0.3);
 
   /* Glass (_glass.scss): a lit top hairline and a wide soft drop; the strength of an app's
      ambient image */

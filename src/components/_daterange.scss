@@ -14,17 +14,17 @@
     height: var(--ntn-control-md); padding: 0 10px; min-width: 232px;
     @include control-surface;
     cursor: pointer;
-    color: var(--ntn-text-primary); font-family: var(--ntn-font-sans); font-size: var(--ntn-font-size-sm); text-align: left;
-    @include transition(border-color, box-shadow);
+    color: var(--ntn-face-text); font-family: var(--ntn-font-sans); font-size: var(--ntn-font-size-sm); text-align: left;
+    @include transition(background-color, border-color, box-shadow);
 
-    i { font-size: 15px; color: var(--ntn-text-muted); flex: 0 0 auto; }
-    &:hover { border-color: var(--ntn-border-strong); }
+    i { font-size: 15px; color: var(--ntn-face-muted); flex: 0 0 auto; }
+    @include hover { @include face-hover; }
     &:focus-visible, &[aria-expanded="true"] { outline: 0; @include focus-accent; }
   }
   &__value {
     flex: 1; min-width: 0; @include truncate; font-variant-numeric: tabular-nums;
 
-    &[data-empty] { color: var(--ntn-text-disabled); }
+    &[data-empty] { color: var(--ntn-face-placeholder); }
   }
   &__caret { margin-left: auto; }
   // Two classes, so the caret's size beats the trigger's own icon size (&__trigger i).

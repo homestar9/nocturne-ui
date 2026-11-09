@@ -106,11 +106,11 @@
     display: flex; align-items: center; gap: var(--ntn-space-2); width: 100%;
     min-height: var(--ntn-control-md); padding: var(--ntn-control-pad-y) 10px var(--ntn-control-pad-y) 12px;
     @include control-surface;
-    color: var(--ntn-text-primary);
+    color: var(--ntn-face-text);
     font-family: var(--ntn-font-sans); font-size: var(--ntn-font-size-sm); font-weight: var(--ntn-weight-medium); text-align: left; cursor: pointer;
-    @include transition(border-color, box-shadow);
+    @include transition(background-color, border-color, box-shadow);
 
-    @include hover { border-color: var(--ntn-border-strong); }
+    @include hover { @include face-hover; }
     &:focus-visible, &[aria-expanded="true"] { outline: 0; @include focus-accent; }
     &:disabled { @include disabled; }
   }
@@ -118,10 +118,10 @@
     flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; overflow: hidden;
 
     > span:only-child { @include truncate; }
-    &[data-empty] { color: var(--ntn-text-disabled); font-weight: var(--ntn-weight-regular); }
+    &[data-empty] { color: var(--ntn-face-placeholder); font-weight: var(--ntn-weight-regular); }
   }
   &__caret {
-    flex: 0 0 auto; font-size: 12px; color: var(--ntn-text-muted); transition: tr(transform, fast, out);
+    flex: 0 0 auto; font-size: 12px; color: var(--ntn-face-muted); transition: tr(transform, fast, out);
 
     .ntn-combo__trigger[aria-expanded="true"] & { transform: rotate(180deg); }
   }

@@ -63,6 +63,15 @@
 
   /* A per-person avatar (--ntn-avatar-hue): the OKLCH lightness its gradient starts from */
   --ntn-avatar-lightness: 0.78;
+
+  /* The raised control face (control-surface): field, select, search, combo and date triggers,
+     segmented controls. Measured values, kept exact as lch(); the light estimates live in one
+     block at the end of _theme-light.scss. The ring and drop are --ntn-shadow-face. */
+  --ntn-face-bg:          lch(13.861 1.139 272);
+  --ntn-face-bg-hover:    lch(18.49 1.525 272);
+  --ntn-face-text:        lch(90.826 1.425 272);
+  --ntn-face-muted:       lch(63.304 1.425 272);   /* chevron, leading icon */
+  --ntn-face-placeholder: lch(52 1.425 272);
 }
 
 :root {

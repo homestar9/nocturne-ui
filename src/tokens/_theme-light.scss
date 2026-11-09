@@ -93,4 +93,16 @@
   --ntn-shine-glow: 0.2;
 
   --ntn-scrim: rgba(0,0,0,0.42);
+
+  /* ── Raised controls: estimated, tune here ─────────────────────────────────
+     Every light value of the control face lives in this block. The dark values are measured
+     and stay where they are (_colors.scss, _elevation.scss). Aliases of the light ramp follow a
+     theme's light mode by themselves; swap one for a literal to tune it. */
+  --ntn-face-bg:           var(--ntn-n-0);
+  --ntn-face-bg-hover:     var(--ntn-n-100);
+  --ntn-face-text:         var(--ntn-n-900);
+  --ntn-face-muted:        var(--ntn-n-700);
+  --ntn-face-placeholder:  var(--ntn-n-600);
+  --ntn-shadow-face:       0 0 0 1px rgba(0,0,0,0.10), 0 0.5px 1px 0 rgba(0,0,0,0.08);
+  --ntn-shadow-face-hover: 0 0 0 1px rgba(0,0,0,0.15), 0 0.5px 1px 0 rgba(0,0,0,0.08);
 }
