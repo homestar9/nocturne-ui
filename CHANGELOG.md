@@ -33,7 +33,7 @@ renamed or removed class names and tokens.
   `--ntn-picker-bg` in `--ntn-picker-option` ink, group headings in the caps-label grey, disabled
   options in `--ntn-picker-empty`. Before, an `<optgroup>` painted the browser's white in dark
   mode. A multiple select's rows keep the face's fill.
-- Kitchen sink: the Select section shows the enhanced, searchable, small inline, multiple and
+- Kitchen sink: the Select section shows the enhanced, searchable, inline, multiple and
   grouped selects (the last two native and enhanced), and a new **Form controls in both themes**
   section puts a dark and a light panel side by side.
 - `scrollIntoList()` and `stepTo()` are shared by the combo and the select.
