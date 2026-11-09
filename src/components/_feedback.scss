@@ -22,6 +22,46 @@
   &--count { min-width: 18px; height: 18px; padding: 0 5px; justify-content: center; background: var(--ntn-surface-3); font-family: var(--ntn-font-mono); font-size: var(--ntn-font-size-2xs); font-weight: var(--ntn-weight-semibold); line-height: 1; }
 }
 
+/* Processing — work in flight. A light sweeps round the
+   hairline (the ::after ring) and a sheen crosses the label, clipped to its letters, then the
+   label rests. The label is a child so the sheen clips to the text alone:
+   <span class="ntn-badge ntn-badge--processing"><span class="ntn-badge__label">Working</span></span>
+   Under reduced motion both stop: a still ring, a plain label. */
+@keyframes ntn-badge-sweep { to { background-position: 120px 0; } }
+@keyframes ntn-badge-sheen { from { background-position: 100% 0; } 75%, to { background-position: 0 0; } }
+
+.ntn-badge--processing {
+  --ntn-badge-ring-opacity: 0.4;
+  position: relative; background: transparent; border-color: var(--ntn-border-default); color: var(--ntn-text-muted);
+
+  &::after {
+    content: ""; position: absolute; inset: -1px; padding: 1px; border-radius: inherit; pointer-events: none;
+    background: linear-gradient(105deg, transparent 15%, var(--ntn-accent-500) 40%,
+                color-mix(in srgb, var(--ntn-n-900) 50%, transparent) 50%, var(--ntn-n-700) 62%, transparent 85%)
+                0 0 / 120px 100% repeat-x;
+    opacity: var(--ntn-badge-ring-opacity);
+    animation: ntn-badge-sweep 2s linear infinite;
+    @include ring-mask;
+  }
+  .ntn-badge__label {
+    color: transparent; -webkit-text-fill-color: transparent;
+    background: linear-gradient(90deg, var(--ntn-text-muted) 0 40%, var(--ntn-accent-300) 47%,
+                var(--ntn-text-primary) 52%, var(--ntn-text-muted) 60% 100%) 100% 0 / 300% 100% no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: ntn-badge-sheen 2.4s linear infinite;
+  }
+
+  @include reduced-motion {
+    &::after { animation: none; background-position: 60px 0; }
+    .ntn-badge__label { animation: none; background: none; color: inherit; -webkit-text-fill-color: currentColor; }
+  }
+  @media (forced-colors: active) {
+    &::after { display: none; }
+    .ntn-badge__label { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; }
+  }
+}
+
 .ntn-alert {
   display: flex; align-items: flex-start; flex-wrap: wrap; gap: var(--ntn-space-3); padding: var(--ntn-box-pad-y) var(--ntn-space-4);
   background: tone(info, soft); border: 1px solid tone(info, line); border-radius: var(--ntn-radius-lg);

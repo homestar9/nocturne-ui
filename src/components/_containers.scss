@@ -6,14 +6,15 @@
    (__foot below). A --flush card is the exception: it holds edge-to-edge tables and media, so it
    clips; menus and popovers inside one render in the top layer and are not affected.
 
-   Containers (card, stat, accordion, modal) frame themselves in --ntn-border-default; the rules
-   inside them (foot, divided head, accordion items) stay on --ntn-border-subtle, so the frame
-   reads first. */
+   Containers (card, stat, accordion, modal) take the edge-surface frame: a translucent hairline
+   at 8% ink, the top-lit sheen, a dark separation ring and (cards, modals) a soft drop. The lit
+   rim on the top edge is their ::after, drawn in _effects.scss. Rules inside them (foot, divided
+   head, accordion items) are the 5% ink, so the frame reads first. */
 .ntn-card {
   position: relative;
   display: flex; flex-direction: column;
-  background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-xl);
-  box-shadow: var(--ntn-shadow-md); backdrop-filter: var(--ntn-surface-filter);
+  background: var(--ntn-surface-1); @include edge-surface; border-radius: var(--ntn-radius-xl);
+  backdrop-filter: var(--ntn-surface-filter);
   transition: tr(border-color), tr(transform, fast, out);
 
   &__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ntn-space-4); padding: var(--ntn-gutter) var(--ntn-gutter) 0; }
@@ -21,18 +22,18 @@
   &__sub { margin: 3px 0 0; font-size: var(--ntn-font-size-xs); color: var(--ntn-text-muted); }
   &__actions { display: flex; align-items: center; gap: var(--ntn-space-2); flex: 0 0 auto; }
   &__body { padding: var(--ntn-gutter); flex: 1; min-height: 0; }
-  &__foot { padding: var(--ntn-space-3) var(--ntn-gutter); border-top: 1px solid var(--ntn-border-subtle); background: var(--ntn-alpha-ink-04); font-size: var(--ntn-font-size-xs); color: var(--ntn-text-muted); border-radius: 0 0 calc(var(--ntn-radius-xl) - 1px) calc(var(--ntn-radius-xl) - 1px); }
+  &__foot { padding: var(--ntn-space-3) var(--ntn-gutter); border-top: var(--ntn-hairline) solid var(--ntn-edge-line); background: var(--ntn-alpha-ink-04); font-size: var(--ntn-font-size-xs); color: var(--ntn-text-muted); border-radius: 0 0 calc(var(--ntn-radius-xl) - var(--ntn-hairline)) calc(var(--ntn-radius-xl) - var(--ntn-hairline)); }
   &--flush {
-    overflow: hidden;
+    @include clip-to-edge;
 
     .ntn-card__body { padding: 0; }
     > .ntn-card__head {
       /* A flush card is the table/list shell: its head always needs a rule under it,
          otherwise the head, the toolbar and the first row run together. */
-      padding-bottom: calc(var(--ntn-gutter) - 4px); border-bottom: 1px solid var(--ntn-border-default);
+      padding-bottom: calc(var(--ntn-gutter) - 4px); @include edge-rule;
     }
   }
-  &__head--divided { border-bottom: 1px solid var(--ntn-border-subtle); padding-bottom: calc(var(--ntn-gutter) - 4px); }
+  &__head--divided { @include edge-rule; padding-bottom: calc(var(--ntn-gutter) - 4px); }
   &__heading {
     display: flex; flex-direction: column; gap: 3px; min-width: 0;
 
@@ -52,12 +53,13 @@
 }
 
 .ntn-stat {
-  display: flex; flex-direction: column; gap: 6px; padding: calc(var(--ntn-gutter) - 4px) calc(var(--ntn-gutter) - 2px); background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg);
+  position: relative; display: flex; flex-direction: column; gap: 6px; padding: calc(var(--ntn-gutter) - 4px) calc(var(--ntn-gutter) - 2px);
+  background: var(--ntn-surface-1); @include edge-surface($drop: false); border-radius: var(--ntn-radius-lg);
 
   &__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   &__label { font-size: var(--ntn-font-size-xs); color: var(--ntn-text-muted); }
   &__figure { display: flex; align-items: baseline; gap: var(--ntn-space-2); flex-wrap: wrap; }
-  &__value { font-size: var(--ntn-font-size-2xl); font-weight: var(--ntn-weight-semibold); letter-spacing: var(--ntn-tracking-heading); color: var(--ntn-text-primary); }
+  &__value { font-size: var(--ntn-font-size-2xl); font-weight: var(--ntn-weight-semibold); letter-spacing: var(--ntn-tracking-heading); color: var(--ntn-text-primary); font-variant-numeric: tabular-nums; }
   &__delta {
     font-family: var(--ntn-font-mono); font-size: var(--ntn-font-size-xs); font-weight: var(--ntn-weight-medium); color: var(--ntn-success-400);
 
@@ -67,10 +69,48 @@
   &__caption { font-size: var(--ntn-font-size-xs); color: var(--ntn-text-disabled); }
 }
 
+/* Frame — an app pane set into a shell: a sunken shell with the
+   raised-surface edge, 8px of padding, and a view inside it that is barely lit (1% ink), framed
+   in the 5% hairline and set in by a dark ring. An optional __aside sits beside the view, on the
+   shell itself (a sidebar, a list). Both the shell and the view carry the lit rim. The fade
+   modifiers dissolve the frame into the page, so a tall or wide one can bleed off a hero:
+   --fade-bottom, --fade-sides, or both (the masks intersect). Put it on ntn-ambient--floor. */
+.ntn-frame {
+  --ntn-frame-fade-y: linear-gradient(#000 0 0);
+  --ntn-frame-fade-x: linear-gradient(#000 0 0);
+  --ntn-frame-aside: 220px;
+  position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--ntn-space-2);
+  padding: var(--ntn-space-2); background: var(--ntn-bg-sunken); @include edge-surface; border-radius: var(--ntn-radius-xl);
+
+  &:has(> .ntn-frame__aside) { grid-template-columns: var(--ntn-frame-aside) minmax(0, 1fr); }
+  &__aside { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: var(--ntn-space-2) var(--ntn-space-2) var(--ntn-space-2) 0; }
+  &__view {
+    position: relative; min-width: 0; min-height: 0;
+    background: color-mix(in srgb, var(--ntn-n-1000) 1%, transparent);
+    border: var(--ntn-hairline) solid var(--ntn-edge-line); border-radius: calc(var(--ntn-radius-xl) - 4px);
+    box-shadow: var(--ntn-shadow-well);
+    @include clip-to-edge;
+  }
+  &--fade-bottom, &--fade-sides {
+    -webkit-mask-image: var(--ntn-frame-fade-y), var(--ntn-frame-fade-x);
+    -webkit-mask-composite: source-in;
+    mask-image: var(--ntn-frame-fade-y), var(--ntn-frame-fade-x);
+    mask-composite: intersect;
+  }
+  &--fade-bottom { --ntn-frame-fade-y: linear-gradient(to bottom, #000 55%, transparent); }
+  &--fade-sides { --ntn-frame-fade-x: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent); }
+
+  @include below(md) {
+    &:has(> .ntn-frame__aside) { grid-template-columns: minmax(0, 1fr); }
+    &__aside { display: none; }
+  }
+}
+
 /* Modal — native <dialog>. Open with dialog.showModal(). */
 .ntn-modal {
-  width: 100%; max-width: 520px; padding: 0; border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-2xl);
-  background: var(--ntn-surface-1); color: var(--ntn-text-primary); box-shadow: var(--ntn-shadow-lg); overflow: hidden;
+  width: 100%; max-width: 520px; padding: 0; border-radius: var(--ntn-radius-2xl);
+  background: var(--ntn-surface-1); @include edge-surface; box-shadow: var(--ntn-shadow-ring), var(--ntn-shadow-lg);
+  color: var(--ntn-text-primary); @include clip-to-edge;
   backdrop-filter: var(--ntn-pop-filter);
 
   &::backdrop { background: var(--ntn-scrim); backdrop-filter: var(--ntn-blur-scrim); }
@@ -90,17 +130,18 @@
   }
   &__desc { margin: 6px 0 0; font-size: var(--ntn-font-size-sm); color: var(--ntn-text-muted); line-height: var(--ntn-leading-normal); }
   &__body { padding: var(--ntn-gutter); display: flex; flex-direction: column; gap: var(--ntn-layout-gap); }
-  &__foot { display: flex; justify-content: flex-end; gap: var(--ntn-space-2); padding: var(--ntn-box-pad-y) var(--ntn-gutter); border-top: 1px solid var(--ntn-border-subtle); background: var(--ntn-alpha-ink-04); }
+  &__foot { display: flex; justify-content: flex-end; gap: var(--ntn-space-2); padding: var(--ntn-box-pad-y) var(--ntn-gutter); border-top: var(--ntn-hairline) solid var(--ntn-edge-line); background: var(--ntn-alpha-ink-04); }
   &--sm { max-width: 380px; }
   &--lg { max-width: 720px; }
 }
 
 /* Accordion — native <details>. */
 .ntn-accordion {
-  display: flex; flex-direction: column; background: var(--ntn-surface-1); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg); overflow: hidden;
+  position: relative; display: flex; flex-direction: column; background: var(--ntn-surface-1); @include edge-surface($drop: false);
+  border-radius: var(--ntn-radius-lg); @include clip-to-edge;
 
   &__item {
-    border-top: 1px solid var(--ntn-border-subtle);
+    border-top: var(--ntn-hairline) solid var(--ntn-edge-line);
 
     &:first-child { border-top: 0; }
     &[open] > summary { background: var(--ntn-alpha-ink-04); }

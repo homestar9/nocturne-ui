@@ -81,6 +81,18 @@ $-mid: calc(50% - var(--ntn-ambient-size) / 2);
   }
   &--center { @include -place($-mid auto auto $-mid, $-size, $-size, radial-gradient(closest-side, $-fade), closest-side, center); }
 
+  // Floor: the stage under a hero or a framed pane. It brightens toward
+  // the bottom edge, and a vignette anchored at the bottom centre pulls the sides back into the
+  // canvas, so the light pools under whatever stands on it. Fills the container; no glow.
+  &--floor::before {
+    inset: 0; height: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+    background:
+      radial-gradient(52.5% 57.5% at 50% 100%, transparent, color-mix(in srgb, var(--ntn-bg-app) 50%, transparent)),
+      linear-gradient(180deg, var(--ntn-bg-app) 35%, var(--ntn-ambient-floor) 100%);
+  }
+
   // Tones tint the glow; the default is the accent.
   @each $tone in list.join($statuses, neutral) {
     &--#{$tone} { --ntn-ambient-glow: color-mix(in srgb, #{tone($tone, solid)} 35%, transparent); }
@@ -89,20 +101,29 @@ $-mid: calc(50% - var(--ntn-ambient-size) / 2);
 /* Stacked ambients: the first draws the background image, the rest only add their band. */
 .ntn-ambient ~ .ntn-ambient { background: none; }
 
+/* Grain — film noise over whatever it covers: an ambient, a frame, a hero card. A decorative
+   child (<div class="ntn-grain" aria-hidden="true"></div>) laid over its positioned parent,
+   overlay-blended so it adds texture without a tint. It sits over the parent's content
+   and lets every click through. */
+.ntn-grain {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none; border-radius: inherit;
+  background: var(--ntn-grain-image) 0 0 / 256px 256px repeat;
+  mix-blend-mode: overlay; opacity: var(--ntn-grain-opacity);
+}
+
 /* Glass surfaces */
 /* The sheen is a separate image over the fill, so ntn-edge--glow and ntn-gradient, which set
    their own background-image later in the cascade, replace the sheen but keep the fill. */
 #{$-glass-surface} {
   background-color: var(--ntn-glass-bg);
-  background-image: var(--ntn-glass-sheen);
-  border-color: var(--ntn-glass-border);
-  box-shadow: var(--ntn-glass-highlight), var(--ntn-glass-shadow);
+  background-image: var(--ntn-surface-sheen);
+  box-shadow: var(--ntn-glass-highlight), var(--ntn-shadow-ring), var(--ntn-glass-shadow);
   backdrop-filter: var(--ntn-glass-blur);
 }
 #{$-glass-sidebar} {
   background-color: var(--ntn-glass-bg);
-  background-image: var(--ntn-glass-sheen);
-  border-color: var(--ntn-glass-border);
+  background-image: var(--ntn-surface-sheen);
+  border-color: var(--ntn-edge-line-strong);
   backdrop-filter: var(--ntn-glass-blur);
 }
 
@@ -127,6 +148,13 @@ $-mid: calc(50% - var(--ntn-ambient-size) / 2);
    slides over page content rather than artwork. */
 @media (prefers-reduced-transparency: reduce) {
   #{$-glass-surface} { background-color: var(--ntn-surface-1); background-image: none; backdrop-filter: none; }
+}
+/* No texture for less transparency, and nothing decorative in forced colours. */
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  .ntn-grain { display: none; }
+}
+@media (forced-colors: active) {
+  .ntn-ambient--floor::before { background: none; }
 }
 @media (prefers-reduced-transparency: reduce), #{below(md)} {
   #{$-glass-sidebar} { background-color: var(--ntn-bg-sunken); background-image: none; backdrop-filter: none; }

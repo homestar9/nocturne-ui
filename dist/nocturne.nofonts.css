@@ -1,14 +1,16 @@
-/*! Nocturne nocturne.nofonts.css v1.15.0 — dark-first SaaS design system.
+/*! Nocturne nocturne.nofonts.css v1.16.0 — dark-first SaaS design system.
  *  Compiled from src/*.scss. Edit files in src/, never in dist/. */
 
 /* Nocturne — full stylesheet: tokens + reset + components. */
 
-/* Nocturne ships no licensed binaries. Geist / Geist Mono are loaded from Google Fonts.
+/* Nocturne ships no licensed binaries. Inter (variable, with its optical-size axis) and
+   JetBrains Mono are loaded from Google Fonts; both are SIL OFL.
    Self-hosting: load dist/nocturne.nofonts.css (the same stylesheet without this @import) and
-   declare @font-face rules for Geist and Geist Mono yourself. */
+   declare @font-face rules for Inter and JetBrains Mono yourself. Keep Inter's opsz axis: large
+   type switches to its display cut by itself (font-optical-sizing: auto). */
 :root {
-  --ntn-font-sans: "Geist", ui-sans-serif, -apple-system, "Segoe UI", Helvetica, sans-serif;
-  --ntn-font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --ntn-font-sans: "Inter", "SF Pro Display", -apple-system, "Segoe UI", Helvetica, sans-serif;
+  --ntn-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 }
 
 /* ── Nocturne color primitives ───────────────────────────────────────────────
@@ -28,18 +30,18 @@
       inside a dark page would inherit dark text resolved at :root. */
 :root, [data-theme=dark] {
   color-scheme: dark;
-  /* Neutral ramp — cool, slightly blue-shifted graphite */
-  --ntn-n-0: #050609;
-  --ntn-n-50: #0A0C10;
-  --ntn-n-100: #0F1217;
-  --ntn-n-200: #14181F;
-  --ntn-n-300: #1B202A;
-  --ntn-n-400: #242A36;
-  --ntn-n-500: #39414F;
-  --ntn-n-600: #5A6474;
-  --ntn-n-700: #8A93A3;
-  --ntn-n-800: #B9C0CC;
-  --ntn-n-900: #E6E9EF;
+  /* Neutral ramp — near-neutral graphite */
+  --ntn-n-0: #050506;
+  --ntn-n-50: #08090A;
+  --ntn-n-100: #0F1011;
+  --ntn-n-200: #141516;
+  --ntn-n-300: #191A1B;
+  --ntn-n-400: #23252A;
+  --ntn-n-500: #34343A;
+  --ntn-n-600: #62666D;
+  --ntn-n-700: #8A8F98;
+  --ntn-n-800: #D0D6E0;
+  --ntn-n-900: #F7F8F8;
   --ntn-n-1000: #FFFFFF;
   /* Accent — synthwave violet (the themeable channel) */
   --ntn-accent-100: #E9E0FF;
@@ -139,14 +141,26 @@
   --ntn-surface-inset: rgba(0,0,0,0.25);
   /* Translucent bar behind the sticky top bar's blur: the canvas at 72% */
   --ntn-bg-blur: color-mix(in srgb, var(--ntn-n-50) 72%, transparent);
-  /* Glass surfaces (_glass.scss): a translucent card colour, a faint sheen that lights it from
-     the top, and a hairline drawn in the ink. ntn-glass--clear and --frosted swap in the
-     lighter and denser fills. */
+  /* Glass surfaces (_glass.scss): a translucent card colour. ntn-glass--clear and --frosted
+     swap in the lighter and denser fills. */
   --ntn-glass-bg-clear: color-mix(in srgb, var(--ntn-n-100) 50%, transparent);
   --ntn-glass-bg: color-mix(in srgb, var(--ntn-n-100) 72%, transparent);
   --ntn-glass-bg-frosted: color-mix(in srgb, var(--ntn-n-100) 88%, transparent);
-  --ntn-glass-sheen: linear-gradient(180deg, color-mix(in srgb, var(--ntn-n-900) 3%, transparent), transparent);
-  --ntn-glass-border: color-mix(in srgb, var(--ntn-n-900) 8%, transparent);
+  /* The light a raised surface catches from above: a faint ink glow at the top centre, eased
+     out over several stops so the falloff doesn't band. A separate background-image, so a
+     wash (ntn-gradient) or a glow edge that sets its own image replaces it but keeps the fill. */
+  --ntn-surface-sheen: radial-gradient(ellipse 100% 160px at 50% 0,
+                            color-mix(in srgb, var(--ntn-n-1000) 3.5%, transparent) 0%,
+                            color-mix(in srgb, var(--ntn-n-1000) 2.8%, transparent) 20%,
+                            color-mix(in srgb, var(--ntn-n-1000) 1.8%, transparent) 40%,
+                            color-mix(in srgb, var(--ntn-n-1000) 0.9%, transparent) 60%,
+                            color-mix(in srgb, var(--ntn-n-1000) 0.3%, transparent) 80%,
+                            transparent 100%);
+  /* Edges of raised surfaces (card, stat, accordion, modal, popover, toast): the ink at 8%
+     frames the surface, at 5% it rules inside one. Translucent, so the same edge works over
+     any fill, glass included, and a theme's ramp gives it its own tint. */
+  --ntn-edge-line: color-mix(in srgb, var(--ntn-n-1000) 5%, transparent);
+  --ntn-edge-line-strong: color-mix(in srgb, var(--ntn-n-1000) 8%, transparent);
   /* Inner hairlines sit halfway between the raised surfaces */
   --ntn-border-subtle: color-mix(in srgb, var(--ntn-n-200), var(--ntn-n-300));
   --ntn-border-default: var(--ntn-n-400);
@@ -188,12 +202,14 @@
   --ntn-leading-loose: 1.65;
   --ntn-weight-light: 300;
   --ntn-weight-regular: 400;
-  --ntn-weight-medium: 500;
-  --ntn-weight-semibold: 600;
+  /* Off-grid stops on Inter's variable weight axis: a touch heavier than 500 / 600
+     so medium labels and semibold titles hold up on dark grounds. */
+  --ntn-weight-medium: 510;
+  --ntn-weight-semibold: 590;
   --ntn-weight-bold: 700;
   --ntn-tracking-display: -0.022em;
-  --ntn-tracking-heading: -0.014em;
-  --ntn-tracking-body: -0.004em;
+  --ntn-tracking-heading: -0.012em;
+  --ntn-tracking-body: -0.011em;
   --ntn-tracking-wide: 0.06em;
   --ntn-tracking-caps: 0.09em;
 }
@@ -232,23 +248,42 @@
    are aliases re-resolved on every [data-theme] element, and the blurs are constants. Same three-block
    split as _colors.scss, so a data-theme subtree gets its own depth. */
 :root, [data-theme=dark] {
-  /* Dark UI depth comes from a hairline + a soft drop, never from heavy blur */
+  /* Dark UI depth comes from a hairline, a dark separation ring and a wide, faint drop, never
+     from heavy blur. The drops form a low / medium / high stack. */
   --ntn-shadow-xs: 0 1px 2px rgba(0,0,0,0.35);
   --ntn-shadow-sm: 0 1px 2px rgba(0,0,0,0.40);
-  --ntn-shadow-md: 0 8px 24px -12px rgba(0,0,0,0.70);
-  --ntn-shadow-lg: 0 24px 60px -24px rgba(0,0,0,0.85);
-  --ntn-shadow-pop: 0 12px 32px -8px rgba(0,0,0,0.75);
+  --ntn-shadow-md: 0 2px 4px rgba(0,0,0,0.10), 0 4px 24px rgba(0,0,0,0.20);
+  --ntn-shadow-lg: 0 7px 32px rgba(0,0,0,0.35), 0 4px 32px rgba(0,0,0,0.45);
+  --ntn-shadow-pop: 0 8px 32px rgba(0,0,0,0.70);
   /* Small control depth: under a filled button, a dark hairline round a glowing one, under the
      floating action button, and pressed into a switch track */
   --ntn-shadow-control: 0 1px 2px rgba(0,0,0,0.45);
   --ntn-shadow-hairline: 0 0 0 1px rgba(0,0,0,0.2);
+  /* The separation ring just outside a raised surface's hairline, which keeps it off a canvas
+     of nearly the same grey. Off in light mode, where the hairline and the drop are enough. */
+  --ntn-shadow-ring: 0 0 0 1px rgba(0,0,0,0.2);
+  /* The dark ring that sets a frame's view into its shell (ntn-frame__view) */
+  --ntn-shadow-well: 0 0 0 2px rgba(0,0,0,0.2);
   --ntn-shadow-float: 0 2px 6px rgba(0,0,0,0.5);
   --ntn-shadow-inset: inset 0 1px 2px rgba(0,0,0,0.4);
+  /* The bevel of a control face (button, field, select, toggle group): a lit
+     top inside the border, a dark ring outside it and a short drop. */
+  --ntn-shadow-bevel: inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 1px rgba(0,0,0,0.5), 0 4px 4px rgba(0,0,0,0.1);
   /* Glass (_glass.scss): a lit top hairline and a wide soft drop; the strength of an app's
      ambient image */
   --ntn-glass-highlight: inset 0 1px 0 rgba(255,255,255,0.06);
-  --ntn-glass-shadow: 0 24px 60px -24px rgba(0,0,0,0.70);
+  --ntn-glass-shadow: 0 4px 32px rgba(0,0,0,0.60);
   --ntn-ambient-opacity: 0.5;
+  /* ntn-ambient--floor: the light the stage brightens to at its bottom edge. ntn-grain: how
+     strongly the noise overlays what is under it. */
+  --ntn-ambient-floor: var(--ntn-n-800);
+  --ntn-grain-opacity: 0.6;
+  /* The lit rim of a raised surface (_effects.scss): a second 8% hairline over the surface's
+     own, so where the beam falls the edge reads about twice as bright. Off in light mode, where
+     the surface is already the brightest thing on the page. The groove is the dark line under a
+     highlight rule (a divided card head), engraving it. */
+  --ntn-edge-light: rgba(255,255,255,0.08);
+  --ntn-edge-groove: 0 1px 0 rgba(0,0,0,0.4);
   /* Shine edge (_effects.scss): the bright head of each light, and its halo's strength */
   --ntn-shine-head: #FFFFFF;
   --ntn-shine-glow: 0.3;
@@ -271,6 +306,15 @@
 }
 
 :root {
+  /* The hairline every raised surface is framed in: half a CSS pixel on a 2x screen, so it
+     stays one device pixel thin. */
+  --ntn-hairline: 1px;
+  /* Where the lit rim is brightest, and the beam it fades out over: centred on the top edge.
+     The beam is a fixed 200px, so the rim lights the same length of edge on every surface,
+     whatever its size; it reaches 140px from the source before it is gone. */
+  --ntn-edge-light-x: 50%;
+  --ntn-edge-light-y: 0%;
+  --ntn-edge-light-size: 200px 200px;
   --ntn-blur-scrim: blur(6px);
   --ntn-blur-panel: blur(20px);
   /* Glass hooks: a theme with translucent surfaces sets these to blur(...). none adds no containing
@@ -285,6 +329,9 @@
   --ntn-background-image: none;
   --ntn-ambient-image: none;
   --ntn-ambient-size: 760px;
+  /* ntn-grain: a 256px tile of grey fractal noise, drawn by the browser from an inline SVG, so
+     no image ships with the kit. */
+  --ntn-grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)'/%3E%3C/svg%3E");
   /* ntn-gradient (_gradient.scss): how far down the wash fades out */
   --ntn-gradient-size: 160px;
   /* ntn-edge--shine (_effects.scss): one lap per --ntn-shine-speed; --ntn-shine-length is the
@@ -294,6 +341,11 @@
   --ntn-shine-length: 240px;
 }
 
+@media (min-resolution: 2dppx) {
+  :root {
+    --ntn-hairline: 0.5px;
+  }
+}
 :root {
   --ntn-dur-instant: 80ms;
   --ntn-dur-fast: 140ms;
@@ -320,16 +372,16 @@
   color-scheme: light;
   /* Neutral ramp reverses: 0 is furthest from the ink, 1000 is the ink. */
   --ntn-n-0: #FFFFFF;
-  --ntn-n-50: #FAFBFC;
-  --ntn-n-100: #F4F6F8;
-  --ntn-n-200: #EDEFF3;
-  --ntn-n-300: #E4E7ED;
-  --ntn-n-400: #D5D9E1;
-  --ntn-n-500: #B4BAC6;
-  --ntn-n-600: #6E7685;
-  --ntn-n-700: #5E6573;
-  --ntn-n-800: #333A47;
-  --ntn-n-900: #10141B;
+  --ntn-n-50: #F9F9FA;
+  --ntn-n-100: #F4F4F5;
+  --ntn-n-200: #EEEDEF;
+  --ntn-n-300: #E9E8EA;
+  --ntn-n-400: #DCDBDD;
+  --ntn-n-500: #C2C1C6;
+  --ntn-n-600: #86848D;
+  --ntn-n-700: #6F6E77;
+  --ntn-n-800: #3C4149;
+  --ntn-n-900: #282A30;
   --ntn-n-1000: #000000;
   /* Accent: the light tints become unreadable as ink, so 100–400 darken.
      500–900 are unchanged, which keeps fills and gradients identical. */
@@ -342,46 +394,54 @@
   --ntn-warning-400: #8A5D04;
   --ntn-danger-400: #C4323A;
   --ntn-info-400: #1D5FC4;
-  --ntn-alpha-ink-04: rgba(16,20,27,0.035);
-  --ntn-alpha-ink-06: rgba(16,20,27,0.055);
-  --ntn-alpha-ink-10: rgba(16,20,27,0.10);
+  --ntn-alpha-ink-04: rgba(0,0,0,0.035);
+  --ntn-alpha-ink-06: rgba(0,0,0,0.055);
+  --ntn-alpha-ink-10: rgba(0,0,0,0.10);
   /* A per-person avatar starts a touch deeper, so it holds its shape on white */
   --ntn-avatar-lightness: 0.76;
   /* Surfaces are set outright: grey canvas, white paper, grey recesses. */
-  --ntn-bg-app: #F6F7F9;
+  --ntn-bg-app: #F7F7F8;
   --ntn-bg-sunken: #FFFFFF;
   --ntn-surface-1: #FFFFFF;
   --ntn-surface-2: #FFFFFF;
-  --ntn-surface-3: #F1F3F7;
-  --ntn-surface-inset: rgba(16,20,27,0.05);
+  --ntn-surface-3: #F4F4F5;
+  --ntn-surface-inset: rgba(0,0,0,0.05);
   --ntn-bg-blur: rgba(255,255,255,0.78);
   --ntn-glass-bg-clear: color-mix(in srgb, var(--ntn-n-0) 50%, transparent);
   --ntn-glass-bg: color-mix(in srgb, var(--ntn-n-0) 72%, transparent);
   --ntn-glass-bg-frosted: color-mix(in srgb, var(--ntn-n-0) 88%, transparent);
-  --ntn-glass-sheen: none;
-  --ntn-border-subtle: #E7EAF0;
-  --ntn-border-default: #DCE0E8;
-  --ntn-border-strong: #C3C9D4;
+  --ntn-surface-sheen: none;
+  --ntn-border-subtle: #EEEDEF;
+  --ntn-border-default: #DCDBDD;
+  --ntn-border-strong: #C2C1C6;
   --ntn-text-inverse: #FFFFFF;
   --ntn-switch-knob: #FFFFFF;
-  /* Depth is a soft grey drop, never a black one. */
-  --ntn-shadow-xs: 0 1px 2px rgba(16,20,27,0.06);
-  --ntn-shadow-sm: 0 1px 2px rgba(16,20,27,0.08);
-  --ntn-shadow-md: 0 8px 24px -14px rgba(16,20,27,0.20), 0 1px 2px rgba(16,20,27,0.04);
-  --ntn-shadow-lg: 0 24px 60px -24px rgba(16,20,27,0.28), 0 1px 3px rgba(16,20,27,0.06);
-  --ntn-shadow-pop: 0 12px 32px -10px rgba(16,20,27,0.22);
-  --ntn-shadow-control: 0 1px 2px rgba(16,20,27,0.12);
-  --ntn-shadow-hairline: 0 0 0 1px rgba(16,20,27,0.06);
-  --ntn-shadow-float: 0 2px 6px rgba(16,20,27,0.16);
-  --ntn-shadow-inset: inset 0 1px 2px rgba(16,20,27,0.12);
+  /* Depth is a faint, wide drop. */
+  --ntn-shadow-xs: 0 1px 2px rgba(0,0,0,0.06);
+  --ntn-shadow-sm: 0 1px 2px rgba(0,0,0,0.08);
+  --ntn-shadow-md: 0 8px 24px -14px rgba(0,0,0,0.20), 0 1px 2px rgba(0,0,0,0.04);
+  --ntn-shadow-lg: 0 24px 60px -24px rgba(0,0,0,0.28), 0 1px 3px rgba(0,0,0,0.06);
+  --ntn-shadow-pop: 0 12px 32px -10px rgba(0,0,0,0.22);
+  --ntn-shadow-control: 0 1px 2px rgba(0,0,0,0.12);
+  --ntn-shadow-hairline: 0 0 0 1px rgba(0,0,0,0.06);
+  --ntn-shadow-ring: 0 0 #0000;
+  --ntn-shadow-well: 0 0 0 1px rgba(0,0,0,0.04);
+  --ntn-shadow-float: 0 2px 6px rgba(0,0,0,0.16);
+  --ntn-shadow-inset: inset 0 1px 2px rgba(0,0,0,0.12);
+  --ntn-shadow-bevel: var(--ntn-shadow-xs);
   /* Glass: a bright lit hairline, and the ambient image kept faint on a light page */
   --ntn-glass-highlight: inset 0 1px 0 rgba(255,255,255,0.6);
-  --ntn-glass-shadow: 0 1px 2px rgba(16,20,27,0.05), 0 18px 40px -24px rgba(16,20,27,0.25);
+  --ntn-glass-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 18px 40px -24px rgba(0,0,0,0.25);
   --ntn-ambient-opacity: 0.22;
+  --ntn-ambient-floor: var(--ntn-n-400);
+  --ntn-grain-opacity: 0.35;
+  /* No lit rim on a white surface, and no groove under a rule */
+  --ntn-edge-light: transparent;
+  --ntn-edge-groove: 0 0 #0000;
   /* Shine: a white head vanishes on a light page, so the head is the accent */
   --ntn-shine-head: var(--ntn-accent-400);
   --ntn-shine-glow: 0.2;
-  --ntn-scrim: rgba(16,20,27,0.42);
+  --ntn-scrim: rgba(0,0,0,0.42);
 }
 
 /* ── Nocturne density ────────────────────────────────────────────────────────
@@ -456,6 +516,10 @@ html, body {
   font-size: var(--ntn-font-size-md);
   line-height: var(--ntn-leading-normal);
   letter-spacing: var(--ntn-tracking-body);
+  /* Inter's alternate 1 (cv01) and open digits (ss03); optical sizing picks the display cut
+     for large type. */
+  font-feature-settings: "cv01", "ss03";
+  font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -724,7 +788,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   border: 1px solid var(--ntn-border-default);
   background: var(--ntn-surface-2);
   color: var(--ntn-text-primary);
-  box-shadow: var(--ntn-shadow-xs);
+  box-shadow: var(--ntn-shadow-bevel);
   cursor: pointer;
   white-space: nowrap;
   text-decoration: none;
@@ -745,7 +809,12 @@ i:is([class*=fa-], [data-icon], :empty) {
   color: var(--ntn-text-primary);
 }
 .ntn-btn:active {
-  transform: translateY(0.5px);
+  transform: scale(0.97);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ntn-btn:active {
+    transform: none;
+  }
 }
 .ntn-btn:disabled, .ntn-btn[aria-disabled=true] {
   opacity: var(--ntn-disabled-opacity);
@@ -924,10 +993,18 @@ i:is([class*=fa-], [data-icon], :empty) {
   background: transparent;
   color: var(--ntn-text-muted);
   cursor: pointer;
-  transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard), border-color var(--ntn-dur-fast) var(--ntn-ease-standard);
+  transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard), border-color var(--ntn-dur-fast) var(--ntn-ease-standard), transform var(--ntn-dur-instant) var(--ntn-ease-standard);
 }
 .ntn-icon-btn i {
   font-size: 16px;
+}
+.ntn-icon-btn:active {
+  transform: scale(0.97);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ntn-icon-btn:active {
+    transform: none;
+  }
 }
 .ntn-icon-btn:hover:where(:not(:disabled, [aria-disabled=true])) {
   background: var(--ntn-surface-hover);
@@ -940,11 +1017,13 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-icon-btn:disabled, .ntn-icon-btn[aria-disabled=true] {
   opacity: var(--ntn-disabled-opacity);
   cursor: not-allowed;
+  transform: none;
 }
 .ntn-icon-btn--secondary {
   background: var(--ntn-surface-2);
   border-color: var(--ntn-border-default);
   color: var(--ntn-text-secondary);
+  box-shadow: var(--ntn-shadow-bevel);
 }
 .ntn-icon-btn--secondary:hover:where(:not(:disabled, [aria-disabled=true])) {
   background: var(--ntn-surface-3);
@@ -1056,7 +1135,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   background: var(--ntn-surface-2);
   border: 1px solid var(--ntn-border-default);
   border-radius: var(--ntn-radius-md);
-  box-shadow: var(--ntn-shadow-xs);
+  box-shadow: var(--ntn-shadow-bevel);
 }
 .ntn-toggle-group__btn {
   display: inline-flex;
@@ -1195,7 +1274,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   background: var(--ntn-surface-2);
   border: 1px solid var(--ntn-border-default);
   border-radius: var(--ntn-radius-md);
-  box-shadow: var(--ntn-shadow-xs);
+  box-shadow: var(--ntn-shadow-bevel);
   transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
 }
 .ntn-field__control i {
@@ -1339,7 +1418,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   background: var(--ntn-surface-2);
   border: 1px solid var(--ntn-border-default);
   border-radius: var(--ntn-radius-md);
-  box-shadow: var(--ntn-shadow-xs);
+  box-shadow: var(--ntn-shadow-bevel);
   font-family: var(--ntn-font-sans);
   font-size: var(--ntn-font-size-sm);
   font-weight: var(--ntn-weight-medium);
@@ -1492,7 +1571,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   background: var(--ntn-surface-2);
   border: 1px solid var(--ntn-border-default);
   border-radius: var(--ntn-radius-md);
-  box-shadow: var(--ntn-shadow-xs);
+  box-shadow: var(--ntn-shadow-bevel);
   transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
 }
 .ntn-search i {
@@ -1581,9 +1660,9 @@ i:is([class*=fa-], [data-icon], :empty) {
   gap: var(--ntn-space-3);
   color: var(--ntn-text-primary);
   background: var(--ntn-surface-2);
-  border: 1px solid var(--ntn-border-default);
+  border: var(--ntn-hairline) solid var(--ntn-edge-line-strong);
   border-radius: var(--ntn-radius-lg);
-  box-shadow: var(--ntn-shadow-lg);
+  box-shadow: var(--ntn-shadow-ring), var(--ntn-shadow-lg);
   animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out);
   backdrop-filter: var(--ntn-pop-filter);
 }
@@ -1599,9 +1678,9 @@ i:is([class*=fa-], [data-icon], :empty) {
   min-width: 180px;
   padding: var(--ntn-space-1);
   background: var(--ntn-surface-2);
-  border: 1px solid var(--ntn-border-default);
+  border: var(--ntn-hairline) solid var(--ntn-edge-line-strong);
   border-radius: var(--ntn-radius-lg);
-  box-shadow: var(--ntn-shadow-lg);
+  box-shadow: var(--ntn-shadow-ring), var(--ntn-shadow-lg);
   animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out);
   backdrop-filter: var(--ntn-pop-filter);
 }
@@ -1747,7 +1826,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   background: var(--ntn-surface-2);
   border: 1px solid var(--ntn-border-default);
   border-radius: var(--ntn-radius-md);
-  box-shadow: var(--ntn-shadow-xs);
+  box-shadow: var(--ntn-shadow-bevel);
   color: var(--ntn-text-primary);
   font-family: var(--ntn-font-sans);
   font-size: var(--ntn-font-size-sm);
@@ -2055,7 +2134,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   background: var(--ntn-surface-2);
   border: 1px solid var(--ntn-border-default);
   border-radius: var(--ntn-radius-md);
-  box-shadow: var(--ntn-shadow-xs);
+  box-shadow: var(--ntn-shadow-bevel);
   cursor: pointer;
   color: var(--ntn-text-primary);
   font-family: var(--ntn-font-sans);
@@ -2120,9 +2199,9 @@ i:is([class*=fa-], [data-icon], :empty) {
   width: max-content;
   color: var(--ntn-text-primary);
   background: var(--ntn-surface-2);
-  border: 1px solid var(--ntn-border-default);
+  border: var(--ntn-hairline) solid var(--ntn-edge-line-strong);
   border-radius: var(--ntn-radius-lg);
-  box-shadow: var(--ntn-shadow-lg);
+  box-shadow: var(--ntn-shadow-ring), var(--ntn-shadow-lg);
   animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out);
   backdrop-filter: var(--ntn-pop-filter);
   overflow: hidden;
@@ -2659,7 +2738,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   background: var(--ntn-surface-2);
   border: 1px solid var(--ntn-border-default);
   border-radius: var(--ntn-radius-md);
-  box-shadow: var(--ntn-shadow-xs);
+  box-shadow: var(--ntn-shadow-bevel);
 }
 .ntn-radio-group--segmented > legend {
   position: absolute;
@@ -2847,6 +2926,77 @@ i:is([class*=fa-], [data-icon], :empty) {
   font-size: var(--ntn-font-size-2xs);
   font-weight: var(--ntn-weight-semibold);
   line-height: 1;
+}
+
+/* Processing — work in flight. A light sweeps round the
+   hairline (the ::after ring) and a sheen crosses the label, clipped to its letters, then the
+   label rests. The label is a child so the sheen clips to the text alone:
+   <span class="ntn-badge ntn-badge--processing"><span class="ntn-badge__label">Working</span></span>
+   Under reduced motion both stop: a still ring, a plain label. */
+@keyframes ntn-badge-sweep {
+  to {
+    background-position: 120px 0;
+  }
+}
+@keyframes ntn-badge-sheen {
+  from {
+    background-position: 100% 0;
+  }
+  75%, to {
+    background-position: 0 0;
+  }
+}
+.ntn-badge--processing {
+  --ntn-badge-ring-opacity: 0.4;
+  position: relative;
+  background: transparent;
+  border-color: var(--ntn-border-default);
+  color: var(--ntn-text-muted);
+}
+.ntn-badge--processing::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  padding: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 15%, var(--ntn-accent-500) 40%, color-mix(in srgb, var(--ntn-n-900) 50%, transparent) 50%, var(--ntn-n-700) 62%, transparent 85%) 0 0/120px 100% repeat-x;
+  opacity: var(--ntn-badge-ring-opacity);
+  animation: ntn-badge-sweep 2s linear infinite;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+.ntn-badge--processing .ntn-badge__label {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  background: linear-gradient(90deg, var(--ntn-text-muted) 0 40%, var(--ntn-accent-300) 47%, var(--ntn-text-primary) 52%, var(--ntn-text-muted) 60% 100%) 100% 0/300% 100% no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: ntn-badge-sheen 2.4s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ntn-badge--processing::after {
+    animation: none;
+    background-position: 60px 0;
+  }
+  .ntn-badge--processing .ntn-badge__label {
+    animation: none;
+    background: none;
+    color: inherit;
+    -webkit-text-fill-color: currentColor;
+  }
+}
+@media (forced-colors: active) {
+  .ntn-badge--processing::after {
+    display: none;
+  }
+  .ntn-badge--processing .ntn-badge__label {
+    background: none;
+    color: CanvasText;
+    -webkit-text-fill-color: CanvasText;
+  }
 }
 
 .ntn-alert {
@@ -3332,10 +3482,10 @@ i:is([class*=fa-], [data-icon], :empty) {
   gap: var(--ntn-space-3);
   padding: calc(var(--ntn-box-pad-y) - 2px) 12px calc(var(--ntn-box-pad-y) - 2px) 14px;
   overflow: hidden;
-  border: 1px solid var(--ntn-border-default);
+  border: var(--ntn-hairline) solid var(--ntn-edge-line-strong);
   border-radius: var(--ntn-radius-lg);
   background: var(--ntn-surface-2);
-  box-shadow: var(--ntn-shadow-lg);
+  box-shadow: var(--ntn-shadow-ring), var(--ntn-shadow-lg);
   backdrop-filter: var(--ntn-pop-filter);
   color: var(--ntn-text-primary);
   font-size: var(--ntn-font-size-sm);
@@ -3403,7 +3553,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   animation: ntn-toast-leave var(--ntn-dur-fast) var(--ntn-ease-in-out) forwards;
 }
 .ntn-toast--neutral {
-  border-color: var(--ntn-border-default);
+  border-color: var(--ntn-edge-line-strong);
 }
 .ntn-toast--primary {
   background: linear-gradient(var(--ntn-accent-soft), var(--ntn-accent-soft)), var(--ntn-surface-2);
@@ -3676,17 +3826,19 @@ i:is([class*=fa-], [data-icon], :empty) {
    (__foot below). A --flush card is the exception: it holds edge-to-edge tables and media, so it
    clips; menus and popovers inside one render in the top layer and are not affected.
 
-   Containers (card, stat, accordion, modal) frame themselves in --ntn-border-default; the rules
-   inside them (foot, divided head, accordion items) stay on --ntn-border-subtle, so the frame
-   reads first. */
+   Containers (card, stat, accordion, modal) take the edge-surface frame: a translucent hairline
+   at 8% ink, the top-lit sheen, a dark separation ring and (cards, modals) a soft drop. The lit
+   rim on the top edge is their ::after, drawn in _effects.scss. Rules inside them (foot, divided
+   head, accordion items) are the 5% ink, so the frame reads first. */
 .ntn-card {
   position: relative;
   display: flex;
   flex-direction: column;
   background: var(--ntn-surface-1);
-  border: 1px solid var(--ntn-border-default);
+  border: var(--ntn-hairline) solid var(--ntn-edge-line-strong);
+  background-image: var(--ntn-surface-sheen);
+  box-shadow: var(--ntn-shadow-ring), var(--ntn-shadow-md);
   border-radius: var(--ntn-radius-xl);
-  box-shadow: var(--ntn-shadow-md);
   backdrop-filter: var(--ntn-surface-filter);
   transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), transform var(--ntn-dur-fast) var(--ntn-ease-out);
 }
@@ -3722,14 +3874,15 @@ i:is([class*=fa-], [data-icon], :empty) {
 }
 .ntn-card__foot {
   padding: var(--ntn-space-3) var(--ntn-gutter);
-  border-top: 1px solid var(--ntn-border-subtle);
+  border-top: var(--ntn-hairline) solid var(--ntn-edge-line);
   background: var(--ntn-alpha-ink-04);
   font-size: var(--ntn-font-size-xs);
   color: var(--ntn-text-muted);
-  border-radius: 0 0 calc(var(--ntn-radius-xl) - 1px) calc(var(--ntn-radius-xl) - 1px);
+  border-radius: 0 0 calc(var(--ntn-radius-xl) - var(--ntn-hairline)) calc(var(--ntn-radius-xl) - var(--ntn-hairline));
 }
 .ntn-card--flush {
-  overflow: hidden;
+  overflow: clip;
+  overflow-clip-margin: var(--ntn-hairline);
 }
 .ntn-card--flush .ntn-card__body {
   padding: 0;
@@ -3738,10 +3891,12 @@ i:is([class*=fa-], [data-icon], :empty) {
   /* A flush card is the table/list shell: its head always needs a rule under it,
      otherwise the head, the toolbar and the first row run together. */
   padding-bottom: calc(var(--ntn-gutter) - 4px);
-  border-bottom: 1px solid var(--ntn-border-default);
+  border-bottom: var(--ntn-hairline) solid var(--ntn-edge-line);
+  box-shadow: var(--ntn-edge-groove);
 }
 .ntn-card__head--divided {
-  border-bottom: 1px solid var(--ntn-border-subtle);
+  border-bottom: var(--ntn-hairline) solid var(--ntn-edge-line);
+  box-shadow: var(--ntn-edge-groove);
   padding-bottom: calc(var(--ntn-gutter) - 4px);
 }
 .ntn-card__heading {
@@ -3770,12 +3925,15 @@ i:is([class*=fa-], [data-icon], :empty) {
 }
 
 .ntn-stat {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 6px;
   padding: calc(var(--ntn-gutter) - 4px) calc(var(--ntn-gutter) - 2px);
   background: var(--ntn-surface-1);
-  border: 1px solid var(--ntn-border-default);
+  border: var(--ntn-hairline) solid var(--ntn-edge-line-strong);
+  background-image: var(--ntn-surface-sheen);
+  box-shadow: var(--ntn-shadow-ring);
   border-radius: var(--ntn-radius-lg);
 }
 .ntn-stat__head {
@@ -3799,6 +3957,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   font-weight: var(--ntn-weight-semibold);
   letter-spacing: var(--ntn-tracking-heading);
   color: var(--ntn-text-primary);
+  font-variant-numeric: tabular-nums;
 }
 .ntn-stat__delta {
   font-family: var(--ntn-font-mono);
@@ -3817,17 +3976,83 @@ i:is([class*=fa-], [data-icon], :empty) {
   color: var(--ntn-text-disabled);
 }
 
+/* Frame — an app pane set into a shell: a sunken shell with the
+   raised-surface edge, 8px of padding, and a view inside it that is barely lit (1% ink), framed
+   in the 5% hairline and set in by a dark ring. An optional __aside sits beside the view, on the
+   shell itself (a sidebar, a list). Both the shell and the view carry the lit rim. The fade
+   modifiers dissolve the frame into the page, so a tall or wide one can bleed off a hero:
+   --fade-bottom, --fade-sides, or both (the masks intersect). Put it on ntn-ambient--floor. */
+.ntn-frame {
+  --ntn-frame-fade-y: linear-gradient(#000 0 0);
+  --ntn-frame-fade-x: linear-gradient(#000 0 0);
+  --ntn-frame-aside: 220px;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ntn-space-2);
+  padding: var(--ntn-space-2);
+  background: var(--ntn-bg-sunken);
+  border: var(--ntn-hairline) solid var(--ntn-edge-line-strong);
+  background-image: var(--ntn-surface-sheen);
+  box-shadow: var(--ntn-shadow-ring), var(--ntn-shadow-md);
+  border-radius: var(--ntn-radius-xl);
+}
+.ntn-frame:has(> .ntn-frame__aside) {
+  grid-template-columns: var(--ntn-frame-aside) minmax(0, 1fr);
+}
+.ntn-frame__aside {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: var(--ntn-space-2) var(--ntn-space-2) var(--ntn-space-2) 0;
+}
+.ntn-frame__view {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  background: color-mix(in srgb, var(--ntn-n-1000) 1%, transparent);
+  border: var(--ntn-hairline) solid var(--ntn-edge-line);
+  border-radius: calc(var(--ntn-radius-xl) - 4px);
+  box-shadow: var(--ntn-shadow-well);
+  overflow: clip;
+  overflow-clip-margin: var(--ntn-hairline);
+}
+.ntn-frame--fade-bottom, .ntn-frame--fade-sides {
+  -webkit-mask-image: var(--ntn-frame-fade-y), var(--ntn-frame-fade-x);
+  -webkit-mask-composite: source-in;
+  mask-image: var(--ntn-frame-fade-y), var(--ntn-frame-fade-x);
+  mask-composite: intersect;
+}
+.ntn-frame--fade-bottom {
+  --ntn-frame-fade-y: linear-gradient(to bottom, #000 55%, transparent);
+}
+.ntn-frame--fade-sides {
+  --ntn-frame-fade-x: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+@media (width <= 720px) {
+  .ntn-frame:has(> .ntn-frame__aside) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ntn-frame__aside {
+    display: none;
+  }
+}
+
 /* Modal — native <dialog>. Open with dialog.showModal(). */
 .ntn-modal {
   width: 100%;
   max-width: 520px;
   padding: 0;
-  border: 1px solid var(--ntn-border-default);
   border-radius: var(--ntn-radius-2xl);
   background: var(--ntn-surface-1);
+  border: var(--ntn-hairline) solid var(--ntn-edge-line-strong);
+  background-image: var(--ntn-surface-sheen);
+  box-shadow: var(--ntn-shadow-ring), var(--ntn-shadow-md);
+  box-shadow: var(--ntn-shadow-ring), var(--ntn-shadow-lg);
   color: var(--ntn-text-primary);
-  box-shadow: var(--ntn-shadow-lg);
-  overflow: hidden;
+  overflow: clip;
+  overflow-clip-margin: var(--ntn-hairline);
   backdrop-filter: var(--ntn-pop-filter);
 }
 .ntn-modal::backdrop {
@@ -3890,7 +4115,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   justify-content: flex-end;
   gap: var(--ntn-space-2);
   padding: var(--ntn-box-pad-y) var(--ntn-gutter);
-  border-top: 1px solid var(--ntn-border-subtle);
+  border-top: var(--ntn-hairline) solid var(--ntn-edge-line);
   background: var(--ntn-alpha-ink-04);
 }
 .ntn-modal--sm {
@@ -3902,15 +4127,19 @@ i:is([class*=fa-], [data-icon], :empty) {
 
 /* Accordion — native <details>. */
 .ntn-accordion {
+  position: relative;
   display: flex;
   flex-direction: column;
   background: var(--ntn-surface-1);
-  border: 1px solid var(--ntn-border-default);
+  border: var(--ntn-hairline) solid var(--ntn-edge-line-strong);
+  background-image: var(--ntn-surface-sheen);
+  box-shadow: var(--ntn-shadow-ring);
   border-radius: var(--ntn-radius-lg);
-  overflow: hidden;
+  overflow: clip;
+  overflow-clip-margin: var(--ntn-hairline);
 }
 .ntn-accordion__item {
-  border-top: 1px solid var(--ntn-border-subtle);
+  border-top: var(--ntn-hairline) solid var(--ntn-edge-line);
 }
 .ntn-accordion__item:first-child {
   border-top: 0;
@@ -4181,6 +4410,13 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-ambient--center::after {
   background-position: center;
 }
+.ntn-ambient--floor::before {
+  inset: 0;
+  height: auto;
+  -webkit-mask-image: none;
+  mask-image: none;
+  background: radial-gradient(52.5% 57.5% at 50% 100%, transparent, color-mix(in srgb, var(--ntn-bg-app) 50%, transparent)), linear-gradient(180deg, var(--ntn-bg-app) 35%, var(--ntn-ambient-floor) 100%);
+}
 .ntn-ambient--success {
   --ntn-ambient-glow: color-mix(in srgb, var(--ntn-success-500) 35%, transparent);
 }
@@ -4202,21 +4438,35 @@ i:is([class*=fa-], [data-icon], :empty) {
   background: none;
 }
 
+/* Grain — film noise over whatever it covers: an ambient, a frame, a hero card. A decorative
+   child (<div class="ntn-grain" aria-hidden="true"></div>) laid over its positioned parent,
+   overlay-blended so it adds texture without a tint. It sits over the parent's content
+   and lets every click through. */
+.ntn-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: inherit;
+  background: var(--ntn-grain-image) 0 0/256px 256px repeat;
+  mix-blend-mode: overlay;
+  opacity: var(--ntn-grain-opacity);
+}
+
 /* Glass surfaces */
 /* The sheen is a separate image over the fill, so ntn-edge--glow and ntn-gradient, which set
    their own background-image later in the cascade, replace the sheen but keep the fill. */
 :where(.ntn-glass):is(.ntn-card, .ntn-stat, .ntn-accordion), :where(.ntn-glass) :is(.ntn-card, .ntn-stat, .ntn-accordion) {
   background-color: var(--ntn-glass-bg);
-  background-image: var(--ntn-glass-sheen);
-  border-color: var(--ntn-glass-border);
-  box-shadow: var(--ntn-glass-highlight), var(--ntn-glass-shadow);
+  background-image: var(--ntn-surface-sheen);
+  box-shadow: var(--ntn-glass-highlight), var(--ntn-shadow-ring), var(--ntn-glass-shadow);
   backdrop-filter: var(--ntn-glass-blur);
 }
 
 .ntn-glass.ntn-sidebar, .ntn-glass .ntn-sidebar {
   background-color: var(--ntn-glass-bg);
-  background-image: var(--ntn-glass-sheen);
-  border-color: var(--ntn-glass-border);
+  background-image: var(--ntn-surface-sheen);
+  border-color: var(--ntn-edge-line-strong);
   backdrop-filter: var(--ntn-glass-blur);
 }
 
@@ -4257,6 +4507,17 @@ i:is([class*=fa-], [data-icon], :empty) {
     backdrop-filter: none;
   }
 }
+/* No texture for less transparency, and nothing decorative in forced colours. */
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  .ntn-grain {
+    display: none;
+  }
+}
+@media (forced-colors: active) {
+  .ntn-ambient--floor::before {
+    background: none;
+  }
+}
 @media (prefers-reduced-transparency: reduce), (width <= 720px) {
   .ntn-glass.ntn-sidebar, .ntn-glass .ntn-sidebar {
     background-color: var(--ntn-bg-sunken);
@@ -4284,11 +4545,28 @@ i:is([class*=fa-], [data-icon], :empty) {
 }
 .ntn-edge {
   position: relative;
-  border: 1px solid var(--ntn-border-default);
+  border: var(--ntn-hairline) solid var(--ntn-edge-line-strong);
+  background-image: var(--ntn-surface-sheen);
+  box-shadow: var(--ntn-shadow-ring);
   border-radius: var(--ntn-radius-xl);
 }
 .ntn-edge--strong {
   border-color: var(--ntn-border-strong);
+}
+
+/* The lit rim: every raised surface catches the light along its top edge. It is the host's
+   ::after, so the shine (whose halos are the host's pseudo-elements) and the glow (which has
+   its own accent edge) go without. */
+:is(.ntn-card, .ntn-stat, .ntn-accordion, .ntn-modal, .ntn-edge, .ntn-frame, .ntn-frame__view):not(.ntn-edge--shine, .ntn-edge--glow, .ntn-card--glow)::after {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--ntn-hairline));
+  z-index: 1;
+  pointer-events: none;
+  border: var(--ntn-hairline) solid var(--ntn-edge-light);
+  border-radius: inherit;
+  -webkit-mask: radial-gradient(ellipse var(--ntn-edge-light-size) at var(--ntn-edge-light-x) var(--ntn-edge-light-y), #000 0%, rgba(0, 0, 0, 0.6) 30%, rgba(0, 0, 0, 0.2) 50%, transparent 70%);
+  mask: radial-gradient(ellipse var(--ntn-edge-light-size) at var(--ntn-edge-light-x) var(--ntn-edge-light-y), #000 0%, rgba(0, 0, 0, 0.6) 30%, rgba(0, 0, 0, 0.2) 50%, transparent 70%);
 }
 
 /* Glow — the one element on the page you want read first. Accent hairline, a
@@ -4304,7 +4582,7 @@ i:is([class*=fa-], [data-icon], :empty) {
    glow orbits with it. Both read the same --ntn-spin, so they never drift. */
 .ntn-edge--processing, .ntn-card--processing {
   position: relative;
-  border-color: var(--ntn-border-default);
+  border-color: var(--ntn-edge-line-strong);
   /* Static fallback first, for engines without trigonometric functions. */
   box-shadow: 0 0 24px -12px var(--ntn-accent-glow), var(--ntn-shadow-md);
   box-shadow: calc(cos(var(--ntn-spin)) * 9px) calc(sin(var(--ntn-spin)) * 9px) 26px -8px var(--ntn-accent-glow), 0 0 26px -16px var(--ntn-accent-glow), var(--ntn-shadow-md);
@@ -4347,9 +4625,9 @@ i:is([class*=fa-], [data-icon], :empty) {
 }
 @supports (offset-path: border-box) {
   .ntn-edge__shine {
-    /* The frame sits on the 1px border and is masked to a ring of --ntn-shine-thickness. */
+    /* The frame sits on the hairline border and is masked to a ring of --ntn-shine-thickness. */
     position: absolute;
-    inset: -1px;
+    inset: calc(-1 * var(--ntn-hairline));
     z-index: 2;
     pointer-events: none;
     border-radius: inherit;

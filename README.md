@@ -23,11 +23,11 @@ npm install @homestar9/nocturne-ui
 No bundler? Load it from a CDN, or vendor the one file — `dist/nocturne.css` is self-contained:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.15.0/dist/nocturne.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.16.0/dist/nocturne.css">
 ```
 
 ```bash
-curl -O https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.15.0/dist/nocturne.css
+curl -O https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.16.0/dist/nocturne.css
 ```
 
 ## Use
@@ -173,8 +173,8 @@ one value for every density.
 Accent is the main channel a product may override, and it applies to both themes. Violet is the
 default. Four more ship in `themes/`:
 - `emerald.css`.
-- `amber.css`, a warm gold. Amber also swaps the blue-leaning greys for warmer ones: near-neutral
-  graphite in dark mode, warm paper with slate text in light mode.
+- `amber.css`, a warm gold. Amber also swaps the neutral greys for warmer ones: warm graphite in
+  dark mode, warm paper with slate text in light mode.
 - `mono.css`, which turns everything grey except the status tones. The accent is near white in
   dark mode and near black in light mode, so an app can add its own brand colour on top without
   it fighting a theme hue.

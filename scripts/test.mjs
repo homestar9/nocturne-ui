@@ -62,7 +62,9 @@ try {
 
   console.log('Font-free stylesheet');
   const nofonts = await readFile(join(base, 'nocturne.nofonts.css'), 'utf8');
-  check(/@import\s+url\(["']https:\/\/fonts\.googleapis/.test(css), 'nocturne.css still loads Geist from Google Fonts');
+  check(/@import\s+url\(["']https:\/\/fonts\.googleapis[^)]*family=Inter:ital,opsz,wght[^)]*family=JetBrains\+Mono/.test(css),
+    'nocturne.css loads Inter (with its opsz axis) and JetBrains Mono from Google Fonts (NTN-39)');
+  check(/html, body \{[^}]*font-feature-settings: "cv01", "ss03";[^}]*font-optical-sizing: auto;/.test(css), 'the body switches on Inter\'s cv01 and ss03, and optical sizing');
   check(!/@import\s+url/.test(nofonts), 'nocturne.nofonts.css makes no remote @import');
   const strip = (s) => s.replace(/^\/\*![\s\S]*?\*\/\n\n/, '').replace(/^@import[^\n]*\n+/gm, '');
   check(strip(nofonts) === strip(css), 'nocturne.nofonts.css is otherwise identical to nocturne.css');
@@ -137,6 +139,33 @@ try {
   const stacked = rules.find((r) => r.sel === '.ntn-ambient ~ .ntn-ambient');
   check(stacked && /background:\s*none\s*;/.test(stacked.body), 'a stacked ambient leaves the background image to the first');
 
+  const floor = rules.find((r) => r.sel === '.ntn-ambient--floor::before');
+  check(floor && /var\(--ntn-ambient-floor\)/.test(floor.body) && /mask-image:\s*none/.test(floor.body),
+    'ntn-ambient--floor fills its container, unmasked, brightening to --ntn-ambient-floor (NTN-40)');
+  const grain = rules.find((r) => r.sel === '.ntn-grain');
+  check(grain && /var\(--ntn-grain-image\)/.test(grain.body) && /mix-blend-mode:\s*overlay/.test(grain.body) && /pointer-events:\s*none/.test(grain.body),
+    'ntn-grain overlays --ntn-grain-image and lets clicks through');
+  check(/@media \(prefers-reduced-transparency: reduce\), \(forced-colors: active\) \{\s*\.ntn-grain \{\s*display: none;/.test(css),
+    'the grain goes under reduced transparency and forced colours');
+
+  console.log('Frame (NTN-41)');
+  const view = rules.find((r) => r.sel === '.ntn-frame__view');
+  check(view && /var\(--ntn-shadow-well\)/.test(view.body) && /overflow:\s*clip/.test(view.body), 'ntn-frame__view is set in by the well ring and clips to its edge');
+  const litHosts = rules.find((r) => /::after$/.test(r.sel) && /var\(--ntn-edge-light\)/.test(r.body));
+  check(litHosts && /\.ntn-frame\b/.test(litHosts.sel) && /\.ntn-frame__view/.test(litHosts.sel), 'the frame and its view carry the lit rim');
+  const fades = rules.find((r) => /\.ntn-frame--fade-bottom/.test(r.sel) && /\.ntn-frame--fade-sides/.test(r.sel));
+  check(fades && /mask-composite:\s*intersect/.test(fades.body) && /-webkit-mask-composite:\s*source-in/.test(fades.body), 'the frame fades intersect, so bottom and sides combine');
+
+  console.log('Processing badge (NTN-42)');
+  const badgeRing = rules.find((r) => r.sel === '.ntn-badge--processing::after');
+  check(badgeRing && /mask-composite:\s*exclude/.test(badgeRing.body) && /animation:\s*ntn-badge-sweep/.test(badgeRing.body),
+    'the processing badge sweeps a light round a ring cut with the ring mask');
+  const badgeLabel = rules.find((r) => r.sel === '.ntn-badge--processing .ntn-badge__label');
+  check(badgeLabel && /background-clip:\s*text/.test(badgeLabel.body) && /animation:\s*ntn-badge-sheen/.test(badgeLabel.body),
+    'its label sheen is clipped to the text');
+  check(/@media \(prefers-reduced-motion: reduce\) \{\s*\.ntn-badge--processing::after \{\s*animation: none;[^}]*\}\s*\.ntn-badge--processing \.ntn-badge__label \{\s*animation: none;/.test(css),
+    'under reduced motion the ring and the sheen both stop');
+
   console.log('Gradient (NTN-19)');
   const washAt = rules.findIndex((r) => r.sel === '.ntn-gradient');
   const wash = rules[washAt];
@@ -148,6 +177,24 @@ try {
   const before = { '.ntn-card': /(^|,\s*)\.ntn-card(,|$)/, '.ntn-sidebar': /(^|,\s*)\.ntn-sidebar(,|$)/, '.ntn-edge--glow': /\.ntn-edge--glow(,|$)/ };
   const washFirst = Object.entries(before).filter(([, re]) => lastAt(re) > washAt).map(([n]) => n);
   check(washAt >= 0 && washFirst.length === 0, 'the wash comes after the surfaces it lies over' + (washFirst.length ? ': ' + washFirst.join(' ') : ''));
+
+  console.log('Surface lighting (NTN-37)');
+  const rim = rules.find((r) => /::after$/.test(r.sel) && /\.ntn-card\b/.test(r.sel) && /var\(--ntn-edge-light\)/.test(r.body));
+  check(rim, 'raised surfaces draw a lit rim in --ntn-edge-light on ::after');
+  check(rim && /\.ntn-edge--shine/.test(rim.sel) && /\.ntn-edge--glow/.test(rim.sel) && /\.ntn-card--glow/.test(rim.sel),
+    'the rim skips the shine (its halos own ::after) and the glow (its own accent edge)');
+  check(rim && /inset:\s*calc\(-1 \* var\(--ntn-hairline\)\)/.test(rim.body),
+    'the rim sits on the border, not inside it, so the hairline is not doubled');
+  check(rim && /at var\(--ntn-edge-light-x\) var\(--ntn-edge-light-y\)/.test(rim.body),
+    'the rim is placed by --ntn-edge-light-x / -y (centred on the top edge, not a corner)');
+  check(rim && /#000 0%,\s*rgba\(0,\s*0,\s*0,\s*0\.6\) 30%,\s*rgba\(0,\s*0,\s*0,\s*0\.2\) 50%,\s*transparent 70%/.test(rim.body),
+    'the rim beam falls off in steps (NTN-43)');
+  check(/@media \(min-resolution: 2dppx\) \{\s*:root \{\s*--ntn-hairline: 0\.5px;/.test(css), '--ntn-hairline is half a CSS pixel on a 2x screen');
+  const unclippedRim = ['.ntn-card--flush', '.ntn-accordion', '.ntn-modal'].filter((s) => {
+    const r = rules.find((x) => x.sel === s);
+    return !(r && /overflow:\s*clip/.test(r.body) && /overflow-clip-margin:\s*var\(--ntn-hairline\)/.test(r.body));
+  });
+  check(unclippedRim.length === 0, 'clipped surfaces use overflow: clip with a hairline of clip margin, so the rim still paints' + (unclippedRim.length ? ': ' + unclippedRim.join(' ') : ''));
 
   console.log('One disabled treatment');
   const disabledRules = rules.filter((r) => /:disabled|\[aria-disabled=("?)true\1\]/.test(r.sel) && /(?:^|[;\s])opacity:/.test(r.body));
@@ -176,9 +223,15 @@ try {
   const CONTROL_FACES = ['.ntn-field__control', '.ntn-select__control select', '.ntn-combo__trigger', '.ntn-daterange__trigger', '.ntn-toggle-group', '.ntn-radio-group--segmented', '.ntn-search'];
   const oddFaces = CONTROL_FACES.filter((sel) => {
     const r = rules.find((x) => x.sel === sel);
-    return !(r && /border:\s*1px solid var\(--ntn-border-default\)/.test(r.body) && /box-shadow:\s*var\(--ntn-shadow-xs\)/.test(r.body));
+    return !(r && /border:\s*1px solid var\(--ntn-border-default\)/.test(r.body) && /box-shadow:\s*var\(--ntn-shadow-bevel\)/.test(r.body));
   });
-  check(oddFaces.length === 0, 'every form control face draws --ntn-border-default and --ntn-shadow-xs' + (oddFaces.length ? ': ' + oddFaces.join(' ') : ''));
+  const pressed = ['.ntn-btn:active', '.ntn-icon-btn:active'].filter((s) => {
+    const r = rules.find((x) => x.sel === s);
+    return !(r && /transform:\s*scale\(0\.97\)/.test(r.body)
+      && new RegExp(`@media \\(prefers-reduced-motion: reduce\\) \\{\\s*${s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} \\{\\s*transform: none;`).test(css));
+  });
+  check(pressed.length === 0, 'buttons give to 97% when pressed, and stay put under reduced motion (NTN-38)' + (pressed.length ? ': ' + pressed.join(' ') : ''));
+  check(oddFaces.length === 0, 'every form control face draws --ntn-border-default and --ntn-shadow-bevel (NTN-38)' + (oddFaces.length ? ': ' + oddFaces.join(' ') : ''));
 
   console.log('Tree link labels (NTN-28)');
   // An <a> label takes the row's colour. The :hover half is what beats the base a:hover.

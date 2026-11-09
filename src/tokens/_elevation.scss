@@ -2,24 +2,44 @@
    are aliases re-resolved on every [data-theme] element, and the blurs are constants. Same three-block
    split as _colors.scss, so a data-theme subtree gets its own depth. */
 :root, [data-theme="dark"] {
-  /* Dark UI depth comes from a hairline + a soft drop, never from heavy blur */
+  /* Dark UI depth comes from a hairline, a dark separation ring and a wide, faint drop, never
+     from heavy blur. The drops form a low / medium / high stack. */
   --ntn-shadow-xs: 0 1px 2px rgba(0,0,0,0.35);
   --ntn-shadow-sm: 0 1px 2px rgba(0,0,0,0.40);
-  --ntn-shadow-md: 0 8px 24px -12px rgba(0,0,0,0.70);
-  --ntn-shadow-lg: 0 24px 60px -24px rgba(0,0,0,0.85);
-  --ntn-shadow-pop: 0 12px 32px -8px rgba(0,0,0,0.75);
+  --ntn-shadow-md: 0 2px 4px rgba(0,0,0,0.10), 0 4px 24px rgba(0,0,0,0.20);
+  --ntn-shadow-lg: 0 7px 32px rgba(0,0,0,0.35), 0 4px 32px rgba(0,0,0,0.45);
+  --ntn-shadow-pop: 0 8px 32px rgba(0,0,0,0.70);
   /* Small control depth: under a filled button, a dark hairline round a glowing one, under the
      floating action button, and pressed into a switch track */
   --ntn-shadow-control:  0 1px 2px rgba(0,0,0,0.45);
   --ntn-shadow-hairline: 0 0 0 1px rgba(0,0,0,0.2);
+  /* The separation ring just outside a raised surface's hairline, which keeps it off a canvas
+     of nearly the same grey. Off in light mode, where the hairline and the drop are enough. */
+  --ntn-shadow-ring:     0 0 0 1px rgba(0,0,0,0.2);
+  /* The dark ring that sets a frame's view into its shell (ntn-frame__view) */
+  --ntn-shadow-well:     0 0 0 2px rgba(0,0,0,0.2);
   --ntn-shadow-float:    0 2px 6px rgba(0,0,0,0.5);
   --ntn-shadow-inset:    inset 0 1px 2px rgba(0,0,0,0.4);
+  /* The bevel of a control face (button, field, select, toggle group): a lit
+     top inside the border, a dark ring outside it and a short drop. */
+  --ntn-shadow-bevel:   inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 1px rgba(0,0,0,0.5), 0 4px 4px rgba(0,0,0,0.1);
 
   /* Glass (_glass.scss): a lit top hairline and a wide soft drop; the strength of an app's
      ambient image */
   --ntn-glass-highlight: inset 0 1px 0 rgba(255,255,255,0.06);
-  --ntn-glass-shadow:    0 24px 60px -24px rgba(0,0,0,0.70);
+  --ntn-glass-shadow:    0 4px 32px rgba(0,0,0,0.60);
   --ntn-ambient-opacity: 0.5;
+  /* ntn-ambient--floor: the light the stage brightens to at its bottom edge. ntn-grain: how
+     strongly the noise overlays what is under it. */
+  --ntn-ambient-floor: var(--ntn-n-800);
+  --ntn-grain-opacity: 0.6;
+
+  /* The lit rim of a raised surface (_effects.scss): a second 8% hairline over the surface's
+     own, so where the beam falls the edge reads about twice as bright. Off in light mode, where
+     the surface is already the brightest thing on the page. The groove is the dark line under a
+     highlight rule (a divided card head), engraving it. */
+  --ntn-edge-light:  rgba(255,255,255,0.08);
+  --ntn-edge-groove: 0 1px 0 rgba(0,0,0,0.4);
 
   /* Shine edge (_effects.scss): the bright head of each light, and its halo's strength */
   --ntn-shine-head: #FFFFFF;
@@ -43,6 +63,15 @@
 }
 
 :root {
+  /* The hairline every raised surface is framed in: half a CSS pixel on a 2x screen, so it
+     stays one device pixel thin. */
+  --ntn-hairline: 1px;
+  /* Where the lit rim is brightest, and the beam it fades out over: centred on the top edge.
+     The beam is a fixed 200px, so the rim lights the same length of edge on every surface,
+     whatever its size; it reaches 140px from the source before it is gone. */
+  --ntn-edge-light-x: 50%;
+  --ntn-edge-light-y: 0%;
+  --ntn-edge-light-size: 200px 200px;
   --ntn-blur-scrim: blur(6px);
   --ntn-blur-panel: blur(20px);
   /* Glass hooks: a theme with translucent surfaces sets these to blur(...). none adds no containing
@@ -57,6 +86,9 @@
   --ntn-background-image: none;
   --ntn-ambient-image: none;
   --ntn-ambient-size: 760px;
+  /* ntn-grain: a 256px tile of grey fractal noise, drawn by the browser from an inline SVG, so
+     no image ships with the kit. */
+  --ntn-grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)'/%3E%3C/svg%3E");
   /* ntn-gradient (_gradient.scss): how far down the wash fades out */
   --ntn-gradient-size: 160px;
   /* ntn-edge--shine (_effects.scss): one lap per --ntn-shine-speed; --ntn-shine-length is the
@@ -64,4 +96,8 @@
   --ntn-shine-speed: 20s;
   --ntn-shine-thickness: 1px;
   --ntn-shine-length: 240px;
+}
+
+@media (min-resolution: 2dppx) {
+  :root { --ntn-hairline: 0.5px; }
 }

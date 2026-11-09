@@ -6,6 +6,77 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.16.0 — 2026-11-09
+
+### Added
+- **`ntn-ambient--floor`**: a lit stage under a hero. The canvas brightens toward
+  the bottom edge, from 35% down (`--ntn-ambient-floor`: the 800 grey in dark, the 400 in light) under a
+  vignette anchored at the bottom centre, so light pools under whatever stands on it.
+- **`ntn-frame`**: an app pane set into a shell, for a hero screenshot made of real markup. A sunken shell with
+  the raised-surface edge and 8px of padding; `__view` is barely lit (1% ink), framed in the 5%
+  hairline and set in by a dark ring (`--ntn-shadow-well`, new); `__aside` sits beside it
+  (`--ntn-frame-aside`, 220px; hidden below `md`). Both shell and view carry the lit rim.
+  `--fade-bottom` and `--fade-sides` dissolve it into the page with intersected masks. The kitchen
+  sink has a new Frame section: a frame on a lit floor under grain.
+- **`ntn-badge--processing`**: work in flight. A light sweeps
+  round the hairline every 2s (a ring cut with the ring mask, `--ntn-badge-ring-opacity`), and
+  a sheen crosses the `ntn-badge__label` text, clipped to the letters, over 1.8s before a 0.6s
+  rest. Both stop under reduced motion; forced colours drop the ring.
+- **`ntn-grain`**: film noise over its positioned parent, overlay-blended at
+  `--ntn-grain-opacity` (0.6 dark, 0.35 light). The tile is an inline SVG `feTurbulence`
+  (`--ntn-grain-image`), so no image ships. Hidden under reduced transparency and forced colours.
+
+### Changed
+- **Near-neutral greys.** The dark ramp moves to graphite (`#08090A` canvas, `#0F1011`
+  card, `#23252A` border, `#F7F8F8` ink), dropping the blue tint. The light ramp, its ink alphas
+  and its shadows go neutral too (`rgba(0,0,0,…)` instead of `rgba(16,20,27,…)`). Themes that
+  set their own ramp (`amber`, `mono`, `synthwave`) are unchanged.
+- **Wider, fainter dark shadows**, a low / medium / high stack: `--ntn-shadow-md`
+  is `0 2px 4px` + `0 4px 24px` at 10% / 20%, `--ntn-shadow-lg` `0 7px 32px` + `0 4px 32px`,
+  `--ntn-shadow-pop` `0 8px 32px` at 70%, `--ntn-glass-shadow` `0 4px 32px` at 60%.
+- **Lit surfaces.** Cards, stats, accordions, modals and `ntn-edge` are framed in a
+  translucent hairline (`--ntn-edge-line-strong`, the ink at 8%) with a dark separation ring
+  outside it (`--ntn-shadow-ring`, new; off in light mode), the top-lit sheen over the fill, and a lit rim along the
+  top edge: a second hairline (`--ntn-edge-light`, 8% white in dark, off in light) drawn on
+  the border by the host's `::after` and revealed by a 200px radial beam centred on the top
+  edge, falling off in steps (full, 60% at 30%, 20% at 50%, gone at 70%;
+  `--ntn-edge-light-x`, `-y`, `-size`). Unlike a corner-anchored ring, it sits on the
+  border rather than inside it, so the hairline never doubles. `ntn-edge--shine` and the glow
+  edges skip it. Menus, popovers, the date panel and toasts take the hairline and the ring too.
+- **`--ntn-hairline`**: the frame's width, 1px, or 0.5px on a 2x screen. Rules inside a
+  surface (card foot, divided head, accordion items, modal foot) use it at 5% ink
+  (`--ntn-edge-line`); a rule under a head is engraved with a dark line beneath it
+  (`--ntn-edge-groove`, dark mode only).
+- **Clipped surfaces use `overflow: clip`.** A `--flush` card, an accordion and a modal clip with
+  `overflow: clip; overflow-clip-margin: var(--ntn-hairline)` instead of `overflow: hidden`, so
+  the rim on the border still paints.
+- **Stats and accordions** get the separation ring (no drop) and are `position: relative`.
+
+- **`--ntn-glass-sheen` is now `--ntn-surface-sheen`**: an eased radial glow at the top centre
+  (3.5% ink fading out over 160px) instead of a linear 3% gradient. `none` in light mode.
+
+- **Bevelled control faces.** Buttons, icon buttons (`--secondary`), fields, selects, search,
+  combobox and date triggers, toggle groups and segmented radios draw `--ntn-shadow-bevel` (new)
+  instead of `--ntn-shadow-xs`: a 4% lit top inside the border, a 50% dark ring outside it and a
+  short drop. Light mode keeps `--ntn-shadow-xs`.
+- **Press gives.** `ntn-btn` and `ntn-icon-btn` scale to 97% while pressed instead of nudging
+  0.5px down; they stay put under reduced motion.
+
+- **Inter and JetBrains Mono replace Geist and Geist Mono**, both from Google Fonts (SIL OFL).
+  Inter loads with its optical-size axis (`font-optical-sizing: auto`), and the body switches on
+  its alternate 1 and open digits (`font-feature-settings: "cv01", "ss03"`).
+  Self-hosters declare `@font-face` for the new families.
+- **Weights and tracking:** `--ntn-weight-medium` 510 (was 500),
+  `--ntn-weight-semibold` 590 (was 600), `--ntn-tracking-heading` -0.012em (was -0.014em),
+  `--ntn-tracking-body` -0.011em (was -0.004em). `ntn-stat__value` uses tabular figures.
+- **Kitchen sink:** a mono A/B toggle in the top bar (terminal icon) swaps JetBrains Mono for
+  [Hack](https://github.com/source-foundry/hack), loaded from jsDelivr on first use and
+  remembered per browser. It is a demo control, not part of the library.
+
+### Removed
+- **`--ntn-glass-border`.** Glass surfaces use the same `--ntn-edge-line-strong` hairline as
+  every raised surface, so a theme's ramp tints both.
+
 ## 1.15.0 — 2026-10-24
 
 ### Added
