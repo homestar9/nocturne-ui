@@ -8,7 +8,7 @@ user-invocable: true
 
 A dark-first interface system for data-dense SaaS: consoles, dashboards, admin tools, billing
 and settings surfaces. Dark by default, neutral by construction, synthwave only at the edges.
-Eleven cool greys carry the chrome; one violet accent channel carries every interactive signal.
+Eleven near-neutral greys carry the chrome; one violet accent channel carries every interactive signal.
 
 **Read [`components.md`](components.md) before writing markup.** It is the class contract.
 [`brand.md`](brand.md) holds the visual and voice rules. [`patterns.md`](patterns.md) holds

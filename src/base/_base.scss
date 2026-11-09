@@ -16,6 +16,10 @@ html, body {
   font-size: var(--ntn-font-size-md);
   line-height: var(--ntn-leading-normal);
   letter-spacing: var(--ntn-tracking-body);
+  /* Inter's alternate 1 (cv01) and open digits (ss03); optical sizing picks the display cut
+     for large type. */
+  font-feature-settings: "cv01", "ss03";
+  font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }

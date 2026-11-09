@@ -58,20 +58,67 @@
 }
 
 /// The bordered, raised face of a form control: field, select, search, combobox, date trigger,
-/// toggle group, segmented radio.
+/// toggle group, segmented radio. Bevelled like a button.
 @mixin control-surface {
   background: var(--ntn-surface-2);
   border: 1px solid var(--ntn-border-default);
   border-radius: var(--ntn-radius-md);
-  box-shadow: var(--ntn-shadow-xs);
+  box-shadow: var(--ntn-shadow-bevel);
 }
 
-/// A floating panel: menu, popover, date-range panel. Reads the glass hook, and rises in.
+/// The press: a button gives a little under the pointer. Under reduced motion it stays put.
+@mixin press {
+  &:active { transform: scale(0.97); }
+  @include reduced-motion { &:active { transform: none; } }
+}
+
+/// The edge of a raised surface (card, stat, accordion, modal, ntn-edge): a translucent hairline,
+/// the top-lit sheen over the fill, and a dark separation ring just outside (--ntn-shadow-ring),
+/// which keeps the surface off a canvas of nearly the same grey. $drop adds the card's soft drop under it.
+/// Include it after the surface's background shorthand, which would reset the sheen.
+@mixin edge-surface($drop: true) {
+  border: var(--ntn-hairline) solid var(--ntn-edge-line-strong);
+  background-image: var(--ntn-surface-sheen);
+  @if $drop { box-shadow: var(--ntn-shadow-ring), var(--ntn-shadow-md); }
+  @else { box-shadow: var(--ntn-shadow-ring); }
+}
+
+/// The lit rim, for a host's ::after: a second hairline drawn ON the host's border (not inside
+/// it, which would double the line) in --ntn-edge-light, revealed by a radial beam centred on
+/// the top edge. The beam falls off in steps: full at the source, 60% by a
+/// third of the way out, 20% by half, gone by 70%. Inheriting the radius from the border box
+/// keeps its curve on the border's.
+@mixin edge-light {
+  $mask: radial-gradient(ellipse var(--ntn-edge-light-size) at var(--ntn-edge-light-x) var(--ntn-edge-light-y),
+         #000 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.2) 50%, transparent 70%);
+  content: ""; position: absolute; inset: calc(-1 * var(--ntn-hairline)); z-index: 1; pointer-events: none;
+  border: var(--ntn-hairline) solid var(--ntn-edge-light); border-radius: inherit;
+  -webkit-mask: $mask;
+  mask: $mask;
+}
+
+/// A host whose content must be clipped to its rounded corners (a flush card, an accordion, a
+/// modal): clip, but let the lit rim on the border paint. Engines without overflow-clip-margin
+/// clip the rim with the content; the hairline itself is unaffected.
+@mixin clip-to-edge {
+  overflow: clip;
+  overflow-clip-margin: var(--ntn-hairline);
+}
+
+/// A rule under a raised surface's head that reads as engraved: the ink hairline with a dark
+/// line under it (none in light mode).
+@mixin edge-rule {
+  border-bottom: var(--ntn-hairline) solid var(--ntn-edge-line);
+  box-shadow: var(--ntn-edge-groove);
+}
+
+/// A floating panel: menu, popover, date-range panel. Framed like a raised surface (hairline and
+/// separation ring), with the larger drop. Reads the glass hook, and rises in.
 @mixin popover-surface {
   background: var(--ntn-surface-2);
-  border: 1px solid var(--ntn-border-default);
+  border: var(--ntn-hairline) solid var(--ntn-edge-line-strong);
   border-radius: var(--ntn-radius-lg);
-  box-shadow: var(--ntn-shadow-lg);
+  box-shadow: var(--ntn-shadow-ring), var(--ntn-shadow-lg);
   animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out);
   backdrop-filter: var(--ntn-pop-filter);
 }

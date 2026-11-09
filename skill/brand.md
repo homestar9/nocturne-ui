@@ -2,9 +2,9 @@
 
 ## Palette
 
-Eleven cool greys (`--ntn-n-0` … `--ntn-n-1000`) do about 90% of the work. One violet ramp
+Eleven near-neutral greys (`--ntn-n-0` … `--ntn-n-1000`, a graphite ramp) do about 90% of the work. One violet ramp
 (`--ntn-accent-100` … `--ntn-accent-900`) is the accent and the main themeable channel; a theme may
-also retint the greys, as `themes/amber.css` does with warmer, less blue ones. `themes/mono.css`
+also retint the greys, as `themes/amber.css` does with warmer ones. `themes/mono.css`
 turns everything but the status tones grey (a near-white accent in dark mode, near black in
 light), for apps that bring their own brand colour. `themes/synthwave.css` goes the other way:
 hot pink and Miami teal on night-purple greys, with a sunset behind `ntn-ambient`. Magenta (`--ntn-magenta-*`) and cyan
@@ -30,8 +30,14 @@ component.
 ## Depth
 
 Four flat surfaces stack: `--ntn-bg-sunken` (sidebar) → `--ntn-bg-app` (canvas) → `--ntn-surface-1` (cards)
-→ `--ntn-surface-2` / `--ntn-surface-3` (inputs, menus, hovers). Elevation is a hairline border plus a
-wide soft drop (`--ntn-shadow-md`), never a bright glow or heavy blur. The only glows are
+→ `--ntn-surface-2` / `--ntn-surface-3` (inputs, menus, hovers). Elevation is lit:
+a translucent hairline (`--ntn-edge-line-strong`, the ink at 8%), a dark separation ring just
+outside it (`--ntn-shadow-ring`), a faint top-lit sheen over the fill
+(`--ntn-surface-sheen`), a lit rim along the top edge (`--ntn-edge-light`), and a wide, faint
+drop (`--ntn-shadow-md`). The rim is always centred on the top edge, as if lit from above; never
+park it in a corner, where it reads as a bracket. In light mode the ring, the rim, the sheen
+and the groove are off: a white surface is already the brightest thing on the page. Never a bright glow
+or heavy blur. The only glows are
 `ntn-btn--glow` and `ntn-edge--glow`, each kept to the one element a page wants read first.
 Gradients appear in exactly five places: the brand mark tile, avatar initials, slider/progress
 fill, chart area fills, and filled accent buttons (primary button, primary icon button, FAB),
@@ -48,18 +54,26 @@ into a different look. Leave them at `none` when building to the Nocturne brand.
 
 ## Type
 
-Geist for everything; Geist Mono for every number a user compares — currency, deltas, counts,
-IDs, page numbers. Use `.ntn-num` on a numeric cell or span. Display sizes are semibold with
+Inter for everything: the variable font with its optical-size axis, so large type
+takes the display cut by itself, and the alternate 1 and open digits switched on (`cv01`,
+`ss03`). Weights sit just off the grid: medium 510, semibold 590. JetBrains Mono for every number
+a user compares — currency, deltas, counts, IDs, page numbers. Use `.ntn-num` on a numeric cell
+or span; figures in tables and stats are tabular. Tracking tightens with size: display
+`-0.022em`, headings `-0.012em`, body `-0.011em`. Display sizes are semibold with
 `--ntn-tracking-display`; UI runs 13–14px; 11px is reserved for uppercase section labels with
 `--ntn-tracking-caps`. Line height 1.5 body, 1.15 display.
 
 ## Shape and border
 
 Radii climb with the size of the thing: 4px checkbox, 6px chip, 8px control, 10px menu, 14px
-card, 18px dialog, full for pills and avatars. Borders are always 1px: `--ntn-border-default`
-frames containers (cards, stats, accordions, modals) and outlines interactive surfaces,
-`--ntn-border-subtle` draws the rules inside them (table rows, card feet, dividers),
-`--ntn-border-strong` marks hover. Depth never comes from an inset ring. There is no coloured-left-border pattern anywhere in this system.
+card, 18px dialog, full for pills and avatars. Raised surfaces (cards, stats, accordions,
+modals, menus, toasts) are framed in a hairline, `--ntn-hairline`: 1px, half a pixel on a 2x
+screen. Its colour is translucent ink, `--ntn-edge-line-strong` (8%) for the frame and
+`--ntn-edge-line` (5%) for the rules inside (card feet, divided heads, accordion items); a rule
+under a head is engraved with a dark line beneath it (`--ntn-edge-groove`). Controls keep solid
+1px borders: `--ntn-border-default` outlines interactive surfaces, `--ntn-border-subtle` draws
+table rows and dividers, `--ntn-border-strong` marks hover. There is no coloured-left-border
+pattern anywhere in this system.
 
 ## Motion
 
@@ -71,8 +85,10 @@ and the indeterminate bar pulses instead of sweeping. Fades and spinners remain.
 
 ## States
 
-Hover washes the surface +4% white and brightens the border one step. Press adds +6% and nudges
-0.5px down. Focus-visible is a 3px violet ring drawn as an outline (`--ntn-focus-outline`), so a
+Hover washes the surface +4% white and brightens the border one step. Press adds +6% and the button
+gives to 97% (`scale(.97)`, none under reduced motion). Control faces (buttons, fields, selects,
+toggle groups) are bevelled: a lit top inside the border, a dark ring outside it and
+a short drop (`--ntn-shadow-bevel`; a plain `--ntn-shadow-xs` in light mode). Focus-visible is a 3px violet ring drawn as an outline (`--ntn-focus-outline`), so a
 control's own shadow never hides it and it survives forced-colours mode. Field-style controls
 (field, select, combobox, date trigger, tree row) instead switch the border to `--ntn-accent-500`
 and add the same ring as a halo (`--ntn-ring-focus`). Disabled is 45% opacity
@@ -101,5 +117,5 @@ celebrate. Sentence case everywhere except the 11px uppercase section labels.
 - **Status words are lowercase nouns** inside badges (*active*, *pending*, *failed*) — they read
   as data values, not sentences.
 - **Numbers:** currency with separators and two decimals (`$24,678.81`); deltas signed and padded
-  to two digits (`+14.06%`, `-09.12%`); magnitudes abbreviated lowercase (`82k`, `2.19m`). All in Geist Mono.
+  to two digits (`+14.06%`, `-09.12%`); magnitudes abbreviated lowercase (`82k`, `2.19m`). All in JetBrains Mono.
 - **No emoji.** Not in UI, not in copy, not as icons.

@@ -173,8 +173,8 @@ one value for every density.
 Accent is the main channel a product may override, and it applies to both themes. Violet is the
 default. Four more ship in `themes/`:
 - `emerald.css`.
-- `amber.css`, a warm gold. Amber also swaps the blue-leaning greys for warmer ones: near-neutral
-  graphite in dark mode, warm paper with slate text in light mode.
+- `amber.css`, a warm gold. Amber also swaps the neutral greys for warmer ones: warm graphite in
+  dark mode, warm paper with slate text in light mode.
 - `mono.css`, which turns everything grey except the status tones. The accent is near white in
   dark mode and near black in light mode, so an app can add its own brand colour on top without
   it fighting a theme hue.

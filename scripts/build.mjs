@@ -112,7 +112,7 @@ export async function build({ prefix = SOURCE_PREFIX, tokenPrefix = prefix, outD
       const css = stripBanner(await readFile(resolve(cssDir, name), 'utf8'));
       await write(name, banner(name, pkg.version, prefix, tokenPrefix) + rename(css));
       // The same stylesheet without remote @imports (the Google Fonts request), for apps that
-      // self-host Geist or run a strict CSP. --ntn-font-sans still names Geist.
+      // self-host Inter and JetBrains Mono or run a strict CSP. The font tokens still name them.
       if (name === 'nocturne.css') {
         await write('nocturne.nofonts.css', banner('nocturne.nofonts.css', pkg.version, prefix, tokenPrefix) + rename(stripRemoteImports(css)));
       }
