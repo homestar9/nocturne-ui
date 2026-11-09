@@ -90,16 +90,19 @@ Hover washes the surface +4% white and brightens the border one step. Press adds
 gives to 97% (`scale(.97)`, none under reduced motion). Buttons are bevelled: a lit top inside
 the border, a dark ring outside it and a short drop (`--ntn-shadow-bevel`; a plain
 `--ntn-shadow-xs` in light mode). Form control faces (field, select, search, combobox and date
-triggers, toggle group, segmented radio) are raised: a fill one step above the surface
-(`--ntn-face-bg`), a transparent border, and a translucent 1px ring with a tight drop
-(`--ntn-shadow-face`). Under the pointer the fill lifts and the ring brightens
+triggers, toggle group, segmented radio) are raised: a translucent fill one small step above
+whatever surface it sits on (`--ntn-face-bg`), a transparent border, and a translucent 1px ring
+with a tight drop (`--ntn-shadow-face`). Field-style faces are 4px shorter than a button of the
+same size (30px beside a 34px button). Under the pointer the fill lifts and the ring brightens
 (`--ntn-face-bg-hover`, `--ntn-shadow-face-hover`). Text in a face is `--ntn-face-text` at weight
 450 (`--ntn-weight-book`), placeholders `--ntn-face-placeholder`, icons and chevrons
 `--ntn-face-muted`. The light values are estimates, kept in one block at the end of
 `_theme-light.scss`. Focus-visible is a 3px violet ring drawn as an outline (`--ntn-focus-outline`), so a
-control's own shadow never hides it and it survives forced-colours mode. Field-style controls
-(field, select, combobox, date trigger, tree row) instead switch the border to `--ntn-accent-500`
-and add the same ring as a halo (`--ntn-ring-focus`). Disabled is 45% opacity
+control's own shadow never hides it and it survives forced-colours mode. A control face being
+typed in (field, search, native select) swaps its ring for an accent hairline and a faint halo
+(`--ntn-ring-face-focus`); a select, combobox or date trigger reached by keyboard keeps its hover
+face inside a wider accent halo (`--ntn-ring-face-keyboard`). The tree row and drop area switch
+the border to `--ntn-accent-500` and add the ring as a halo (`--ntn-ring-focus`). Disabled is 45% opacity
 (`--ntn-disabled-opacity`) plus `not-allowed` on every control, and a disabled control ignores
 hover. Rows and nav items follow the same rules as buttons.
 

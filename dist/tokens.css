@@ -76,9 +76,12 @@
   --ntn-avatar-lightness: 0.78;
   /* The raised control face (control-surface): field, select, search, combo and date triggers,
      segmented controls. Measured values, kept exact as lch(); the light estimates live in one
-     block at the end of _theme-light.scss. The ring and drop are --ntn-shadow-face. */
-  --ntn-face-bg: lch(13.861 1.139 272);
-  --ntn-face-bg-hover: lch(18.49 1.525 272);
+     block at the end of _theme-light.scss. The ring and drop are --ntn-shadow-face.
+     The fill is translucent, so the face keeps the same small step above any surface (and the
+     ring stays brighter than the fill): over lch(9.232 0.85 272), #1A1A1B, the surface it was
+     measured on, these give exactly lch(13.861 1.139 272) and lch(18.49 1.525 272). */
+  --ntn-face-bg: rgba(226,226,248,0.047);
+  --ntn-face-bg-hover: rgba(221,232,244,0.094);
   --ntn-face-text: lch(90.826 1.425 272);
   --ntn-face-muted: lch(63.304 1.425 272); /* chevron, leading icon */
   --ntn-face-placeholder: lch(52 1.425 272);
@@ -325,6 +328,11 @@
      with an accent border instead. */
   --ntn-focus-outline: 3px solid var(--ntn-focus-ring);
   --ntn-ring-focus: 0 0 0 3px var(--ntn-focus-ring);
+  /* A raised control face with focus: typing (an accent hairline and a faint halo), and a
+     button-style trigger reached by keyboard (a wider halo outside its hover ring). */
+  --ntn-ring-face-focus: 0 0 0 1px color-mix(in srgb, var(--ntn-accent-500) 80%, transparent),
+                            0 0 0 3px color-mix(in srgb, var(--ntn-accent-500) 22%, transparent);
+  --ntn-ring-face-keyboard: 0 0 0 3px color-mix(in srgb, var(--ntn-accent-500) 40%, transparent);
   /* The lit top edge of a filled accent control */
   --ntn-highlight-top: inset 0 1px 0 rgba(255,255,255,0.22);
   /* The colour a shine light fades through */

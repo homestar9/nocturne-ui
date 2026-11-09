@@ -91,7 +91,7 @@ try {
   ];
   const ringless = rules.filter((r) => r.sel.includes(':focus-visible')
     && /outline:\s*(0|none)\s*;/.test(r.body)
-    && !/box-shadow:\s*var\(--ntn-ring-focus\)/.test(r.body)
+    && !/box-shadow:\s*(?:var\(--ntn-shadow-face-hover\),\s*)?var\(--ntn-ring-(?:focus|face-focus|face-keyboard)\)/.test(r.body)
     && !RING_ELSEWHERE.some((re) => re.test(r.sel)));
   check(ringless.length === 0, 'no :focus-visible rule removes the outline without drawing a ring'
     + (ringless.length ? ': ' + ringless.map((r) => r.sel).join(' | ') : ''));
@@ -99,6 +99,8 @@ try {
   console.log('Reduced motion');
   const calmRise = css.match(/@media \(prefers-reduced-motion: reduce\) \{\s*@keyframes ntn-rise \{((?:[^{}]*\{[^{}]*\})*)[^{}]*\}/);
   check(calmRise && !/transform/.test(calmRise[1]), 'under reduced motion, entrances (ntn-rise) fade without moving');
+  const calmPop = css.match(/@media \(prefers-reduced-motion: reduce\) \{(?:\s*@keyframes [\w-]+ \{(?:[^{}]*\{[^{}]*\})*[^{}]*\})*?\s*@keyframes ntn-pop \{((?:[^{}]*\{[^{}]*\})*)[^{}]*\}/);
+  check(calmPop && !/transform/.test(calmPop[1]), 'under reduced motion, the select panel (ntn-pop) fades without scaling');
   const calmLeave = css.match(/@media \(prefers-reduced-motion: reduce\) \{\s*@keyframes ntn-toast-leave \{((?:[^{}]*\{[^{}]*\})*)[^{}]*\}/);
   check(calmLeave && !/transform/.test(calmLeave[1]), 'under reduced motion, a toast leaves by fading only');
   check(/@media \(prefers-reduced-motion: reduce\) \{\s*\.ntn-toast__timer \{\s*display: none;/.test(css), 'under reduced motion, the shrinking toast timer is hidden');

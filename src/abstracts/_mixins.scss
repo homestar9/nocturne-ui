@@ -58,9 +58,10 @@
 }
 
 /// The raised face of a form control: field, select, search, combobox, date trigger, toggle group,
-/// segmented radio. A fill lifted off the surface by a translucent ring and a short drop, both in
-/// --ntn-shadow-face. The 1px border stays transparent: focus-accent and invalid colour it, and
-/// forced-colours mode draws it, where box-shadows are dropped.
+/// segmented radio. A translucent fill, so it sits one small step above whatever surface it is on,
+/// lifted off it by a translucent ring and a short drop, both in --ntn-shadow-face. The 1px border
+/// stays transparent: invalid colours it, and forced-colours mode draws it, where box-shadows are
+/// dropped.
 @mixin control-surface {
   background: var(--ntn-face-bg);
   border: 1px solid transparent;
@@ -73,6 +74,31 @@
 @mixin face-hover {
   background: var(--ntn-face-bg-hover);
   box-shadow: var(--ntn-shadow-face-hover);
+}
+
+/// The height of a field-style control face: 4px under a button of the same size (30px beside a
+/// 34px button), floored at the target minimum.
+@mixin face-height($size: md) {
+  height: max(var(--ntn-target-min), calc(var(--ntn-control-#{$size}) - 4px));
+}
+
+/// A field-style face being typed in (field, search, native select): the fill settles back from
+/// hover, and an accent hairline with a faint accent halo replaces the ring. Forced-colours mode
+/// drops box-shadows, so there it gets a system outline.
+@mixin face-focus {
+  background: var(--ntn-face-bg);
+  box-shadow: var(--ntn-ring-face-focus);
+
+  @media (forced-colors: active) { outline: 2px solid Highlight; }
+}
+
+/// A button-style face (select, combobox and date triggers) with keyboard focus: the hover face,
+/// with a wider accent halo.
+@mixin face-focus-visible {
+  outline: 0;
+  box-shadow: var(--ntn-shadow-face-hover), var(--ntn-ring-face-keyboard);
+
+  @media (forced-colors: active) { outline: 2px solid Highlight; }
 }
 
 /// The press: a button gives a little under the pointer. Under reduced motion it stays put.

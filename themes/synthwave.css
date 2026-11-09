@@ -50,10 +50,8 @@
   --ntn-n-800: #C0BDCD;
   --ntn-n-900: #E9E8F0;
 
-  /* The raised control face, on the purple ramp: a fill at the line step, lifting halfway to the
-     next under the pointer, and the ramp's own text greys */
-  --ntn-face-bg:          var(--ntn-n-400);
-  --ntn-face-bg-hover:    color-mix(in oklab, var(--ntn-n-400), var(--ntn-n-500));
+  /* The raised control face: Nocturne's translucent fill takes the purple from the surface under
+     it; the text greys come from the ramp */
   --ntn-face-text:        var(--ntn-n-900);
   --ntn-face-muted:       var(--ntn-n-700);
   --ntn-face-placeholder: var(--ntn-n-600);
@@ -124,8 +122,6 @@
   /* Set again here, or the dark block's :root values would beat Nocturne's light theme */
   --ntn-shine-glow: 0.25;
   --ntn-ambient-opacity: 0.3;
-  --ntn-face-bg:          var(--ntn-n-0);
-  --ntn-face-bg-hover:    var(--ntn-n-100);
   --ntn-face-text:        var(--ntn-n-900);
   --ntn-face-muted:       var(--ntn-n-700);
   --ntn-face-placeholder: var(--ntn-n-600);

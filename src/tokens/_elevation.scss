@@ -58,6 +58,11 @@
      with an accent border instead. */
   --ntn-focus-outline: 3px solid var(--ntn-focus-ring);
   --ntn-ring-focus: 0 0 0 3px var(--ntn-focus-ring);
+  /* A raised control face with focus: typing (an accent hairline and a faint halo), and a
+     button-style trigger reached by keyboard (a wider halo outside its hover ring). */
+  --ntn-ring-face-focus:    0 0 0 1px color-mix(in srgb, var(--ntn-accent-500) 80%, transparent),
+                            0 0 0 3px color-mix(in srgb, var(--ntn-accent-500) 22%, transparent);
+  --ntn-ring-face-keyboard: 0 0 0 3px color-mix(in srgb, var(--ntn-accent-500) 40%, transparent);
   /* The lit top edge of a filled accent control */
   --ntn-highlight-top: inset 0 1px 0 rgba(255,255,255,0.22);
   /* The colour a shine light fades through */

@@ -48,9 +48,10 @@
   --ntn-n-800: #BFBFBF;
   --ntn-n-900: #E9E9E9;
 
-  /* The raised control face: Nocturne's measured lightness, with the chroma taken out */
-  --ntn-face-bg:          lch(13.861 0 0);
-  --ntn-face-bg-hover:    lch(18.49 0 0);
+  /* The raised control face: Nocturne's measured lightness, with the chroma taken out (the fill
+     is translucent white, so it keeps its step above any surface) */
+  --ntn-face-bg:          rgba(255,255,255,0.04);
+  --ntn-face-bg-hover:    rgba(255,255,255,0.08);
   --ntn-face-text:        lch(90.826 0 0);
   --ntn-face-muted:       lch(63.304 0 0);
   --ntn-face-placeholder: lch(52 0 0);
