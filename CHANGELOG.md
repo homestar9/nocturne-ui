@@ -34,6 +34,11 @@ renamed or removed class names and tokens.
   `<form method="dialog">` confirm closes the delete dialog. It ships in the package, so the
   bundled skill can point agents at it, and the kitchen sink links it from its index and from
   Get started. A test fails when an example page uses a class `dist/` lacks or isn't linked.
+- **`examples/dashboard.html`**: `skill/patterns.md` §2. A greeting and a date range in the page
+  head, four stats on neutral washes with the one alert in danger, a 1.9 / 1 split (spend by
+  service, top spenders) and a 1 / 1.9 split (activity, and a deploys table that
+  `data-ntn-paginate` pages, searches and filters). Applying a range toasts it through
+  `ntn:daterangechange`. Ships in the package, linked the same way.
 
 ## 1.16.0 — 2026-11-09
 

@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — Nocturne example</title>
+<!--
+  A complete Nocturne page: skill/patterns.md §2 (Dashboard body), with library classes only.
+  Copy it as a starting point. It loads ../dist and ../js so the kitchen sink previews your local
+  build; in your app, use the CDN lines from the kitchen sink's Get started section instead, here
+  and in the import at the bottom of the page.
+-->
+<script>try{var p=localStorage.getItem('ntn-theme')||'dark';document.documentElement.setAttribute('data-theme',p==='auto'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):p)}catch(e){}</script>
+<link rel="stylesheet" href="../dist/nocturne.css">
+<script type="module" src="../js/nocturne.js"></script>
+<!-- Icons: Font Awesome Free has no Light weight, so this rule draws Light classes with the Solid
+     faces. Swap both lines for your Pro kit if you have one. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+<style>.fa-light { font-family: "Font Awesome 6 Free"; font-weight: 900; font-style: normal }</style>
+</head>
+<body>
+
+<div class="ntn-app">
+  <aside class="ntn-sidebar">
+    <div class="ntn-sidebar__brand">
+      <span class="ntn-sidebar__mark"><i class="fa-light fa-cube"></i></span>
+      <span class="ntn-sidebar__brand-text">
+        <span class="ntn-sidebar__name">Cortex Labs</span>
+        <span class="ntn-sidebar__meta">Pro workspace</span>
+      </span>
+    </div>
+    <nav class="ntn-sidebar__nav">
+      <div class="ntn-sidebar__group">
+        <p class="ntn-sidebar__section">Platform</p>
+        <a class="ntn-sidebar__item" href="dashboard.html" aria-current="page"><i class="fa-light fa-gauge-high"></i><span class="ntn-sidebar__label">Overview</span></a>
+        <a class="ntn-sidebar__item" href="#"><i class="fa-light fa-folder"></i><span class="ntn-sidebar__label">Projects</span></a>
+        <a class="ntn-sidebar__item" href="#"><i class="fa-light fa-rocket"></i><span class="ntn-sidebar__label">Deploys</span><span class="ntn-badge ntn-badge--count">3</span></a>
+        <a class="ntn-sidebar__item" href="#"><i class="fa-light fa-users"></i><span class="ntn-sidebar__label">Members</span></a>
+      </div>
+      <div class="ntn-sidebar__group">
+        <p class="ntn-sidebar__section">Account</p>
+        <a class="ntn-sidebar__item" href="settings.html"><i class="fa-light fa-gear"></i><span class="ntn-sidebar__label">Settings</span></a>
+        <a class="ntn-sidebar__item" href="#"><i class="fa-light fa-key"></i><span class="ntn-sidebar__label">API keys</span></a>
+      </div>
+    </nav>
+  </aside>
+  <div class="ntn-sidebar__scrim"></div>
+
+  <div class="ntn-app__main">
+    <header class="ntn-navbar">
+      <button class="ntn-icon-btn" aria-label="Collapse navigation" data-ntn-toggle=".ntn-sidebar"><i class="fa-light fa-bars"></i></button>
+      <div class="ntn-navbar__center">
+        <div class="ntn-search ntn-search--sm">
+          <i class="fa-light fa-magnifying-glass"></i>
+          <input type="search" placeholder="Search projects, deploys, people ..." aria-label="Search">
+          <span class="ntn-search__shortcut">⌘K</span>
+        </div>
+      </div>
+      <div class="ntn-navbar__right">
+        <button class="ntn-icon-btn" aria-label="Toggle light theme" data-ntn-theme-toggle><i class="fa-light fa-sun" data-ntn-theme-icon></i></button>
+        <button class="ntn-icon-btn" aria-label="Notifications"><i class="fa-light fa-bell"></i></button>
+        <span class="ntn-avatar ntn-avatar--sm" data-ntn-avatar-name="Ada Lovelace">AL</span>
+      </div>
+    </header>
+
+    <div class="ntn-app__scroll">
+      <main class="ntn-page">
+
+        <!-- Example chrome: delete this row in your app. -->
+        <div class="ntn-row ntn-row--between">
+          <a class="ntn-btn ntn-btn--sm ntn-btn--subtle" href="kitchen-sink.html"><i class="fa-light fa-arrow-left"></i>Components</a>
+          <a class="ntn-btn ntn-btn--sm ntn-btn--subtle" href="https://github.com/homestar9/nocturne-ui/blob/master/examples/dashboard.html"><i class="fa-light fa-code"></i>View source</a>
+        </div>
+
+        <div class="ntn-page__head">
+          <div>
+            <p class="ntn-eyebrow">Overview</p>
+            <h1 class="ntn-page__title">Welcome back, Ada</h1>
+            <p class="ntn-page__sub">Last updated 30 sec ago</p>
+          </div>
+          <div class="ntn-page__actions">
+            <div class="ntn-daterange ntn-daterange--sm" data-ntn-daterange data-ntn-start="2026-10-11" data-ntn-end="2026-11-09">
+              <button class="ntn-daterange__trigger" type="button" aria-expanded="false">
+                <i class="fa-light fa-calendar-range"></i>
+                <span class="ntn-daterange__value" data-ntn-daterange-label></span>
+                <i class="fa-light fa-chevron-down ntn-daterange__caret"></i>
+              </button>
+              <div class="ntn-daterange__panel" hidden>
+                <div class="ntn-daterange__row">
+                  <div class="ntn-daterange__presets">
+                    <button type="button" class="ntn-daterange__preset" data-ntn-range="7">Last 7 days</button>
+                    <button type="button" class="ntn-daterange__preset" data-ntn-range="30">Last 30 days</button>
+                    <button type="button" class="ntn-daterange__preset" data-ntn-range="month">This month</button>
+                    <button type="button" class="ntn-daterange__preset" data-ntn-range="ytd">Year to date</button>
+                  </div>
+                  <div class="ntn-daterange__cals">
+                    <div class="ntn-daterange__cal" data-ntn-cal="0"></div>
+                    <div class="ntn-daterange__cal" data-ntn-cal="1"></div>
+                  </div>
+                </div>
+                <footer class="ntn-daterange__foot">
+                  <span class="ntn-daterange__summary" data-ntn-daterange-summary></span>
+                  <div class="ntn-daterange__actions">
+                    <button class="ntn-btn ntn-btn--subtle ntn-btn--sm" type="button" data-ntn-daterange-cancel>Cancel</button>
+                    <button class="ntn-btn ntn-btn--primary ntn-btn--sm" type="button" data-ntn-daterange-apply>Apply</button>
+                  </div>
+                </footer>
+              </div>
+            </div>
+            <button class="ntn-btn ntn-btn--primary ntn-btn--sm"><i class="fa-light fa-plus"></i>New project</button>
+          </div>
+        </div>
+
+        <!-- A row of stats. Quiet neutral washes, and the one that needs attention stands out. -->
+        <div class="ntn-grid ntn-grid--4">
+          <div class="ntn-stat ntn-gradient ntn-gradient--neutral">
+            <div class="ntn-stat__head"><span class="ntn-stat__label">Monthly spend</span></div>
+            <div class="ntn-stat__figure"><span class="ntn-stat__value">$24,678.81</span><span class="ntn-stat__delta">+14.06%</span></div>
+            <span class="ntn-stat__caption">vs. $21,637.02 last month</span>
+          </div>
+          <div class="ntn-stat ntn-gradient ntn-gradient--neutral">
+            <div class="ntn-stat__head"><span class="ntn-stat__label">Requests</span></div>
+            <div class="ntn-stat__figure"><span class="ntn-stat__value">8.21M</span><span class="ntn-stat__delta">+3.2%</span></div>
+            <span class="ntn-stat__caption">p95 latency 182 ms</span>
+          </div>
+          <div class="ntn-stat ntn-gradient ntn-gradient--neutral">
+            <div class="ntn-stat__head"><span class="ntn-stat__label">Active projects</span></div>
+            <div class="ntn-stat__figure"><span class="ntn-stat__value">42</span><span class="ntn-stat__delta ntn-stat__delta--flat">0%</span></div>
+            <span class="ntn-stat__caption">3 archived this month</span>
+          </div>
+          <div class="ntn-stat ntn-gradient ntn-gradient--danger ntn-gradient--strong ntn-gradient--line">
+            <div class="ntn-stat__head">
+              <span class="ntn-stat__label">Error rate</span>
+              <span class="ntn-badge ntn-badge--danger ntn-badge--sm">alert</span>
+            </div>
+            <div class="ntn-stat__figure"><span class="ntn-stat__value">2.4%</span><span class="ntn-stat__delta ntn-stat__delta--down">+1.1 pt</span></div>
+            <span class="ntn-stat__caption">Above the 1% budget since 09:40</span>
+          </div>
+        </div>
+
+        <!-- 1.9 / 1: the main view, then a list beside it. -->
+        <div class="ntn-grid ntn-grid--split">
+          <section class="ntn-card">
+            <header class="ntn-card__head">
+              <div class="ntn-card__heading">
+                <h2 class="ntn-card__title">Spend by service</h2>
+                <p class="ntn-card__sub">Share of this period's bill. A chart library would sit here.</p>
+              </div>
+              <div class="ntn-card__actions">
+                <div class="ntn-toggle-group ntn-toggle-group--sm ntn-toggle-group--pill" role="group" aria-label="Unit">
+                  <button class="ntn-toggle-group__btn" aria-pressed="true">Cost</button>
+                  <button class="ntn-toggle-group__btn" aria-pressed="false">Usage</button>
+                </div>
+              </div>
+            </header>
+            <div class="ntn-card__body ntn-stack">
+              <div class="ntn-progress">
+                <div class="ntn-progress__head"><span class="ntn-progress__label">Compute</span><span class="ntn-progress__value">$11,105</span></div>
+                <div class="ntn-progress__track"><div class="ntn-progress__fill" data-value="45"></div></div>
+              </div>
+              <div class="ntn-progress">
+                <div class="ntn-progress__head"><span class="ntn-progress__label">Storage</span><span class="ntn-progress__value">$6,417</span></div>
+                <div class="ntn-progress__track"><div class="ntn-progress__fill" data-value="26"></div></div>
+              </div>
+              <div class="ntn-progress">
+                <div class="ntn-progress__head"><span class="ntn-progress__label">Bandwidth</span><span class="ntn-progress__value">$4,196</span></div>
+                <div class="ntn-progress__track"><div class="ntn-progress__fill" data-value="17"></div></div>
+              </div>
+              <div class="ntn-progress">
+                <div class="ntn-progress__head"><span class="ntn-progress__label">Build minutes</span><span class="ntn-progress__value">$2,960</span></div>
+                <div class="ntn-progress__track"><div class="ntn-progress__fill" data-value="12"></div></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="ntn-card">
+            <header class="ntn-card__head">
+              <div class="ntn-card__heading">
+                <h2 class="ntn-card__title">Top spenders</h2>
+                <p class="ntn-card__sub">People, this period</p>
+              </div>
+            </header>
+            <div class="ntn-card__body ntn-stack">
+              <div class="ntn-row ntn-row--between">
+                <span class="ntn-row"><span class="ntn-avatar ntn-avatar--sm" data-ntn-avatar-name="Wei Chen">WC</span>Wei Chen</span>
+                <span class="ntn-num">$2,041.00</span>
+              </div>
+              <div class="ntn-row ntn-row--between">
+                <span class="ntn-row"><span class="ntn-avatar ntn-avatar--sm" data-ntn-avatar-name="Inés Duarte">ID</span>Inés Duarte</span>
+                <span class="ntn-num">$1,560.00</span>
+              </div>
+              <div class="ntn-row ntn-row--between">
+                <span class="ntn-row"><span class="ntn-avatar ntn-avatar--sm" data-ntn-avatar-name="Lena Fischer">LF</span>Lena Fischer</span>
+                <span class="ntn-num">$988.20</span>
+              </div>
+              <div class="ntn-row ntn-row--between">
+                <span class="ntn-row"><span class="ntn-avatar ntn-avatar--sm" data-ntn-avatar-name="Diego Salas">DS</span>Diego Salas</span>
+                <span class="ntn-num">$318.40</span>
+              </div>
+            </div>
+            <footer class="ntn-card__foot ntn-row ntn-row--end">
+              <a class="ntn-btn ntn-btn--sm ntn-btn--subtle" href="#">All members<i class="fa-light fa-arrow-right"></i></a>
+            </footer>
+          </section>
+        </div>
+
+        <!-- 1 / 1.9: activity beside a paginated table. -->
+        <div class="ntn-grid ntn-grid--split-reverse">
+          <section class="ntn-card">
+            <header class="ntn-card__head">
+              <div class="ntn-card__heading">
+                <h2 class="ntn-card__title">Activity</h2>
+                <p class="ntn-card__sub">Across every project</p>
+              </div>
+            </header>
+            <div class="ntn-card__body ntn-stack">
+              <div class="ntn-row">
+                <span class="ntn-avatar ntn-avatar--sm" data-ntn-avatar-name="Wei Chen">WC</span>
+                <span>Wei deployed <b>api-gateway</b></span>
+                <span class="ntn-badge ntn-badge--success ntn-badge--dot ntn-badge--sm">live</span>
+              </div>
+              <div class="ntn-row">
+                <span class="ntn-avatar ntn-avatar--sm" data-ntn-avatar-name="Lena Fischer">LF</span>
+                <span>Lena rolled back <b>search</b></span>
+                <span class="ntn-badge ntn-badge--warning ntn-badge--dot ntn-badge--sm">rolled back</span>
+              </div>
+              <div class="ntn-row">
+                <span class="ntn-avatar ntn-avatar--sm" data-ntn-avatar-name="Inés Duarte">ID</span>
+                <span>Inés invited 2 people</span>
+                <span class="ntn-badge ntn-badge--sm">members</span>
+              </div>
+              <div class="ntn-row">
+                <span class="ntn-avatar ntn-avatar--sm" data-ntn-avatar-name="Diego Salas">DS</span>
+                <span>Diego's build of <b>web</b> failed</span>
+                <span class="ntn-badge ntn-badge--danger ntn-badge--dot ntn-badge--sm">failed</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- nocturne.js pages, searches and filters the rows already here (data-ntn-paginate). -->
+          <section class="ntn-card ntn-card--flush" data-ntn-table-scope>
+            <header class="ntn-card__head">
+              <div class="ntn-card__heading">
+                <h2 class="ntn-card__title">Deploys <span class="ntn-badge ntn-badge--primary ntn-badge--sm">8</span></h2>
+                <p class="ntn-card__sub">The last 24 hours</p>
+              </div>
+            </header>
+            <div class="ntn-toolbar ntn-toolbar--divided">
+              <div class="ntn-toolbar__start">
+                <div class="ntn-toggle-group ntn-toggle-group--sm">
+                  <button class="ntn-toggle-group__btn" aria-pressed="true" data-ntn-filter-tag="all">All</button>
+                  <button class="ntn-toggle-group__btn" aria-pressed="false" data-ntn-filter-tag="live">Live</button>
+                  <button class="ntn-toggle-group__btn" aria-pressed="false" data-ntn-filter-tag="failed">Failed</button>
+                </div>
+              </div>
+              <div class="ntn-toolbar__end">
+                <div class="ntn-search ntn-search--sm ntn-toolbar__search">
+                  <i class="fa-light fa-magnifying-glass"></i>
+                  <input type="search" placeholder="Search deploys" aria-label="Search deploys" data-ntn-table-search>
+                </div>
+              </div>
+            </div>
+            <div class="ntn-table" data-ntn-paginate="5">
+              <table>
+                <thead><tr><th>Service</th><th>Status</th><th>By</th><th class="ntn-table__num">Duration</th></tr></thead>
+                <tbody>
+                  <tr data-tags="live"><td class="ntn-table__primary">api-gateway</td><td><span class="ntn-badge ntn-badge--success ntn-badge--dot ntn-badge--sm">live</span></td><td>Wei Chen</td><td class="ntn-table__num">1m 42s</td></tr>
+                  <tr data-tags="failed"><td class="ntn-table__primary">web</td><td><span class="ntn-badge ntn-badge--danger ntn-badge--dot ntn-badge--sm">failed</span></td><td>Diego Salas</td><td class="ntn-table__num">0m 58s</td></tr>
+                  <tr data-tags="live"><td class="ntn-table__primary">billing</td><td><span class="ntn-badge ntn-badge--success ntn-badge--dot ntn-badge--sm">live</span></td><td>Inés Duarte</td><td class="ntn-table__num">2m 10s</td></tr>
+                  <tr data-tags="rolled-back"><td class="ntn-table__primary">search</td><td><span class="ntn-badge ntn-badge--warning ntn-badge--dot ntn-badge--sm">rolled back</span></td><td>Lena Fischer</td><td class="ntn-table__num">3m 05s</td></tr>
+                  <tr data-tags="live"><td class="ntn-table__primary">auth</td><td><span class="ntn-badge ntn-badge--success ntn-badge--dot ntn-badge--sm">live</span></td><td>Wei Chen</td><td class="ntn-table__num">1m 12s</td></tr>
+                  <tr data-tags="live"><td class="ntn-table__primary">media</td><td><span class="ntn-badge ntn-badge--success ntn-badge--dot ntn-badge--sm">live</span></td><td>Ada Lovelace</td><td class="ntn-table__num">4m 31s</td></tr>
+                  <tr data-tags="failed"><td class="ntn-table__primary">worker</td><td><span class="ntn-badge ntn-badge--danger ntn-badge--dot ntn-badge--sm">failed</span></td><td>Diego Salas</td><td class="ntn-table__num">0m 22s</td></tr>
+                  <tr data-tags="live"><td class="ntn-table__primary">docs</td><td><span class="ntn-badge ntn-badge--success ntn-badge--dot ntn-badge--sm">live</span></td><td>Lena Fischer</td><td class="ntn-table__num">0m 49s</td></tr>
+                  <tr data-ntn-table-empty hidden><td colspan="4" class="ntn-table__empty">No deploys match.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <footer class="ntn-card__foot">
+              <div class="ntn-pager">
+                <div class="ntn-pager__start">
+                  <span class="ntn-pager__summary" data-ntn-summary>Showing 1–5 of 8</span>
+                </div>
+                <div class="ntn-pager__end">
+                  <button class="ntn-pager__step" data-ntn-prev><i class="fa-light fa-arrow-left"></i>Previous</button>
+                  <div class="ntn-pager__pages" data-ntn-pages></div>
+                  <button class="ntn-pager__step" data-ntn-next>Next<i class="fa-light fa-arrow-right"></i></button>
+                </div>
+              </div>
+            </footer>
+          </section>
+        </div>
+
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- The page's own behaviour. In your app, import from the CDN URL in Get started. -->
+<script type="module">
+  import { toast } from '../js/nocturne.js';
+
+  // The picker commits on Apply; reload your data for the new range here.
+  document.addEventListener('ntn:daterangechange', (e) => {
+    const { start, end } = e.detail;
+    toast({ message: start ? `Showing ${start} to ${end ?? start}` : 'Showing all time' });
+  });
+</script>
+
+</body>
+</html>
