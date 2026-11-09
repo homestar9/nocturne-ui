@@ -131,6 +131,7 @@
         <p class="ntn-sidebar__section">Inputs</p>
         <a class="ntn-sidebar__item" href="#field"><i class="fa-light fa-font"></i><span>Text field</span></a>
         <a class="ntn-sidebar__item" href="#select"><i class="fa-light fa-caret-down"></i><span>Select</span></a>
+        <a class="ntn-sidebar__item" href="#form-themes"><i class="fa-light fa-circle-half-stroke"></i><span>Form controls, both themes</span></a>
         <a class="ntn-sidebar__item" href="#combo"><i class="fa-light fa-square-caret-down"></i><span>Dropdown · Multi-select</span></a>
         <a class="ntn-sidebar__item" href="#search"><i class="fa-light fa-magnifying-glass"></i><span>Search</span></a>
         <a class="ntn-sidebar__item" href="#slider"><i class="fa-light fa-sliders"></i><span>Slider</span></a>
@@ -531,7 +532,7 @@
           <header class="sink__head">
             <h2 class="sink__title">Select</h2>
             <code class="sink__code">.ntn-select</code>
-            <p class="sink__note">A native <code>&lt;select&gt;</code>, restyled — smallest footprint, and it gets the platform picker on mobile for free. Reach for <a href="#combo">Dropdown</a> when options need descriptions, icons, filtering or multi-select.</p>
+            <p class="sink__note">A native <code>&lt;select&gt;</code>, restyled — smallest footprint, and it gets the platform picker on mobile for free. Add <code>data-ntn-select</code> and <code>nocturne.js</code> draws a listbox over it instead (search with <code>data-ntn-search</code>, an empty state with <code>data-ntn-empty</code>), while the native select still posts and fires <code>change</code>. Reach for <a href="#combo">Dropdown</a> when options need descriptions, icons or chips.</p>
           </header>
           <div class="ntn-card"><div class="ntn-card__body ntn-stack">
             <label class="ntn-select" style="max-width:280px" data-sink-example="Stacked label">
@@ -565,6 +566,144 @@
               </label>
             </div>
           </div></div>
+          <div class="ntn-card"><div class="ntn-card__body ntn-stack">
+            <div class="ntn-grid ntn-grid--3">
+              <label class="ntn-select" data-ntn-select data-sink-example="Enhanced">
+                <span class="ntn-select__label">First day of the week</span>
+                <span class="ntn-select__control"><select name="week-start"><option selected>Sunday</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select></span>
+                <span class="ntn-select__hint">Arrow keys, type-to-jump, <kbd class="ntn-kbd">esc</kbd>.</span>
+              </label>
+              <label class="ntn-select" data-ntn-select data-ntn-search="Search teams…" data-ntn-empty="No matching teams" data-sink-example="Enhanced, searchable">
+                <span class="ntn-select__label">Include private teams</span>
+                <span class="ntn-select__control"><select name="private-teams"><option value="" selected>None</option><option value="eng">Engineering</option><option value="design">Design</option><option value="ops">Operations</option><option value="mkt">Marketing</option><option value="sales">Sales</option><option value="support">Support</option></select></span>
+              </label>
+              <label class="ntn-select ntn-select--sm ntn-select--inline" data-ntn-select data-sink-example="Enhanced, inline and small">
+                <span class="ntn-select__label">Sort by</span>
+                <span class="ntn-select__control"><select><option>Newest</option><option>Oldest</option><option>Most active</option></select></span>
+              </label>
+            </div>
+            <div class="ntn-grid ntn-grid--2">
+              <label class="ntn-select" data-sink-example="Multiple, native">
+                <span class="ntn-select__label">Notify channels (native)</span>
+                <span class="ntn-select__control"><select name="channels-native" multiple size="4"><option value="email" selected>Email</option><option value="slack" selected>Slack</option><option value="sms">SMS</option><option value="webhook">Webhook</option></select></span>
+                <span class="ntn-select__hint">Without the script: the platform's list box.</span>
+              </label>
+              <label class="ntn-select" data-ntn-select data-ntn-placeholder="No channels" data-sink-example="Multiple, enhanced">
+                <span class="ntn-select__label">Notify channels</span>
+                <span class="ntn-select__control"><select name="channels" multiple><option value="email" selected>Email</option><option value="slack" selected>Slack</option><option value="sms">SMS</option><option value="webhook">Webhook</option></select></span>
+                <span class="ntn-select__hint">Toggles stay open; the trigger joins the labels.</span>
+              </label>
+              <label class="ntn-select" data-sink-example="Groups, native">
+                <span class="ntn-select__label">Assignee (native)</span>
+                <span class="ntn-select__control"><select name="assignee-native"><optgroup label="People"><option>Ada Lovelace</option><option>Grace Hopper</option><option>Alan Turing</option></optgroup><optgroup label="Bots" disabled><option>Deploy bot</option><option>Triage bot</option></optgroup></select></span>
+                <span class="ntn-select__hint">The Bots group is disabled.</span>
+              </label>
+              <label class="ntn-select" data-ntn-select data-ntn-search="Search people…" data-ntn-empty="No one matches" data-sink-example="Groups, enhanced">
+                <span class="ntn-select__label">Assignee</span>
+                <span class="ntn-select__control"><select name="assignee"><optgroup label="People"><option>Ada Lovelace</option><option>Grace Hopper</option><option>Alan Turing</option></optgroup><optgroup label="Bots" disabled><option>Deploy bot</option><option>Triage bot</option></optgroup></select></span>
+                <span class="ntn-select__hint">Group headings; a disabled group can't be picked.</span>
+              </label>
+            </div>
+          </div></div>
+        </section>
+
+        <!-- ── Form controls in both themes ──────────────────────────── -->
+        <section class="sink" id="form-themes">
+          <header class="sink__head">
+            <h2 class="sink__title">Form controls in both themes</h2>
+            <code class="sink__code">data-theme</code>
+            <p class="sink__note">The raised face and the select's listbox, side by side: a <code>data-theme="dark"</code> panel and a <code>data-theme="light"</code> panel, whatever the page's theme. Dark values are measured; the light ones are estimates, tuned in one block at the end of <code>src/tokens/_theme-light.scss</code>.</p>
+          </header>
+          <div class="ntn-grid ntn-grid--2">
+            <div class="ntn-card" data-theme="dark" style="color:var(--ntn-text-primary)"><div class="ntn-card__body ntn-stack">
+              <h3 class="ntn-card__title">Dark</h3>
+              <label class="ntn-select" data-ntn-select data-ntn-search="Search teams…" data-ntn-empty="No matching teams">
+                <span class="ntn-select__label">Include private teams</span>
+                <span class="ntn-select__control"><select name="dark-private-teams"><option value="" selected>None</option><option value="eng">Engineering</option><option value="design">Design</option><option value="ops">Operations</option><option value="mkt">Marketing</option><option value="sales">Sales</option><option value="support">Support</option></select></span>
+                <span class="ntn-select__hint">Searchable, showing its placeholder value.</span>
+              </label>
+              <label class="ntn-select" data-ntn-select>
+                <span class="ntn-select__label">First day of the week</span>
+                <span class="ntn-select__control"><select name="dark-week-start"><option selected>Sunday</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select></span>
+              </label>
+              <label class="ntn-select" data-ntn-select data-ntn-placeholder="No channels">
+                <span class="ntn-select__label">Notify channels</span>
+                <span class="ntn-select__control"><select name="dark-channels" multiple><option value="email" selected>Email</option><option value="slack">Slack</option><option value="sms">SMS</option></select></span>
+              </label>
+              <label class="ntn-select" data-ntn-select>
+                <span class="ntn-select__label">Assignee</span>
+                <span class="ntn-select__control"><select name="dark-assignee"><optgroup label="People"><option>Ada Lovelace</option><option>Grace Hopper</option></optgroup><optgroup label="Bots" disabled><option>Deploy bot</option></optgroup></select></span>
+              </label>
+              <label class="ntn-select" data-ntn-select>
+                <span class="ntn-select__label">Region (disabled)</span>
+                <span class="ntn-select__control"><select name="dark-region" disabled><option>us-east-1</option></select></span>
+              </label>
+              <label class="ntn-field">
+                <span class="ntn-field__label">Full name</span>
+                <span class="ntn-field__control"><input type="text" value="Ada Lovelace" placeholder=" "></span>
+              </label>
+              <label class="ntn-field">
+                <span class="ntn-field__label">Title</span>
+                <span class="ntn-field__control"><input type="text" placeholder="Your job title or role"></span>
+              </label>
+              <label class="ntn-field">
+                <span class="ntn-field__label">Search</span>
+                <span class="ntn-field__control"><i class="fa-light fa-magnifying-glass"></i><input type="search" placeholder="Search…"></span>
+              </label>
+              <label class="ntn-field">
+                <span class="ntn-field__label">Username (disabled)</span>
+                <span class="ntn-field__control"><input type="text" value="ada" placeholder=" " disabled></span>
+              </label>
+              <label class="ntn-field ntn-field--textarea">
+                <span class="ntn-field__label">Description</span>
+                <span class="ntn-field__control"><textarea placeholder="Add a description…"></textarea></span>
+              </label>
+            </div></div>
+            <div class="ntn-card" data-theme="light" style="color:var(--ntn-text-primary)" data-sink-example="A light panel: data-theme on any subtree"><div class="ntn-card__body ntn-stack">
+              <h3 class="ntn-card__title">Light</h3>
+              <label class="ntn-select" data-ntn-select data-ntn-search="Search teams…" data-ntn-empty="No matching teams">
+                <span class="ntn-select__label">Include private teams</span>
+                <span class="ntn-select__control"><select name="light-private-teams"><option value="" selected>None</option><option value="eng">Engineering</option><option value="design">Design</option><option value="ops">Operations</option><option value="mkt">Marketing</option><option value="sales">Sales</option><option value="support">Support</option></select></span>
+                <span class="ntn-select__hint">Searchable, showing its placeholder value.</span>
+              </label>
+              <label class="ntn-select" data-ntn-select>
+                <span class="ntn-select__label">First day of the week</span>
+                <span class="ntn-select__control"><select name="light-week-start"><option selected>Sunday</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select></span>
+              </label>
+              <label class="ntn-select" data-ntn-select data-ntn-placeholder="No channels">
+                <span class="ntn-select__label">Notify channels</span>
+                <span class="ntn-select__control"><select name="light-channels" multiple><option value="email" selected>Email</option><option value="slack">Slack</option><option value="sms">SMS</option></select></span>
+              </label>
+              <label class="ntn-select" data-ntn-select>
+                <span class="ntn-select__label">Assignee</span>
+                <span class="ntn-select__control"><select name="light-assignee"><optgroup label="People"><option>Ada Lovelace</option><option>Grace Hopper</option></optgroup><optgroup label="Bots" disabled><option>Deploy bot</option></optgroup></select></span>
+              </label>
+              <label class="ntn-select" data-ntn-select>
+                <span class="ntn-select__label">Region (disabled)</span>
+                <span class="ntn-select__control"><select name="light-region" disabled><option>us-east-1</option></select></span>
+              </label>
+              <label class="ntn-field">
+                <span class="ntn-field__label">Full name</span>
+                <span class="ntn-field__control"><input type="text" value="Ada Lovelace" placeholder=" "></span>
+              </label>
+              <label class="ntn-field">
+                <span class="ntn-field__label">Title</span>
+                <span class="ntn-field__control"><input type="text" placeholder="Your job title or role"></span>
+              </label>
+              <label class="ntn-field">
+                <span class="ntn-field__label">Search</span>
+                <span class="ntn-field__control"><i class="fa-light fa-magnifying-glass"></i><input type="search" placeholder="Search…"></span>
+              </label>
+              <label class="ntn-field">
+                <span class="ntn-field__label">Username (disabled)</span>
+                <span class="ntn-field__control"><input type="text" value="ada" placeholder=" " disabled></span>
+              </label>
+              <label class="ntn-field ntn-field--textarea">
+                <span class="ntn-field__label">Description</span>
+                <span class="ntn-field__control"><textarea placeholder="Add a description…"></textarea></span>
+              </label>
+            </div></div>
+          </div>
         </section>
 
         <!-- ── Dropdown ──────────────────────────────────────────────── -->

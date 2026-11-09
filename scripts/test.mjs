@@ -72,7 +72,7 @@ try {
   console.log('Glass hooks (R15)');
   check(/--ntn-surface-filter:\s*none;/.test(css) && /--ntn-pop-filter:\s*none;/.test(css), 'both hooks default to none');
   const HOOKS = { 'ntn-card': 'surface', 'ntn-sidebar': 'surface', 'ntn-modal': 'pop', 'ntn-menu': 'pop',
-    'ntn-popover': 'pop', 'ntn-daterange__panel': 'pop', 'ntn-tooltip__bubble': 'pop', 'ntn-toast': 'pop' };
+    'ntn-popover': 'pop', 'ntn-daterange__panel': 'pop', 'ntn-select__panel': 'pop', 'ntn-tooltip__bubble': 'pop', 'ntn-toast': 'pop' };
   for (const [block, hook] of Object.entries(HOOKS)) {
     const rule = css.match(new RegExp(`(?:^|\\n)\\.${block} \\{([^}]*)\\}`));
     check(rule && rule[1].includes(`backdrop-filter: var(--ntn-${hook}-filter)`), `.${block} reads --ntn-${hook}-filter`);
@@ -221,7 +221,7 @@ try {
   console.log('One control face (NTN-27, NTN-53)');
   // Controls that sit side by side in a toolbar draw the same raised face (the control-surface
   // mixin): the face fill, a transparent border, and the ring and drop of --ntn-shadow-face.
-  const CONTROL_FACES = ['.ntn-field__control', '.ntn-select__control select', '.ntn-combo__trigger', '.ntn-daterange__trigger', '.ntn-toggle-group', '.ntn-radio-group--segmented', '.ntn-search'];
+  const CONTROL_FACES = ['.ntn-field__control', '.ntn-select__control select', '.ntn-select__trigger', '.ntn-combo__trigger', '.ntn-daterange__trigger', '.ntn-toggle-group', '.ntn-radio-group--segmented', '.ntn-search'];
   const oddFaces = CONTROL_FACES.filter((sel) => {
     const r = rules.find((x) => x.sel === sel);
     return !(r && /background:\s*var\(--ntn-face-bg\)/.test(r.body) && /border:\s*1px solid transparent/.test(r.body) && /box-shadow:\s*var\(--ntn-shadow-face\)/.test(r.body));

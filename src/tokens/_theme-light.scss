@@ -94,8 +94,8 @@
 
   --ntn-scrim: rgba(0,0,0,0.42);
 
-  /* ── Raised controls: estimated, tune here ─────────────────────────────────
-     Every light value of the control face lives in this block. The dark values are measured
+  /* ── Raised controls and the select picker: estimated, tune here ───────────
+     Every light value of the control face and the select's panel lives in this block. The dark values are measured
      and stay where they are (_colors.scss, _elevation.scss). Aliases of the light ramp follow a
      theme's light mode by themselves; swap one for a literal to tune it. */
   --ntn-face-bg:           var(--ntn-n-0);
@@ -105,4 +105,15 @@
   --ntn-face-placeholder:  var(--ntn-n-600);
   --ntn-shadow-face:       0 0 0 1px rgba(0,0,0,0.10), 0 0.5px 1px 0 rgba(0,0,0,0.08);
   --ntn-shadow-face-hover: 0 0 0 1px rgba(0,0,0,0.15), 0 0.5px 1px 0 rgba(0,0,0,0.08);
+  --ntn-picker-bg:            var(--ntn-n-0);
+  --ntn-picker-border:        var(--ntn-n-400);
+  --ntn-picker-divider:       var(--ntn-n-200);
+  --ntn-picker-text:          var(--ntn-n-900);
+  --ntn-picker-placeholder:   var(--ntn-n-600);
+  --ntn-picker-empty:         var(--ntn-n-600);
+  --ntn-picker-option:        var(--ntn-n-900);
+  --ntn-picker-option-active: var(--ntn-n-200);
+  --ntn-picker-tick:          var(--ntn-n-700);
+  --ntn-picker-scrollbar:     var(--ntn-n-400);
+  --ntn-shadow-picker:        0 3px 8px rgba(0,0,0,0.07), 0 2px 5px rgba(0,0,0,0.07), 0 1px 1px rgba(0,0,0,0.07);
 }

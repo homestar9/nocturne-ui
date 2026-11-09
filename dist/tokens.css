@@ -82,6 +82,18 @@
   --ntn-face-text: lch(90.826 1.425 272);
   --ntn-face-muted: lch(63.304 1.425 272); /* chevron, leading icon */
   --ntn-face-placeholder: lch(52 1.425 272);
+  /* The select's listbox panel (data-ntn-select), measured like the face. Its drop is
+     --ntn-shadow-picker. */
+  --ntn-picker-bg: lch(12.72 0.85 272);
+  --ntn-picker-border: lch(21.36 1.93 272);
+  --ntn-picker-divider: lch(17.04 1.93 272); /* under the search box */
+  --ntn-picker-text: lch(91.178 1.425 272); /* typed search text */
+  --ntn-picker-placeholder: lch(64.714 1.425 272);
+  --ntn-picker-empty: lch(41.778 1.425 272);
+  --ntn-picker-option: lch(91.554 1.65 272);
+  --ntn-picker-option-active: lch(25.69 1.975 272);
+  --ntn-picker-tick: lch(66.215 1.65 272);
+  --ntn-picker-scrollbar: lch(30 2 272);
 }
 
 :root {
@@ -285,6 +297,8 @@
      and a short, tight drop. Brighter under the pointer. Light values: _theme-light.scss. */
   --ntn-shadow-face: 0 0 0 1px rgba(255,255,255,0.095), 0 0.5px 1px 1px rgba(0,0,0,0.3);
   --ntn-shadow-face-hover: 0 0 0 1px rgba(255,255,255,0.119), 0 0.5px 1px 1px rgba(0,0,0,0.3);
+  /* The select's listbox panel: three short, even drops */
+  --ntn-shadow-picker: 0 3px 8px rgba(0,0,0,0.125), 0 2px 5px rgba(0,0,0,0.125), 0 1px 1px rgba(0,0,0,0.125);
   /* Glass (_glass.scss): a lit top hairline and a wide soft drop; the strength of an app's
      ambient image */
   --ntn-glass-highlight: inset 0 1px 0 rgba(255,255,255,0.06);
@@ -458,8 +472,8 @@
   --ntn-shine-head: var(--ntn-accent-400);
   --ntn-shine-glow: 0.2;
   --ntn-scrim: rgba(0,0,0,0.42);
-  /* ── Raised controls: estimated, tune here ─────────────────────────────────
-     Every light value of the control face lives in this block. The dark values are measured
+  /* ── Raised controls and the select picker: estimated, tune here ───────────
+     Every light value of the control face and the select's panel lives in this block. The dark values are measured
      and stay where they are (_colors.scss, _elevation.scss). Aliases of the light ramp follow a
      theme's light mode by themselves; swap one for a literal to tune it. */
   --ntn-face-bg: var(--ntn-n-0);
@@ -469,6 +483,17 @@
   --ntn-face-placeholder: var(--ntn-n-600);
   --ntn-shadow-face: 0 0 0 1px rgba(0,0,0,0.10), 0 0.5px 1px 0 rgba(0,0,0,0.08);
   --ntn-shadow-face-hover: 0 0 0 1px rgba(0,0,0,0.15), 0 0.5px 1px 0 rgba(0,0,0,0.08);
+  --ntn-picker-bg: var(--ntn-n-0);
+  --ntn-picker-border: var(--ntn-n-400);
+  --ntn-picker-divider: var(--ntn-n-200);
+  --ntn-picker-text: var(--ntn-n-900);
+  --ntn-picker-placeholder: var(--ntn-n-600);
+  --ntn-picker-empty: var(--ntn-n-600);
+  --ntn-picker-option: var(--ntn-n-900);
+  --ntn-picker-option-active: var(--ntn-n-200);
+  --ntn-picker-tick: var(--ntn-n-700);
+  --ntn-picker-scrollbar: var(--ntn-n-400);
+  --ntn-shadow-picker: 0 3px 8px rgba(0,0,0,0.07), 0 2px 5px rgba(0,0,0,0.07), 0 1px 1px rgba(0,0,0,0.07);
 }
 
 /* ── Nocturne density ────────────────────────────────────────────────────────

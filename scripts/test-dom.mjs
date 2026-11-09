@@ -332,6 +332,167 @@ console.log('Date picker opens in the top layer (NTN-21)');
   check(!shown.has(panel) && !dr.ntnRange.open, 'Escape hides it again');
 }
 
+console.log('Enhanced select (NTN-54)');
+{
+  const { document, window, mod } = await page(
+    `<form id="f">
+       <label class="ntn-select" id="s1" data-ntn-select>
+         <span class="ntn-select__label">Team</span>
+         <span class="ntn-select__control"><select name="team" aria-describedby="s1-hint"><option value="">None</option><option value="eng">Engineering</option><option value="des">Design</option><option value="ops" disabled>Operations</option><option value="evil">x</option></select></span>
+         <span class="ntn-select__hint" id="s1-hint">Hint</span>
+       </label>
+       <label class="ntn-select" id="s2" data-ntn-select data-ntn-search="Search people…" data-ntn-empty="No matching people">
+         <span class="ntn-select__label">Owner</span>
+         <span class="ntn-select__control"><select name="owner"><optgroup label="People"><option>Ada</option><option>Grace</option></optgroup><optgroup label="Bots" disabled><option>Robo</option></optgroup></select></span>
+       </label>
+       <label class="ntn-select" id="s3" data-ntn-select data-ntn-placeholder="No channels">
+         <span class="ntn-select__label">Channels</span>
+         <span class="ntn-select__control"><select name="ch" multiple><option value="email" selected>Email</option><option value="slack">Slack</option><option value="sms">SMS</option></select></span>
+       </label>
+       <label class="ntn-select" id="s4" data-ntn-select><span class="ntn-select__label">Off</span><span class="ntn-select__control"><select name="off" disabled><option>X</option></select></span></label>
+       <button type="submit" id="go">Go</button>
+     </form>`);
+  const $ = (sel) => document.querySelector(sel);
+  const key = (el, k) => el.dispatchEvent(new window.KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
+  const form = $('#f');
+  const data = () => new window.FormData(form);
+  let submits = 0;
+  form.addEventListener('submit', (e) => { e.preventDefault(); submits++; });
+  const changes = [];
+  form.addEventListener('change', (e) => changes.push(e.target.name));
+  $('#s1 option[value="evil"]').text = EVIL;
+
+  const s1 = $('#s1');
+  const select = s1.querySelector('select');
+  const trigger = s1.querySelector('.ntn-select__trigger');
+  const panel = s1.querySelector('.ntn-select__panel');
+  const list = s1.querySelector('.ntn-select__list');
+  const isOpen = (root) => !root.querySelector('.ntn-select__panel').hidden;
+  const active = (root) => root.querySelector('.ntn-select__option[data-ntn-active]');
+  mod.refresh();
+  check(document.querySelectorAll('#s1 .ntn-select__trigger').length === 1 && select.nextElementSibling === trigger,
+    'set-up draws one trigger, after the native select, however often refresh() runs');
+  const named = trigger.getAttribute('aria-labelledby').split(' ').map((id) => document.getElementById(id).textContent).join(' ');
+  check(named === 'Team None', `the trigger is named by the label and the value ("${named}")`);
+  check(trigger.getAttribute('aria-describedby') === 's1-hint' && select.tabIndex === -1, 'it takes aria-describedby from the select, which leaves the tab order');
+  check(s1.querySelector('.ntn-select__value').hasAttribute('data-empty'), 'an empty first value shows as a placeholder');
+
+  click(trigger);
+  check(isOpen(s1) && trigger.getAttribute('aria-expanded') === 'true' && document.activeElement === list, 'a click opens the list and focuses it');
+  check(list.querySelectorAll('.ntn-select__option').length === 5 && active(s1).textContent === 'None', 'the list is built from the select, the chosen option active');
+  check(list.getAttribute('aria-activedescendant') === active(s1).id, 'aria-activedescendant names the active option');
+  check(!list.querySelector('img') && list.querySelector('[data-ntn-index="4"] .ntn-select__text').textContent === EVIL, 'labels are drawn as text');
+  const walk = [];
+  for (let i = 0; i < 4; i++) { key(list, 'ArrowDown'); walk.push(active(s1).dataset.ntnIndex); }
+  check(walk.join(',') === '1,2,4,0', `↓ skips the disabled option and wraps (${walk.join(',')})`);
+  key(list, 'd');
+  check(active(s1).textContent === 'Design', 'typing jumps to the first label that starts with it');
+  key(list, 'Enter');
+  check(select.value === 'des' && changes.join(',') === 'team' && !isOpen(s1) && document.activeElement === trigger,
+    `↵ picks, fires one change on the native select, closes and returns focus (${changes.join(',')})`);
+  check(s1.querySelector('.ntn-select__value').textContent === 'Design' && data().get('team') === 'des', 'the trigger shows it, and the form posts it');
+
+  check(key(trigger, 'Enter') && !isOpen(s1), '↵ on the trigger is left to its native click');
+  click(trigger);
+  check(isOpen(s1), '...which opens it, and it stays open');
+  key(list, 'Escape');
+  check(!isOpen(s1) && document.activeElement === trigger, 'esc closes and returns focus to the trigger');
+  key(trigger, 'ArrowDown');
+  check(isOpen(s1), '↓ on the trigger opens it');
+  click(list.querySelector('[data-ntn-index="3"]'));
+  check(isOpen(s1) && select.value === 'des', 'a disabled option cannot be picked');
+  click(list.querySelector('[data-ntn-index="1"]'));
+  check(select.value === 'eng' && !isOpen(s1), 'a click picks and closes');
+
+  click(s1.querySelector('.ntn-select__label'));
+  check(document.activeElement === trigger && !isOpen(s1), 'a click on the label focuses the trigger');
+
+  form.reset();
+  await new Promise((r) => setTimeout(r, 5));
+  check(s1.querySelector('.ntn-select__value').textContent === 'None', 'form.reset() redraws the trigger');
+
+  const s2 = $('#s2');
+  const search = s2.querySelector('.ntn-select__search');
+  click(s2.querySelector('.ntn-select__trigger'));
+  check(document.activeElement === search && search.getAttribute('aria-activedescendant') === active(s2).id, 'with data-ntn-search the search box takes focus and the active option');
+  const heads = [...s2.querySelectorAll('.ntn-select__group')].map((h) => h.textContent);
+  check(heads.join(',') === 'People,Bots' && s2.querySelector('[role="group"]').getAttribute('aria-labelledby') === s2.querySelector('.ntn-select__group').id,
+    'an optgroup becomes a group named by its heading');
+  check(s2.querySelector('[data-ntn-index="2"]').getAttribute('aria-disabled') === 'true', "a disabled optgroup's options are disabled");
+  key(search, 'ArrowDown'); key(search, 'ArrowDown');
+  check(active(s2).textContent === 'Ada', '↓ skips headings and disabled options');
+  search.value = 'gr';
+  search.dispatchEvent(new window.Event('input', { bubbles: true }));
+  const shown = [...s2.querySelectorAll('.ntn-select__option:not([hidden])')].map((o) => o.textContent);
+  check(shown.join(',') === 'Grace' && s2.querySelectorAll('[role="group"]')[1].hidden && active(s2).textContent === 'Grace', 'typing filters, hides emptied groups and activates the first hit');
+  search.value = 'zzz';
+  search.dispatchEvent(new window.Event('input', { bubbles: true }));
+  const empty = s2.querySelector('.ntn-select__empty');
+  check(!empty.hidden && empty.textContent === 'No matching people' && s2.querySelector('.ntn-select__list').hidden, 'no hits shows the empty state');
+  check(!key(search, 'Enter') && submits === 0 && isOpen(s2), '↵ in the search box never submits the form');
+  key(search, 'Escape');
+
+  const s3 = $('#s3');
+  const multi = s3.querySelector('select');
+  click(s3.querySelector('.ntn-select__trigger'));
+  check(s3.querySelector('.ntn-select__list').getAttribute('aria-multiselectable') === 'true', 'a multiple select is a multiselectable listbox');
+  click(s3.querySelector('[data-ntn-index="1"]'));
+  check(isOpen(s3) && JSON.stringify(data().getAll('ch')) === '["email","slack"]', 'a click toggles an option and keeps the list open');
+  check(s3.querySelector('.ntn-select__value').textContent === 'Email, Slack', 'the trigger joins the chosen labels');
+  key(s3.querySelector('.ntn-select__list'), ' ');
+  check(!multi.options[1].selected && s3.querySelector('[data-ntn-index="1"]').getAttribute('aria-selected') === 'false', 'space toggles the active option');
+  click(s3.querySelector('[data-ntn-index="0"]'));
+  const v3 = s3.querySelector('.ntn-select__value');
+  check(v3.textContent === 'No channels' && v3.hasAttribute('data-empty') && data().getAll('ch').length === 0, 'with nothing chosen it shows data-ntn-placeholder');
+  key(s3.querySelector('.ntn-select__list'), 'Escape');
+
+  const off = $('#s4 .ntn-select__trigger');
+  click(off);
+  check(off.disabled && !isOpen($('#s4')), 'a disabled select has a disabled trigger that does not open');
+}
+
+console.log('Enhanced select: placement and nesting (NTN-54)');
+{
+  const { document, window, mod } = await page(
+    `<label class="ntn-select" id="s" data-ntn-select><span class="ntn-select__label">A</span><span class="ntn-select__control"><select><option>One</option></select></span></label>
+     <div class="ntn-dropdown" data-ntn-dropdown id="dd">
+       <button type="button" class="ntn-btn" aria-haspopup="dialog">Filters</button>
+       <div class="ntn-popover" role="dialog">
+         <label class="ntn-select" id="inner" data-ntn-select><span class="ntn-select__label">B</span><span class="ntn-select__control"><select><option>Two</option></select></span></label>
+       </div>
+     </div>`);
+  const shown = new Set();
+  window.HTMLElement.prototype.showPopover = function () { shown.add(this); };
+  window.HTMLElement.prototype.hidePopover = function () { shown.delete(this); };
+  mod.refresh();
+  const s = document.getElementById('s');
+  const trigger = s.querySelector('.ntn-select__trigger');
+  const panel = s.querySelector('.ntn-select__panel');
+  check(panel.getAttribute('popover') === 'manual' && !panel.hidden, 'refresh() upgrades the panel to a popover');
+  const place = (top, bottom, h) => {
+    trigger.getBoundingClientRect = () => ({ top, bottom, left: 50, right: 250, width: 200, height: bottom - top });
+    Object.defineProperty(panel, 'offsetHeight', { value: h, configurable: true });
+    Object.defineProperty(panel, 'offsetWidth', { value: 204, configurable: true });
+    click(trigger);
+    const at = [panel.style.left, panel.style.top, panel.getAttribute('data-ntn-side')].join(' ');
+    click(trigger);
+    return at;
+  };
+  check(place(100, 134, 200) === '46px 96px bottom', 'the panel covers the trigger: right edges aligned, its top 4px above');
+  check(place(700, 734, 200) === '46px 538px top', 'near the bottom it flips: its bottom 4px below the trigger\'s');
+  check(place(700, 734, 900).startsWith('46px 8px '), 'too tall either way, it is kept on screen');
+
+  const dd = document.getElementById('dd');
+  mod.open(dd);
+  const inner = document.getElementById('inner');
+  inner.querySelector('.ntn-select__trigger').focus();
+  click(inner.querySelector('.ntn-select__trigger'));
+  const innerPanel = inner.querySelector('.ntn-select__panel');
+  check(shown.has(innerPanel) && dd.hasAttribute('data-ntn-open'), 'a select opens inside an open popover without closing it');
+  inner.querySelector('.ntn-select__list').dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+  check(!shown.has(innerPanel) && dd.hasAttribute('data-ntn-open'), 'esc closes the select only, and leaves the popover open');
+}
+
 console.log('Avatar hue (NTN-22)');
 {
   const { document, mod } = await page('<span class="ntn-avatar" id="a" data-ntn-avatar-name="Ada Lovelace">AL</span>');
@@ -712,6 +873,9 @@ console.log('Kitchen sink covers the library (NTN-46)');
     'ntn-daterange__head', 'ntn-daterange__month', 'ntn-daterange__nav', 'ntn-daterange__grid',
     'ntn-daterange__dow', 'ntn-daterange__day', 'ntn-daterange__panel--narrow',    // calendar
     'ntn-toaster', 'ntn-toaster__live',                                            // toast()
+    'ntn-select__trigger', 'ntn-select__value', 'ntn-select__panel', 'ntn-select__search',
+    'ntn-select__list', 'ntn-select__option', 'ntn-select__text', 'ntn-select__tick',
+    'ntn-select__group', 'ntn-select__empty',                                      // data-ntn-select
   ];
   const stale = DRAWN.filter((c) => !dist.has(c));
   const unshown = [...dist].filter((c) => !used.has(c) && !DRAWN.includes(c));

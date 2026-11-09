@@ -84,22 +84,106 @@
       &:focus-visible { outline: 0; @include focus-accent; }
       &:disabled { @include disabled; }
     }
+    // Without the script a multiple select is the platform's list box: let it grow, no chevron.
+    select[multiple] { height: auto; padding: 4px; }
+    &:not([data-ntn-dropdown]):has(> select[multiple])::after { content: none; }
     option { background: var(--ntn-surface-2); color: var(--ntn-text-primary); }
+
+    // Enhanced (data-ntn-select): the native select stays in the form, invisible under the trigger,
+    // where the browser's required message still points.
+    &[data-ntn-dropdown] > select { position: absolute; inset: 0; height: 100%; opacity: 0; pointer-events: none; }
   }
+
+  /* ── Enhanced select: the trigger, and its listbox panel ── */
+  &__trigger {
+    display: flex; align-items: center; width: 100%; min-width: 32px; margin: 0;
+    height: var(--ntn-control-md); padding: 0 28px 0 10px;
+    @include control-surface;
+    color: var(--ntn-face-text);
+    font-family: var(--ntn-font-sans); font-size: var(--ntn-font-size-sm); font-weight: var(--ntn-weight-medium); text-align: left; cursor: pointer;
+    @include transition(background-color, border-color, box-shadow);
+
+    @include hover { @include face-hover; }
+    &[aria-expanded="true"] { @include face-hover; }
+    &:focus-visible { outline: 0; @include focus-accent; }
+    &:disabled { @include disabled; }
+  }
+  &__value {
+    flex: 1; min-width: 0; @include truncate; font-weight: var(--ntn-weight-book);
+
+    &[data-empty] { color: var(--ntn-face-muted); }
+  }
+  &__panel {
+    // Placed by nocturne.js in viewport pixels (over the trigger, its right edge on the trigger's);
+    // in the top layer where the browser has popovers.
+    position: fixed; inset: auto; z-index: var(--ntn-z-dropdown); margin: 0; padding: 0;
+    display: flex; flex-direction: column; min-width: 204px; max-width: min(500px, calc(100vw - 16px));
+    overflow: visible;
+    background: var(--ntn-picker-bg); border: 1px solid var(--ntn-picker-border); border-radius: var(--ntn-radius-lg);
+    box-shadow: var(--ntn-shadow-picker); color: var(--ntn-picker-text);
+    font-family: var(--ntn-font-sans); font-size: var(--ntn-font-size-sm); line-height: var(--ntn-leading-normal);
+    animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out);
+    backdrop-filter: var(--ntn-pop-filter);
+
+    &[popover]:not(:popover-open) { display: none; }
+  }
+  &__search {
+    display: block; width: 100%; height: calc(var(--ntn-control-md) + 2px); margin: 0; padding: 0 12px 0 14px;
+    border: 0; border-bottom: 1px solid var(--ntn-picker-divider); border-radius: 0; outline: 0;
+    background: transparent; color: var(--ntn-picker-text); caret-color: var(--ntn-accent-500);
+    font-family: var(--ntn-font-sans); font-size: var(--ntn-font-size-sm);
+
+    &::placeholder { color: var(--ntn-picker-placeholder); opacity: 1; }
+  }
+  &__list {
+    position: relative; padding: 4px 0; max-height: 320px; overflow-y: auto; overscroll-behavior: contain;
+    scrollbar-width: thin; scrollbar-color: var(--ntn-picker-scrollbar) transparent;
+
+    &:focus { outline: 0; }
+  }
+  &__option {
+    position: relative; display: flex; align-items: center;
+    min-height: max(var(--ntn-target-min), calc(var(--ntn-control-md) - 2px)); padding: 0 35px 0 12px;
+    color: var(--ntn-picker-option); cursor: pointer; user-select: none;
+
+    // The highlight is inset 4px from the panel's sides, on its own layer under the text.
+    &::before { content: ""; position: absolute; inset: 0 4px; border-radius: var(--ntn-radius-sm); }
+    &[data-ntn-active]::before { background: var(--ntn-picker-option-active); }
+    &[aria-disabled="true"] { @include disabled; }
+  }
+  &__text { position: relative; min-width: 0; @include truncate; }
+  &__tick {
+    // Drawn in CSS like the chevron, so it shows whatever icon set the app uses (or none).
+    position: absolute; right: 8px; width: 25px; height: 16px; display: flex; align-items: center; justify-content: center;
+    color: var(--ntn-picker-tick);
+
+    &::before {
+      content: ""; width: 4px; height: 8px; margin-top: -2px;
+      border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg);
+    }
+    .ntn-select__option[aria-selected="false"] & { display: none; }
+  }
+  &__group { margin: 0; padding: 8px 12px 4px; @include caps-label; }
+  &__empty {
+    display: flex; align-items: center; justify-content: center; height: 42px; margin: 0; padding: 2px 14px 4px;
+    color: var(--ntn-picker-empty);
+  }
+
   &__hint { font-size: var(--ntn-font-size-xs); color: var(--ntn-text-muted); }
   &__error { font-size: var(--ntn-font-size-xs); color: var(--ntn-danger-400); }
   &:is([data-invalid], :has([aria-invalid="true"])) {
-    .ntn-select__control select { @include invalid; }
+    .ntn-select__control select, .ntn-select__trigger { @include invalid; }
     .ntn-select__hint { color: var(--ntn-danger-400); }
   }
-  &--sm &__control select { height: var(--ntn-control-sm); font-size: var(--ntn-font-size-xs); padding: 0 28px 0 10px; }
-  &--lg &__control select { height: var(--ntn-control-lg); font-size: var(--ntn-font-size-md); padding: 0 34px 0 14px; }
+  &--sm &__control select, &--sm &__trigger { height: var(--ntn-control-sm); font-size: var(--ntn-font-size-xs); padding: 0 28px 0 10px; }
+  &--lg &__control select, &--lg &__trigger { height: var(--ntn-control-lg); font-size: var(--ntn-font-size-md); padding: 0 34px 0 14px; }
   &--inline {
     /* Label beside the control — for toolbars and pagination rows. */
     flex-direction: row; align-items: center; gap: var(--ntn-space-2); width: auto;
 
     .ntn-select__label { white-space: nowrap; color: var(--ntn-text-muted); font-weight: var(--ntn-weight-regular); }
-    .ntn-select__control select { width: auto; }
+    .ntn-select__control select, .ntn-select__trigger { width: auto; }
+    .ntn-select__trigger { max-width: 280px; }
   }
 }
 

@@ -6,6 +6,31 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+### Added
+- **Enhanced select (`data-ntn-select` on `.ntn-select`).** `nocturne.js` draws a trigger and a
+  listbox panel over the native `<select>`, which stays in the form: it posts, fires `input` and
+  `change`, honours `form.reset()`, and shows the browser's `required` message under the trigger.
+  The control becomes an `ntn-dropdown`, so the panel opens in the top layer and the dropdown code
+  handles Escape, focus return, outside clicks, Tab-out and repositioning. The panel covers the
+  trigger: right edges aligned, its top 4px above, flipping to sit with its bottom 4px below the
+  trigger near the viewport's bottom (`placeFixed` gains the `over-end` placement). Keys: `↑↓`
+  wrap and skip disabled options, `home/end`, `↵`, `esc`, `tab`, and type-to-jump, with
+  `aria-activedescendant` on the list or the search box. `data-ntn-search` adds a filter box and
+  `data-ntn-empty` its empty state. `<select multiple>` toggles and stays open (the trigger joins
+  the labels, or shows `data-ntn-placeholder`); `<optgroup>` becomes a labelled group, and a
+  disabled group's options can't be picked. The trigger is named by the label and the value, and
+  takes the select's `aria-describedby` and `aria-invalid`.
+- Picker tokens for its panel: `--ntn-picker-bg`, `-border`, `-divider`, `-text`, `-placeholder`,
+  `-empty`, `-option`, `-option-active`, `-tick`, `-scrollbar`, and `--ntn-shadow-picker`. Dark
+  values are exact; the light estimates join the face's block in `_theme-light.scss`. Mono and
+  synthwave set them in both modes.
+- Without the script, a `<select multiple>` in `.ntn-select` is the platform's list box (it grows,
+  no chevron) instead of a one-row control.
+- Kitchen sink: the Select section shows the enhanced, searchable, small inline, multiple and
+  grouped selects (the last two native and enhanced), and a new **Form controls in both themes**
+  section puts a dark and a light panel side by side.
+- `scrollIntoList()` and `stepTo()` are shared by the combo and the select.
+
 ### Changed
 - **Raised control faces.** Field, select, search, the combobox and date triggers, the toggle
   group and the segmented radio drop the bordered bevel for a raised face (the `control-surface`

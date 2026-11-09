@@ -82,6 +82,18 @@
   --ntn-face-text: lch(90.826 1.425 272);
   --ntn-face-muted: lch(63.304 1.425 272); /* chevron, leading icon */
   --ntn-face-placeholder: lch(52 1.425 272);
+  /* The select's listbox panel (data-ntn-select), measured like the face. Its drop is
+     --ntn-shadow-picker. */
+  --ntn-picker-bg: lch(12.72 0.85 272);
+  --ntn-picker-border: lch(21.36 1.93 272);
+  --ntn-picker-divider: lch(17.04 1.93 272); /* under the search box */
+  --ntn-picker-text: lch(91.178 1.425 272); /* typed search text */
+  --ntn-picker-placeholder: lch(64.714 1.425 272);
+  --ntn-picker-empty: lch(41.778 1.425 272);
+  --ntn-picker-option: lch(91.554 1.65 272);
+  --ntn-picker-option-active: lch(25.69 1.975 272);
+  --ntn-picker-tick: lch(66.215 1.65 272);
+  --ntn-picker-scrollbar: lch(30 2 272);
 }
 
 :root {
@@ -285,6 +297,8 @@
      and a short, tight drop. Brighter under the pointer. Light values: _theme-light.scss. */
   --ntn-shadow-face: 0 0 0 1px rgba(255,255,255,0.095), 0 0.5px 1px 1px rgba(0,0,0,0.3);
   --ntn-shadow-face-hover: 0 0 0 1px rgba(255,255,255,0.119), 0 0.5px 1px 1px rgba(0,0,0,0.3);
+  /* The select's listbox panel: three short, even drops */
+  --ntn-shadow-picker: 0 3px 8px rgba(0,0,0,0.125), 0 2px 5px rgba(0,0,0,0.125), 0 1px 1px rgba(0,0,0,0.125);
   /* Glass (_glass.scss): a lit top hairline and a wide soft drop; the strength of an app's
      ambient image */
   --ntn-glass-highlight: inset 0 1px 0 rgba(255,255,255,0.06);
@@ -458,8 +472,8 @@
   --ntn-shine-head: var(--ntn-accent-400);
   --ntn-shine-glow: 0.2;
   --ntn-scrim: rgba(0,0,0,0.42);
-  /* ── Raised controls: estimated, tune here ─────────────────────────────────
-     Every light value of the control face lives in this block. The dark values are measured
+  /* ── Raised controls and the select picker: estimated, tune here ───────────
+     Every light value of the control face and the select's panel lives in this block. The dark values are measured
      and stay where they are (_colors.scss, _elevation.scss). Aliases of the light ramp follow a
      theme's light mode by themselves; swap one for a literal to tune it. */
   --ntn-face-bg: var(--ntn-n-0);
@@ -469,6 +483,17 @@
   --ntn-face-placeholder: var(--ntn-n-600);
   --ntn-shadow-face: 0 0 0 1px rgba(0,0,0,0.10), 0 0.5px 1px 0 rgba(0,0,0,0.08);
   --ntn-shadow-face-hover: 0 0 0 1px rgba(0,0,0,0.15), 0 0.5px 1px 0 rgba(0,0,0,0.08);
+  --ntn-picker-bg: var(--ntn-n-0);
+  --ntn-picker-border: var(--ntn-n-400);
+  --ntn-picker-divider: var(--ntn-n-200);
+  --ntn-picker-text: var(--ntn-n-900);
+  --ntn-picker-placeholder: var(--ntn-n-600);
+  --ntn-picker-empty: var(--ntn-n-600);
+  --ntn-picker-option: var(--ntn-n-900);
+  --ntn-picker-option-active: var(--ntn-n-200);
+  --ntn-picker-tick: var(--ntn-n-700);
+  --ntn-picker-scrollbar: var(--ntn-n-400);
+  --ntn-shadow-picker: 0 3px 8px rgba(0,0,0,0.07), 0 2px 5px rgba(0,0,0,0.07), 0 1px 1px rgba(0,0,0,0.07);
 }
 
 /* ── Nocturne density ────────────────────────────────────────────────────────
@@ -1476,9 +1501,206 @@ i:is([class*=fa-], [data-icon], :empty) {
   opacity: var(--ntn-disabled-opacity);
   cursor: not-allowed;
 }
+.ntn-select__control select[multiple] {
+  height: auto;
+  padding: 4px;
+}
+.ntn-select__control:not([data-ntn-dropdown]):has(> select[multiple])::after {
+  content: none;
+}
 .ntn-select__control option {
   background: var(--ntn-surface-2);
   color: var(--ntn-text-primary);
+}
+.ntn-select__control[data-ntn-dropdown] > select {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+.ntn-select {
+  /* ── Enhanced select: the trigger, and its listbox panel ── */
+}
+.ntn-select__trigger {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 32px;
+  margin: 0;
+  height: var(--ntn-control-md);
+  padding: 0 28px 0 10px;
+  background: var(--ntn-face-bg);
+  border: 1px solid transparent;
+  border-radius: var(--ntn-radius-md);
+  box-shadow: var(--ntn-shadow-face);
+  color: var(--ntn-face-text);
+  font-family: var(--ntn-font-sans);
+  font-size: var(--ntn-font-size-sm);
+  font-weight: var(--ntn-weight-medium);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--ntn-dur-fast) var(--ntn-ease-standard), border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
+}
+.ntn-select__trigger:hover:where(:not(:disabled, [aria-disabled=true])) {
+  background: var(--ntn-face-bg-hover);
+  box-shadow: var(--ntn-shadow-face-hover);
+}
+.ntn-select__trigger[aria-expanded=true] {
+  background: var(--ntn-face-bg-hover);
+  box-shadow: var(--ntn-shadow-face-hover);
+}
+.ntn-select__trigger:focus-visible {
+  outline: 0;
+  border-color: var(--ntn-accent-500);
+  box-shadow: var(--ntn-ring-focus);
+}
+@media (forced-colors: active) {
+  .ntn-select__trigger:focus-visible {
+    outline: 2px solid Highlight;
+  }
+}
+.ntn-select__trigger:disabled {
+  opacity: var(--ntn-disabled-opacity);
+  cursor: not-allowed;
+}
+.ntn-select__value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--ntn-weight-book);
+}
+.ntn-select__value[data-empty] {
+  color: var(--ntn-face-muted);
+}
+.ntn-select__panel {
+  position: fixed;
+  inset: auto;
+  z-index: var(--ntn-z-dropdown);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 204px;
+  max-width: min(500px, 100vw - 16px);
+  overflow: visible;
+  background: var(--ntn-picker-bg);
+  border: 1px solid var(--ntn-picker-border);
+  border-radius: var(--ntn-radius-lg);
+  box-shadow: var(--ntn-shadow-picker);
+  color: var(--ntn-picker-text);
+  font-family: var(--ntn-font-sans);
+  font-size: var(--ntn-font-size-sm);
+  line-height: var(--ntn-leading-normal);
+  animation: ntn-rise var(--ntn-dur-fast) var(--ntn-ease-out);
+  backdrop-filter: var(--ntn-pop-filter);
+}
+.ntn-select__panel[popover]:not(:popover-open) {
+  display: none;
+}
+.ntn-select__search {
+  display: block;
+  width: 100%;
+  height: calc(var(--ntn-control-md) + 2px);
+  margin: 0;
+  padding: 0 12px 0 14px;
+  border: 0;
+  border-bottom: 1px solid var(--ntn-picker-divider);
+  border-radius: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ntn-picker-text);
+  caret-color: var(--ntn-accent-500);
+  font-family: var(--ntn-font-sans);
+  font-size: var(--ntn-font-size-sm);
+}
+.ntn-select__search::placeholder {
+  color: var(--ntn-picker-placeholder);
+  opacity: 1;
+}
+.ntn-select__list {
+  position: relative;
+  padding: 4px 0;
+  max-height: 320px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ntn-picker-scrollbar) transparent;
+}
+.ntn-select__list:focus {
+  outline: 0;
+}
+.ntn-select__option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: max(var(--ntn-target-min), var(--ntn-control-md) - 2px);
+  padding: 0 35px 0 12px;
+  color: var(--ntn-picker-option);
+  cursor: pointer;
+  user-select: none;
+}
+.ntn-select__option::before {
+  content: "";
+  position: absolute;
+  inset: 0 4px;
+  border-radius: var(--ntn-radius-sm);
+}
+.ntn-select__option[data-ntn-active]::before {
+  background: var(--ntn-picker-option-active);
+}
+.ntn-select__option[aria-disabled=true] {
+  opacity: var(--ntn-disabled-opacity);
+  cursor: not-allowed;
+}
+.ntn-select__text {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ntn-select__tick {
+  position: absolute;
+  right: 8px;
+  width: 25px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ntn-picker-tick);
+}
+.ntn-select__tick::before {
+  content: "";
+  width: 4px;
+  height: 8px;
+  margin-top: -2px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+}
+.ntn-select__option[aria-selected=false] .ntn-select__tick {
+  display: none;
+}
+.ntn-select__group {
+  margin: 0;
+  padding: 8px 12px 4px;
+  font-size: var(--ntn-font-size-2xs);
+  font-weight: var(--ntn-weight-medium);
+  letter-spacing: var(--ntn-tracking-caps);
+  text-transform: uppercase;
+  color: var(--ntn-text-disabled);
+}
+.ntn-select__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 42px;
+  margin: 0;
+  padding: 2px 14px 4px;
+  color: var(--ntn-picker-empty);
 }
 .ntn-select__hint {
   font-size: var(--ntn-font-size-xs);
@@ -1488,19 +1710,19 @@ i:is([class*=fa-], [data-icon], :empty) {
   font-size: var(--ntn-font-size-xs);
   color: var(--ntn-danger-400);
 }
-.ntn-select:is([data-invalid], :has([aria-invalid=true])) .ntn-select__control select {
+.ntn-select:is([data-invalid], :has([aria-invalid=true])) .ntn-select__control select, .ntn-select:is([data-invalid], :has([aria-invalid=true])) .ntn-select__trigger {
   border-color: var(--ntn-danger-500);
   box-shadow: 0 0 0 3px var(--ntn-danger-soft);
 }
 .ntn-select:is([data-invalid], :has([aria-invalid=true])) .ntn-select__hint {
   color: var(--ntn-danger-400);
 }
-.ntn-select--sm .ntn-select__control select {
+.ntn-select--sm .ntn-select__control select, .ntn-select--sm .ntn-select__trigger {
   height: var(--ntn-control-sm);
   font-size: var(--ntn-font-size-xs);
   padding: 0 28px 0 10px;
 }
-.ntn-select--lg .ntn-select__control select {
+.ntn-select--lg .ntn-select__control select, .ntn-select--lg .ntn-select__trigger {
   height: var(--ntn-control-lg);
   font-size: var(--ntn-font-size-md);
   padding: 0 34px 0 14px;
@@ -1517,8 +1739,11 @@ i:is([class*=fa-], [data-icon], :empty) {
   color: var(--ntn-text-muted);
   font-weight: var(--ntn-weight-regular);
 }
-.ntn-select--inline .ntn-select__control select {
+.ntn-select--inline .ntn-select__control select, .ntn-select--inline .ntn-select__trigger {
   width: auto;
+}
+.ntn-select--inline .ntn-select__trigger {
+  max-width: 280px;
 }
 
 /* Menu and combobox live in components/_menu.scss. */

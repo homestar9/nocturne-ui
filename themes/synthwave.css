@@ -57,6 +57,17 @@
   --ntn-face-text:        var(--ntn-n-900);
   --ntn-face-muted:       var(--ntn-n-700);
   --ntn-face-placeholder: var(--ntn-n-600);
+  /* ...and the select's panel: a surface just above the face, lines and the active row from the ramp */
+  --ntn-picker-bg:            var(--ntn-n-300);
+  --ntn-picker-border:        var(--ntn-n-500);
+  --ntn-picker-divider:       var(--ntn-n-400);
+  --ntn-picker-text:          var(--ntn-n-900);
+  --ntn-picker-placeholder:   var(--ntn-n-700);
+  --ntn-picker-empty:         var(--ntn-n-600);
+  --ntn-picker-option:        var(--ntn-n-900);
+  --ntn-picker-option-active: var(--ntn-n-500);
+  --ntn-picker-tick:          var(--ntn-n-700);
+  --ntn-picker-scrollbar:     var(--ntn-n-500);
 
   /* A brighter halo round each shine light, and a stronger sunset */
   --ntn-shine-glow: 0.45;
@@ -118,6 +129,16 @@
   --ntn-face-text:        var(--ntn-n-900);
   --ntn-face-muted:       var(--ntn-n-700);
   --ntn-face-placeholder: var(--ntn-n-600);
+  --ntn-picker-bg:            var(--ntn-n-0);
+  --ntn-picker-border:        var(--ntn-n-400);
+  --ntn-picker-divider:       var(--ntn-n-200);
+  --ntn-picker-text:          var(--ntn-n-900);
+  --ntn-picker-placeholder:   var(--ntn-n-600);
+  --ntn-picker-empty:         var(--ntn-n-600);
+  --ntn-picker-option:        var(--ntn-n-900);
+  --ntn-picker-option-active: var(--ntn-n-200);
+  --ntn-picker-tick:          var(--ntn-n-700);
+  --ntn-picker-scrollbar:     var(--ntn-n-400);
 }
 
 /* ── Aliases, on every data-theme element ───────────────────────────────── */

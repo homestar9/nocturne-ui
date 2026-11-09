@@ -161,14 +161,41 @@ no button.
 
 Native `<select>`, styled. Elements: `__label` `__control` `__hint` `__error`. Modifiers: `--sm` `--lg`
 `--inline`. Error: `aria-invalid="true"` on the `<select>` (or `data-invalid` on the block). Smallest footprint, and it gets the platform picker on mobile — use it whenever the
-options are plain strings. Reach for `ntn-combo` when they need descriptions, icons, filtering
-or multi-select.
+options are plain strings. Reach for `ntn-combo` when they need descriptions, icons or chips.
 
 ```html
 <label class="ntn-select">
   <span class="ntn-select__label">Region</span>
   <span class="ntn-select__control">
     <select><option>us-east-1</option><option>eu-west-2</option></select>
+  </span>
+</label>
+```
+
+**Enhanced:** add `data-ntn-select` to the block, and `nocturne.js` draws a listbox over the
+native select. The `<select>` stays in the form, invisible under the trigger, so it still posts,
+fires `input` and `change`, honours `form.reset()` and shows the browser's `required` message.
+Options are read from it on every open; after setting its value in code, call `refresh(root)`.
+It loses the platform picker on mobile, so opt in per select.
+- **Search:** `data-ntn-search="Search teams…"` (the placeholder) adds a filter box;
+  `data-ntn-empty="No matching teams"` is shown when nothing matches.
+- **Multiple:** `<select multiple>` toggles options and stays open; the trigger joins the chosen
+  labels, or shows `data-ntn-placeholder` (default "Select options").
+- **Groups:** each `<optgroup>` becomes a heading; a disabled group's options can't be picked.
+- **Keys:** `↑↓` (wrap, skip disabled), `home/end` (no search box), `↵` picks (`space` toggles in a
+  multiple select), `esc` closes and refocuses the trigger, `tab` closes, and typing jumps to a
+  label (no search box).
+- The panel opens in the top layer over the trigger: right edges aligned, its top 4px above the
+  trigger's; near the bottom of the viewport it flips, its bottom 4px below the trigger's. The
+  control is an `ntn-dropdown`, so it fires `ntn:dropdownshow` / `ntn:dropdownhide`.
+- Script-drawn: `__trigger` `__value` `__panel` `__search` `__list` `__option` `__text` `__tick`
+  `__group` `__empty`, with `data-ntn-active` on the active option.
+
+```html
+<label class="ntn-select" data-ntn-select data-ntn-search="Search teams…" data-ntn-empty="No matching teams">
+  <span class="ntn-select__label">Include private teams</span>
+  <span class="ntn-select__control">
+    <select name="teams"><option value="" selected>None</option><option value="eng">Engineering</option></select>
   </span>
 </label>
 ```
@@ -1464,6 +1491,7 @@ table, so header, toolbar, filter form and pager can sit anywhere in that wrappe
 | `data-ntn-tree` on `.ntn-tree` | Selection, expand/collapse, keyboard nav and handle-gated moves (drag and `alt`+arrows); fires `ntn:treemove`, `ntn:treeselect`, `ntn:treetoggle` |
 | `data-ntn-nest` on `.ntn-tree` | Lets leaf rows accept a child on drop |
 | `data-ntn-multi` on `.ntn-tree` | ⌘/ctrl-click selects several rows |
+| `data-ntn-select` on `.ntn-select` | Draws a listbox over the native select (which still posts and fires `change`); `data-ntn-search`, `data-ntn-empty`, `data-ntn-placeholder` |
 | `data-ntn-combo` on `.ntn-combo` | Owns the listbox: open/close, filtering, keyboard, chips; fires `ntn:combochange` |
 | `data-ntn-multi` / `data-ntn-max="2"` on `.ntn-combo` | Multi-select, and how many chips show before `+N` |
 | `data-ntn-combo-value` / `-search` / `-count` / `-none` | Trigger readout, filter input, "n selected", clear-all |

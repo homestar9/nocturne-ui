@@ -27,6 +27,8 @@
      and a short, tight drop. Brighter under the pointer. Light values: _theme-light.scss. */
   --ntn-shadow-face:       0 0 0 1px rgba(255,255,255,0.095), 0 0.5px 1px 1px rgba(0,0,0,0.3);
   --ntn-shadow-face-hover: 0 0 0 1px rgba(255,255,255,0.119), 0 0.5px 1px 1px rgba(0,0,0,0.3);
+  /* The select's listbox panel: three short, even drops */
+  --ntn-shadow-picker:     0 3px 8px rgba(0,0,0,0.125), 0 2px 5px rgba(0,0,0,0.125), 0 1px 1px rgba(0,0,0,0.125);
 
   /* Glass (_glass.scss): a lit top hairline and a wide soft drop; the strength of an app's
      ambient image */
