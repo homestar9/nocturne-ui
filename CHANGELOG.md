@@ -6,6 +6,14 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+### Kitchen sink
+- **Every block is shown.** A Layout section (page head, `ntn-grid --2/3/4/split/split-reverse`,
+  `ntn-row --between/--end`, `ntn-stack`, the text helpers and dividers, `ntn-divider-label`), and
+  standalone `ntn-icon` sizes and tints plus `ntn-fab` beside the icon buttons. The Dropdown
+  section has an index link. The stale version and the permanent "new" badges are gone from the
+  sidebar. A test now fails when a block in `dist/` has no example, when the sink uses a class that
+  `dist/` lacks, or when a section and its index link don't match.
+
 ## 1.16.0 — 2026-11-09
 
 ### Added

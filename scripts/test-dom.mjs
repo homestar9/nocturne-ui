@@ -664,6 +664,29 @@ console.log('Kitchen sink tabs switch panels (NTN-34)');
     `each of the ${tabs.length} enabled tabs switches a panel that exists` + (orphans.length ? ': ' + orphans.map((t) => t.textContent.trim()).join(', ') : ''));
 }
 
+console.log('Kitchen sink covers the library (NTN-46)');
+{
+  // A block is the leading ntn-* name of a class in dist, before any __element or --modifier.
+  const css = (await readFile(resolve(root, 'dist/nocturne.css'), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '');
+  const dist = new Set([...css.matchAll(/\.(ntn-[a-zA-Z0-9_-]+)/g)].map((m) => m[1]));
+  const blocks = [...new Set([...dist].map((c) => c.split(/__|--/)[0]))];
+  const JS_ONLY = ['ntn-toaster']; // created by toast(), never written in markup
+  const raw = await readFile(resolve(root, 'examples/kitchen-sink.html'), 'utf8');
+  const { document } = new JSDOM(raw.replace(/<script\b[\s\S]*?<\/script>/g, '')).window;
+  const used = new Set([...document.querySelectorAll('[class]')].flatMap((e) => [...e.classList]).filter((c) => c.startsWith('ntn-')));
+  const missing = blocks.filter((b) => !used.has(b) && !JS_ONLY.includes(b));
+  check(!missing.length, `every one of the ${blocks.length} blocks in dist is shown${missing.length ? ' (missing: ' + missing.join(', ') + ')' : ''}`);
+  const typos = [...used].filter((c) => !dist.has(c));
+  check(!typos.length, `every ntn-* class in the sink exists in dist${typos.length ? ' (unknown: ' + typos.join(', ') + ')' : ''}`);
+  const ids = [...document.querySelectorAll('section.sink[id]')].map((s) => s.id);
+  const links = [...document.querySelectorAll('#index a[href^="#"]')].map((a) => a.getAttribute('href').slice(1));
+  const unlinked = ids.filter((id) => links.filter((l) => l === id).length !== 1);
+  const dangling = links.filter((l) => !ids.includes(l));
+  check(!unlinked.length && !dangling.length,
+    `each of the ${ids.length} sections has one index link, and every link a section` +
+    (unlinked.length ? ` (unlinked: ${unlinked.join(', ')})` : '') + (dangling.length ? ` (dangling: ${dangling.join(', ')})` : ''));
+}
+
 console.log('Source guard');
 {
   const src = await readFile(resolve(root, 'js/nocturne.js'), 'utf8');

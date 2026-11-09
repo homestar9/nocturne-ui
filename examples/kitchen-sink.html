@@ -32,6 +32,20 @@
     padding: var(--ntn-space-3) var(--ntn-space-4); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg);
     background: var(--ntn-surface-2); box-shadow: var(--ntn-shadow-lg);
   }
+  /* A box the fixed FAB pins to: layout containment makes it the containing block. The first FAB
+     moves to the left corner so both fit. */
+  .sink__fab-stage {
+    position: relative; contain: layout; min-height: 96px;
+    border: 1px dashed var(--ntn-border-subtle); border-radius: var(--ntn-radius-lg);
+  }
+  .sink__fab-stage > .ntn-fab:first-child { right: auto; left: var(--ntn-space-6); }
+  /* The Layout section: numbered cells that show a grid's columns. An attribute, not a sink__
+     class, because the Code view drops elements whose only classes are page chrome. */
+  [data-sink-cells] > * {
+    display: grid; place-items: center; min-height: 48px; padding: var(--ntn-space-2);
+    border: 1px dashed var(--ntn-border-default); border-radius: var(--ntn-radius-md);
+    color: var(--ntn-text-muted); font-size: var(--ntn-font-size-xs);
+  }
   .sink__head {
     display: flex; align-items: baseline; gap: var(--ntn-space-3); flex-wrap: wrap;
     padding-top: var(--ntn-space-6); border-top: 1px solid var(--ntn-border-subtle);
@@ -90,31 +104,31 @@
       <span class="ntn-sidebar__mark"><i class="fa-light fa-cube"></i></span>
       <span class="ntn-sidebar__brand-text">
         <span class="ntn-sidebar__name">Nocturne</span>
-        <span class="ntn-sidebar__meta">v1.4.0 · components</span>
+        <span class="ntn-sidebar__meta">components</span>
       </span>
     </div>
     <nav class="ntn-sidebar__nav" id="index">
       <div class="ntn-sidebar__group">
         <p class="ntn-sidebar__section">Actions</p>
         <a class="ntn-sidebar__item" href="#buttons"><i class="fa-light fa-square"></i><span>Buttons</span></a>
-        <a class="ntn-sidebar__item" href="#icon-buttons"><i class="fa-light fa-circle-plus"></i><span>Icon buttons</span></a>
+        <a class="ntn-sidebar__item" href="#icon-buttons"><i class="fa-light fa-circle-plus"></i><span>Icon buttons · FAB</span></a>
         <a class="ntn-sidebar__item" href="#toggle-group"><i class="fa-light fa-table-columns"></i><span>Toggle group</span></a>
       </div>
       <div class="ntn-sidebar__group">
         <p class="ntn-sidebar__section">Inputs</p>
         <a class="ntn-sidebar__item" href="#field"><i class="fa-light fa-font"></i><span>Text field</span></a>
         <a class="ntn-sidebar__item" href="#select"><i class="fa-light fa-caret-down"></i><span>Select</span></a>
-        <a class="ntn-sidebar__item" href="#combo"><i class="fa-light fa-square-caret-down"></i><span>Dropdown · Multi-select</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#combo"><i class="fa-light fa-square-caret-down"></i><span>Dropdown · Multi-select</span></a>
         <a class="ntn-sidebar__item" href="#search"><i class="fa-light fa-magnifying-glass"></i><span>Search</span></a>
         <a class="ntn-sidebar__item" href="#slider"><i class="fa-light fa-sliders"></i><span>Slider</span></a>
-        <a class="ntn-sidebar__item" href="#upload"><i class="fa-light fa-cloud-arrow-up"></i><span>Upload</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
-        <a class="ntn-sidebar__item" href="#daterange"><i class="fa-light fa-calendar-range"></i><span>Date &amp; range</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#upload"><i class="fa-light fa-cloud-arrow-up"></i><span>Upload</span></a>
+        <a class="ntn-sidebar__item" href="#daterange"><i class="fa-light fa-calendar-range"></i><span>Date &amp; range</span></a>
         <a class="ntn-sidebar__item" href="#selection"><i class="fa-light fa-square-check"></i><span>Checkbox · Radio · Switch</span></a>
       </div>
       <div class="ntn-sidebar__group">
         <p class="ntn-sidebar__section">Data</p>
-        <a class="ntn-sidebar__item" href="#table"><i class="fa-light fa-table"></i><span>Table</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
-        <a class="ntn-sidebar__item" href="#tree"><i class="fa-light fa-folder-tree"></i><span>Tree view</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#table"><i class="fa-light fa-table"></i><span>Table</span></a>
+        <a class="ntn-sidebar__item" href="#tree"><i class="fa-light fa-folder-tree"></i><span>Tree view</span></a>
         <a class="ntn-sidebar__item" href="#pagination"><i class="fa-light fa-ellipsis"></i><span>Pagination</span></a>
         <a class="ntn-sidebar__item" href="#stats"><i class="fa-light fa-chart-simple"></i><span>Stats</span></a>
       </div>
@@ -122,21 +136,22 @@
         <p class="ntn-sidebar__section">Feedback</p>
         <a class="ntn-sidebar__item" href="#badges"><i class="fa-light fa-tag"></i><span>Badges</span></a>
         <a class="ntn-sidebar__item" href="#alerts"><i class="fa-light fa-triangle-exclamation"></i><span>Alerts</span></a>
-        <a class="ntn-sidebar__item" href="#toast"><i class="fa-light fa-message-lines"></i><span>Toast</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#toast"><i class="fa-light fa-message-lines"></i><span>Toast</span></a>
         <a class="ntn-sidebar__item" href="#progress"><i class="fa-light fa-bars-progress"></i><span>Progress · Spinner</span></a>
         <a class="ntn-sidebar__item" href="#avatars"><i class="fa-light fa-user"></i><span>Avatars</span></a>
-        <a class="ntn-sidebar__item" href="#tooltip"><i class="fa-light fa-message"></i><span>Tooltip</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#tooltip"><i class="fa-light fa-message"></i><span>Tooltip</span></a>
         <a class="ntn-sidebar__item" href="#empty"><i class="fa-light fa-inbox"></i><span>Empty state</span></a>
       </div>
       <div class="ntn-sidebar__group">
         <p class="ntn-sidebar__section">Containers</p>
-        <a class="ntn-sidebar__item" href="#shell"><i class="fa-light fa-browser"></i><span>App shell</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
-        <a class="ntn-sidebar__item" href="#density"><i class="fa-light fa-compress"></i><span>Density</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#layout"><i class="fa-light fa-table-cells-large"></i><span>Layout</span></a>
+        <a class="ntn-sidebar__item" href="#shell"><i class="fa-light fa-browser"></i><span>App shell</span></a>
+        <a class="ntn-sidebar__item" href="#density"><i class="fa-light fa-compress"></i><span>Density</span></a>
         <a class="ntn-sidebar__item" href="#cards"><i class="fa-light fa-clone"></i><span>Cards</span></a>
-        <a class="ntn-sidebar__item" href="#frame"><i class="fa-light fa-window-maximize"></i><span>Frame</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
-        <a class="ntn-sidebar__item" href="#edges"><i class="fa-light fa-wand-magic-sparkles"></i><span>Border effects</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
-        <a class="ntn-sidebar__item" href="#glass"><i class="fa-light fa-droplet"></i><span>Glass</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
-        <a class="ntn-sidebar__item" href="#gradient"><i class="fa-light fa-fill-drip"></i><span>Gradient</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#frame"><i class="fa-light fa-window-maximize"></i><span>Frame</span></a>
+        <a class="ntn-sidebar__item" href="#edges"><i class="fa-light fa-wand-magic-sparkles"></i><span>Border effects</span></a>
+        <a class="ntn-sidebar__item" href="#glass"><i class="fa-light fa-droplet"></i><span>Glass</span></a>
+        <a class="ntn-sidebar__item" href="#gradient"><i class="fa-light fa-fill-drip"></i><span>Gradient</span></a>
         <a class="ntn-sidebar__item" href="#accordion"><i class="fa-light fa-list"></i><span>Accordion</span></a>
         <a class="ntn-sidebar__item" href="#modal"><i class="fa-light fa-window-restore"></i><span>Modal</span></a>
       </div>
@@ -145,7 +160,8 @@
         <a class="ntn-sidebar__item" href="#tabs"><i class="fa-light fa-folder"></i><span>Tabs</span></a>
         <a class="ntn-sidebar__item" href="#crumbs"><i class="fa-light fa-angles-right"></i><span>Breadcrumbs</span></a>
         <a class="ntn-sidebar__item" href="#menu"><i class="fa-light fa-bars"></i><span>Menu</span></a>
-        <a class="ntn-sidebar__item" href="#steps"><i class="fa-light fa-circle-nodes"></i><span>Progress steps</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#dropdown"><i class="fa-light fa-caret-down"></i><span>Dropdown · Popover</span></a>
+        <a class="ntn-sidebar__item" href="#steps"><i class="fa-light fa-circle-nodes"></i><span>Progress steps</span></a>
       </div>
     </nav>
   </aside>
@@ -257,12 +273,15 @@
         <!-- ── Icon buttons ───────────────────────────────────────────── -->
         <section class="sink" id="icon-buttons">
           <header class="sink__head">
-            <h2 class="sink__title">Icon buttons</h2>
+            <h2 class="sink__title">Icon buttons · Icons · FAB</h2>
             <code class="sink__code">.ntn-icon-btn</code>
-            <p class="sink__note">Square actions for toolbars and table rows. Always give one an <code>aria-label</code>.</p>
+            <code class="sink__code">.ntn-icon</code>
+            <code class="sink__code">.ntn-fab</code>
+            <p class="sink__note">Square actions for toolbars and table rows. Always give one an <code>aria-label</code>. <code>ntn-icon</code> sizes and tints a standalone icon; inside a block, the block sizes its own icons. The floating action button is fixed to the bottom right of the window (here, of the dashed stage).</p>
           </header>
-          <div class="ntn-card"><div class="ntn-card__body">
-            <div class="ntn-row" data-sink-example="">
+          <div class="ntn-card"><div class="ntn-card__body ntn-stack">
+            <span class="sink__label">Icon buttons</span>
+            <div class="ntn-row" data-sink-example="Icon buttons">
               <button class="ntn-icon-btn" aria-label="Filter"><i class="fa-light fa-filter"></i></button>
               <button class="ntn-icon-btn ntn-icon-btn--secondary" aria-label="Download"><i class="fa-light fa-download"></i></button>
               <button class="ntn-icon-btn ntn-icon-btn--primary" aria-label="Add"><i class="fa-light fa-plus"></i></button>
@@ -270,6 +289,21 @@
               <span class="ntn-divider ntn-divider--vertical"></span>
               <button class="ntn-icon-btn ntn-icon-btn--sm" aria-label="More"><i class="fa-light fa-ellipsis"></i></button>
               <button class="ntn-icon-btn ntn-icon-btn--lg" aria-label="Play"><i class="fa-light fa-play"></i></button>
+            </div>
+            <hr class="ntn-divider">
+            <span class="sink__label">Standalone icons: sizes and tints</span>
+            <div class="ntn-row" data-sink-example="Icons">
+              <i class="ntn-icon ntn-icon--sm fa-light fa-bolt" aria-hidden="true"></i>
+              <i class="ntn-icon fa-light fa-bolt" aria-hidden="true"></i>
+              <i class="ntn-icon ntn-icon--lg fa-light fa-bolt" aria-hidden="true"></i>
+              <i class="ntn-icon ntn-icon--lg ntn-icon--primary fa-light fa-bolt" aria-hidden="true"></i>
+              <i class="ntn-icon ntn-icon--lg ntn-icon--muted fa-light fa-bolt" aria-hidden="true"></i>
+            </div>
+            <hr class="ntn-divider">
+            <span class="sink__label">Floating action button: icon, extended</span>
+            <div class="sink__fab-stage">
+              <button class="ntn-fab" aria-label="New key" data-sink-example="FAB"><i class="fa-light fa-plus"></i></button>
+              <button class="ntn-fab ntn-fab--extended" data-sink-example="FAB"><i class="fa-light fa-plus"></i>New key</button>
             </div>
           </div></div>
         </section>
@@ -1575,6 +1609,71 @@
               <button class="ntn-btn ntn-btn--sm">View plan</button>
             </div>
           </section>
+        </section>
+
+        <!-- ── Layout ─────────────────────────────────────────────────── -->
+        <section class="sink" id="layout">
+          <header class="sink__head">
+            <h2 class="sink__title">Layout</h2>
+            <code class="sink__code">.ntn-page</code>
+            <code class="sink__code">.ntn-grid</code>
+            <code class="sink__code">.ntn-row</code>
+            <code class="sink__code">.ntn-stack</code>
+            <p class="sink__note">The page column, its head, and the three groupings everything else sits in. Grids collapse to two columns below <code>lg</code> and to one below <code>md</code>; resize the window to see it. The text helpers and dividers live here too.</p>
+          </header>
+          <div class="ntn-card"><div class="ntn-card__body ntn-stack">
+            <span class="sink__label">Page head (inside <code>ntn-page</code>)</span>
+            <div class="ntn-page__head" data-sink-example="Page head">
+              <div>
+                <p class="ntn-eyebrow">Workspace</p>
+                <h1 class="ntn-page__title">API keys</h1>
+                <p class="ntn-page__sub">Keys let your services call the API on your behalf.</p>
+              </div>
+              <div class="ntn-page__actions">
+                <button class="ntn-btn">Docs</button>
+                <button class="ntn-btn ntn-btn--primary"><i class="fa-light fa-plus"></i>New key</button>
+              </div>
+            </div>
+            <hr class="ntn-divider">
+            <span class="sink__label">Grids: --2, --3, --4, --split, --split-reverse</span>
+            <div class="ntn-grid ntn-grid--2" data-sink-cells data-sink-example="Grids"><div>1</div><div>2</div></div>
+            <div class="ntn-grid ntn-grid--3" data-sink-cells data-sink-example="Grids"><div>1</div><div>2</div><div>3</div></div>
+            <div class="ntn-grid ntn-grid--4" data-sink-cells data-sink-example="Grids"><div>1</div><div>2</div><div>3</div><div>4</div></div>
+            <div class="ntn-grid ntn-grid--split" data-sink-cells data-sink-example="Grids"><div>Main</div><div>Aside</div></div>
+            <div class="ntn-grid ntn-grid--split-reverse" data-sink-cells data-sink-example="Grids"><div>Aside</div><div>Main</div></div>
+            <hr class="ntn-divider">
+            <span class="sink__label">Rows: default, --between, --end · Stack</span>
+            <div class="ntn-row" data-sink-example="Rows and stack">
+              <button class="ntn-btn ntn-btn--sm">One</button>
+              <button class="ntn-btn ntn-btn--sm">Two</button>
+            </div>
+            <div class="ntn-row ntn-row--between" data-sink-example="Rows and stack">
+              <span class="ntn-page__sub">3 selected</span>
+              <button class="ntn-btn ntn-btn--sm">Clear</button>
+            </div>
+            <div class="ntn-row ntn-row--end" data-sink-example="Rows and stack">
+              <button class="ntn-btn ntn-btn--sm">Cancel</button>
+              <button class="ntn-btn ntn-btn--primary ntn-btn--sm">Save</button>
+            </div>
+            <div class="ntn-stack" data-sink-cells data-sink-example="Rows and stack"><div>First</div><div>Second</div></div>
+            <hr class="ntn-divider">
+            <span class="sink__label">Text helpers: eyebrow, numbers, keys</span>
+            <div class="ntn-row" data-sink-example="Text helpers">
+              <span class="ntn-eyebrow">Billing</span>
+              <span class="ntn-num">$24,678.81</span>
+              <span>Search <kbd class="ntn-kbd">⌘</kbd> <kbd class="ntn-kbd">K</kbd></span>
+            </div>
+            <hr class="ntn-divider">
+            <span class="sink__label">Dividers: default, --subtle, labelled, --vertical</span>
+            <div class="ntn-stack" data-sink-example="Dividers">
+              <hr class="ntn-divider">
+              <hr class="ntn-divider ntn-divider--subtle">
+              <div class="ntn-divider-label">Or continue with</div>
+              <div class="ntn-row">
+                <span>Left</span><span class="ntn-divider ntn-divider--vertical"></span><span>Right</span>
+              </div>
+            </div>
+          </div></div>
         </section>
 
         <!-- ── App shell: sticky ──────────────────────────────────────── -->
