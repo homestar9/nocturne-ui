@@ -416,9 +416,12 @@ and never appears in a snippet; nor do `data-sink-*` attributes.
 Code that isn't markup on the page (the starter page, a `toast()` call) goes in a hidden
 `<textarea data-sink-source="Label" data-sink-lang="html|js|sh">`, which holds raw text; add
 `data-sink-inline` to show it in place instead of in the Code panel. `data-sink-ref="slug"` on a
-section links its head to that heading of `skill/components.md`. The tests check that every block
-in `dist/` has an example, that the JavaScript section names every event and export, that the
-Reference links resolve, and that every pinned CDN link names the `package.json` version.
+section links its head to that heading of `skill/components.md`. The tests check that every class
+in `dist/` (each block, element and modifier) has an example in the sink or an example page, except
+the few that `nocturne.js` draws itself, which `scripts/test-dom.mjs` lists. A new modifier fails
+the tests until it gets one. They also check that the JavaScript section names every event and
+export, that the Reference links resolve, and that every pinned CDN link names the `package.json`
+version.
 
 Edit files in `src/`, never in `dist/`. Commit the rebuilt `dist/` with the source change: the
 tests fail when the two disagree. Always spell the namespace `ntn` in source — the prefix build
@@ -529,7 +532,7 @@ src/             authored SCSS: nocturne.scss and tokens.scss (entries), tokens/
 js/              optional behaviours
 themes/          accent overrides (plain CSS)
 skill/           Claude Code skill: rules, component reference, patterns
-examples/        kitchen sink — every block, inside the console shell
+examples/        kitchen sink (every class, inside the console shell), settings and dashboard pages
 scripts/         compile.mjs (src → dist), build.mjs (prefix build, shipped), tests
 ```
 

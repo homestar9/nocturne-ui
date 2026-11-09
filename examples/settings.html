@@ -34,6 +34,10 @@
         <p class="ntn-sidebar__section">Platform</p>
         <a class="ntn-sidebar__item" href="dashboard.html"><i class="fa-light fa-gauge-high"></i><span class="ntn-sidebar__label">Overview</span></a>
         <a class="ntn-sidebar__item" href="#"><i class="fa-light fa-folder"></i><span class="ntn-sidebar__label">Projects</span></a>
+        <div class="ntn-sidebar__sub">
+          <a class="ntn-sidebar__item" href="#"><span class="ntn-sidebar__label">api-gateway</span></a>
+          <a class="ntn-sidebar__item" href="#"><span class="ntn-sidebar__label">web</span></a>
+        </div>
         <a class="ntn-sidebar__item" href="#"><i class="fa-light fa-users"></i><span class="ntn-sidebar__label">Members</span><span class="ntn-badge ntn-badge--count">8</span></a>
       </div>
       <div class="ntn-sidebar__group">
@@ -42,6 +46,9 @@
         <a class="ntn-sidebar__item" href="#"><i class="fa-light fa-key"></i><span class="ntn-sidebar__label">API keys</span></a>
       </div>
     </nav>
+    <div class="ntn-sidebar__foot">
+      <a class="ntn-sidebar__item" href="kitchen-sink.html"><i class="fa-light fa-circle-question"></i><span class="ntn-sidebar__label">Help and docs</span></a>
+    </div>
   </aside>
   <div class="ntn-sidebar__scrim"></div>
 
@@ -86,7 +93,7 @@
         </div>
 
         <!-- ── Profile ─────────────────────────────────────────────────── -->
-        <div class="ntn-stack" id="profile">
+        <div class="ntn-tabs__panel ntn-stack" id="profile">
           <form class="ntn-card" data-save="Profile">
             <header class="ntn-card__head">
               <div class="ntn-card__heading">
@@ -169,7 +176,7 @@
         </div>
 
         <!-- ── Security ────────────────────────────────────────────────── -->
-        <div class="ntn-stack" id="security" hidden>
+        <div class="ntn-tabs__panel ntn-stack" id="security" hidden>
           <form class="ntn-card" data-save="Password">
             <header class="ntn-card__head">
               <div class="ntn-card__heading">
@@ -265,7 +272,7 @@
         </div>
 
         <!-- ── Notifications ───────────────────────────────────────────── -->
-        <div class="ntn-stack" id="notifications" hidden>
+        <div class="ntn-tabs__panel ntn-stack" id="notifications" hidden>
           <form class="ntn-card" data-save="Notification settings">
             <header class="ntn-card__head">
               <div class="ntn-card__heading">
@@ -335,7 +342,7 @@
         </div>
 
         <!-- ── Billing ─────────────────────────────────────────────────── -->
-        <div class="ntn-stack" id="billing" hidden>
+        <div class="ntn-tabs__panel ntn-stack" id="billing" hidden>
           <div class="ntn-grid ntn-grid--split">
             <section class="ntn-card">
               <header class="ntn-card__head">

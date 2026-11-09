@@ -701,8 +701,23 @@ console.log('Kitchen sink covers the library (NTN-46)');
       .filter((c) => !c.startsWith('fa-') && !dist.has(c));
     check(!unknown.length, `${file} uses only classes from dist${unknown.length ? ' (unknown: ' + unknown.join(', ') + ')' : ''}`);
     check(document.querySelector(`#index a[href="${file}"]`), `${file} is linked from the sink's index`);
+    page.querySelectorAll('[class]').forEach((e) => e.classList.forEach((c) => used.add(c)));
   }
   check(pages.length >= 1, `${pages.length} example page(s) checked`);
+
+  // Every class, not just every block (NTN-50): each modifier and element in dist appears in the
+  // sink or an example page. The exceptions are drawn by nocturne.js, so the live demos show them.
+  const DRAWN = [
+    'ntn-combo__chip', 'ntn-combo__chip-x', 'ntn-combo__more',                     // combo chips
+    'ntn-daterange__head', 'ntn-daterange__month', 'ntn-daterange__nav', 'ntn-daterange__grid',
+    'ntn-daterange__dow', 'ntn-daterange__day', 'ntn-daterange__panel--narrow',    // calendar
+    'ntn-toaster', 'ntn-toaster__live',                                            // toast()
+  ];
+  const stale = DRAWN.filter((c) => !dist.has(c));
+  const unshown = [...dist].filter((c) => !used.has(c) && !DRAWN.includes(c));
+  check(!unshown.length && !stale.length,
+    `every one of the ${dist.size} classes in dist has an example (${DRAWN.length} are drawn by nocturne.js)` +
+    (unshown.length ? ` (no example: ${unshown.join(', ')})` : '') + (stale.length ? ` (allowlisted but gone: ${stale.join(', ')})` : ''));
 }
 
 console.log('Source guard');

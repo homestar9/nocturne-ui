@@ -13,6 +13,15 @@ renamed or removed class names and tokens.
   section has an index link. The stale version and the permanent "new" badges are gone from the
   sidebar. A test now fails when a block in `dist/` has no example, when the sink uses a class that
   `dist/` lacks, or when a section and its index link don't match.
+- **Every class has an example**, not just every block. New rows show `ntn-btn--block`,
+  `--lg` on field, select and combo, the select's hint and error, `ntn-radio__desc`,
+  `ntn-rating--sm`, alert `--info` / `--primary` / `--neutral` / `--banner`, the end-aligned
+  tooltip, progress tones / `--lg` / `--indeterminate`, avatar `--xs` / `--ring` and the busy and
+  away dots, toast `--primary` / `--neutral`, the frame fades (beside the plain frame, which stays
+  plain), `ntn-card--glow`, `ntn-edge--strong`, a flush tree with row actions, `ntn-modal--lg`,
+  `ntn-steps--inline`, and a top bar with its own brand. The Settings example adds the sidebar's
+  nested list and footer and marks its panels `ntn-tabs__panel`. The coverage test now checks
+  every class in `dist/`, allowing only the 12 that `nocturne.js` draws.
 - **Get started** opens the page: the two CDN lines, and in its Code a complete starter page
   (theme script, Font Awesome Free with the Light shim, a dialog that proves the script loaded),
   the npm install and bundler imports, and theme / accent / density. Links go to the component
