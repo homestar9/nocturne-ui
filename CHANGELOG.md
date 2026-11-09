@@ -6,6 +6,8 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.16.0 — 2026-11-09
+
 ### Added
 - **`ntn-ambient--floor`**: a lit stage under a hero. The canvas brightens toward
   the bottom edge, from 35% down (`--ntn-ambient-floor`: the 800 grey in dark, the 400 in light) under a
