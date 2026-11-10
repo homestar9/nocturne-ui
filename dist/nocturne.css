@@ -2586,6 +2586,48 @@ i:is([class*=fa-], [data-icon], :empty) {
   color: var(--ntn-text-primary);
   letter-spacing: var(--ntn-tracking-heading);
 }
+.ntn-daterange__year {
+  /* The heading's year: a number input that reads as text, with nothing but the pointer to say
+     it can be clicked (the negative margin takes back its padding and border, so the digits sit
+     where text would). Focus turns it into a small field with its spin buttons. */
+  width: calc(4ch + 12px);
+  height: var(--ntn-target-min);
+  margin: 0 -6px;
+  padding: 0 5px;
+  border: 1px solid transparent;
+  border-radius: var(--ntn-radius-sm);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  appearance: textfield;
+}
+.ntn-daterange__year::-webkit-inner-spin-button, .ntn-daterange__year::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+.ntn-daterange__year:focus {
+  width: calc(4ch + 36px);
+  margin: 0;
+  outline: 0;
+  cursor: text;
+  appearance: auto;
+  background: var(--ntn-surface-1);
+  border-color: var(--ntn-border-default);
+  color-scheme: inherit;
+  border-color: var(--ntn-accent-500);
+  box-shadow: var(--ntn-ring-focus);
+}
+@media (forced-colors: active) {
+  .ntn-daterange__year:focus {
+    outline: 2px solid Highlight;
+  }
+}
+.ntn-daterange__year:focus::-webkit-inner-spin-button {
+  appearance: auto;
+}
 .ntn-daterange__nav {
   display: inline-flex;
   align-items: center;

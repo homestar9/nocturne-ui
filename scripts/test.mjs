@@ -269,6 +269,11 @@ try {
   const drClosed = rules.find((r) => r.sel === '.ntn-daterange__panel[popover]:not(:popover-open)');
   check(drClosed && /display:\s*none/.test(drClosed.body), 'a closed date-picker popover stays hidden despite the panel\'s display: flex');
   check(!rules.some((r) => /^\.ntn-card:has\(\.ntn-daterange__panel/.test(r.sel)), 'no card overflow workaround for the date panel (the top layer is never clipped)');
+  // NTN-52: the heading's year reads as text; only the pointer says it can be clicked.
+  const drYear = rules.find((r) => r.sel === '.ntn-daterange__year');
+  check(drYear && /cursor:\s*pointer/.test(drYear.body) && /background:\s*transparent/.test(drYear.body) && /border:\s*1px solid transparent/.test(drYear.body),
+    'the date picker year is a transparent, borderless-looking input with a pointer cursor');
+  check(!rules.some((r) => /\.ntn-daterange__year:hover/.test(r.sel)), '...with no hover style');
   // NTN-20: the page scrolls. A scroll container here would capture every sticky inside the content.
   const appScroll = rules.find((r) => r.sel === '.ntn-app__scroll');
   check(appScroll && !/overflow/.test(appScroll.body), '.ntn-app__scroll is not a scroll container, so stickies inside it stick to the viewport');

@@ -37,6 +37,13 @@ renamed or removed class names and tokens.
   grouped selects (the last two native and enhanced), and a new **Form controls in both themes**
   section puts a dark and a light panel side by side.
 - `scrollIntoList()` and `stepTo()` are shared by the combo and the select.
+- **Date picker year input (`ntn-daterange__year`).** Each month heading's year is a number input
+  that reads as plain text, with only a pointer cursor. Click it to type a year or step it with
+  `↑` `↓` / the spin buttons; the month follows. `Esc` restores it and `↵` keeps it, without
+  closing the panel, and its events never reach a form. Bounded by the `data-ntn-min` /
+  `data-ntn-max` years, it works from either month of a two-month panel. The month heads are now
+  built once and patched, so the focused field survives hover and arrow redraws. Non-Gregorian or
+  non-Latin-digit locales keep a plain heading.
 
 ### Changed
 - **Raised control faces.** Field, select, search, the combobox and date triggers, the toggle

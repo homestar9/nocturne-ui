@@ -1403,19 +1403,99 @@ function drRenderCal(root, s, cal, offset, last) {
     );
   }
 
-  const nav = (dir, label, ghost) => make('button', {
-    type: 'button', class: 'ntn-daterange__nav', 'data-ntn-month': String(dir), 'aria-label': label,
-    ...(ghost ? { 'data-ghost': '' } : {}),
-  }, renderIcon(dir < 0 ? 'prev' : 'next'));
   // The grid holds only dates and weekday initials, so it is safe to write as HTML.
   const grid = make('div', { class: 'ntn-daterange__grid' });
   grid.innerHTML = DOW.map((x) => `<span class="ntn-daterange__dow">${x}</span>`).join('') + cells.join('');
-  cal.replaceChildren(
-    make('div', { class: 'ntn-daterange__head' },
-      nav(-1, 'Previous month', !!offset),
-      make('span', { class: 'ntn-daterange__month' }, drMonthFmt.format(view)),
-      nav(1, 'Next month', offset !== last)),
-    grid);
+
+  // The head is built once and patched, so a focused year input survives every redraw (hover,
+  // arrows, presets); only the grid is replaced.
+  let head = cal.querySelector(':scope > .ntn-daterange__head');
+  if (!head) {
+    const nav = (dir, label) => make('button', { type: 'button', class: 'ntn-daterange__nav', 'data-ntn-month': String(dir), 'aria-label': label });
+    head = make('div', { class: 'ntn-daterange__head' }, nav(-1, 'Previous month'), make('span', { class: 'ntn-daterange__month' }), nav(1, 'Next month'));
+    cal.replaceChildren(head);
+  }
+  const [prev, month, next] = head.children;
+  // Redrawn each time, so configure({ icon }) and refresh() still reach the arrows.
+  prev.replaceChildren(renderIcon('prev'));
+  next.replaceChildren(renderIcon('next'));
+  prev.toggleAttribute('data-ghost', !!offset);
+  next.toggleAttribute('data-ghost', offset !== last);
+  drPatchMonth(root, month, view, offset);
+  const old = cal.querySelector(':scope > .ntn-daterange__grid');
+  if (old) old.replaceWith(grid); else cal.append(grid);
+}
+
+/* The year in each month heading is a number input styled as text: click it to step or
+   type a year. Only where the heading's year is the Gregorian year in Latin digits, so the input
+   never disagrees with the year on screen; other calendars keep a plain heading. */
+const drYearEditable = (() => {
+  const o = drMonthFmt.resolvedOptions();
+  return o.calendar === 'gregory' && o.numberingSystem === 'latn';
+})();
+
+function drPatchMonth(root, month, view, offset) {
+  const parts = drMonthFmt.formatToParts(view);
+  const at = parts.findIndex((p) => p.type === 'year');
+  if (!drYearEditable || at < 0) { month.textContent = drMonthFmt.format(view); return; }
+  let input = month.querySelector('[data-ntn-year]');
+  if (!input) {
+    input = drYearInput(root, offset);
+    month.replaceChildren(document.createTextNode(''), input, document.createTextNode(''));
+  }
+  const text = (list) => list.map((p) => p.value).join('');
+  month.firstChild.data = text(parts.slice(0, at));
+  month.lastChild.data = text(parts.slice(at + 1));
+  // Bounds: the years of data-ntn-min / -max, else a century either side (so ↑ on an emptied
+  // field lands near now, not in year 1000), always taking in the year on show.
+  const year = view.getFullYear();
+  const now = new Date().getFullYear();
+  const min = drParse(root.dataset.ntnMin);
+  const max = drParse(root.dataset.ntnMax);
+  input.min = String(Math.min(year, min ? min.getFullYear() : now - 100));
+  input.max = String(Math.max(year, max ? max.getFullYear() : now + 100));
+  if (document.activeElement !== input) input.value = String(year);
+}
+
+/* Its events stop here: a year edit is navigation, not a value, so neither the picker's root nor a
+   form hears input or change (form="" also rules out implicit submission on Enter). */
+function drYearInput(root, offset) {
+  const input = make('input', {
+    type: 'number', class: 'ntn-daterange__year', 'data-ntn-year': '', inputmode: 'numeric',
+    form: '', 'aria-label': 'Year', step: '1',
+  });
+  let from = null;
+  // Sets the view absolutely, keeping this month's month, so repeated steps never compound and
+  // either month of a two-month panel can be edited. Clamped to the min / max months.
+  const go = (y) => {
+    const s = drState(root);
+    let v = new Date(y, monthStart(s.view, offset).getMonth(), 1);
+    const min = drParse(root.dataset.ntnMin);
+    const max = drParse(root.dataset.ntnMax);
+    if (min && v < monthStart(min)) v = monthStart(min);
+    if (max && v > monthStart(max)) v = monthStart(max);
+    s.view = monthStart(v, -offset);
+    drRender(root);
+  };
+  input.addEventListener('focus', () => { from = Number(input.value); });
+  input.addEventListener('input', (e) => {
+    e.stopPropagation();
+    const y = Number(input.value);
+    // A partly typed year ("20") waits for the rest.
+    if (/^\d{4}$/.test(input.value) && y >= Number(input.min) && y <= Number(input.max)) go(y);
+  });
+  input.addEventListener('change', (e) => e.stopPropagation());
+  input.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' && e.key !== 'Enter') return;
+    // Stopped here, so Escape leaves the panel (and a drawer or modal around it) open.
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.key === 'Escape' && from) { input.value = String(from); go(from); }
+    input.blur();
+  });
+  // Leaving puts the year on show back, so an emptied or partial value never lingers.
+  input.addEventListener('blur', () => { input.value = String(monthStart(drState(root).view, offset).getFullYear()); });
+  return input;
 }
 
 function drRender(root) {

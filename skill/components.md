@@ -1077,6 +1077,14 @@ draft-first: presets and clicks change nothing outside the panel until **Apply**
 `ntn:daterangechange` with `{ start, end }` as `YYYY-MM-DD` (and `startDate` / `endDate` as
 `Date`s). Cancel, Escape, or a click outside reverts.
 
+Each month heading's year is a number input that reads as plain text (`__year`, drawn by
+`nocturne.js`; only the pointer cursor hints at it). Clicking it shows a small field: type a year,
+or step it with `↑` `↓` or the spin buttons, and the month jumps there. `Esc` puts the year back,
+`↵` keeps it; neither closes the panel. Its `input` and `change` never reach the picker or a form,
+since it moves the view rather than the value. It stays within the `data-ntn-min` / `data-ntn-max`
+years (a century either side of today otherwise). Locales whose heading isn't a Gregorian year in
+Latin digits (Thai, Persian, Arabic, Japanese-era) keep a plain heading.
+
 Set the initial range with `data-ntn-start` / `data-ntn-end`; bound it with `data-ntn-min` /
 `data-ntn-max`. Preset keys on `data-ntn-range`: a plain number (last N days, ending today),
 `today`, `yesterday`, `month`, `last-month`, `ytd`.
