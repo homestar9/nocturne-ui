@@ -183,8 +183,8 @@ try {
   console.log('Surface lighting (NTN-37)');
   const rim = rules.find((r) => /::after$/.test(r.sel) && /\.ntn-card\b/.test(r.sel) && /var\(--ntn-edge-light\)/.test(r.body));
   check(rim, 'raised surfaces draw a lit rim in --ntn-edge-light on ::after');
-  check(rim && /\.ntn-edge--shine/.test(rim.sel) && /\.ntn-edge--glow/.test(rim.sel) && /\.ntn-card--glow/.test(rim.sel),
-    'the rim skips the shine (its halos own ::after) and the glow (its own accent edge)');
+  check(rim && /\.ntn-edge--shine/.test(rim.sel) && !/--glow/.test(rim.sel),
+    'the rim skips the shine (its halos own ::after) but lights the glow too');
   check(rim && /inset:\s*calc\(-1 \* var\(--ntn-hairline\)\)/.test(rim.body),
     'the rim sits on the border, not inside it, so the hairline is not doubled');
   check(rim && /at var\(--ntn-edge-light-x\) var\(--ntn-edge-light-y\)/.test(rim.body),

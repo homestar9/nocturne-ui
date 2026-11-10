@@ -334,7 +334,7 @@
                             0 0 0 3px color-mix(in srgb, var(--ntn-accent-500) 22%, transparent);
   --ntn-ring-face-keyboard: 0 0 0 3px color-mix(in srgb, var(--ntn-accent-500) 40%, transparent);
   /* The lit top edge of a filled accent control */
-  --ntn-highlight-top: inset 0 1px 0 rgba(255,255,255,0.22);
+  --ntn-highlight-top: inset 0 1px 0 rgba(255,255,255,0.15);
   /* The colour a shine light fades through */
   --ntn-shine-color: var(--ntn-accent-500);
   /* The bright glint in the processing ring, just ahead of the accent stops */
@@ -4866,8 +4866,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 }
 
 /* The lit rim: every raised surface catches the light along its top edge. It is the host's
-   ::after, so the shine (whose halos are the host's pseudo-elements) and the glow (which has
-   its own accent edge) go without. */
+   ::after, so the shine (whose halos are the host's pseudo-elements) go without. */
 :is(.ntn-card, .ntn-stat, .ntn-accordion, .ntn-modal, .ntn-edge, .ntn-frame, .ntn-frame__view):not(.ntn-edge--shine)::after {
   content: "";
   position: absolute;
