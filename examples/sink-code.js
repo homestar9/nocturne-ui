@@ -4,11 +4,17 @@
 
    This is a classic script loaded at the end of <body>, so it runs before the deferred nocturne.js
    module and copies the markup as written: no chips, calendar cells or tab ink. sink__* classes and
-   data-sink-* attributes are page chrome, and are cut from every snippet. Not part of the library. */
+   data-sink-* attributes are page chrome, and are cut from every snippet. Not part of the library.
+
+   Code that isn't markup on the page goes in a hidden textarea, which holds raw text:
+   <textarea hidden data-sink-source="Label" data-sink-lang="html|js|sh">…</textarea>. It joins
+   the Code panel, or, with data-sink-inline, is shown where it stands. data-sink-ref="slug" on a
+   section adds a Reference link to that heading of skill/components.md. */
 (function () {
   'use strict';
 
   const SINK = /^sink__/;
+  const REFERENCE = 'https://github.com/homestar9/nocturne-ui/blob/master/skill/components.md';
 
   /** The markup of one example root, as an author would write it. */
   function snippet(root) {
@@ -111,14 +117,67 @@
     button.setAttribute('aria-expanded', String(open));
   }
 
+  /** The text of a verbatim source (a hidden textarea), dedented. */
+  function source(area) {
+    const lines = area.value.replace(/^\s*\n/, '').replace(/\s+$/, '').split('\n');
+    const indents = lines.filter((l) => l.trim()).map((l) => l.match(/^ */)[0].length);
+    const cut = indents.length ? Math.min(...indents) : 0;
+    return lines.map((l) => l.slice(cut)).join('\n');
+  }
+
+  /** One labelled snippet: a head with a copy button over the code. Only HTML is coloured. */
+  function snippetBlock(label, text, lang) {
+    const block = document.createElement('div');
+    block.className = 'sink__snippet';
+    const head = document.createElement('div');
+    head.className = 'sink__snippet-head';
+    const name = document.createElement('span');
+    name.className = 'sink__label';
+    name.textContent = label;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ntn-icon-btn ntn-icon-btn--sm';
+    btn.setAttribute('aria-label', label ? 'Copy code: ' + label : 'Copy code');
+    btn.append(icon('fa-copy'));
+    head.append(name, btn);
+    const pre = document.createElement('pre');
+    pre.className = 'sink__pre';
+    pre.tabIndex = 0;
+    const code = document.createElement('code');
+    if (lang === 'html') highlight(code, text);
+    else code.textContent = text;
+    pre.append(code);
+    btn.addEventListener('click', () => copy(btn, pre));
+    block.append(head, pre);
+    return block;
+  }
+
   for (const section of document.querySelectorAll('.sink')) {
+    // A section's reference: its heading in skill/components.md.
+    if (section.dataset.sinkRef) {
+      const ref = document.createElement('a');
+      ref.className = 'ntn-btn ntn-btn--sm ntn-btn--subtle';
+      ref.href = REFERENCE + '#' + section.dataset.sinkRef;
+      ref.append(icon('fa-book'), 'Reference');
+      section.querySelector('.sink__head').append(ref);
+    }
+
     const groups = new Map();
+    const add = (label, text, lang) => {
+      if (!groups.has(label)) groups.set(label, { lang, parts: [] });
+      groups.get(label).parts.push(text);
+    };
+    // Verbatim sources first: code that isn't markup on the page (a starter page, a script call).
+    // An inline one is shown where it stands; the rest lead the Code panel.
+    for (const area of section.querySelectorAll('textarea[data-sink-source]')) {
+      const lang = area.dataset.sinkLang || 'html';
+      if (area.hasAttribute('data-sink-inline')) area.replaceWith(snippetBlock(area.dataset.sinkSource, source(area), lang));
+      else add(area.dataset.sinkSource, source(area), lang);
+    }
     for (const root of section.querySelectorAll('[data-sink-example]')) {
       // An example nested in another example belongs to the outer one.
       if (root.parentElement.closest('[data-sink-example]')) continue;
-      const label = root.dataset.sinkExample;
-      if (!groups.has(label)) groups.set(label, []);
-      groups.get(label).push(snippet(root));
+      add(root.dataset.sinkExample, snippet(root), 'html');
     }
     if (!groups.size) continue;
 
@@ -126,30 +185,7 @@
     panel.className = 'sink__codeview';
     panel.id = section.id + '-code';
     panel.hidden = true;
-    for (const [label, parts] of groups) {
-      const block = document.createElement('div');
-      block.className = 'sink__snippet';
-      const head = document.createElement('div');
-      head.className = 'sink__snippet-head';
-      const name = document.createElement('span');
-      name.className = 'sink__label';
-      name.textContent = label;
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'ntn-icon-btn ntn-icon-btn--sm';
-      btn.setAttribute('aria-label', label ? 'Copy code: ' + label : 'Copy code');
-      btn.append(icon('fa-copy'));
-      head.append(name, btn);
-      const pre = document.createElement('pre');
-      pre.className = 'sink__pre';
-      pre.tabIndex = 0;
-      const code = document.createElement('code');
-      highlight(code, parts.join('\n\n'));
-      pre.append(code);
-      btn.addEventListener('click', () => copy(btn, pre));
-      block.append(head, pre);
-      panel.append(block);
-    }
+    for (const [label, { lang, parts }] of groups) panel.append(snippetBlock(label, parts.join('\n\n'), lang));
     section.append(panel);
     panels.push(panel);
 

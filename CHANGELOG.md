@@ -6,6 +6,49 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+### Kitchen sink
+- **Every block is shown.** A Layout section (page head, `ntn-grid --2/3/4/split/split-reverse`,
+  `ntn-row --between/--end`, `ntn-stack`, the text helpers and dividers, `ntn-divider-label`), and
+  standalone `ntn-icon` sizes and tints plus `ntn-fab` beside the icon buttons. The Dropdown
+  section has an index link. The stale version and the permanent "new" badges are gone from the
+  sidebar. A test now fails when a block in `dist/` has no example, when the sink uses a class that
+  `dist/` lacks, or when a section and its index link don't match.
+- **Every class has an example**, not just every block. New rows show `ntn-btn--block`,
+  `--lg` on field, select and combo, the select's hint and error, `ntn-radio__desc`,
+  `ntn-rating--sm`, alert `--info` / `--primary` / `--neutral` / `--banner`, the end-aligned
+  tooltip, progress tones / `--lg` / `--indeterminate`, avatar `--xs` / `--ring` and the busy and
+  away dots, toast `--primary` / `--neutral`, the frame fades (beside the plain frame, which stays
+  plain), `ntn-card--glow`, `ntn-edge--strong`, a flush tree with row actions, `ntn-modal--lg`,
+  `ntn-steps--inline`, and a top bar with its own brand. The Settings example adds the sidebar's
+  nested list and footer and marks its panels `ntn-tabs__panel`. The coverage test now checks
+  every class in `dist/`, allowing only the 12 that `nocturne.js` draws.
+- **Get started** opens the page: the two CDN lines, and in its Code a complete starter page
+  (theme script, Font Awesome Free with the Light shim, a dialog that proves the script loaded),
+  the npm install and bundler imports, and theme / accent / density. Links go to the component
+  reference and to building with Claude Code.
+- **JavaScript** closes it: `refresh(root)`, every export with an example call, and every
+  `ntn:*` event with its `detail`. The Toast section's Code leads with the `toast({...})` call.
+- **Reference** links: each section head links to its heading in `skill/components.md`.
+- Verbatim sources: a hidden `<textarea data-sink-source>` holds code that isn't markup on the
+  page; `data-sink-inline` shows it in place.
+- Tests fail when a pinned CDN link in the README or the sink names another version than
+  `package.json`, when the JavaScript section misses an event or export, or when a Reference link
+  has no heading. The README opens with a link to the live sink, and `homepage` points there.
+
+### Examples
+- **`examples/settings.html`**: a complete account settings page, `skill/patterns.md` §4 built
+  with library classes only. Tabs switch Profile, Security, Notifications and Billing; each card
+  is its own `<form>` whose Save toasts what it would post (a `data-ntn-name` combo included) and
+  whose Discard is a plain reset. A dropped photo fills the avatar through `ntn:files`, and a
+  `<form method="dialog">` confirm closes the delete dialog. It ships in the package, so the
+  bundled skill can point agents at it, and the kitchen sink links it from its index and from
+  Get started. A test fails when an example page uses a class `dist/` lacks or isn't linked.
+- **`examples/dashboard.html`**: `skill/patterns.md` §2. A greeting and a date range in the page
+  head, four stats on neutral washes with the one alert in danger, a 1.9 / 1 split (spend by
+  service, top spenders) and a 1 / 1.9 split (activity, and a deploys table that
+  `data-ntn-paginate` pages, searches and filters). Applying a range toasts it through
+  `ntn:daterangechange`. Ships in the package, linked the same way.
+
 ## 1.16.0 — 2026-11-09
 
 ### Added

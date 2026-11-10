@@ -5,7 +5,7 @@
 import { JSDOM } from 'jsdom';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const moduleUrl = new URL('../js/nocturne.js', import.meta.url).href;
@@ -595,10 +595,17 @@ console.log('Kitchen sink code view (NTN-1)');
   window.eval(await readFile(resolve(root, 'examples/sink-code.js'), 'utf8'));
 
   const sections = [...document.querySelectorAll('.sink')];
-  const bare = sections.filter((s) => !s.querySelector('[data-sink-example]')).map((s) => s.id);
-  check(sections.length > 0 && !bare.length, `every section marks at least one example${bare.length ? ' (missing: ' + bare.join(', ') + ')' : ''}`);
-  const toggles = sections.map((s) => s.querySelectorAll('.sink__head .sink__codetoggle'));
-  check(toggles.every((t) => t.length === 1), 'every section head gets exactly one Code button');
+  const bare = sections.filter((s) => !s.querySelector('[data-sink-example], textarea[data-sink-source], .sink__snippet')).map((s) => s.id);
+  check(sections.length > 0 && !bare.length, `every section shows code: an example or a source${bare.length ? ' (missing: ' + bare.join(', ') + ')' : ''}`);
+  const inline = document.querySelectorAll('textarea[data-sink-inline]');
+  const shown = [...document.querySelectorAll('.sink__snippet')].filter((b) => !b.closest('.sink__codeview'));
+  check(!inline.length && shown.length >= 4, `inline sources are shown in place (${shown.length})`);
+  // Sections whose code is all inline (JavaScript) need no panel; every other one gets one button.
+  const coded = sections.filter((s) => document.getElementById(s.id + '-code'));
+  const strays = sections.filter((s) => !coded.includes(s) && s.querySelector('.sink__codetoggle')).map((s) => s.id);
+  const toggles = coded.map((s) => s.querySelectorAll('.sink__head .sink__codetoggle'));
+  check(coded.length >= sections.length - 2 && toggles.every((t) => t.length === 1) && !strays.length,
+    `every section with a Code panel gets exactly one Code button (${coded.length} of ${sections.length})`);
   const pairs = toggles.map((t) => [t[0], document.getElementById(t[0]?.getAttribute('aria-controls'))]);
   check(pairs.every(([b, p]) => p && b.getAttribute('aria-expanded') === 'false' && p.hidden), 'code is off by default: every panel starts hidden');
 
@@ -662,6 +669,55 @@ console.log('Kitchen sink tabs switch panels (NTN-34)');
   const orphans = tabs.filter((t) => { const sel = t.getAttribute('data-ntn-panel'); return !sel || !document.querySelector(sel); });
   check(tabs.length > 0 && orphans.length === 0,
     `each of the ${tabs.length} enabled tabs switches a panel that exists` + (orphans.length ? ': ' + orphans.map((t) => t.textContent.trim()).join(', ') : ''));
+}
+
+console.log('Kitchen sink covers the library (NTN-46)');
+{
+  // A block is the leading ntn-* name of a class in dist, before any __element or --modifier.
+  const css = (await readFile(resolve(root, 'dist/nocturne.css'), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '');
+  const dist = new Set([...css.matchAll(/\.(ntn-[a-zA-Z0-9_-]+)/g)].map((m) => m[1]));
+  const blocks = [...new Set([...dist].map((c) => c.split(/__|--/)[0]))];
+  const JS_ONLY = ['ntn-toaster']; // created by toast(), never written in markup
+  const raw = await readFile(resolve(root, 'examples/kitchen-sink.html'), 'utf8');
+  const { document } = new JSDOM(raw.replace(/<script\b[\s\S]*?<\/script>/g, '')).window;
+  const used = new Set([...document.querySelectorAll('[class]')].flatMap((e) => [...e.classList]).filter((c) => c.startsWith('ntn-')));
+  const missing = blocks.filter((b) => !used.has(b) && !JS_ONLY.includes(b));
+  check(!missing.length, `every one of the ${blocks.length} blocks in dist is shown${missing.length ? ' (missing: ' + missing.join(', ') + ')' : ''}`);
+  const typos = [...used].filter((c) => !dist.has(c));
+  check(!typos.length, `every ntn-* class in the sink exists in dist${typos.length ? ' (unknown: ' + typos.join(', ') + ')' : ''}`);
+  const ids = [...document.querySelectorAll('section.sink[id]')].map((s) => s.id);
+  const links = [...document.querySelectorAll('#index a[href^="#"]')].map((a) => a.getAttribute('href').slice(1));
+  const unlinked = ids.filter((id) => links.filter((l) => l === id).length !== 1);
+  const dangling = links.filter((l) => !ids.includes(l));
+  check(!unlinked.length && !dangling.length,
+    `each of the ${ids.length} sections has one index link, and every link a section` +
+    (unlinked.length ? ` (unlinked: ${unlinked.join(', ')})` : '') + (dangling.length ? ` (dangling: ${dangling.join(', ')})` : ''));
+
+  // The example pages (NTN-48): library classes only, and each one linked from the sink's index.
+  const pages = (await readdir(resolve(root, 'examples'))).filter((f) => f.endsWith('.html') && f !== 'kitchen-sink.html');
+  for (const file of pages) {
+    const page = new JSDOM(await readFile(resolve(root, 'examples', file), 'utf8')).window.document;
+    const unknown = [...new Set([...page.querySelectorAll('[class]')].flatMap((e) => [...e.classList]))]
+      .filter((c) => !c.startsWith('fa-') && !dist.has(c));
+    check(!unknown.length, `${file} uses only classes from dist${unknown.length ? ' (unknown: ' + unknown.join(', ') + ')' : ''}`);
+    check(document.querySelector(`#index a[href="${file}"]`), `${file} is linked from the sink's index`);
+    page.querySelectorAll('[class]').forEach((e) => e.classList.forEach((c) => used.add(c)));
+  }
+  check(pages.length >= 1, `${pages.length} example page(s) checked`);
+
+  // Every class, not just every block (NTN-50): each modifier and element in dist appears in the
+  // sink or an example page. The exceptions are drawn by nocturne.js, so the live demos show them.
+  const DRAWN = [
+    'ntn-combo__chip', 'ntn-combo__chip-x', 'ntn-combo__more',                     // combo chips
+    'ntn-daterange__head', 'ntn-daterange__month', 'ntn-daterange__nav', 'ntn-daterange__grid',
+    'ntn-daterange__dow', 'ntn-daterange__day', 'ntn-daterange__panel--narrow',    // calendar
+    'ntn-toaster', 'ntn-toaster__live',                                            // toast()
+  ];
+  const stale = DRAWN.filter((c) => !dist.has(c));
+  const unshown = [...dist].filter((c) => !used.has(c) && !DRAWN.includes(c));
+  check(!unshown.length && !stale.length,
+    `every one of the ${dist.size} classes in dist has an example (${DRAWN.length} are drawn by nocturne.js)` +
+    (unshown.length ? ` (no example: ${unshown.join(', ')})` : '') + (stale.length ? ` (allowlisted but gone: ${stale.join(', ')})` : ''));
 }
 
 console.log('Source guard');

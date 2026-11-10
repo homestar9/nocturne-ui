@@ -32,6 +32,8 @@
     "js",
     "themes",
     "skill",
+    "examples/dashboard.html",
+    "examples/settings.html",
     "scripts/build.mjs",
     "README.md",
     "CHANGELOG.md"
@@ -50,7 +52,7 @@
     "type": "git",
     "url": "git+https://github.com/homestar9/nocturne-ui.git"
   },
-  "homepage": "https://github.com/homestar9/nocturne-ui#readme",
+  "homepage": "https://homestar9.github.io/nocturne-ui/",
   "bugs": {
     "url": "https://github.com/homestar9/nocturne-ui/issues"
   },

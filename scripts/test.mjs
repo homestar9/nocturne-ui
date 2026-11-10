@@ -500,6 +500,29 @@ try {
   const notes = await releaseNotes(version).catch((err) => err);
   check(typeof notes === 'string' && notes.includes(`@homestar9/nocturne-ui@${version}`) && /^### /m.test(notes),
     `CHANGELOG.md has release notes for ${version}, the package.json version` + (notes instanceof Error ? ': ' + notes.message : ''));
+
+  console.log('Docs stay in step with the code (NTN-47)');
+  const sink = await readFile(join(root, 'examples/kitchen-sink.html'), 'utf8');
+  const readme = await readFile(join(root, 'README.md'), 'utf8');
+  for (const [name, text] of [['kitchen sink', sink], ['README', readme]]) {
+    const pins = [...text.matchAll(/@homestar9\/nocturne-ui@(\d+\.\d+\.\d+)/g)].map((m) => m[1]);
+    const stale = pins.filter((v) => v !== version);
+    check(pins.length > 0 && !stale.length, `the ${name}'s ${pins.length} pinned CDN links name ${version}` + (stale.length ? ` (found ${[...new Set(stale)].join(', ')})` : ''));
+  }
+  // The JavaScript section names every event the module fires and every function it exports.
+  const jsSection = sink.match(/<section class="sink" id="javascript"[\s\S]*?<\/section>/)?.[0] ?? '';
+  const jsSrc = await readFile(join(root, 'js/nocturne.js'), 'utf8');
+  const events = [...new Set([...jsSrc.matchAll(/new CustomEvent\('(ntn:[a-z]+)'/g)].map((m) => m[1]))];
+  const exported = [...jsSrc.matchAll(/^export function (\w+)/gm)].map((m) => m[1]);
+  const quiet = [...events.filter((e) => !jsSection.includes(e)), ...exported.filter((f) => !jsSection.includes(f + '('))];
+  check(events.length > 10 && exported.length > 10 && !quiet.length,
+    `the kitchen sink's JavaScript section covers all ${events.length} events and ${exported.length} exports` + (quiet.length ? ` (missing: ${quiet.join(', ')})` : ''));
+  // Reference links point at real headings of skill/components.md (GitHub's anchor rules).
+  const slug = (h) => h.replace(/`/g, '').trim().toLowerCase().replace(/[^\p{L}\p{N}\s_-]/gu, '').replace(/ /g, '-');
+  const headings = new Set([...(await readFile(join(root, 'skill/components.md'), 'utf8')).matchAll(/^## (.+)$/gm)].map((m) => slug(m[1])));
+  const refs = [...sink.matchAll(/data-sink-ref="([^"]+)"/g)].map((m) => m[1]);
+  const broken = refs.filter((r) => !headings.has(r));
+  check(refs.length > 30 && !broken.length, `the sink's ${refs.length} Reference links each match a components.md heading` + (broken.length ? ` (broken: ${broken.join(', ')})` : ''));
 } finally {
   await rm(tmp, { recursive: true, force: true });
 }
