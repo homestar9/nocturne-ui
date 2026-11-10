@@ -568,14 +568,31 @@ function comboFilter(root) {
   comboActivate(root, comboOptions(root).find((o) => !o.hidden) || null);
 }
 
+/* Scrolls a listbox just enough to show an option (the combo's and the select's). */
+function scrollIntoList(list, option) {
+  if (option.offsetTop < list.scrollTop) list.scrollTop = option.offsetTop;
+  else if (option.offsetTop + option.offsetHeight > list.scrollTop + list.clientHeight) list.scrollTop = option.offsetTop + option.offsetHeight - list.clientHeight;
+}
+
+/* The option an arrow, Home or End key moves to among the pickable ones. With wrap, ↑/↓ run past
+   the ends; without, they stop there. null for any other key. */
+function stepTo(opts, active, key, wrap) {
+  const n = opts.length;
+  if (!n) return null;
+  const i = opts.indexOf(active);
+  if (key === 'Home') return opts[0];
+  if (key === 'End') return opts[n - 1];
+  if (key === 'ArrowDown') return i < 0 ? opts[0] : opts[wrap ? (i + 1) % n : Math.min(i + 1, n - 1)];
+  if (key === 'ArrowUp') return i < 0 ? opts[wrap ? n - 1 : 0] : opts[wrap ? (i - 1 + n) % n : Math.max(i - 1, 0)];
+  return null;
+}
+
 function comboActivate(root, option) {
   comboOptions(root).forEach((o) => o.removeAttribute('data-ntn-active'));
   if (!option) return;
   option.setAttribute('data-ntn-active', '');
   const list = root.querySelector('.ntn-combo__list');
-  if (!list) return;
-  if (option.offsetTop < list.scrollTop) list.scrollTop = option.offsetTop;
-  else if (option.offsetTop + option.offsetHeight > list.scrollTop + list.clientHeight) list.scrollTop = option.offsetTop + option.offsetHeight - list.clientHeight;
+  if (list) scrollIntoList(list, option);
 }
 
 function comboClose(root) {
@@ -626,11 +643,8 @@ function onComboKey(root, e) {
   }
   const opts = comboOptions(root).filter((o) => !o.hidden && o.getAttribute('aria-disabled') !== 'true');
   const active = root.querySelector('.ntn-combo__option[data-ntn-active]');
-  const i = opts.indexOf(active);
-  if (e.key === 'ArrowDown') { e.preventDefault(); comboActivate(root, opts[Math.min(i + 1, opts.length - 1)] || opts[0]); return; }
-  if (e.key === 'ArrowUp') { e.preventDefault(); comboActivate(root, opts[Math.max(i - 1, 0)] || opts[0]); return; }
-  if (e.key === 'Home') { e.preventDefault(); comboActivate(root, opts[0]); return; }
-  if (e.key === 'End') { e.preventDefault(); comboActivate(root, opts[opts.length - 1]); return; }
+  const to = stepTo(opts, active, e.key, false);
+  if (to) { e.preventDefault(); comboActivate(root, to); return; }
   if (e.key === 'Enter') { e.preventDefault(); if (active) comboPick(root, active); return; }
   if (e.key === 'Escape' || e.key === 'Tab') {
     comboClose(root);
@@ -705,7 +719,7 @@ function onSubmenuKey(item, e) {
 
 let ddSeq = 0;
 const ddRoot = (el) => (el && el.closest ? el.closest('[data-ntn-dropdown]') : null);
-const ddPanel = (root) => root.querySelector(':scope > [popover], :scope > .ntn-menu, :scope > .ntn-popover');
+const ddPanel = (root) => root.querySelector(':scope > [popover], :scope > .ntn-menu, :scope > .ntn-popover, :scope > .ntn-select__panel');
 const ddTrigger = (root) => root.querySelector(':scope > [aria-haspopup], :scope > [data-ntn-dropdown-trigger]');
 const ddIsOpen = (root) => root.hasAttribute('data-ntn-open');
 const DD_FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -733,23 +747,38 @@ function ddPlace(root) {
 }
 
 /* Places a top-layer (position: fixed) panel against an anchor in viewport pixels. Shared by
-   dropdowns and the date picker. */
+   dropdowns, the date picker and the select. Placements are side-align: bottom, top, or over (the
+   select's: the panel covers the anchor, its top `gap` above the anchor's top, or, near the
+   viewport's bottom, its bottom `gap` below the anchor's bottom; data-ntn-side says which). */
 function placeFixed(panel, anchor, placement, gap) {
   const r = anchor.getBoundingClientRect();
   const [side, align] = placement.split('-');
   const margin = 8;
   const w = panel.offsetWidth;
   const h = panel.offsetHeight;
-  const below = r.bottom + gap;
-  const above = r.top - gap - h;
-  let top = side === 'top' ? above : below;
-  if (side === 'top' && top < margin && below + h <= innerHeight - margin) top = below;
-  if (side !== 'top' && top + h > innerHeight - margin && above >= margin) top = above;
+  let top;
+  let up;
+  if (side === 'over') {
+    top = r.top - gap;
+    up = false;
+    if (top + h > innerHeight - margin) {
+      const flipped = r.bottom + gap - h;
+      up = flipped >= margin;
+      top = up ? flipped : innerHeight - margin - h;
+    }
+  } else {
+    const below = r.bottom + gap;
+    const above = r.top - gap - h;
+    top = side === 'top' ? above : below;
+    if (side === 'top' && top < margin && below + h <= innerHeight - margin) top = below;
+    if (side !== 'top' && top + h > innerHeight - margin && above >= margin) top = above;
+    up = top < r.top;
+  }
   let left = align === 'start' ? r.left : r.right - w;
   left = Math.max(margin, Math.min(left, innerWidth - w - margin));
   panel.style.left = Math.round(left) + 'px';
   panel.style.top = Math.round(Math.max(margin, top)) + 'px';
-  panel.setAttribute('data-ntn-side', top < r.top ? 'top' : 'bottom');
+  panel.setAttribute('data-ntn-side', up ? 'top' : 'bottom');
 }
 
 /**
@@ -840,6 +869,248 @@ function ddOnFocusOut(e) {
 function ddReposition() {
   $$('[data-ntn-dropdown][data-ntn-open]').forEach(ddPlace);
   $$('[data-ntn-daterange]').filter((r) => drState(r).open).forEach(drPlace);
+}
+
+/* ── Select ──────────────────────────────────────────────────────────────────
+   <label class="ntn-select" data-ntn-select [data-ntn-search="Search teams…"]
+          [data-ntn-empty="No matching teams"] [data-ntn-placeholder="No teams"]>
+     <span class="ntn-select__label">Team</span>
+     <span class="ntn-select__control"><select name="team">…</select></span>
+   </label>
+   The native <select> stays in the form, invisible under a trigger button, so it posts, fires
+   input and change, takes form.reset() and shows the browser's required message. The control
+   becomes an ntn-dropdown: its listbox panel opens in the top layer over the trigger, and the
+   dropdown code owns Escape, focus return, outside clicks, Tab-out and repositioning. The list is
+   built from the <select> on every open, so options added later need no refresh; refresh(root)
+   redraws the trigger after the app sets the value in code. <select multiple> toggles and stays
+   open; <optgroup> becomes a labelled group. */
+
+let selSeq = 0;
+const selRoot = (el) => (el && el.closest ? el.closest('[data-ntn-select]') : null);
+const selNative = (root) => root.querySelector('.ntn-select__control > select');
+const selCtl = (root) => root.querySelector('.ntn-select__control');
+const selTrigger = (root) => root.querySelector('.ntn-select__trigger');
+const selPanel = (root) => root.querySelector('.ntn-select__panel');
+const selList = (root) => root.querySelector('.ntn-select__list');
+const selSearch = (root) => root.querySelector('.ntn-select__search');
+const selOptions = (root) => $$('.ntn-select__option', selList(root));
+const selPickable = (root) => selOptions(root).filter((o) => !o.hidden && o.getAttribute('aria-disabled') !== 'true');
+const selTyped = new WeakMap();
+
+/** Draws the trigger and panel once; on later calls re-syncs the trigger. */
+function selSetup(root) {
+  const select = selNative(root);
+  const ctl = selCtl(root);
+  if (!select || !ctl) return;
+  let trigger = selTrigger(root);
+  if (!trigger) {
+    const id = 'ntn-sel-' + (++selSeq);
+    const label = root.querySelector('.ntn-select__label');
+    if (label && !label.id) label.id = id + '-label';
+    const value = make('span', { class: 'ntn-select__value', id: id + '-value' });
+    trigger = make('button', { type: 'button', class: 'ntn-select__trigger', 'aria-haspopup': 'listbox',
+      'aria-labelledby': (label ? label.id + ' ' : '') + value.id }, value);
+    const list = make('div', { class: 'ntn-select__list', role: 'listbox', id: id + '-list', tabindex: '-1' });
+    if (label) list.setAttribute('aria-labelledby', label.id);
+    if (select.multiple) list.setAttribute('aria-multiselectable', 'true');
+    const panel = make('div', { class: 'ntn-select__panel', 'data-ntn-placement': 'over-end', 'data-ntn-offset': '4' });
+    if (root.hasAttribute('data-ntn-search')) {
+      const search = make('input', { type: 'text', class: 'ntn-select__search', role: 'combobox', 'aria-autocomplete': 'list',
+        'aria-expanded': 'true', 'aria-controls': list.id, autocomplete: 'off', spellcheck: 'false',
+        placeholder: root.getAttribute('data-ntn-search') || 'Search…' });
+      if (label) search.setAttribute('aria-labelledby', label.id);
+      panel.append(search);
+    }
+    panel.append(list, make('div', { class: 'ntn-select__empty', hidden: '' }, root.getAttribute('data-ntn-empty') || 'No results'));
+    select.after(trigger, panel);
+    select.tabIndex = -1;
+    ctl.setAttribute('data-ntn-dropdown', '');
+  }
+  for (const name of ['aria-describedby', 'aria-invalid']) {
+    const v = select.getAttribute(name);
+    if (v === null) trigger.removeAttribute(name); else trigger.setAttribute(name, v);
+  }
+  trigger.disabled = select.disabled;
+  ddSetup(ctl);
+  // A panel upgraded to a popover on a later refresh drops the no-popover hidden.
+  const panel = selPanel(root);
+  if (panel.hasAttribute('popover')) panel.hidden = false;
+  selRender(root);
+}
+
+/** The trigger shows the chosen label (multiple: the labels, joined), or the placeholder. */
+function selRender(root) {
+  const select = selNative(root);
+  const out = root.querySelector('.ntn-select__value');
+  if (!select || !out) return;
+  const chosen = Array.from(select.options).filter((o) => o.selected);
+  const empty = select.multiple ? !chosen.length : !chosen.length || chosen[0].value === '';
+  out.textContent = select.multiple
+    ? (chosen.length ? chosen.map((o) => o.text).join(', ') : root.dataset.ntnPlaceholder || 'Select options')
+    : (chosen[0] ? chosen[0].text : '');
+  out.toggleAttribute('data-empty', empty);
+}
+
+/* One option row. Its data-ntn-index points back at the native option. */
+function selOption(listId, o, n) {
+  const el = make('div', { class: 'ntn-select__option', role: 'option', id: `${listId}-${n}`,
+    'data-ntn-index': String(o.index), 'aria-selected': String(o.selected) },
+  make('span', { class: 'ntn-select__text' }, o.text),
+  make('span', { class: 'ntn-select__tick', 'aria-hidden': 'true' }));
+  const group = o.parentElement;
+  if (o.disabled || (group && group.tagName === 'OPTGROUP' && group.disabled)) el.setAttribute('aria-disabled', 'true');
+  return el;
+}
+
+function selBuild(root) {
+  const select = selNative(root);
+  const list = selList(root);
+  let n = 0;
+  let g = 0;
+  const nodes = [];
+  for (const child of select.children) {
+    if (child.tagName === 'OPTION') nodes.push(selOption(list.id, child, n++));
+    else if (child.tagName === 'OPTGROUP') {
+      const head = make('div', { class: 'ntn-select__group', id: `${list.id}-g${g++}`, role: 'presentation' }, child.label);
+      const group = make('div', { role: 'group', 'aria-labelledby': head.id }, head);
+      for (const o of child.children) if (o.tagName === 'OPTION') group.append(selOption(list.id, o, n++));
+      nodes.push(group);
+    }
+  }
+  list.replaceChildren(...nodes);
+}
+
+/** Marks the active option for keyboard and screen readers, on the search box or the list. */
+function selActivate(root, option, scroll = true) {
+  const list = selList(root);
+  selOptions(root).forEach((o) => o.removeAttribute('data-ntn-active'));
+  const owner = selSearch(root) || list;
+  if (!option) { owner.removeAttribute('aria-activedescendant'); return; }
+  option.setAttribute('data-ntn-active', '');
+  owner.setAttribute('aria-activedescendant', option.id);
+  if (scroll) scrollIntoList(list, option);
+}
+
+/* Shows the options matching the search, hides emptied groups, and swaps in the empty state. */
+function selFilter(root) {
+  const search = selSearch(root);
+  const q = search ? search.value.trim().toLowerCase() : '';
+  let hits = 0;
+  selOptions(root).forEach((o) => {
+    o.hidden = !!q && !o.textContent.toLowerCase().includes(q);
+    if (!o.hidden) hits++;
+  });
+  $$('[role="group"]', selList(root)).forEach((grp) => { grp.hidden = !grp.querySelector('.ntn-select__option:not([hidden])'); });
+  selList(root).hidden = !hits;
+  root.querySelector('.ntn-select__empty').hidden = hits > 0;
+}
+
+function selOpen(root) {
+  const ctl = selCtl(root);
+  const trigger = selTrigger(root);
+  if (!ctl || !trigger || trigger.disabled || ddIsOpen(ctl)) return;
+  selBuild(root);
+  const search = selSearch(root);
+  if (search) search.value = '';
+  selFilter(root);
+  selPanel(root).style.minWidth = Math.max(204, trigger.offsetWidth) + 'px';
+  ddOpen(ctl, { focus: false });
+  (search || selList(root)).focus({ preventScroll: true });
+  const chosen = selPickable(root).find((o) => o.getAttribute('aria-selected') === 'true');
+  selActivate(root, chosen || selPickable(root)[0] || null);
+}
+
+function selFire(select) {
+  select.dispatchEvent(new Event('input', { bubbles: true }));
+  select.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
+/* Single: choose and close. Multiple: toggle and stay open. */
+function selPick(root, option) {
+  if (!option || option.getAttribute('aria-disabled') === 'true') return;
+  const select = selNative(root);
+  const o = select.options[Number(option.dataset.ntnIndex)];
+  if (!o) return;
+  if (select.multiple) {
+    o.selected = !o.selected;
+    option.setAttribute('aria-selected', String(o.selected));
+    selFire(select);
+    selActivate(root, option, false);
+    return;
+  }
+  if (!o.selected) { o.selected = true; selFire(select); }
+  selRender(root);
+  ddClose(selCtl(root), { returnFocus: true });
+}
+
+/* Type-to-jump: keys typed within 500ms of each other match the start of a label. */
+function selTypeahead(root, ch) {
+  const now = Date.now();
+  const last = selTyped.get(root);
+  const typed = (last && now - last.at < 500 ? last.typed : '') + ch.toLowerCase();
+  selTyped.set(root, { typed, at: now });
+  const hit = selPickable(root).find((o) => o.textContent.trim().toLowerCase().startsWith(typed));
+  if (hit) selActivate(root, hit);
+}
+
+/* Keys on a select. True when handled; Escape and Tab fall through to the dropdown code. */
+function onSelectKey(root, e) {
+  const ctl = selCtl(root);
+  const trigger = selTrigger(root);
+  if (!ctl || !trigger) return false;
+  if (!ddIsOpen(ctl)) {
+    // Enter and Space reach the trigger as a native click; only the arrows open it from here.
+    if (e.target === trigger && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) { e.preventDefault(); selOpen(root); return true; }
+    return false;
+  }
+  if (!selPanel(root).contains(e.target)) return false;
+  const search = selSearch(root);
+  const active = selList(root).querySelector('.ntn-select__option[data-ntn-active]');
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || (!search && (e.key === 'Home' || e.key === 'End'))) {
+    e.preventDefault();
+    selActivate(root, stepTo(selPickable(root), active, e.key, true));
+    return true;
+  }
+  // Enter always stops here, so it never submits the form from the search box.
+  if (e.key === 'Enter' || (e.key === ' ' && !search && selNative(root).multiple)) {
+    e.preventDefault();
+    selPick(root, active);
+    return true;
+  }
+  if (!search && e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey) { selTypeahead(root, e.key); return true; }
+  return false;
+}
+
+/* Clicks inside an enhanced select. A <label> would forward any other click to the hidden
+   <select>, so those are stopped, and a click on the label focuses the trigger. */
+function onSelectClick(root, e) {
+  const trigger = selTrigger(root);
+  if (!trigger) return false;
+  if (trigger.contains(e.target)) {
+    e.preventDefault();
+    if (!trigger.disabled) { if (ddIsOpen(selCtl(root))) ddClose(selCtl(root), { returnFocus: true }); else selOpen(root); }
+    return true;
+  }
+  if (selPanel(root).contains(e.target)) {
+    if (e.target === selSearch(root)) return true;
+    e.preventDefault();
+    const option = e.target.closest('.ntn-select__option');
+    if (option) selPick(root, option);
+    return true;
+  }
+  if (e.target.closest('label')) {
+    e.preventDefault();
+    if (!trigger.disabled) trigger.focus();
+    return true;
+  }
+  return false;
+}
+
+/* form.reset() fires before the controls reset, and no change follows: redraw once it has. */
+function selOnReset(e) {
+  if (e.defaultPrevented) return;
+  const roots = $$('[data-ntn-select]', e.target);
+  if (roots.length) setTimeout(() => roots.forEach(selRender), 0);
 }
 
 /* Table select-all + per-row aria-selected. */
@@ -1328,6 +1599,10 @@ function drawerSet(sidebar, open, opener) {
 }
 
 function onClick(e) {
+  // An enhanced select first: its trigger is also a dropdown trigger, but opening builds the list.
+  const sel = selRoot(e.target);
+  if (sel && onSelectClick(sel, e)) return;
+
   // Dropdown trigger: toggle. A chosen menu item, or a data-ntn-close inside an open panel
   // (a filter form's Apply), closes it; the item's own action still runs.
   const ddTrig = e.target.closest('[data-ntn-dropdown] > [aria-haspopup], [data-ntn-dropdown] > [data-ntn-dropdown-trigger]');
@@ -1462,6 +1737,10 @@ function onKeyDown(e) {
     return;
   }
 
+  // A select's keys come before the dropdown's: the arrows open it, and move through its list.
+  const sel = q('[data-ntn-select]');
+  if (sel && onSelectKey(sel, e)) return;
+
   // A closed dropdown's trigger: arrow keys open it on the first / last item.
   const ddTrig = q('[data-ntn-dropdown] > [aria-haspopup], [data-ntn-dropdown] > [data-ntn-dropdown-trigger]');
   if (ddTrig && !ddIsOpen(ddRoot(ddTrig)) && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
@@ -1521,6 +1800,11 @@ function onChange(e) {
   if (el.matches('[data-ntn-page-size]')) {
     const table = tableFor(el);
     if (table) { const s = stateOf(table); s.size = Number(el.value) || 10; s.page = 1; applyTable(table); }
+  }
+  if (el.matches('[data-ntn-select] .ntn-select__control > select')) selRender(selRoot(el));
+  if (el.matches('.ntn-select__search')) {
+    const root = selRoot(el);
+    if (root) { selFilter(root); selActivate(root, selPickable(root)[0] || null); ddPlace(selCtl(root)); }
   }
   if (el.matches('[data-ntn-combo-search]')) {
     const root = el.closest('[data-ntn-combo]');
@@ -1786,6 +2070,7 @@ export function refresh(root = document) {
   within('[data-ntn-tree]').forEach(treeSync);
   within('[data-ntn-combo]').forEach(comboRender);
   within('[data-ntn-daterange]').forEach(drRefresh);
+  within('[data-ntn-select]').forEach(selSetup);
   within('[data-ntn-dropdown]').forEach(ddSetup);
   within('[data-ntn-avatar-name]').forEach(syncAvatar);
   if (themeManaged) syncThemeControls(getTheme());
@@ -1813,6 +2098,15 @@ export function start(options = {}) {
   document.addEventListener('change', onChange);
   document.addEventListener('reset', comboOnReset);
   document.addEventListener('reset', drOnReset);
+  document.addEventListener('reset', selOnReset);
+  // A press on a select's panel keeps focus in its search box or list; hovering an option makes it active.
+  document.addEventListener('mousedown', (e) => {
+    if (e.target.closest && e.target.closest('.ntn-select__panel') && !e.target.matches('.ntn-select__search')) e.preventDefault();
+  });
+  document.addEventListener('mouseover', (e) => {
+    const o = e.target.closest && e.target.closest('.ntn-select__option');
+    if (o && o.getAttribute('aria-disabled') !== 'true') selActivate(selRoot(o), o, false);
+  });
   document.addEventListener('mouseover', drOnHover);
   document.addEventListener('mouseover', (e) => {
     const sub = e.target.closest && e.target.closest('.ntn-menu__sub');

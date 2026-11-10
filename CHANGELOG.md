@@ -6,6 +6,66 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+### Added
+- **Enhanced select (`data-ntn-select` on `.ntn-select`).** `nocturne.js` draws a trigger and a
+  listbox panel over the native `<select>`, which stays in the form: it posts, fires `input` and
+  `change`, honours `form.reset()`, and shows the browser's `required` message under the trigger.
+  The control becomes an `ntn-dropdown`, so the panel opens in the top layer and the dropdown code
+  handles Escape, focus return, outside clicks, Tab-out and repositioning. The panel covers the
+  trigger: right edges aligned, its top 4px above, flipping to sit with its bottom 4px below the
+  trigger near the viewport's bottom (`placeFixed` gains the `over-end` placement). Keys: `↑↓`
+  wrap and skip disabled options, `home/end`, `↵`, `esc`, `tab`, and type-to-jump, with
+  `aria-activedescendant` on the list or the search box. `data-ntn-search` adds a filter box and
+  `data-ntn-empty` its empty state. `<select multiple>` toggles and stays open (the trigger joins
+  the labels, or shows `data-ntn-placeholder`); `<optgroup>` becomes a labelled group, and a
+  disabled group's options can't be picked. The trigger is named by the label and the value, and
+  takes the select's `aria-describedby` and `aria-invalid`. The panel has 12px corners, 32px rows
+  whose highlight is inset 4px with 8px corners, a filled tick (a mask, so no icon font is
+  needed), and grows out of the trigger's corner in 120ms (`ntn-pop`, a fade only under reduced
+  motion).
+- Picker tokens for its panel: `--ntn-picker-bg`, `-border`, `-divider`, `-text`, `-placeholder`,
+  `-empty`, `-option`, `-option-active`, `-tick`, `-scrollbar`, and `--ntn-shadow-picker`. Dark
+  values are exact; the light estimates join the face's block in `_theme-light.scss`. Mono and
+  synthwave set them in both modes.
+- Without the script, a `<select multiple>` in `.ntn-select` is the platform's list box (it grows,
+  no chevron) instead of a one-row control.
+- A native select's own list takes the enhanced panel's colours: options and optgroups on
+  `--ntn-picker-bg` in `--ntn-picker-option` ink, group headings in the caps-label grey, disabled
+  options in `--ntn-picker-empty`. Before, an `<optgroup>` painted the browser's white in dark
+  mode. A multiple select's rows keep the face's fill.
+- Kitchen sink: the Select section shows the enhanced, searchable, inline, multiple and
+  grouped selects (the last two native and enhanced), and a new **Form controls in both themes**
+  section puts a dark and a light panel side by side.
+- `scrollIntoList()` and `stepTo()` are shared by the combo and the select.
+
+### Changed
+- **Raised control faces.** Field, select, search, the combobox and date triggers, the toggle
+  group and the segmented radio drop the bordered bevel for a raised face (the `control-surface`
+  mixin): a translucent fill one small step above whatever surface it sits on (`--ntn-face-bg`;
+  over `#1A1A1B` it is exactly `lch(13.861 1.139 272)`, the measured value, and on Nocturne's
+  darker cards the step, and so the ring, still reads), a transparent 1px border (drawn in
+  forced-colours mode, and coloured by invalid), and a translucent 1px ring with a tight drop
+  (`--ntn-shadow-face`). Hover lifts the fill and brightens the ring (`--ntn-face-bg-hover`,
+  `--ntn-shadow-face-hover`) instead of colouring the border, and skips disabled controls. Text in
+  a face is `--ntn-face-text` at weight 450 (`--ntn-weight-book`, new), with
+  `--ntn-face-placeholder` placeholders, `--ntn-face-muted` icons and chevrons, and an accent
+  caret. The light values are estimates, kept together at the end of `_theme-light.scss` (mostly
+  aliases of the light ramp, so themes' light modes follow).
+- **Field-style faces are 4px shorter than a button of the same size** (`face-height`: 30px
+  beside a 34px button, 24px in compact density): field, select, search, combobox and date
+  triggers. The select's chevron is a small filled shape (9 × 5, a mask) 10px from the edge.
+- **Focus on a face.** Typing in a field, search or native select draws an accent hairline with a
+  faint halo (`--ntn-ring-face-focus`: 1px at 80%, 3px at 22%) and settles the fill; a select,
+  combobox or date trigger reached by keyboard keeps its hover face inside a wider halo
+  (`--ntn-ring-face-keyboard`, 3px at 40%). Both follow the accent, so themes recolour them.
+- A disabled field is only the 45% fade (no `surface-1` fill). The textarea pads 7px 10px with an
+  18px line. The select pads `0 28px 0 10px`. A selected segment sits on `--ntn-face-bg-hover`,
+  and segment dividers are the 8% ink hairline. `chevron()` takes a colour.
+- `themes/mono.css` sets the face in grey (a white fill, no tint), and `themes/synthwave.css`
+  takes its text greys from its ramp; the translucent fill picks up its purple surfaces.
+- Tests: the one-control-face guard checks the raised face, no face colours its border on hover,
+  every face token has a light value, and the mono guard reads `lch()` colours.
+
 ### Kitchen sink
 - **Every block is shown.** A Layout section (page head, `ntn-grid --2/3/4/split/split-reverse`,
   `ntn-row --between/--end`, `ntn-stack`, the text helpers and dividers, `ntn-divider-label`), and

@@ -17,6 +17,8 @@
 
   --ntn-weight-light:    300;
   --ntn-weight-regular:  400;
+  /* Typed text and values in a control face: a touch above regular */
+  --ntn-weight-book:     450;
   /* Off-grid stops on Inter's variable weight axis: a touch heavier than 500 / 600
      so medium labels and semibold titles hold up on dark grounds. */
   --ntn-weight-medium:   510;

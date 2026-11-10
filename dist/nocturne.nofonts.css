@@ -72,6 +72,29 @@
   --ntn-alpha-ink-10: rgba(255,255,255,0.10);
   /* A per-person avatar (--ntn-avatar-hue): the OKLCH lightness its gradient starts from */
   --ntn-avatar-lightness: 0.78;
+  /* The raised control face (control-surface): field, select, search, combo and date triggers,
+     segmented controls. Measured values, kept exact as lch(); the light estimates live in one
+     block at the end of _theme-light.scss. The ring and drop are --ntn-shadow-face.
+     The fill is translucent, so the face keeps the same small step above any surface (and the
+     ring stays brighter than the fill): over lch(9.232 0.85 272), #1A1A1B, the surface it was
+     measured on, these give exactly lch(13.861 1.139 272) and lch(18.49 1.525 272). */
+  --ntn-face-bg: rgba(226,226,248,0.047);
+  --ntn-face-bg-hover: rgba(221,232,244,0.094);
+  --ntn-face-text: lch(90.826 1.425 272);
+  --ntn-face-muted: lch(63.304 1.425 272); /* chevron, leading icon */
+  --ntn-face-placeholder: lch(52 1.425 272);
+  /* The select's listbox panel (data-ntn-select), measured like the face. Its drop is
+     --ntn-shadow-picker. */
+  --ntn-picker-bg: lch(12.72 0.85 272);
+  --ntn-picker-border: lch(21.36 1.93 272);
+  --ntn-picker-divider: lch(17.04 1.93 272); /* under the search box */
+  --ntn-picker-text: lch(91.178 1.425 272); /* typed search text */
+  --ntn-picker-placeholder: lch(64.714 1.425 272);
+  --ntn-picker-empty: lch(41.778 1.425 272);
+  --ntn-picker-option: lch(91.554 1.65 272);
+  --ntn-picker-option-active: lch(25.69 1.975 272);
+  --ntn-picker-tick: lch(66.215 1.65 272);
+  --ntn-picker-scrollbar: lch(30 2 272);
 }
 
 :root {
@@ -202,6 +225,8 @@
   --ntn-leading-loose: 1.65;
   --ntn-weight-light: 300;
   --ntn-weight-regular: 400;
+  /* Typed text and values in a control face: a touch above regular */
+  --ntn-weight-book: 450;
   /* Off-grid stops on Inter's variable weight axis: a touch heavier than 500 / 600
      so medium labels and semibold titles hold up on dark grounds. */
   --ntn-weight-medium: 510;
@@ -266,9 +291,15 @@
   --ntn-shadow-well: 0 0 0 2px rgba(0,0,0,0.2);
   --ntn-shadow-float: 0 2px 6px rgba(0,0,0,0.5);
   --ntn-shadow-inset: inset 0 1px 2px rgba(0,0,0,0.4);
-  /* The bevel of a control face (button, field, select, toggle group): a lit
-     top inside the border, a dark ring outside it and a short drop. */
+  /* The bevel of a button face: a lit top inside the border, a dark ring outside it and a
+     short drop. */
   --ntn-shadow-bevel: inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 1px rgba(0,0,0,0.5), 0 4px 4px rgba(0,0,0,0.1);
+  /* The raised control face (control-surface): a translucent ink ring just outside the border
+     and a short, tight drop. Brighter under the pointer. Light values: _theme-light.scss. */
+  --ntn-shadow-face: 0 0 0 1px rgba(255,255,255,0.095), 0 0.5px 1px 1px rgba(0,0,0,0.3);
+  --ntn-shadow-face-hover: 0 0 0 1px rgba(255,255,255,0.119), 0 0.5px 1px 1px rgba(0,0,0,0.3);
+  /* The select's listbox panel: three short, even drops */
+  --ntn-shadow-picker: 0 3px 8px rgba(0,0,0,0.125), 0 2px 5px rgba(0,0,0,0.125), 0 1px 1px rgba(0,0,0,0.125);
   /* Glass (_glass.scss): a lit top hairline and a wide soft drop; the strength of an app's
      ambient image */
   --ntn-glass-highlight: inset 0 1px 0 rgba(255,255,255,0.06);
@@ -295,6 +326,11 @@
      with an accent border instead. */
   --ntn-focus-outline: 3px solid var(--ntn-focus-ring);
   --ntn-ring-focus: 0 0 0 3px var(--ntn-focus-ring);
+  /* A raised control face with focus: typing (an accent hairline and a faint halo), and a
+     button-style trigger reached by keyboard (a wider halo outside its hover ring). */
+  --ntn-ring-face-focus: 0 0 0 1px color-mix(in srgb, var(--ntn-accent-500) 80%, transparent),
+                            0 0 0 3px color-mix(in srgb, var(--ntn-accent-500) 22%, transparent);
+  --ntn-ring-face-keyboard: 0 0 0 3px color-mix(in srgb, var(--ntn-accent-500) 40%, transparent);
   /* The lit top edge of a filled accent control */
   --ntn-highlight-top: inset 0 1px 0 rgba(255,255,255,0.22);
   /* The colour a shine light fades through */
@@ -442,6 +478,28 @@
   --ntn-shine-head: var(--ntn-accent-400);
   --ntn-shine-glow: 0.2;
   --ntn-scrim: rgba(0,0,0,0.42);
+  /* ── Raised controls and the select picker: estimated, tune here ───────────
+     Every light value of the control face and the select's panel lives in this block. The dark values are measured
+     and stay where they are (_colors.scss, _elevation.scss). Aliases of the light ramp follow a
+     theme's light mode by themselves; swap one for a literal to tune it. */
+  --ntn-face-bg: var(--ntn-n-0);
+  --ntn-face-bg-hover: var(--ntn-n-100);
+  --ntn-face-text: var(--ntn-n-900);
+  --ntn-face-muted: var(--ntn-n-700);
+  --ntn-face-placeholder: var(--ntn-n-600);
+  --ntn-shadow-face: 0 0 0 1px rgba(0,0,0,0.10), 0 0.5px 1px 0 rgba(0,0,0,0.08);
+  --ntn-shadow-face-hover: 0 0 0 1px rgba(0,0,0,0.15), 0 0.5px 1px 0 rgba(0,0,0,0.08);
+  --ntn-picker-bg: var(--ntn-n-0);
+  --ntn-picker-border: var(--ntn-n-400);
+  --ntn-picker-divider: var(--ntn-n-200);
+  --ntn-picker-text: var(--ntn-n-900);
+  --ntn-picker-placeholder: var(--ntn-n-600);
+  --ntn-picker-empty: var(--ntn-n-600);
+  --ntn-picker-option: var(--ntn-n-900);
+  --ntn-picker-option-active: var(--ntn-n-200);
+  --ntn-picker-tick: var(--ntn-n-700);
+  --ntn-picker-scrollbar: var(--ntn-n-400);
+  --ntn-shadow-picker: 0 3px 8px rgba(0,0,0,0.07), 0 2px 5px rgba(0,0,0,0.07), 0 1px 1px rgba(0,0,0,0.07);
 }
 
 /* ── Nocturne density ────────────────────────────────────────────────────────
@@ -604,6 +662,17 @@ i:is([class*=fa-], [data-icon], :empty) {
     transform: none;
   }
 }
+/* The select's panel: it grows out of the corner it is anchored to (its transform-origin). */
+@keyframes ntn-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 @keyframes ntn-shimmer {
   from {
     background-position: -200% 0;
@@ -617,6 +686,14 @@ i:is([class*=fa-], [data-icon], :empty) {
    while its media query matches. */
 @media (prefers-reduced-motion: reduce) {
   @keyframes ntn-rise {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes ntn-pop {
     from {
       opacity: 0;
     }
@@ -1132,10 +1209,10 @@ i:is([class*=fa-], [data-icon], :empty) {
   display: inline-flex;
   align-items: center;
   flex: 0 0 auto;
-  background: var(--ntn-surface-2);
-  border: 1px solid var(--ntn-border-default);
+  background: var(--ntn-face-bg);
+  border: 1px solid transparent;
   border-radius: var(--ntn-radius-md);
-  box-shadow: var(--ntn-shadow-bevel);
+  box-shadow: var(--ntn-shadow-face);
 }
 .ntn-toggle-group__btn {
   display: inline-flex;
@@ -1152,7 +1229,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   gap: 6px;
   height: max(var(--ntn-target-min), var(--ntn-control-md) - 2px);
   padding: 0 var(--ntn-space-3);
-  border-left: 1px solid var(--ntn-border-subtle);
+  border-left: 1px solid var(--ntn-edge-line-strong);
   color: var(--ntn-text-muted);
   transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard);
 }
@@ -1171,7 +1248,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   color: var(--ntn-text-secondary);
 }
 .ntn-toggle-group__btn[aria-pressed=true] {
-  background: var(--ntn-surface-3);
+  background: var(--ntn-face-bg-hover);
   color: var(--ntn-text-primary);
 }
 .ntn-toggle-group__btn[aria-pressed=true] i {
@@ -1269,17 +1346,17 @@ i:is([class*=fa-], [data-icon], :empty) {
   display: flex;
   align-items: center;
   gap: var(--ntn-space-2);
-  height: var(--ntn-control-md);
+  height: max(var(--ntn-target-min), var(--ntn-control-md) - 4px);
   padding: 0 10px;
-  background: var(--ntn-surface-2);
-  border: 1px solid var(--ntn-border-default);
+  background: var(--ntn-face-bg);
+  border: 1px solid transparent;
   border-radius: var(--ntn-radius-md);
-  box-shadow: var(--ntn-shadow-bevel);
-  transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
+  box-shadow: var(--ntn-shadow-face);
+  transition: background-color var(--ntn-dur-fast) var(--ntn-ease-standard), border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
 }
 .ntn-field__control i {
-  font-size: 16px;
-  color: var(--ntn-text-muted);
+  font-size: 14px;
+  color: var(--ntn-face-muted);
   flex: 0 0 auto;
 }
 .ntn-field__control input, .ntn-field__control textarea {
@@ -1290,17 +1367,24 @@ i:is([class*=fa-], [data-icon], :empty) {
   background: transparent;
   box-shadow: none;
   padding: 0;
-  color: var(--ntn-text-primary);
+  color: var(--ntn-face-text);
+  caret-color: var(--ntn-accent-500);
   font-family: var(--ntn-font-sans);
   font-size: var(--ntn-font-size-sm);
+  font-weight: var(--ntn-weight-book);
   letter-spacing: var(--ntn-tracking-body);
 }
 .ntn-field__control input::placeholder, .ntn-field__control textarea::placeholder {
-  color: var(--ntn-text-disabled);
+  color: var(--ntn-face-placeholder);
+  opacity: 1;
+}
+.ntn-field__control:hover:where(:not(:has(:disabled))) {
+  background: var(--ntn-face-bg-hover);
+  box-shadow: var(--ntn-shadow-face-hover);
 }
 .ntn-field__control:focus-within {
-  border-color: var(--ntn-accent-500);
-  box-shadow: var(--ntn-ring-focus);
+  background: var(--ntn-face-bg);
+  box-shadow: var(--ntn-ring-face-focus);
 }
 @media (forced-colors: active) {
   .ntn-field__control:focus-within {
@@ -1345,14 +1429,14 @@ i:is([class*=fa-], [data-icon], :empty) {
   color: var(--ntn-danger-400);
 }
 .ntn-field--sm .ntn-field__control {
-  height: var(--ntn-control-sm);
+  height: max(var(--ntn-target-min), var(--ntn-control-sm) - 4px);
   padding: 0 var(--ntn-space-2);
 }
 .ntn-field--sm .ntn-field__control input {
   font-size: var(--ntn-font-size-xs);
 }
 .ntn-field--lg .ntn-field__control {
-  height: var(--ntn-control-lg);
+  height: max(var(--ntn-target-min), var(--ntn-control-lg) - 4px);
   padding: 0 var(--ntn-space-3);
 }
 .ntn-field--lg .ntn-field__control input {
@@ -1360,13 +1444,13 @@ i:is([class*=fa-], [data-icon], :empty) {
 }
 .ntn-field--textarea .ntn-field__control {
   height: auto;
-  padding: 10px;
+  padding: 7px 10px;
   align-items: flex-start;
 }
 .ntn-field--textarea textarea {
   resize: vertical;
-  min-height: 78px;
-  line-height: var(--ntn-leading-normal);
+  min-height: 62px;
+  line-height: 18px;
 }
 .ntn-field:is([data-invalid], :has([aria-invalid=true])) .ntn-field__control {
   border-color: var(--ntn-danger-500);
@@ -1376,7 +1460,6 @@ i:is([class*=fa-], [data-icon], :empty) {
   color: var(--ntn-danger-400);
 }
 .ntn-field:has(input:disabled, textarea:disabled) .ntn-field__control {
-  background: var(--ntn-surface-1);
   opacity: var(--ntn-disabled-opacity);
   cursor: not-allowed;
 }
@@ -1400,35 +1483,41 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-select__control::after {
   content: "";
   position: absolute;
-  right: 12px;
+  top: 50%;
+  right: 10px;
+  width: 9px;
+  height: 5px;
+  margin-top: -2px;
   pointer-events: none;
-  width: 8px;
-  height: 8px;
-  border-right: 1.5px solid var(--ntn-text-muted);
-  border-bottom: 1.5px solid var(--ntn-text-muted);
-  transform: translateY(-2px) rotate(45deg);
+  background: var(--ntn-face-muted);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 5'%3E%3Cpath d='M1.915.557a.667.667 0 0 0-.943.943l2.862 2.862a.942.942 0 0 0 1.333 0L8.028 1.5a.667.667 0 0 0-.943-.943L4.5 3.14 1.915.557Z'/%3E%3C/svg%3E") no-repeat center/9px 5px;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 5'%3E%3Cpath d='M1.915.557a.667.667 0 0 0-.943.943l2.862 2.862a.942.942 0 0 0 1.333 0L8.028 1.5a.667.667 0 0 0-.943-.943L4.5 3.14 1.915.557Z'/%3E%3C/svg%3E") no-repeat center/9px 5px;
 }
 .ntn-select__control select {
   appearance: none;
   -webkit-appearance: none;
   width: 100%;
-  height: var(--ntn-control-md);
-  padding: 0 var(--ntn-space-8) 0 var(--ntn-space-3);
-  color: var(--ntn-text-primary);
-  background: var(--ntn-surface-2);
-  border: 1px solid var(--ntn-border-default);
+  height: max(var(--ntn-target-min), var(--ntn-control-md) - 4px);
+  padding: 0 28px 0 10px;
+  color: var(--ntn-face-text);
+  background: var(--ntn-face-bg);
+  border: 1px solid transparent;
   border-radius: var(--ntn-radius-md);
-  box-shadow: var(--ntn-shadow-bevel);
+  box-shadow: var(--ntn-shadow-face);
   font-family: var(--ntn-font-sans);
   font-size: var(--ntn-font-size-sm);
-  font-weight: var(--ntn-weight-medium);
+  font-weight: var(--ntn-weight-book);
   cursor: pointer;
-  transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
+  transition: background-color var(--ntn-dur-fast) var(--ntn-ease-standard), border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
+}
+.ntn-select__control select:hover:where(:not(:disabled, [aria-disabled=true])) {
+  background: var(--ntn-face-bg-hover);
+  box-shadow: var(--ntn-shadow-face-hover);
 }
 .ntn-select__control select:focus-visible {
   outline: 0;
-  border-color: var(--ntn-accent-500);
-  box-shadow: var(--ntn-ring-focus);
+  background: var(--ntn-face-bg);
+  box-shadow: var(--ntn-ring-face-focus);
 }
 @media (forced-colors: active) {
   .ntn-select__control select:focus-visible {
@@ -1439,9 +1528,211 @@ i:is([class*=fa-], [data-icon], :empty) {
   opacity: var(--ntn-disabled-opacity);
   cursor: not-allowed;
 }
-.ntn-select__control option {
-  background: var(--ntn-surface-2);
-  color: var(--ntn-text-primary);
+.ntn-select__control select[multiple] {
+  height: auto;
+  padding: 4px;
+}
+.ntn-select__control:not([data-ntn-dropdown]):has(> select[multiple])::after {
+  content: none;
+}
+.ntn-select__control select option, .ntn-select__control select optgroup {
+  background: var(--ntn-picker-bg);
+  color: var(--ntn-picker-option);
+}
+.ntn-select__control select optgroup {
+  color: var(--ntn-text-disabled);
+}
+.ntn-select__control select option:disabled {
+  color: var(--ntn-picker-empty);
+}
+.ntn-select__control select[multiple] option, .ntn-select__control select[multiple] optgroup {
+  background: transparent;
+}
+.ntn-select__control select[multiple] option:not(:disabled) {
+  color: var(--ntn-face-text);
+}
+.ntn-select__control[data-ntn-dropdown] > select {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+.ntn-select {
+  /* ── Enhanced select: the trigger, and its listbox panel ── */
+}
+.ntn-select__trigger {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 32px;
+  margin: 0;
+  height: max(var(--ntn-target-min), var(--ntn-control-md) - 4px);
+  padding: 0 28px 0 10px;
+  background: var(--ntn-face-bg);
+  border: 1px solid transparent;
+  border-radius: var(--ntn-radius-md);
+  box-shadow: var(--ntn-shadow-face);
+  color: var(--ntn-face-text);
+  font-family: var(--ntn-font-sans);
+  font-size: var(--ntn-font-size-sm);
+  font-weight: var(--ntn-weight-medium);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--ntn-dur-fast) var(--ntn-ease-standard), border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
+}
+.ntn-select__trigger:hover:where(:not(:disabled, [aria-disabled=true])) {
+  background: var(--ntn-face-bg-hover);
+  box-shadow: var(--ntn-shadow-face-hover);
+}
+.ntn-select__trigger[aria-expanded=true] {
+  background: var(--ntn-face-bg-hover);
+  box-shadow: var(--ntn-shadow-face-hover);
+}
+.ntn-select__trigger:focus-visible {
+  outline: 0;
+  box-shadow: var(--ntn-shadow-face-hover), var(--ntn-ring-face-keyboard);
+}
+@media (forced-colors: active) {
+  .ntn-select__trigger:focus-visible {
+    outline: 2px solid Highlight;
+  }
+}
+.ntn-select__trigger:disabled {
+  opacity: var(--ntn-disabled-opacity);
+  cursor: not-allowed;
+}
+.ntn-select__value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--ntn-weight-book);
+}
+.ntn-select__value[data-empty] {
+  color: var(--ntn-face-muted);
+}
+.ntn-select__panel {
+  position: fixed;
+  inset: auto;
+  z-index: var(--ntn-z-dropdown);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 204px;
+  max-width: min(500px, 100vw - 16px);
+  overflow: visible;
+  background: var(--ntn-picker-bg);
+  border: 1px solid var(--ntn-picker-border);
+  border-radius: 12px;
+  box-shadow: var(--ntn-shadow-picker);
+  color: var(--ntn-picker-text);
+  font-family: var(--ntn-font-sans);
+  font-size: var(--ntn-font-size-sm);
+  line-height: var(--ntn-leading-normal);
+  transform-origin: top right;
+  animation: ntn-pop 120ms var(--ntn-ease-standard);
+  backdrop-filter: var(--ntn-pop-filter);
+}
+.ntn-select__panel[data-ntn-side=top] {
+  transform-origin: bottom right;
+}
+.ntn-select__panel[popover]:not(:popover-open) {
+  display: none;
+}
+.ntn-select__search {
+  display: block;
+  width: 100%;
+  height: calc(var(--ntn-control-md) + 2px);
+  margin: 0;
+  padding: 0 12px 0 14px;
+  border: 0;
+  border-bottom: 1px solid var(--ntn-picker-divider);
+  border-radius: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ntn-picker-text);
+  caret-color: var(--ntn-accent-500);
+  font-family: var(--ntn-font-sans);
+  font-size: var(--ntn-font-size-sm);
+}
+.ntn-select__search::placeholder {
+  color: var(--ntn-picker-placeholder);
+  opacity: 1;
+}
+.ntn-select__list {
+  position: relative;
+  padding: 4px 0;
+  max-height: 320px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ntn-picker-scrollbar) transparent;
+}
+.ntn-select__list:focus {
+  outline: 0;
+}
+.ntn-select__option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: max(var(--ntn-target-min), var(--ntn-control-md) - 2px);
+  padding: 0 35px 0 12px;
+  color: var(--ntn-picker-option);
+  cursor: pointer;
+  user-select: none;
+}
+.ntn-select__option::before {
+  content: "";
+  position: absolute;
+  inset: 0 4px;
+  border-radius: var(--ntn-radius-md);
+}
+.ntn-select__option[data-ntn-active]::before {
+  background: var(--ntn-picker-option-active);
+}
+.ntn-select__option[aria-disabled=true] {
+  opacity: var(--ntn-disabled-opacity);
+  cursor: not-allowed;
+}
+.ntn-select__text {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ntn-select__tick {
+  position: absolute;
+  right: 8px;
+  width: 25px;
+  height: 16px;
+  background: var(--ntn-picker-tick);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.2996 7.23968C4.01775 6.93614 3.5432 6.91857 3.23966 7.20042C2.93613 7.48227 2.91856 7.95682 3.20041 8.26035L6.45041 11.7603C6.7612 12.095 7.29647 12.0766 7.58346 11.7212L12.8335 5.22127C13.0937 4.89904 13.0435 4.42683 12.7213 4.16657C12.399 3.9063 11.9268 3.95654 11.6665 4.27877L6.96051 10.1053L4.2996 7.23968Z'/%3E%3C/svg%3E") no-repeat center/16px 16px;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.2996 7.23968C4.01775 6.93614 3.5432 6.91857 3.23966 7.20042C2.93613 7.48227 2.91856 7.95682 3.20041 8.26035L6.45041 11.7603C6.7612 12.095 7.29647 12.0766 7.58346 11.7212L12.8335 5.22127C13.0937 4.89904 13.0435 4.42683 12.7213 4.16657C12.399 3.9063 11.9268 3.95654 11.6665 4.27877L6.96051 10.1053L4.2996 7.23968Z'/%3E%3C/svg%3E") no-repeat center/16px 16px;
+}
+.ntn-select__option[aria-selected=false] .ntn-select__tick {
+  display: none;
+}
+.ntn-select__group {
+  margin: 0;
+  padding: 8px 12px 4px;
+  font-size: var(--ntn-font-size-2xs);
+  font-weight: var(--ntn-weight-medium);
+  letter-spacing: var(--ntn-tracking-caps);
+  text-transform: uppercase;
+  color: var(--ntn-text-disabled);
+}
+.ntn-select__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 42px;
+  margin: 0;
+  padding: 2px 14px 4px;
+  color: var(--ntn-picker-empty);
 }
 .ntn-select__hint {
   font-size: var(--ntn-font-size-xs);
@@ -1451,20 +1742,20 @@ i:is([class*=fa-], [data-icon], :empty) {
   font-size: var(--ntn-font-size-xs);
   color: var(--ntn-danger-400);
 }
-.ntn-select:is([data-invalid], :has([aria-invalid=true])) .ntn-select__control select {
+.ntn-select:is([data-invalid], :has([aria-invalid=true])) .ntn-select__control select, .ntn-select:is([data-invalid], :has([aria-invalid=true])) .ntn-select__trigger {
   border-color: var(--ntn-danger-500);
   box-shadow: 0 0 0 3px var(--ntn-danger-soft);
 }
 .ntn-select:is([data-invalid], :has([aria-invalid=true])) .ntn-select__hint {
   color: var(--ntn-danger-400);
 }
-.ntn-select--sm .ntn-select__control select {
-  height: var(--ntn-control-sm);
+.ntn-select--sm .ntn-select__control select, .ntn-select--sm .ntn-select__trigger {
+  height: max(var(--ntn-target-min), var(--ntn-control-sm) - 4px);
   font-size: var(--ntn-font-size-xs);
   padding: 0 28px 0 10px;
 }
-.ntn-select--lg .ntn-select__control select {
-  height: var(--ntn-control-lg);
+.ntn-select--lg .ntn-select__control select, .ntn-select--lg .ntn-select__trigger {
+  height: max(var(--ntn-target-min), var(--ntn-control-lg) - 4px);
   font-size: var(--ntn-font-size-md);
   padding: 0 34px 0 14px;
 }
@@ -1480,8 +1771,11 @@ i:is([class*=fa-], [data-icon], :empty) {
   color: var(--ntn-text-muted);
   font-weight: var(--ntn-weight-regular);
 }
-.ntn-select--inline .ntn-select__control select {
+.ntn-select--inline .ntn-select__control select, .ntn-select--inline .ntn-select__trigger {
   width: auto;
+}
+.ntn-select--inline .ntn-select__trigger {
+  max-width: 280px;
 }
 
 /* Menu and combobox live in components/_menu.scss. */
@@ -1566,17 +1860,17 @@ i:is([class*=fa-], [data-icon], :empty) {
   align-items: center;
   gap: 9px;
   width: 100%;
-  height: var(--ntn-control-md);
-  padding: 0 var(--ntn-space-3);
-  background: var(--ntn-surface-2);
-  border: 1px solid var(--ntn-border-default);
+  height: max(var(--ntn-target-min), var(--ntn-control-md) - 4px);
+  padding: 0 10px;
+  background: var(--ntn-face-bg);
+  border: 1px solid transparent;
   border-radius: var(--ntn-radius-md);
-  box-shadow: var(--ntn-shadow-bevel);
-  transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
+  box-shadow: var(--ntn-shadow-face);
+  transition: background-color var(--ntn-dur-fast) var(--ntn-ease-standard), border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
 }
 .ntn-search i {
-  font-size: 15px;
-  color: var(--ntn-text-muted);
+  font-size: 14px;
+  color: var(--ntn-face-muted);
   flex: 0 0 auto;
 }
 .ntn-search input {
@@ -1586,16 +1880,23 @@ i:is([class*=fa-], [data-icon], :empty) {
   outline: 0;
   background: transparent;
   box-shadow: none;
-  color: var(--ntn-text-primary);
+  color: var(--ntn-face-text);
+  caret-color: var(--ntn-accent-500);
   font-family: var(--ntn-font-sans);
   font-size: var(--ntn-font-size-sm);
+  font-weight: var(--ntn-weight-book);
 }
 .ntn-search input::placeholder {
-  color: var(--ntn-text-disabled);
+  color: var(--ntn-face-placeholder);
+  opacity: 1;
+}
+.ntn-search:hover:where(:not(:has(:disabled))) {
+  background: var(--ntn-face-bg-hover);
+  box-shadow: var(--ntn-shadow-face-hover);
 }
 .ntn-search:focus-within {
-  border-color: var(--ntn-accent-500);
-  box-shadow: var(--ntn-ring-focus);
+  background: var(--ntn-face-bg);
+  box-shadow: var(--ntn-ring-face-focus);
 }
 @media (forced-colors: active) {
   .ntn-search:focus-within {
@@ -1625,10 +1926,10 @@ i:is([class*=fa-], [data-icon], :empty) {
   animation: ntn-spin 700ms linear infinite;
 }
 .ntn-search--sm {
-  height: var(--ntn-control-sm);
+  height: max(var(--ntn-target-min), var(--ntn-control-sm) - 4px);
 }
 .ntn-search--lg {
-  height: var(--ntn-control-lg);
+  height: max(var(--ntn-target-min), var(--ntn-control-lg) - 4px);
 }
 
 /* ── Menu, submenu, combobox, dropdown, popover ─────────────────────────────
@@ -1821,30 +2122,34 @@ i:is([class*=fa-], [data-icon], :empty) {
   align-items: center;
   gap: var(--ntn-space-2);
   width: 100%;
-  min-height: var(--ntn-control-md);
-  padding: var(--ntn-control-pad-y) 10px var(--ntn-control-pad-y) 12px;
-  background: var(--ntn-surface-2);
-  border: 1px solid var(--ntn-border-default);
+  min-height: max(var(--ntn-target-min), var(--ntn-control-md) - 4px);
+  padding: calc(var(--ntn-control-pad-y) - 2px) 10px calc(var(--ntn-control-pad-y) - 2px) 10px;
+  background: var(--ntn-face-bg);
+  border: 1px solid transparent;
   border-radius: var(--ntn-radius-md);
-  box-shadow: var(--ntn-shadow-bevel);
-  color: var(--ntn-text-primary);
+  box-shadow: var(--ntn-shadow-face);
+  color: var(--ntn-face-text);
   font-family: var(--ntn-font-sans);
   font-size: var(--ntn-font-size-sm);
   font-weight: var(--ntn-weight-medium);
   text-align: left;
   cursor: pointer;
-  transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
+  transition: background-color var(--ntn-dur-fast) var(--ntn-ease-standard), border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
 }
 .ntn-combo__trigger:hover:where(:not(:disabled, [aria-disabled=true])) {
-  border-color: var(--ntn-border-strong);
+  background: var(--ntn-face-bg-hover);
+  box-shadow: var(--ntn-shadow-face-hover);
 }
-.ntn-combo__trigger:focus-visible, .ntn-combo__trigger[aria-expanded=true] {
+.ntn-combo__trigger[aria-expanded=true] {
+  background: var(--ntn-face-bg-hover);
+  box-shadow: var(--ntn-shadow-face-hover);
+}
+.ntn-combo__trigger:focus-visible {
   outline: 0;
-  border-color: var(--ntn-accent-500);
-  box-shadow: var(--ntn-ring-focus);
+  box-shadow: var(--ntn-shadow-face-hover), var(--ntn-ring-face-keyboard);
 }
 @media (forced-colors: active) {
-  .ntn-combo__trigger:focus-visible, .ntn-combo__trigger[aria-expanded=true] {
+  .ntn-combo__trigger:focus-visible {
     outline: 2px solid Highlight;
   }
 }
@@ -1867,13 +2172,13 @@ i:is([class*=fa-], [data-icon], :empty) {
   white-space: nowrap;
 }
 .ntn-combo__value[data-empty] {
-  color: var(--ntn-text-disabled);
+  color: var(--ntn-face-placeholder);
   font-weight: var(--ntn-weight-regular);
 }
 .ntn-combo__caret {
   flex: 0 0 auto;
   font-size: 12px;
-  color: var(--ntn-text-muted);
+  color: var(--ntn-face-muted);
   transition: transform var(--ntn-dur-fast) var(--ntn-ease-out);
 }
 .ntn-combo__trigger[aria-expanded=true] .ntn-combo__caret {
@@ -2082,12 +2387,12 @@ i:is([class*=fa-], [data-icon], :empty) {
   color: var(--ntn-text-muted);
 }
 .ntn-combo--sm .ntn-combo__trigger {
-  min-height: var(--ntn-control-sm);
+  min-height: max(var(--ntn-target-min), var(--ntn-control-sm) - 4px);
   font-size: var(--ntn-font-size-xs);
   padding: calc(var(--ntn-control-pad-y) - 1px) 8px calc(var(--ntn-control-pad-y) - 1px) 10px;
 }
 .ntn-combo--lg .ntn-combo__trigger {
-  min-height: var(--ntn-control-lg);
+  min-height: max(var(--ntn-target-min), var(--ntn-control-lg) - 4px);
   font-size: var(--ntn-font-size-md);
 }
 .ntn-combo--inline {
@@ -2128,35 +2433,39 @@ i:is([class*=fa-], [data-icon], :empty) {
   display: inline-flex;
   align-items: center;
   gap: var(--ntn-space-2);
-  height: var(--ntn-control-md);
+  height: max(var(--ntn-target-min), var(--ntn-control-md) - 4px);
   padding: 0 10px;
   min-width: 232px;
-  background: var(--ntn-surface-2);
-  border: 1px solid var(--ntn-border-default);
+  background: var(--ntn-face-bg);
+  border: 1px solid transparent;
   border-radius: var(--ntn-radius-md);
-  box-shadow: var(--ntn-shadow-bevel);
+  box-shadow: var(--ntn-shadow-face);
   cursor: pointer;
-  color: var(--ntn-text-primary);
+  color: var(--ntn-face-text);
   font-family: var(--ntn-font-sans);
   font-size: var(--ntn-font-size-sm);
   text-align: left;
-  transition: border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
+  transition: background-color var(--ntn-dur-fast) var(--ntn-ease-standard), border-color var(--ntn-dur-fast) var(--ntn-ease-standard), box-shadow var(--ntn-dur-fast) var(--ntn-ease-standard);
 }
 .ntn-daterange__trigger i {
   font-size: 15px;
-  color: var(--ntn-text-muted);
+  color: var(--ntn-face-muted);
   flex: 0 0 auto;
 }
-.ntn-daterange__trigger:hover {
-  border-color: var(--ntn-border-strong);
+.ntn-daterange__trigger:hover:where(:not(:disabled, [aria-disabled=true])) {
+  background: var(--ntn-face-bg-hover);
+  box-shadow: var(--ntn-shadow-face-hover);
 }
-.ntn-daterange__trigger:focus-visible, .ntn-daterange__trigger[aria-expanded=true] {
+.ntn-daterange__trigger[aria-expanded=true] {
+  background: var(--ntn-face-bg-hover);
+  box-shadow: var(--ntn-shadow-face-hover);
+}
+.ntn-daterange__trigger:focus-visible {
   outline: 0;
-  border-color: var(--ntn-accent-500);
-  box-shadow: var(--ntn-ring-focus);
+  box-shadow: var(--ntn-shadow-face-hover), var(--ntn-ring-face-keyboard);
 }
 @media (forced-colors: active) {
-  .ntn-daterange__trigger:focus-visible, .ntn-daterange__trigger[aria-expanded=true] {
+  .ntn-daterange__trigger:focus-visible {
     outline: 2px solid Highlight;
   }
 }
@@ -2169,7 +2478,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   font-variant-numeric: tabular-nums;
 }
 .ntn-daterange__value[data-empty] {
-  color: var(--ntn-text-disabled);
+  color: var(--ntn-face-placeholder);
 }
 .ntn-daterange__caret {
   margin-left: auto;
@@ -2178,7 +2487,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   font-size: 12px;
 }
 .ntn-daterange--sm .ntn-daterange__trigger {
-  height: var(--ntn-control-sm);
+  height: max(var(--ntn-target-min), var(--ntn-control-sm) - 4px);
   font-size: var(--ntn-font-size-xs);
   min-width: 200px;
 }
@@ -2735,10 +3044,10 @@ i:is([class*=fa-], [data-icon], :empty) {
   margin: 0;
   padding: 0;
   align-self: flex-start;
-  background: var(--ntn-surface-2);
-  border: 1px solid var(--ntn-border-default);
+  background: var(--ntn-face-bg);
+  border: 1px solid transparent;
   border-radius: var(--ntn-radius-md);
-  box-shadow: var(--ntn-shadow-bevel);
+  box-shadow: var(--ntn-shadow-face);
 }
 .ntn-radio-group--segmented > legend {
   position: absolute;
@@ -2757,7 +3066,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   gap: 6px;
   height: max(var(--ntn-target-min), var(--ntn-control-md) - 2px);
   padding: 0 var(--ntn-space-3);
-  border-left: 1px solid var(--ntn-border-subtle);
+  border-left: 1px solid var(--ntn-edge-line-strong);
   color: var(--ntn-text-muted);
   transition: background var(--ntn-dur-fast) var(--ntn-ease-standard), color var(--ntn-dur-fast) var(--ntn-ease-standard);
 }
@@ -2793,7 +3102,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   color: var(--ntn-text-secondary);
 }
 .ntn-radio-group--segmented .ntn-radio:has(input:checked) {
-  background: var(--ntn-surface-3);
+  background: var(--ntn-face-bg-hover);
   color: var(--ntn-text-primary);
 }
 .ntn-radio-group--segmented .ntn-radio:has(input:checked) i {
@@ -4557,7 +4866,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 /* The lit rim: every raised surface catches the light along its top edge. It is the host's
    ::after, so the shine (whose halos are the host's pseudo-elements) and the glow (which has
    its own accent edge) go without. */
-:is(.ntn-card, .ntn-stat, .ntn-accordion, .ntn-modal, .ntn-edge, .ntn-frame, .ntn-frame__view):not(.ntn-edge--shine, .ntn-edge--glow, .ntn-card--glow)::after {
+:is(.ntn-card, .ntn-stat, .ntn-accordion, .ntn-modal, .ntn-edge, .ntn-frame, .ntn-frame__view):not(.ntn-edge--shine)::after {
   content: "";
   position: absolute;
   inset: calc(-1 * var(--ntn-hairline));
@@ -4575,7 +4884,7 @@ i:is([class*=fa-], [data-icon], :empty) {
   position: relative;
   border-color: var(--ntn-accent-line);
   background-image: radial-gradient(120% 90% at 50% -25%, var(--ntn-accent-soft), transparent 62%);
-  box-shadow: 0 0 0 1px var(--ntn-accent-line), 0 0 26px -10px var(--ntn-accent-glow), 0 24px 60px -34px var(--ntn-accent-glow), var(--ntn-shadow-md);
+  box-shadow: inset 0 0 5px 0 var(--ntn-accent-line), 0 0 26px -10px var(--ntn-accent-glow), 0 24px 60px -34px var(--ntn-accent-glow), var(--ntn-shadow-md);
 }
 
 /* Processing — a light travels the edge while work is in flight, and an exterior

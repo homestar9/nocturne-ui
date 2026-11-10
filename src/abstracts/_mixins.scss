@@ -17,14 +17,14 @@
 }
 
 /// One segment of a segmented control (a toggle-group button, a segmented radio). The group is a
-/// control-surface; segments sit inside its 1px border, divided by a hairline, and the end segments
-/// round to fit. $first / $last select the end segments among their siblings. Include it after the
+/// control-surface; segments sit inside its 1px border, divided by an ink hairline (lighter than
+/// the raised fill in dark mode, darker in light), and the end segments round to fit. $first / $last select the end segments among their siblings. Include it after the
 /// segment's own declarations: its nested rules follow them.
 @mixin segment($first: ":first-child", $last: ":last-child") {
   $inner-radius: calc(var(--ntn-radius-md) - 1px);
   align-items: center; gap: 6px;
   height: max(var(--ntn-target-min), calc(var(--ntn-control-md) - 2px)); padding: 0 var(--ntn-space-3);
-  border-left: 1px solid var(--ntn-border-subtle); color: var(--ntn-text-muted);
+  border-left: 1px solid var(--ntn-edge-line-strong); color: var(--ntn-text-muted);
   @include transition(background, color);
 
   i { font-size: 14px; }
@@ -37,9 +37,9 @@
   background: var(--ntn-surface-hover); color: var(--ntn-text-secondary);
 }
 
-/// The chosen segment: raised to surface-3, its icon in the accent.
+/// The chosen segment: lifted to the face's hover fill, its icon in the accent.
 @mixin segment-selected {
-  background: var(--ntn-surface-3); color: var(--ntn-text-primary);
+  background: var(--ntn-face-bg-hover); color: var(--ntn-text-primary);
 
   i { color: var(--ntn-accent-300); }
 }
@@ -57,13 +57,48 @@
   background: var(--ntn-surface-3); border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-md);
 }
 
-/// The bordered, raised face of a form control: field, select, search, combobox, date trigger,
-/// toggle group, segmented radio. Bevelled like a button.
+/// The raised face of a form control: field, select, search, combobox, date trigger, toggle group,
+/// segmented radio. A translucent fill, so it sits one small step above whatever surface it is on,
+/// lifted off it by a translucent ring and a short drop, both in --ntn-shadow-face. The 1px border
+/// stays transparent: invalid colours it, and forced-colours mode draws it, where box-shadows are
+/// dropped.
 @mixin control-surface {
-  background: var(--ntn-surface-2);
-  border: 1px solid var(--ntn-border-default);
+  background: var(--ntn-face-bg);
+  border: 1px solid transparent;
   border-radius: var(--ntn-radius-md);
-  box-shadow: var(--ntn-shadow-bevel);
+  box-shadow: var(--ntn-shadow-face);
+}
+
+/// A control face under the pointer: the fill lifts and the ring brightens. The caller picks the
+/// selector, so it can skip a disabled control (the hover mixin, or :where(:not(:has(:disabled)))).
+@mixin face-hover {
+  background: var(--ntn-face-bg-hover);
+  box-shadow: var(--ntn-shadow-face-hover);
+}
+
+/// The height of a field-style control face: 4px under a button of the same size (30px beside a
+/// 34px button), floored at the target minimum.
+@mixin face-height($size: md) {
+  height: max(var(--ntn-target-min), calc(var(--ntn-control-#{$size}) - 4px));
+}
+
+/// A field-style face being typed in (field, search, native select): the fill settles back from
+/// hover, and an accent hairline with a faint accent halo replaces the ring. Forced-colours mode
+/// drops box-shadows, so there it gets a system outline.
+@mixin face-focus {
+  background: var(--ntn-face-bg);
+  box-shadow: var(--ntn-ring-face-focus);
+
+  @media (forced-colors: active) { outline: 2px solid Highlight; }
+}
+
+/// A button-style face (select, combobox and date triggers) with keyboard focus: the hover face,
+/// with a wider accent halo.
+@mixin face-focus-visible {
+  outline: 0;
+  box-shadow: var(--ntn-shadow-face-hover), var(--ntn-ring-face-keyboard);
+
+  @media (forced-colors: active) { outline: 2px solid Highlight; }
 }
 
 /// The press: a button gives a little under the pointer. Under reduced motion it stays put.
@@ -217,11 +252,11 @@ $enabled-hover: ':hover:where(:not(:disabled, [aria-disabled="true"]))';
 }
 
 /// A down-pointing chevron drawn with two borders (a select's caret, an accordion's).
-@mixin chevron($size) {
+@mixin chevron($size, $color: var(--ntn-text-muted)) {
   width: $size;
   height: $size;
-  border-right: 1.5px solid var(--ntn-text-muted);
-  border-bottom: 1.5px solid var(--ntn-text-muted);
+  border-right: 1.5px solid $color;
+  border-bottom: 1.5px solid $color;
   transform: translateY(-2px) rotate(45deg);
 }
 
