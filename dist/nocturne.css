@@ -1052,12 +1052,25 @@ i:is([class*=fa-], [data-icon], :empty) {
   width: 100%;
 }
 .ntn-btn[data-loading] {
-  /* Loading: set data-loading on the button; its leading icon spins. */
+  /* Loading: data-loading turns the leading icon into ntn-spinner's ring, sized to the icon.
+     Drawn in CSS, so any icon set works; the ring takes the button's ink, so it reads on every
+     variant (an accent head would vanish on a primary button). */
   pointer-events: none;
   opacity: 0.7;
 }
-.ntn-btn[data-loading] i:first-child {
-  animation: ntn-spin 800ms linear infinite;
+.ntn-btn[data-loading] > i:first-child {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  border-radius: 50%;
+  font-size: 0;
+  border: 2px solid color-mix(in oklab, currentColor 30%, transparent);
+  border-top-color: currentColor;
+  animation: ntn-spin 700ms linear infinite;
+}
+.ntn-btn--sm[data-loading] > i:first-child {
+  width: 14px;
+  height: 14px;
 }
 
 .ntn-icon-btn {

@@ -61,7 +61,7 @@ Two axes, named for **meaning** — combine one of each:
 
 Size: `--sm` `--lg` · `--block`
 Glow: `--glow`, with `--primary` only. Adds a halo in the button's colour.
-States: `disabled`, `data-loading` (spins the leading icon).
+States: `disabled`, `data-loading` (the leading icon becomes a spinner ring in the button's ink).
 
 ```html
 <button class="ntn-btn ntn-btn--primary"><i class="fa-light fa-plus"></i>Add item</button>
@@ -69,7 +69,7 @@ States: `disabled`, `data-loading` (spins the leading icon).
 <button class="ntn-btn">Cancel</button>
 <button class="ntn-btn ntn-btn--subtle ntn-btn--sm"><i class="fa-light fa-ellipsis"></i></button>
 <button class="ntn-btn ntn-btn--primary ntn-btn--danger" disabled>Delete workspace</button>
-<button class="ntn-btn ntn-btn--primary" data-loading><i class="fa-light fa-sort"></i>Saving</button>
+<button class="ntn-btn ntn-btn--primary" data-loading><i class="fa-light fa-floppy-disk"></i>Saving</button>
 ```
 
 Default is the everyday button. One `--primary` per view. `--secondary` is for a highlighted

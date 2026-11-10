@@ -72,6 +72,10 @@ renamed or removed class names and tokens.
   takes its text greys from its ramp; the translucent fill picks up its purple surfaces.
 - Tests: the one-control-face guard checks the raised face, no face colours its border on hover,
   every face token has a light value, and the mono guard reads `lch()` colours.
+- **Loading buttons spin a ring, not the icon.** `data-loading` on `ntn-btn` turns the leading
+  icon into `ntn-spinner`'s ring (700ms `ntn-spin`): 16px, or 14px on `--sm`. The ring is drawn
+  in CSS in the button's own ink, so it reads on every variant and with any icon set; the glyph is
+  hidden. Only a direct child `<i>` turns.
 
 ### Fixed
 - **Date picker trigger and double clicks.** The trigger ignores the second click of a double click

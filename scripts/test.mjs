@@ -269,6 +269,11 @@ try {
   const drClosed = rules.find((r) => r.sel === '.ntn-daterange__panel[popover]:not(:popover-open)');
   check(drClosed && /display:\s*none/.test(drClosed.body), 'a closed date-picker popover stays hidden despite the panel\'s display: flex');
   check(!rules.some((r) => /^\.ntn-card:has\(\.ntn-daterange__panel/.test(r.sel)), 'no card overflow workaround for the date panel (the top layer is never clipped)');
+  // NTN-55: a loading button's leading icon becomes ntn-spinner's ring, not a spinning glyph.
+  const btnSpin = rules.find((r) => r.sel === '.ntn-btn[data-loading] > i:first-child');
+  check(btnSpin && /border-radius:\s*50%/.test(btnSpin.body) && /font-size:\s*0/.test(btnSpin.body) && /animation:\s*ntn-spin\b/.test(btnSpin.body),
+    'data-loading turns the button\'s leading icon into a spinner ring');
+  check(!rules.some((r) => r.sel === '.ntn-btn[data-loading] i:first-child'), '...and the old spinning-glyph rule is gone');
   // NTN-52: the heading's year reads as text; only the pointer says it can be clicked.
   const drYear = rules.find((r) => r.sel === '.ntn-daterange__year');
   check(drYear && /cursor:\s*pointer/.test(drYear.body) && /background:\s*transparent/.test(drYear.body) && /border:\s*1px solid transparent/.test(drYear.body),
