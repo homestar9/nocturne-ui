@@ -1521,7 +1521,13 @@ function drOpen(root) {
 function drOnClick(root, e) {
   const s = drState(root);
 
-  if (e.target.closest('.ntn-daterange__trigger')) { s.open ? drClose(root, false) : drOpen(root); return true; }
+  if (e.target.closest('.ntn-daterange__trigger')) {
+    // The second click of a double click (or of a chattering mouse switch) changes nothing, so a
+    // panel never opens and shuts again in one go. Keys give detail 0 and still toggle.
+    if (e.detail > 1) return true;
+    s.open ? drClose(root, false) : drOpen(root);
+    return true;
+  }
   if (!s.open) return false;
 
   const nav = e.target.closest('[data-ntn-month]');

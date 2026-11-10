@@ -33,7 +33,7 @@ async function page(body, { html = '', storage = {} } = {}) {
 }
 
 const EVIL = '<img src=x onerror="window.pwned=1">';
-const click = (el) => el.dispatchEvent(new globalThis.MouseEvent('click', { bubbles: true }));
+const click = (el, detail = 0) => el.dispatchEvent(new globalThis.MouseEvent('click', { bubbles: true, detail }));
 
 console.log('Combo labels are text, never HTML (R5)');
 {
@@ -330,6 +330,16 @@ console.log('Date picker opens in the top layer (NTN-21)');
   check(/^\d+px$/.test(panel.style.left) && /^\d+px$/.test(panel.style.top), `...placed against the trigger in viewport pixels (${panel.style.left}, ${panel.style.top})`);
   document.body.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
   check(!shown.has(panel) && !dr.ntnRange.open, 'Escape hides it again');
+
+  // NTN-51: a double click (or a mouse whose switch chatters) toggles once, not twice.
+  const trig = dr.querySelector('.ntn-daterange__trigger');
+  click(trig, 1); click(trig, 2);
+  check(shown.has(panel) && dr.ntnRange.open, 'the second click of a double click leaves the panel open');
+  click(trig, 1); click(trig, 2);
+  check(!shown.has(panel) && !dr.ntnRange.open, '...and leaves a just-closed panel closed');
+  click(trig, 0);
+  check(dr.ntnRange.open, 'keyboard activation (detail 0) still toggles');
+  click(trig, 0);
 }
 
 console.log('Enhanced select (NTN-54)');

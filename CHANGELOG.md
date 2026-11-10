@@ -66,6 +66,12 @@ renamed or removed class names and tokens.
 - Tests: the one-control-face guard checks the raised face, no face colours its border on hover,
   every face token has a light value, and the mono guard reads `lch()` colours.
 
+### Fixed
+- **Date picker trigger and double clicks.** The trigger ignores the second click of a double click
+  (`event.detail > 1`), so a quick double click, or a mouse whose switch sends ghost clicks, no
+  longer opens the panel and shuts it again (or reopens one just closed). Keyboard activation
+  still toggles.
+
 ### Kitchen sink
 - **Every block is shown.** A Layout section (page head, `ntn-grid --2/3/4/split/split-reverse`,
   `ntn-row --between/--end`, `ntn-stack`, the text helpers and dividers, `ntn-divider-label`), and
