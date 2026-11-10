@@ -6,6 +6,8 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.17.0 — 2026-11-09
+
 ### Added
 - **Enhanced select (`data-ntn-select` on `.ntn-select`).** `nocturne.js` draws a trigger and a
   listbox panel over the native `<select>`, which stays in the form: it posts, fires `input` and
