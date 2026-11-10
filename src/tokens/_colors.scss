@@ -63,6 +63,31 @@
 
   /* A per-person avatar (--ntn-avatar-hue): the OKLCH lightness its gradient starts from */
   --ntn-avatar-lightness: 0.78;
+
+  /* The raised control face (control-surface): field, select, search, combo and date triggers,
+     segmented controls. Measured values, kept exact as lch(); the light estimates live in one
+     block at the end of _theme-light.scss. The ring and drop are --ntn-shadow-face.
+     The fill is translucent, so the face keeps the same small step above any surface (and the
+     ring stays brighter than the fill): over lch(9.232 0.85 272), #1A1A1B, the surface it was
+     measured on, these give exactly lch(13.861 1.139 272) and lch(18.49 1.525 272). */
+  --ntn-face-bg:          rgba(226,226,248,0.047);
+  --ntn-face-bg-hover:    rgba(221,232,244,0.094);
+  --ntn-face-text:        lch(90.826 1.425 272);
+  --ntn-face-muted:       lch(63.304 1.425 272);   /* chevron, leading icon */
+  --ntn-face-placeholder: lch(52 1.425 272);
+
+  /* The select's listbox panel (data-ntn-select), measured like the face. Its drop is
+     --ntn-shadow-picker. */
+  --ntn-picker-bg:            lch(12.72 0.85 272);
+  --ntn-picker-border:        lch(21.36 1.93 272);
+  --ntn-picker-divider:       lch(17.04 1.93 272);   /* under the search box */
+  --ntn-picker-text:          lch(91.178 1.425 272); /* typed search text */
+  --ntn-picker-placeholder:   lch(64.714 1.425 272);
+  --ntn-picker-empty:         lch(41.778 1.425 272);
+  --ntn-picker-option:        lch(91.554 1.65 272);
+  --ntn-picker-option-active: lch(25.69 1.975 272);
+  --ntn-picker-tick:          lch(66.215 1.65 272);
+  --ntn-picker-scrollbar:     lch(30 2 272);
 }
 
 :root {

@@ -3,6 +3,9 @@
 Nocturne is a dark-first design system for data-dense SaaS interfaces. This package ships it
 as three layers that version together:
 
+**[See every component live →](https://homestar9.github.io/nocturne-ui/)** The kitchen sink opens
+with a Get started section (a copy-paste starter page) and gives every example a Code button.
+
 | Layer | What it is | Who consumes it |
 | --- | --- | --- |
 | **CSS** | `dist/nocturne.css` — tokens, reset, and BEM component classes | any stack, no build step |
@@ -23,11 +26,11 @@ npm install @homestar9/nocturne-ui
 No bundler? Load it from a CDN, or vendor the one file — `dist/nocturne.css` is self-contained:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.16.0/dist/nocturne.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.17.0/dist/nocturne.css">
 ```
 
 ```bash
-curl -O https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.16.0/dist/nocturne.css
+curl -O https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.17.0/dist/nocturne.css
 ```
 
 ## Use
@@ -410,6 +413,16 @@ on the element a developer would copy (an empty label is fine for a section's on
 Elements in one section with the same label show as one snippet. Page chrome is named `sink__*`
 and never appears in a snippet; nor do `data-sink-*` attributes.
 
+Code that isn't markup on the page (the starter page, a `toast()` call) goes in a hidden
+`<textarea data-sink-source="Label" data-sink-lang="html|js|sh">`, which holds raw text; add
+`data-sink-inline` to show it in place instead of in the Code panel. `data-sink-ref="slug"` on a
+section links its head to that heading of `skill/components.md`. The tests check that every class
+in `dist/` (each block, element and modifier) has an example in the sink or an example page, except
+the few that `nocturne.js` draws itself, which `scripts/test-dom.mjs` lists. A new modifier fails
+the tests until it gets one. They also check that the JavaScript section names every event and
+export, that the Reference links resolve, and that every pinned CDN link names the `package.json`
+version.
+
 Edit files in `src/`, never in `dist/`. Commit the rebuilt `dist/` with the source change: the
 tests fail when the two disagree. Always spell the namespace `ntn` in source — the prefix build
 renames exactly that spelling, so a new class, token, hook or event written any other way would
@@ -446,7 +459,7 @@ git checkout -b release/X.Y.Z develop
 npm version minor --no-git-tag-version       # bump package.json and the lockfile only
 npm run build                                # dist/ banners carry the new version
 npm test
-git commit -am "Release X.Y.Z"               # CHANGELOG [Unreleased] → X.Y.Z — date; README CDN links
+git commit -am "Release X.Y.Z"               # CHANGELOG [Unreleased] → X.Y.Z — date; CDN links in README and the kitchen sink
 git checkout master
 git merge --no-ff release/X.Y.Z
 git tag -a vX.Y.Z -m X.Y.Z
@@ -519,7 +532,7 @@ src/             authored SCSS: nocturne.scss and tokens.scss (entries), tokens/
 js/              optional behaviours
 themes/          accent overrides (plain CSS)
 skill/           Claude Code skill: rules, component reference, patterns
-examples/        kitchen sink — every block, inside the console shell
+examples/        kitchen sink (every class, inside the console shell), settings and dashboard pages
 scripts/         compile.mjs (src → dist), build.mjs (prefix build, shipped), tests
 ```
 

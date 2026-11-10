@@ -5,7 +5,7 @@
 import { JSDOM } from 'jsdom';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const moduleUrl = new URL('../js/nocturne.js', import.meta.url).href;
@@ -33,7 +33,7 @@ async function page(body, { html = '', storage = {} } = {}) {
 }
 
 const EVIL = '<img src=x onerror="window.pwned=1">';
-const click = (el) => el.dispatchEvent(new globalThis.MouseEvent('click', { bubbles: true }));
+const click = (el, detail = 0) => el.dispatchEvent(new globalThis.MouseEvent('click', { bubbles: true, detail }));
 
 console.log('Combo labels are text, never HTML (R5)');
 {
@@ -330,6 +330,244 @@ console.log('Date picker opens in the top layer (NTN-21)');
   check(/^\d+px$/.test(panel.style.left) && /^\d+px$/.test(panel.style.top), `...placed against the trigger in viewport pixels (${panel.style.left}, ${panel.style.top})`);
   document.body.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
   check(!shown.has(panel) && !dr.ntnRange.open, 'Escape hides it again');
+
+  // NTN-51: a double click (or a mouse whose switch chatters) toggles once, not twice.
+  const trig = dr.querySelector('.ntn-daterange__trigger');
+  click(trig, 1); click(trig, 2);
+  check(shown.has(panel) && dr.ntnRange.open, 'the second click of a double click leaves the panel open');
+  click(trig, 1); click(trig, 2);
+  check(!shown.has(panel) && !dr.ntnRange.open, '...and leaves a just-closed panel closed');
+  click(trig, 0);
+  check(dr.ntnRange.open, 'keyboard activation (detail 0) still toggles');
+  click(trig, 0);
+}
+
+console.log('Date picker year (NTN-52)');
+{
+  const two = `<div class="ntn-daterange" id="two" data-ntn-daterange data-ntn-start="2026-12-05" data-ntn-end="2026-12-09">
+     <button type="button" class="ntn-daterange__trigger" aria-expanded="false"><span class="ntn-daterange__value" data-ntn-daterange-label></span></button>
+     <div class="ntn-daterange__panel" hidden>
+       <div class="ntn-daterange__cals"><div class="ntn-daterange__cal" data-ntn-cal="0"></div><div class="ntn-daterange__cal" data-ntn-cal="1"></div></div>
+       <footer class="ntn-daterange__foot"><button type="button" data-ntn-daterange-apply>Apply</button></footer>
+     </div>
+   </div>`;
+  const { document, window } = await page(`<form id="f">${picker('id="one" data-ntn-start="2026-09-01" data-ntn-end="2026-09-20" data-ntn-max="2028-06-30"')}${two}</form>`);
+  const form = document.getElementById('f');
+  let heard = 0;
+  form.addEventListener('input', () => heard++);
+  form.addEventListener('change', () => heard++);
+  const one = document.getElementById('one');
+  const year = (r, i = 0) => r.querySelectorAll('[data-ntn-year]')[i];
+  const firstDay = (r, i = 0) => r.querySelectorAll('[data-ntn-cal]')[i].querySelector('[data-ntn-day]:not([data-outside])').dataset.ntnDay;
+  const type = (el, v) => { el.value = v; el.dispatchEvent(new window.Event('input', { bubbles: true })); };
+  const key = (el, k) => { const e = new window.KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }); el.dispatchEvent(e); return e; };
+
+  click(one.querySelector('.ntn-daterange__trigger'));
+  const y = year(one);
+  check(y && y.type === 'number' && y.value === '2026' && one.querySelectorAll('[data-ntn-year]').length === 1,
+    'the month heading holds its year as a number input');
+  check(y.max === '2028', `data-ntn-max caps the year (max ${y.max})`);
+  check(y.getAttribute('form') === '', 'the input belongs to no form, so Enter never submits one');
+
+  y.focus();
+  type(y, '20');
+  check(firstDay(one) === '2026-09-01', 'a partly typed year changes nothing');
+  type(y, '2027');
+  check(firstDay(one) === '2027-09-01', `a whole year redraws the month in that year (${firstDay(one)})`);
+  type(y, '2028');
+  check(firstDay(one) === '2028-06-01', `...clamped to the data-ntn-max month (${firstDay(one)})`);
+
+  // jsdom moves no focus on a dispatched click, so the input stays focused through these redraws.
+  click(one.querySelector('[data-ntn-day]:not([data-outside])'));
+  one.querySelectorAll('[data-ntn-day]')[12].dispatchEvent(new window.MouseEvent('mouseover', { bubbles: true }));
+  click(one.querySelector('[data-ntn-month="-1"]'));
+  check(year(one) === y && document.activeElement === y, 'a day click, a hover redraw and an arrow keep the same focused input');
+
+  y.blur();
+  check(y.value === String(one.ntnRange.view.getFullYear()), 'leaving the field puts the year on show back');
+  y.focus();
+  const shown = firstDay(one);
+  type(y, '2027');
+  const esc = key(y, 'Escape');
+  check(esc.defaultPrevented && firstDay(one) === shown && one.ntnRange.open && document.activeElement !== y,
+    'Escape restores the year, leaves the field and keeps the panel open');
+  y.focus();
+  const enter = key(y, 'Enter');
+  check(enter.defaultPrevented && document.activeElement !== y, 'Enter keeps the year and leaves the field');
+  y.dispatchEvent(new window.Event('change', { bubbles: true }));
+  check(heard === 0, `the form hears no input or change from a year edit (${heard})`);
+
+  const tw = document.getElementById('two');
+  click(tw.querySelector('.ntn-daterange__trigger'));
+  const y2 = year(tw, 1);
+  check(year(tw, 0).value === '2026' && y2.value === '2027', 'a Dec / Jan panel shows each month its own year');
+  y2.focus();
+  type(y2, '2030');
+  check(firstDay(tw, 1) === '2030-01-01' && firstDay(tw, 0) === '2029-12-01', `editing the second month's year moves both (${firstDay(tw, 0)}, ${firstDay(tw, 1)})`);
+  type(y2, '2031');
+  type(y2, '2032');
+  check(firstDay(tw, 1) === '2032-01-01', `repeated steps set the year, never add up (${firstDay(tw, 1)})`);
+}
+
+console.log('Enhanced select (NTN-54)');
+{
+  const { document, window, mod } = await page(
+    `<form id="f">
+       <label class="ntn-select" id="s1" data-ntn-select>
+         <span class="ntn-select__label">Team</span>
+         <span class="ntn-select__control"><select name="team" aria-describedby="s1-hint"><option value="">None</option><option value="eng">Engineering</option><option value="des">Design</option><option value="ops" disabled>Operations</option><option value="evil">x</option></select></span>
+         <span class="ntn-select__hint" id="s1-hint">Hint</span>
+       </label>
+       <label class="ntn-select" id="s2" data-ntn-select data-ntn-search="Search people…" data-ntn-empty="No matching people">
+         <span class="ntn-select__label">Owner</span>
+         <span class="ntn-select__control"><select name="owner"><optgroup label="People"><option>Ada</option><option>Grace</option></optgroup><optgroup label="Bots" disabled><option>Robo</option></optgroup></select></span>
+       </label>
+       <label class="ntn-select" id="s3" data-ntn-select data-ntn-placeholder="No channels">
+         <span class="ntn-select__label">Channels</span>
+         <span class="ntn-select__control"><select name="ch" multiple><option value="email" selected>Email</option><option value="slack">Slack</option><option value="sms">SMS</option></select></span>
+       </label>
+       <label class="ntn-select" id="s4" data-ntn-select><span class="ntn-select__label">Off</span><span class="ntn-select__control"><select name="off" disabled><option>X</option></select></span></label>
+       <button type="submit" id="go">Go</button>
+     </form>`);
+  const $ = (sel) => document.querySelector(sel);
+  const key = (el, k) => el.dispatchEvent(new window.KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
+  const form = $('#f');
+  const data = () => new window.FormData(form);
+  let submits = 0;
+  form.addEventListener('submit', (e) => { e.preventDefault(); submits++; });
+  const changes = [];
+  form.addEventListener('change', (e) => changes.push(e.target.name));
+  $('#s1 option[value="evil"]').text = EVIL;
+
+  const s1 = $('#s1');
+  const select = s1.querySelector('select');
+  const trigger = s1.querySelector('.ntn-select__trigger');
+  const panel = s1.querySelector('.ntn-select__panel');
+  const list = s1.querySelector('.ntn-select__list');
+  const isOpen = (root) => !root.querySelector('.ntn-select__panel').hidden;
+  const active = (root) => root.querySelector('.ntn-select__option[data-ntn-active]');
+  mod.refresh();
+  check(document.querySelectorAll('#s1 .ntn-select__trigger').length === 1 && select.nextElementSibling === trigger,
+    'set-up draws one trigger, after the native select, however often refresh() runs');
+  const named = trigger.getAttribute('aria-labelledby').split(' ').map((id) => document.getElementById(id).textContent).join(' ');
+  check(named === 'Team None', `the trigger is named by the label and the value ("${named}")`);
+  check(trigger.getAttribute('aria-describedby') === 's1-hint' && select.tabIndex === -1, 'it takes aria-describedby from the select, which leaves the tab order');
+  check(s1.querySelector('.ntn-select__value').hasAttribute('data-empty'), 'an empty first value shows as a placeholder');
+
+  click(trigger);
+  check(isOpen(s1) && trigger.getAttribute('aria-expanded') === 'true' && document.activeElement === list, 'a click opens the list and focuses it');
+  check(list.querySelectorAll('.ntn-select__option').length === 5 && active(s1).textContent === 'None', 'the list is built from the select, the chosen option active');
+  check(list.getAttribute('aria-activedescendant') === active(s1).id, 'aria-activedescendant names the active option');
+  check(!list.querySelector('img') && list.querySelector('[data-ntn-index="4"] .ntn-select__text').textContent === EVIL, 'labels are drawn as text');
+  const walk = [];
+  for (let i = 0; i < 4; i++) { key(list, 'ArrowDown'); walk.push(active(s1).dataset.ntnIndex); }
+  check(walk.join(',') === '1,2,4,0', `↓ skips the disabled option and wraps (${walk.join(',')})`);
+  key(list, 'd');
+  check(active(s1).textContent === 'Design', 'typing jumps to the first label that starts with it');
+  key(list, 'Enter');
+  check(select.value === 'des' && changes.join(',') === 'team' && !isOpen(s1) && document.activeElement === trigger,
+    `↵ picks, fires one change on the native select, closes and returns focus (${changes.join(',')})`);
+  check(s1.querySelector('.ntn-select__value').textContent === 'Design' && data().get('team') === 'des', 'the trigger shows it, and the form posts it');
+
+  check(key(trigger, 'Enter') && !isOpen(s1), '↵ on the trigger is left to its native click');
+  click(trigger);
+  check(isOpen(s1), '...which opens it, and it stays open');
+  key(list, 'Escape');
+  check(!isOpen(s1) && document.activeElement === trigger, 'esc closes and returns focus to the trigger');
+  key(trigger, 'ArrowDown');
+  check(isOpen(s1), '↓ on the trigger opens it');
+  click(list.querySelector('[data-ntn-index="3"]'));
+  check(isOpen(s1) && select.value === 'des', 'a disabled option cannot be picked');
+  click(list.querySelector('[data-ntn-index="1"]'));
+  check(select.value === 'eng' && !isOpen(s1), 'a click picks and closes');
+
+  click(s1.querySelector('.ntn-select__label'));
+  check(document.activeElement === trigger && !isOpen(s1), 'a click on the label focuses the trigger');
+
+  form.reset();
+  await new Promise((r) => setTimeout(r, 5));
+  check(s1.querySelector('.ntn-select__value').textContent === 'None', 'form.reset() redraws the trigger');
+
+  const s2 = $('#s2');
+  const search = s2.querySelector('.ntn-select__search');
+  click(s2.querySelector('.ntn-select__trigger'));
+  check(document.activeElement === search && search.getAttribute('aria-activedescendant') === active(s2).id, 'with data-ntn-search the search box takes focus and the active option');
+  const heads = [...s2.querySelectorAll('.ntn-select__group')].map((h) => h.textContent);
+  check(heads.join(',') === 'People,Bots' && s2.querySelector('[role="group"]').getAttribute('aria-labelledby') === s2.querySelector('.ntn-select__group').id,
+    'an optgroup becomes a group named by its heading');
+  check(s2.querySelector('[data-ntn-index="2"]').getAttribute('aria-disabled') === 'true', "a disabled optgroup's options are disabled");
+  key(search, 'ArrowDown'); key(search, 'ArrowDown');
+  check(active(s2).textContent === 'Ada', '↓ skips headings and disabled options');
+  search.value = 'gr';
+  search.dispatchEvent(new window.Event('input', { bubbles: true }));
+  const shown = [...s2.querySelectorAll('.ntn-select__option:not([hidden])')].map((o) => o.textContent);
+  check(shown.join(',') === 'Grace' && s2.querySelectorAll('[role="group"]')[1].hidden && active(s2).textContent === 'Grace', 'typing filters, hides emptied groups and activates the first hit');
+  search.value = 'zzz';
+  search.dispatchEvent(new window.Event('input', { bubbles: true }));
+  const empty = s2.querySelector('.ntn-select__empty');
+  check(!empty.hidden && empty.textContent === 'No matching people' && s2.querySelector('.ntn-select__list').hidden, 'no hits shows the empty state');
+  check(!key(search, 'Enter') && submits === 0 && isOpen(s2), '↵ in the search box never submits the form');
+  key(search, 'Escape');
+
+  const s3 = $('#s3');
+  const multi = s3.querySelector('select');
+  click(s3.querySelector('.ntn-select__trigger'));
+  check(s3.querySelector('.ntn-select__list').getAttribute('aria-multiselectable') === 'true', 'a multiple select is a multiselectable listbox');
+  click(s3.querySelector('[data-ntn-index="1"]'));
+  check(isOpen(s3) && JSON.stringify(data().getAll('ch')) === '["email","slack"]', 'a click toggles an option and keeps the list open');
+  check(s3.querySelector('.ntn-select__value').textContent === 'Email, Slack', 'the trigger joins the chosen labels');
+  key(s3.querySelector('.ntn-select__list'), ' ');
+  check(!multi.options[1].selected && s3.querySelector('[data-ntn-index="1"]').getAttribute('aria-selected') === 'false', 'space toggles the active option');
+  click(s3.querySelector('[data-ntn-index="0"]'));
+  const v3 = s3.querySelector('.ntn-select__value');
+  check(v3.textContent === 'No channels' && v3.hasAttribute('data-empty') && data().getAll('ch').length === 0, 'with nothing chosen it shows data-ntn-placeholder');
+  key(s3.querySelector('.ntn-select__list'), 'Escape');
+
+  const off = $('#s4 .ntn-select__trigger');
+  click(off);
+  check(off.disabled && !isOpen($('#s4')), 'a disabled select has a disabled trigger that does not open');
+}
+
+console.log('Enhanced select: placement and nesting (NTN-54)');
+{
+  const { document, window, mod } = await page(
+    `<label class="ntn-select" id="s" data-ntn-select><span class="ntn-select__label">A</span><span class="ntn-select__control"><select><option>One</option></select></span></label>
+     <div class="ntn-dropdown" data-ntn-dropdown id="dd">
+       <button type="button" class="ntn-btn" aria-haspopup="dialog">Filters</button>
+       <div class="ntn-popover" role="dialog">
+         <label class="ntn-select" id="inner" data-ntn-select><span class="ntn-select__label">B</span><span class="ntn-select__control"><select><option>Two</option></select></span></label>
+       </div>
+     </div>`);
+  const shown = new Set();
+  window.HTMLElement.prototype.showPopover = function () { shown.add(this); };
+  window.HTMLElement.prototype.hidePopover = function () { shown.delete(this); };
+  mod.refresh();
+  const s = document.getElementById('s');
+  const trigger = s.querySelector('.ntn-select__trigger');
+  const panel = s.querySelector('.ntn-select__panel');
+  check(panel.getAttribute('popover') === 'manual' && !panel.hidden, 'refresh() upgrades the panel to a popover');
+  const place = (top, bottom, h) => {
+    trigger.getBoundingClientRect = () => ({ top, bottom, left: 50, right: 250, width: 200, height: bottom - top });
+    Object.defineProperty(panel, 'offsetHeight', { value: h, configurable: true });
+    Object.defineProperty(panel, 'offsetWidth', { value: 204, configurable: true });
+    click(trigger);
+    const at = [panel.style.left, panel.style.top, panel.getAttribute('data-ntn-side')].join(' ');
+    click(trigger);
+    return at;
+  };
+  check(place(100, 134, 200) === '46px 96px bottom', 'the panel covers the trigger: right edges aligned, its top 4px above');
+  check(place(700, 734, 200) === '46px 538px top', 'near the bottom it flips: its bottom 4px below the trigger\'s');
+  check(place(700, 734, 900).startsWith('46px 8px '), 'too tall either way, it is kept on screen');
+
+  const dd = document.getElementById('dd');
+  mod.open(dd);
+  const inner = document.getElementById('inner');
+  inner.querySelector('.ntn-select__trigger').focus();
+  click(inner.querySelector('.ntn-select__trigger'));
+  const innerPanel = inner.querySelector('.ntn-select__panel');
+  check(shown.has(innerPanel) && dd.hasAttribute('data-ntn-open'), 'a select opens inside an open popover without closing it');
+  inner.querySelector('.ntn-select__list').dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+  check(!shown.has(innerPanel) && dd.hasAttribute('data-ntn-open'), 'esc closes the select only, and leaves the popover open');
 }
 
 console.log('Avatar hue (NTN-22)');
@@ -595,10 +833,17 @@ console.log('Kitchen sink code view (NTN-1)');
   window.eval(await readFile(resolve(root, 'examples/sink-code.js'), 'utf8'));
 
   const sections = [...document.querySelectorAll('.sink')];
-  const bare = sections.filter((s) => !s.querySelector('[data-sink-example]')).map((s) => s.id);
-  check(sections.length > 0 && !bare.length, `every section marks at least one example${bare.length ? ' (missing: ' + bare.join(', ') + ')' : ''}`);
-  const toggles = sections.map((s) => s.querySelectorAll('.sink__head .sink__codetoggle'));
-  check(toggles.every((t) => t.length === 1), 'every section head gets exactly one Code button');
+  const bare = sections.filter((s) => !s.querySelector('[data-sink-example], textarea[data-sink-source], .sink__snippet')).map((s) => s.id);
+  check(sections.length > 0 && !bare.length, `every section shows code: an example or a source${bare.length ? ' (missing: ' + bare.join(', ') + ')' : ''}`);
+  const inline = document.querySelectorAll('textarea[data-sink-inline]');
+  const shown = [...document.querySelectorAll('.sink__snippet')].filter((b) => !b.closest('.sink__codeview'));
+  check(!inline.length && shown.length >= 4, `inline sources are shown in place (${shown.length})`);
+  // Sections whose code is all inline (JavaScript) need no panel; every other one gets one button.
+  const coded = sections.filter((s) => document.getElementById(s.id + '-code'));
+  const strays = sections.filter((s) => !coded.includes(s) && s.querySelector('.sink__codetoggle')).map((s) => s.id);
+  const toggles = coded.map((s) => s.querySelectorAll('.sink__head .sink__codetoggle'));
+  check(coded.length >= sections.length - 2 && toggles.every((t) => t.length === 1) && !strays.length,
+    `every section with a Code panel gets exactly one Code button (${coded.length} of ${sections.length})`);
   const pairs = toggles.map((t) => [t[0], document.getElementById(t[0]?.getAttribute('aria-controls'))]);
   check(pairs.every(([b, p]) => p && b.getAttribute('aria-expanded') === 'false' && p.hidden), 'code is off by default: every panel starts hidden');
 
@@ -662,6 +907,58 @@ console.log('Kitchen sink tabs switch panels (NTN-34)');
   const orphans = tabs.filter((t) => { const sel = t.getAttribute('data-ntn-panel'); return !sel || !document.querySelector(sel); });
   check(tabs.length > 0 && orphans.length === 0,
     `each of the ${tabs.length} enabled tabs switches a panel that exists` + (orphans.length ? ': ' + orphans.map((t) => t.textContent.trim()).join(', ') : ''));
+}
+
+console.log('Kitchen sink covers the library (NTN-46)');
+{
+  // A block is the leading ntn-* name of a class in dist, before any __element or --modifier.
+  const css = (await readFile(resolve(root, 'dist/nocturne.css'), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '');
+  const dist = new Set([...css.matchAll(/\.(ntn-[a-zA-Z0-9_-]+)/g)].map((m) => m[1]));
+  const blocks = [...new Set([...dist].map((c) => c.split(/__|--/)[0]))];
+  const JS_ONLY = ['ntn-toaster']; // created by toast(), never written in markup
+  const raw = await readFile(resolve(root, 'examples/kitchen-sink.html'), 'utf8');
+  const { document } = new JSDOM(raw.replace(/<script\b[\s\S]*?<\/script>/g, '')).window;
+  const used = new Set([...document.querySelectorAll('[class]')].flatMap((e) => [...e.classList]).filter((c) => c.startsWith('ntn-')));
+  const missing = blocks.filter((b) => !used.has(b) && !JS_ONLY.includes(b));
+  check(!missing.length, `every one of the ${blocks.length} blocks in dist is shown${missing.length ? ' (missing: ' + missing.join(', ') + ')' : ''}`);
+  const typos = [...used].filter((c) => !dist.has(c));
+  check(!typos.length, `every ntn-* class in the sink exists in dist${typos.length ? ' (unknown: ' + typos.join(', ') + ')' : ''}`);
+  const ids = [...document.querySelectorAll('section.sink[id]')].map((s) => s.id);
+  const links = [...document.querySelectorAll('#index a[href^="#"]')].map((a) => a.getAttribute('href').slice(1));
+  const unlinked = ids.filter((id) => links.filter((l) => l === id).length !== 1);
+  const dangling = links.filter((l) => !ids.includes(l));
+  check(!unlinked.length && !dangling.length,
+    `each of the ${ids.length} sections has one index link, and every link a section` +
+    (unlinked.length ? ` (unlinked: ${unlinked.join(', ')})` : '') + (dangling.length ? ` (dangling: ${dangling.join(', ')})` : ''));
+
+  // The example pages (NTN-48): library classes only, and each one linked from the sink's index.
+  const pages = (await readdir(resolve(root, 'examples'))).filter((f) => f.endsWith('.html') && f !== 'kitchen-sink.html');
+  for (const file of pages) {
+    const page = new JSDOM(await readFile(resolve(root, 'examples', file), 'utf8')).window.document;
+    const unknown = [...new Set([...page.querySelectorAll('[class]')].flatMap((e) => [...e.classList]))]
+      .filter((c) => !c.startsWith('fa-') && !dist.has(c));
+    check(!unknown.length, `${file} uses only classes from dist${unknown.length ? ' (unknown: ' + unknown.join(', ') + ')' : ''}`);
+    check(document.querySelector(`#index a[href="${file}"]`), `${file} is linked from the sink's index`);
+    page.querySelectorAll('[class]').forEach((e) => e.classList.forEach((c) => used.add(c)));
+  }
+  check(pages.length >= 1, `${pages.length} example page(s) checked`);
+
+  // Every class, not just every block (NTN-50): each modifier and element in dist appears in the
+  // sink or an example page. The exceptions are drawn by nocturne.js, so the live demos show them.
+  const DRAWN = [
+    'ntn-combo__chip', 'ntn-combo__chip-x', 'ntn-combo__more',                     // combo chips
+    'ntn-daterange__head', 'ntn-daterange__month', 'ntn-daterange__year', 'ntn-daterange__nav', 'ntn-daterange__grid',
+    'ntn-daterange__dow', 'ntn-daterange__day', 'ntn-daterange__panel--narrow',    // calendar
+    'ntn-toaster', 'ntn-toaster__live',                                            // toast()
+    'ntn-select__trigger', 'ntn-select__value', 'ntn-select__panel', 'ntn-select__search',
+    'ntn-select__list', 'ntn-select__option', 'ntn-select__text', 'ntn-select__tick',
+    'ntn-select__group', 'ntn-select__empty',                                      // data-ntn-select
+  ];
+  const stale = DRAWN.filter((c) => !dist.has(c));
+  const unshown = [...dist].filter((c) => !used.has(c) && !DRAWN.includes(c));
+  check(!unshown.length && !stale.length,
+    `every one of the ${dist.size} classes in dist has an example (${DRAWN.length} are drawn by nocturne.js)` +
+    (unshown.length ? ` (no example: ${unshown.join(', ')})` : '') + (stale.length ? ` (allowlisted but gone: ${stale.join(', ')})` : ''));
 }
 
 console.log('Source guard');

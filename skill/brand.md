@@ -70,9 +70,10 @@ card, 18px dialog, full for pills and avatars. Raised surfaces (cards, stats, ac
 modals, menus, toasts) are framed in a hairline, `--ntn-hairline`: 1px, half a pixel on a 2x
 screen. Its colour is translucent ink, `--ntn-edge-line-strong` (8%) for the frame and
 `--ntn-edge-line` (5%) for the rules inside (card feet, divided heads, accordion items); a rule
-under a head is engraved with a dark line beneath it (`--ntn-edge-groove`). Controls keep solid
-1px borders: `--ntn-border-default` outlines interactive surfaces, `--ntn-border-subtle` draws
-table rows and dividers, `--ntn-border-strong` marks hover. There is no coloured-left-border
+under a head is engraved with a dark line beneath it (`--ntn-edge-groove`). Buttons keep solid
+1px borders, and form control faces are raised instead (see States): `--ntn-border-default`
+outlines interactive surfaces, `--ntn-border-subtle` draws table rows and dividers,
+`--ntn-border-strong` marks hover. There is no coloured-left-border
 pattern anywhere in this system.
 
 ## Motion
@@ -86,12 +87,22 @@ and the indeterminate bar pulses instead of sweeping. Fades and spinners remain.
 ## States
 
 Hover washes the surface +4% white and brightens the border one step. Press adds +6% and the button
-gives to 97% (`scale(.97)`, none under reduced motion). Control faces (buttons, fields, selects,
-toggle groups) are bevelled: a lit top inside the border, a dark ring outside it and
-a short drop (`--ntn-shadow-bevel`; a plain `--ntn-shadow-xs` in light mode). Focus-visible is a 3px violet ring drawn as an outline (`--ntn-focus-outline`), so a
-control's own shadow never hides it and it survives forced-colours mode. Field-style controls
-(field, select, combobox, date trigger, tree row) instead switch the border to `--ntn-accent-500`
-and add the same ring as a halo (`--ntn-ring-focus`). Disabled is 45% opacity
+gives to 97% (`scale(.97)`, none under reduced motion). Buttons are bevelled: a lit top inside
+the border, a dark ring outside it and a short drop (`--ntn-shadow-bevel`; a plain
+`--ntn-shadow-xs` in light mode). Form control faces (field, select, search, combobox and date
+triggers, toggle group, segmented radio) are raised: a translucent fill one small step above
+whatever surface it sits on (`--ntn-face-bg`), a transparent border, and a translucent 1px ring
+with a tight drop (`--ntn-shadow-face`). Field-style faces are 4px shorter than a button of the
+same size (30px beside a 34px button). Under the pointer the fill lifts and the ring brightens
+(`--ntn-face-bg-hover`, `--ntn-shadow-face-hover`). Text in a face is `--ntn-face-text` at weight
+450 (`--ntn-weight-book`), placeholders `--ntn-face-placeholder`, icons and chevrons
+`--ntn-face-muted`. The light values are estimates, kept in one block at the end of
+`_theme-light.scss`. Focus-visible is a 3px violet ring drawn as an outline (`--ntn-focus-outline`), so a
+control's own shadow never hides it and it survives forced-colours mode. A control face being
+typed in (field, search, native select) swaps its ring for an accent hairline and a faint halo
+(`--ntn-ring-face-focus`); a select, combobox or date trigger reached by keyboard keeps its hover
+face inside a wider accent halo (`--ntn-ring-face-keyboard`). The tree row and drop area switch
+the border to `--ntn-accent-500` and add the ring as a halo (`--ntn-ring-focus`). Disabled is 45% opacity
 (`--ntn-disabled-opacity`) plus `not-allowed` on every control, and a disabled control ignores
 hover. Rows and nav items follow the same rules as buttons.
 

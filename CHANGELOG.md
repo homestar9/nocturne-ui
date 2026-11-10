@@ -6,6 +6,128 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.17.0 — 2026-11-09
+
+### Added
+- **Enhanced select (`data-ntn-select` on `.ntn-select`).** `nocturne.js` draws a trigger and a
+  listbox panel over the native `<select>`, which stays in the form: it posts, fires `input` and
+  `change`, honours `form.reset()`, and shows the browser's `required` message under the trigger.
+  The control becomes an `ntn-dropdown`, so the panel opens in the top layer and the dropdown code
+  handles Escape, focus return, outside clicks, Tab-out and repositioning. The panel covers the
+  trigger: right edges aligned, its top 4px above, flipping to sit with its bottom 4px below the
+  trigger near the viewport's bottom (`placeFixed` gains the `over-end` placement). Keys: `↑↓`
+  wrap and skip disabled options, `home/end`, `↵`, `esc`, `tab`, and type-to-jump, with
+  `aria-activedescendant` on the list or the search box. `data-ntn-search` adds a filter box and
+  `data-ntn-empty` its empty state. `<select multiple>` toggles and stays open (the trigger joins
+  the labels, or shows `data-ntn-placeholder`); `<optgroup>` becomes a labelled group, and a
+  disabled group's options can't be picked. The trigger is named by the label and the value, and
+  takes the select's `aria-describedby` and `aria-invalid`. The panel has 12px corners, 32px rows
+  whose highlight is inset 4px with 8px corners, a filled tick (a mask, so no icon font is
+  needed), and grows out of the trigger's corner in 120ms (`ntn-pop`, a fade only under reduced
+  motion).
+- Picker tokens for its panel: `--ntn-picker-bg`, `-border`, `-divider`, `-text`, `-placeholder`,
+  `-empty`, `-option`, `-option-active`, `-tick`, `-scrollbar`, and `--ntn-shadow-picker`. Dark
+  values are exact; the light estimates join the face's block in `_theme-light.scss`. Mono and
+  synthwave set them in both modes.
+- Without the script, a `<select multiple>` in `.ntn-select` is the platform's list box (it grows,
+  no chevron) instead of a one-row control.
+- A native select's own list takes the enhanced panel's colours: options and optgroups on
+  `--ntn-picker-bg` in `--ntn-picker-option` ink, group headings in the caps-label grey, disabled
+  options in `--ntn-picker-empty`. Before, an `<optgroup>` painted the browser's white in dark
+  mode. A multiple select's rows keep the face's fill.
+- Kitchen sink: the Select section shows the enhanced, searchable, inline, multiple and
+  grouped selects (the last two native and enhanced), and a new **Form controls in both themes**
+  section puts a dark and a light panel side by side.
+- `scrollIntoList()` and `stepTo()` are shared by the combo and the select.
+- **Date picker year input (`ntn-daterange__year`).** Each month heading's year is a number input
+  that reads as plain text, with only a pointer cursor. Click it to type a year or step it with
+  `↑` `↓` / the spin buttons; the month follows. `Esc` restores it and `↵` keeps it, without
+  closing the panel, and its events never reach a form. Bounded by the `data-ntn-min` /
+  `data-ntn-max` years, it works from either month of a two-month panel. The month heads are now
+  built once and patched, so the focused field survives hover and arrow redraws. Non-Gregorian or
+  non-Latin-digit locales keep a plain heading.
+
+### Changed
+- **Raised control faces.** Field, select, search, the combobox and date triggers, the toggle
+  group and the segmented radio drop the bordered bevel for a raised face (the `control-surface`
+  mixin): a translucent fill one small step above whatever surface it sits on (`--ntn-face-bg`;
+  over `#1A1A1B` it is exactly `lch(13.861 1.139 272)`, the measured value, and on Nocturne's
+  darker cards the step, and so the ring, still reads), a transparent 1px border (drawn in
+  forced-colours mode, and coloured by invalid), and a translucent 1px ring with a tight drop
+  (`--ntn-shadow-face`). Hover lifts the fill and brightens the ring (`--ntn-face-bg-hover`,
+  `--ntn-shadow-face-hover`) instead of colouring the border, and skips disabled controls. Text in
+  a face is `--ntn-face-text` at weight 450 (`--ntn-weight-book`, new), with
+  `--ntn-face-placeholder` placeholders, `--ntn-face-muted` icons and chevrons, and an accent
+  caret. The light values are estimates, kept together at the end of `_theme-light.scss` (mostly
+  aliases of the light ramp, so themes' light modes follow).
+- **Field-style faces are 4px shorter than a button of the same size** (`face-height`: 30px
+  beside a 34px button, 24px in compact density): field, select, search, combobox and date
+  triggers. The select's chevron is a small filled shape (9 × 5, a mask) 10px from the edge.
+- **Focus on a face.** Typing in a field, search or native select draws an accent hairline with a
+  faint halo (`--ntn-ring-face-focus`: 1px at 80%, 3px at 22%) and settles the fill; a select,
+  combobox or date trigger reached by keyboard keeps its hover face inside a wider halo
+  (`--ntn-ring-face-keyboard`, 3px at 40%). Both follow the accent, so themes recolour them.
+- A disabled field is only the 45% fade (no `surface-1` fill). The textarea pads 7px 10px with an
+  18px line. The select pads `0 28px 0 10px`. A selected segment sits on `--ntn-face-bg-hover`,
+  and segment dividers are the 8% ink hairline. `chevron()` takes a colour.
+- `themes/mono.css` sets the face in grey (a white fill, no tint), and `themes/synthwave.css`
+  takes its text greys from its ramp; the translucent fill picks up its purple surfaces.
+- Tests: the one-control-face guard checks the raised face, no face colours its border on hover,
+  every face token has a light value, and the mono guard reads `lch()` colours.
+- **Loading buttons spin a ring, not the icon.** `data-loading` on `ntn-btn` turns the leading
+  icon into `ntn-spinner`'s ring (700ms `ntn-spin`): 16px, or 14px on `--sm`. The ring is drawn
+  in CSS in the button's own ink, so it reads on every variant and with any icon set; the glyph is
+  hidden. Only a direct child `<i>` turns.
+
+### Fixed
+- **Date picker trigger and double clicks.** The trigger ignores the second click of a double click
+  (`event.detail > 1`), so a quick double click, or a mouse whose switch sends ghost clicks, no
+  longer opens the panel and shuts it again (or reopens one just closed). Keyboard activation
+  still toggles.
+
+### Kitchen sink
+- **Every block is shown.** A Layout section (page head, `ntn-grid --2/3/4/split/split-reverse`,
+  `ntn-row --between/--end`, `ntn-stack`, the text helpers and dividers, `ntn-divider-label`), and
+  standalone `ntn-icon` sizes and tints plus `ntn-fab` beside the icon buttons. The Dropdown
+  section has an index link. The stale version and the permanent "new" badges are gone from the
+  sidebar. A test now fails when a block in `dist/` has no example, when the sink uses a class that
+  `dist/` lacks, or when a section and its index link don't match.
+- **Every class has an example**, not just every block. New rows show `ntn-btn--block`,
+  `--lg` on field, select and combo, the select's hint and error, `ntn-radio__desc`,
+  `ntn-rating--sm`, alert `--info` / `--primary` / `--neutral` / `--banner`, the end-aligned
+  tooltip, progress tones / `--lg` / `--indeterminate`, avatar `--xs` / `--ring` and the busy and
+  away dots, toast `--primary` / `--neutral`, the frame fades (beside the plain frame, which stays
+  plain), `ntn-card--glow`, `ntn-edge--strong`, a flush tree with row actions, `ntn-modal--lg`,
+  `ntn-steps--inline`, and a top bar with its own brand. The Settings example adds the sidebar's
+  nested list and footer and marks its panels `ntn-tabs__panel`. The coverage test now checks
+  every class in `dist/`, allowing only the 12 that `nocturne.js` draws.
+- **Get started** opens the page: the two CDN lines, and in its Code a complete starter page
+  (theme script, Font Awesome Free with the Light shim, a dialog that proves the script loaded),
+  the npm install and bundler imports, and theme / accent / density. Links go to the component
+  reference and to building with Claude Code.
+- **JavaScript** closes it: `refresh(root)`, every export with an example call, and every
+  `ntn:*` event with its `detail`. The Toast section's Code leads with the `toast({...})` call.
+- **Reference** links: each section head links to its heading in `skill/components.md`.
+- Verbatim sources: a hidden `<textarea data-sink-source>` holds code that isn't markup on the
+  page; `data-sink-inline` shows it in place.
+- Tests fail when a pinned CDN link in the README or the sink names another version than
+  `package.json`, when the JavaScript section misses an event or export, or when a Reference link
+  has no heading. The README opens with a link to the live sink, and `homepage` points there.
+
+### Examples
+- **`examples/settings.html`**: a complete account settings page, `skill/patterns.md` §4 built
+  with library classes only. Tabs switch Profile, Security, Notifications and Billing; each card
+  is its own `<form>` whose Save toasts what it would post (a `data-ntn-name` combo included) and
+  whose Discard is a plain reset. A dropped photo fills the avatar through `ntn:files`, and a
+  `<form method="dialog">` confirm closes the delete dialog. It ships in the package, so the
+  bundled skill can point agents at it, and the kitchen sink links it from its index and from
+  Get started. A test fails when an example page uses a class `dist/` lacks or isn't linked.
+- **`examples/dashboard.html`**: `skill/patterns.md` §2. A greeting and a date range in the page
+  head, four stats on neutral washes with the one alert in danger, a 1.9 / 1 split (spend by
+  service, top spenders) and a 1 / 1.9 split (activity, and a deploys table that
+  `data-ntn-paginate` pages, searches and filters). Applying a range toasts it through
+  `ntn:daterangechange`. Ships in the package, linked the same way.
+
 ## 1.16.0 — 2026-11-09
 
 ### Added

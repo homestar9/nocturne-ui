@@ -1,4 +1,4 @@
-/*! Nocturne tokens.css v1.16.0 — dark-first SaaS design system.
+/*! Nocturne tokens.css v1.17.0 — dark-first SaaS design system.
  *  Compiled from src/*.scss. Edit files in src/, never in dist/. */
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@400..700&display=swap");
@@ -74,6 +74,29 @@
   --ntn-alpha-ink-10: rgba(255,255,255,0.10);
   /* A per-person avatar (--ntn-avatar-hue): the OKLCH lightness its gradient starts from */
   --ntn-avatar-lightness: 0.78;
+  /* The raised control face (control-surface): field, select, search, combo and date triggers,
+     segmented controls. Measured values, kept exact as lch(); the light estimates live in one
+     block at the end of _theme-light.scss. The ring and drop are --ntn-shadow-face.
+     The fill is translucent, so the face keeps the same small step above any surface (and the
+     ring stays brighter than the fill): over lch(9.232 0.85 272), #1A1A1B, the surface it was
+     measured on, these give exactly lch(13.861 1.139 272) and lch(18.49 1.525 272). */
+  --ntn-face-bg: rgba(226,226,248,0.047);
+  --ntn-face-bg-hover: rgba(221,232,244,0.094);
+  --ntn-face-text: lch(90.826 1.425 272);
+  --ntn-face-muted: lch(63.304 1.425 272); /* chevron, leading icon */
+  --ntn-face-placeholder: lch(52 1.425 272);
+  /* The select's listbox panel (data-ntn-select), measured like the face. Its drop is
+     --ntn-shadow-picker. */
+  --ntn-picker-bg: lch(12.72 0.85 272);
+  --ntn-picker-border: lch(21.36 1.93 272);
+  --ntn-picker-divider: lch(17.04 1.93 272); /* under the search box */
+  --ntn-picker-text: lch(91.178 1.425 272); /* typed search text */
+  --ntn-picker-placeholder: lch(64.714 1.425 272);
+  --ntn-picker-empty: lch(41.778 1.425 272);
+  --ntn-picker-option: lch(91.554 1.65 272);
+  --ntn-picker-option-active: lch(25.69 1.975 272);
+  --ntn-picker-tick: lch(66.215 1.65 272);
+  --ntn-picker-scrollbar: lch(30 2 272);
 }
 
 :root {
@@ -204,6 +227,8 @@
   --ntn-leading-loose: 1.65;
   --ntn-weight-light: 300;
   --ntn-weight-regular: 400;
+  /* Typed text and values in a control face: a touch above regular */
+  --ntn-weight-book: 450;
   /* Off-grid stops on Inter's variable weight axis: a touch heavier than 500 / 600
      so medium labels and semibold titles hold up on dark grounds. */
   --ntn-weight-medium: 510;
@@ -268,9 +293,15 @@
   --ntn-shadow-well: 0 0 0 2px rgba(0,0,0,0.2);
   --ntn-shadow-float: 0 2px 6px rgba(0,0,0,0.5);
   --ntn-shadow-inset: inset 0 1px 2px rgba(0,0,0,0.4);
-  /* The bevel of a control face (button, field, select, toggle group): a lit
-     top inside the border, a dark ring outside it and a short drop. */
+  /* The bevel of a button face: a lit top inside the border, a dark ring outside it and a
+     short drop. */
   --ntn-shadow-bevel: inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 1px rgba(0,0,0,0.5), 0 4px 4px rgba(0,0,0,0.1);
+  /* The raised control face (control-surface): a translucent ink ring just outside the border
+     and a short, tight drop. Brighter under the pointer. Light values: _theme-light.scss. */
+  --ntn-shadow-face: 0 0 0 1px rgba(255,255,255,0.095), 0 0.5px 1px 1px rgba(0,0,0,0.3);
+  --ntn-shadow-face-hover: 0 0 0 1px rgba(255,255,255,0.119), 0 0.5px 1px 1px rgba(0,0,0,0.3);
+  /* The select's listbox panel: three short, even drops */
+  --ntn-shadow-picker: 0 3px 8px rgba(0,0,0,0.125), 0 2px 5px rgba(0,0,0,0.125), 0 1px 1px rgba(0,0,0,0.125);
   /* Glass (_glass.scss): a lit top hairline and a wide soft drop; the strength of an app's
      ambient image */
   --ntn-glass-highlight: inset 0 1px 0 rgba(255,255,255,0.06);
@@ -297,8 +328,13 @@
      with an accent border instead. */
   --ntn-focus-outline: 3px solid var(--ntn-focus-ring);
   --ntn-ring-focus: 0 0 0 3px var(--ntn-focus-ring);
+  /* A raised control face with focus: typing (an accent hairline and a faint halo), and a
+     button-style trigger reached by keyboard (a wider halo outside its hover ring). */
+  --ntn-ring-face-focus: 0 0 0 1px color-mix(in srgb, var(--ntn-accent-500) 80%, transparent),
+                            0 0 0 3px color-mix(in srgb, var(--ntn-accent-500) 22%, transparent);
+  --ntn-ring-face-keyboard: 0 0 0 3px color-mix(in srgb, var(--ntn-accent-500) 40%, transparent);
   /* The lit top edge of a filled accent control */
-  --ntn-highlight-top: inset 0 1px 0 rgba(255,255,255,0.22);
+  --ntn-highlight-top: inset 0 1px 0 rgba(255,255,255,0.15);
   /* The colour a shine light fades through */
   --ntn-shine-color: var(--ntn-accent-500);
   /* The bright glint in the processing ring, just ahead of the accent stops */
@@ -444,6 +480,28 @@
   --ntn-shine-head: var(--ntn-accent-400);
   --ntn-shine-glow: 0.2;
   --ntn-scrim: rgba(0,0,0,0.42);
+  /* ── Raised controls and the select picker: estimated, tune here ───────────
+     Every light value of the control face and the select's panel lives in this block. The dark values are measured
+     and stay where they are (_colors.scss, _elevation.scss). Aliases of the light ramp follow a
+     theme's light mode by themselves; swap one for a literal to tune it. */
+  --ntn-face-bg: var(--ntn-n-0);
+  --ntn-face-bg-hover: var(--ntn-n-100);
+  --ntn-face-text: var(--ntn-n-900);
+  --ntn-face-muted: var(--ntn-n-700);
+  --ntn-face-placeholder: var(--ntn-n-600);
+  --ntn-shadow-face: 0 0 0 1px rgba(0,0,0,0.10), 0 0.5px 1px 0 rgba(0,0,0,0.08);
+  --ntn-shadow-face-hover: 0 0 0 1px rgba(0,0,0,0.15), 0 0.5px 1px 0 rgba(0,0,0,0.08);
+  --ntn-picker-bg: var(--ntn-n-0);
+  --ntn-picker-border: var(--ntn-n-400);
+  --ntn-picker-divider: var(--ntn-n-200);
+  --ntn-picker-text: var(--ntn-n-900);
+  --ntn-picker-placeholder: var(--ntn-n-600);
+  --ntn-picker-empty: var(--ntn-n-600);
+  --ntn-picker-option: var(--ntn-n-900);
+  --ntn-picker-option-active: var(--ntn-n-200);
+  --ntn-picker-tick: var(--ntn-n-700);
+  --ntn-picker-scrollbar: var(--ntn-n-400);
+  --ntn-shadow-picker: 0 3px 8px rgba(0,0,0,0.07), 0 2px 5px rgba(0,0,0,0.07), 0 1px 1px rgba(0,0,0,0.07);
 }
 
 /* ── Nocturne density ────────────────────────────────────────────────────────

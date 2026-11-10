@@ -32,6 +32,23 @@
     padding: var(--ntn-space-3) var(--ntn-space-4); border: 1px solid var(--ntn-border-default); border-radius: var(--ntn-radius-lg);
     background: var(--ntn-surface-2); box-shadow: var(--ntn-shadow-lg);
   }
+  /* A box the fixed FAB pins to: layout containment makes it the containing block. The first FAB
+     moves to the left corner so both fit. */
+  .sink__fab-stage {
+    position: relative; contain: layout; min-height: 96px;
+    border: 1px dashed var(--ntn-border-subtle); border-radius: var(--ntn-radius-lg);
+  }
+  .sink__fab-stage > .ntn-fab:first-child { right: auto; left: var(--ntn-space-6); }
+  /* A navbar shown as an example, not as this page's bar: in flow, framed, not sticky. */
+  .sink__navbar-stage { border: 1px solid var(--ntn-border-subtle); border-radius: var(--ntn-radius-lg); overflow: hidden; }
+  .sink__navbar-stage > .ntn-navbar { position: relative; }
+  /* The Layout section: numbered cells that show a grid's columns. An attribute, not a sink__
+     class, because the Code view drops elements whose only classes are page chrome. */
+  [data-sink-cells] > * {
+    display: grid; place-items: center; min-height: 48px; padding: var(--ntn-space-2);
+    border: 1px dashed var(--ntn-border-default); border-radius: var(--ntn-radius-md);
+    color: var(--ntn-text-muted); font-size: var(--ntn-font-size-xs);
+  }
   .sink__head {
     display: flex; align-items: baseline; gap: var(--ntn-space-3); flex-wrap: wrap;
     padding-top: var(--ntn-space-6); border-top: 1px solid var(--ntn-border-subtle);
@@ -90,31 +107,42 @@
       <span class="ntn-sidebar__mark"><i class="fa-light fa-cube"></i></span>
       <span class="ntn-sidebar__brand-text">
         <span class="ntn-sidebar__name">Nocturne</span>
-        <span class="ntn-sidebar__meta">v1.4.0 · components</span>
+        <span class="ntn-sidebar__meta">components</span>
       </span>
     </div>
     <nav class="ntn-sidebar__nav" id="index">
       <div class="ntn-sidebar__group">
+        <p class="ntn-sidebar__section">Start</p>
+        <a class="ntn-sidebar__item" href="#get-started"><i class="fa-light fa-rocket"></i><span>Get started</span></a>
+        <a class="ntn-sidebar__item" href="#javascript"><i class="fa-light fa-bolt"></i><span>JavaScript</span></a>
+      </div>
+      <div class="ntn-sidebar__group">
+        <p class="ntn-sidebar__section">Examples</p>
+        <a class="ntn-sidebar__item" href="dashboard.html"><i class="fa-light fa-gauge-high"></i><span>Dashboard</span></a>
+        <a class="ntn-sidebar__item" href="settings.html"><i class="fa-light fa-gear"></i><span>Settings page</span></a>
+      </div>
+      <div class="ntn-sidebar__group">
         <p class="ntn-sidebar__section">Actions</p>
         <a class="ntn-sidebar__item" href="#buttons"><i class="fa-light fa-square"></i><span>Buttons</span></a>
-        <a class="ntn-sidebar__item" href="#icon-buttons"><i class="fa-light fa-circle-plus"></i><span>Icon buttons</span></a>
+        <a class="ntn-sidebar__item" href="#icon-buttons"><i class="fa-light fa-circle-plus"></i><span>Icon buttons · FAB</span></a>
         <a class="ntn-sidebar__item" href="#toggle-group"><i class="fa-light fa-table-columns"></i><span>Toggle group</span></a>
       </div>
       <div class="ntn-sidebar__group">
         <p class="ntn-sidebar__section">Inputs</p>
         <a class="ntn-sidebar__item" href="#field"><i class="fa-light fa-font"></i><span>Text field</span></a>
         <a class="ntn-sidebar__item" href="#select"><i class="fa-light fa-caret-down"></i><span>Select</span></a>
-        <a class="ntn-sidebar__item" href="#combo"><i class="fa-light fa-square-caret-down"></i><span>Dropdown · Multi-select</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#form-themes"><i class="fa-light fa-circle-half-stroke"></i><span>Form controls, both themes</span></a>
+        <a class="ntn-sidebar__item" href="#combo"><i class="fa-light fa-square-caret-down"></i><span>Dropdown · Multi-select</span></a>
         <a class="ntn-sidebar__item" href="#search"><i class="fa-light fa-magnifying-glass"></i><span>Search</span></a>
         <a class="ntn-sidebar__item" href="#slider"><i class="fa-light fa-sliders"></i><span>Slider</span></a>
-        <a class="ntn-sidebar__item" href="#upload"><i class="fa-light fa-cloud-arrow-up"></i><span>Upload</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
-        <a class="ntn-sidebar__item" href="#daterange"><i class="fa-light fa-calendar-range"></i><span>Date &amp; range</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#upload"><i class="fa-light fa-cloud-arrow-up"></i><span>Upload</span></a>
+        <a class="ntn-sidebar__item" href="#daterange"><i class="fa-light fa-calendar-range"></i><span>Date &amp; range</span></a>
         <a class="ntn-sidebar__item" href="#selection"><i class="fa-light fa-square-check"></i><span>Checkbox · Radio · Switch</span></a>
       </div>
       <div class="ntn-sidebar__group">
         <p class="ntn-sidebar__section">Data</p>
-        <a class="ntn-sidebar__item" href="#table"><i class="fa-light fa-table"></i><span>Table</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
-        <a class="ntn-sidebar__item" href="#tree"><i class="fa-light fa-folder-tree"></i><span>Tree view</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#table"><i class="fa-light fa-table"></i><span>Table</span></a>
+        <a class="ntn-sidebar__item" href="#tree"><i class="fa-light fa-folder-tree"></i><span>Tree view</span></a>
         <a class="ntn-sidebar__item" href="#pagination"><i class="fa-light fa-ellipsis"></i><span>Pagination</span></a>
         <a class="ntn-sidebar__item" href="#stats"><i class="fa-light fa-chart-simple"></i><span>Stats</span></a>
       </div>
@@ -122,21 +150,22 @@
         <p class="ntn-sidebar__section">Feedback</p>
         <a class="ntn-sidebar__item" href="#badges"><i class="fa-light fa-tag"></i><span>Badges</span></a>
         <a class="ntn-sidebar__item" href="#alerts"><i class="fa-light fa-triangle-exclamation"></i><span>Alerts</span></a>
-        <a class="ntn-sidebar__item" href="#toast"><i class="fa-light fa-message-lines"></i><span>Toast</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#toast"><i class="fa-light fa-message-lines"></i><span>Toast</span></a>
         <a class="ntn-sidebar__item" href="#progress"><i class="fa-light fa-bars-progress"></i><span>Progress · Spinner</span></a>
         <a class="ntn-sidebar__item" href="#avatars"><i class="fa-light fa-user"></i><span>Avatars</span></a>
-        <a class="ntn-sidebar__item" href="#tooltip"><i class="fa-light fa-message"></i><span>Tooltip</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#tooltip"><i class="fa-light fa-message"></i><span>Tooltip</span></a>
         <a class="ntn-sidebar__item" href="#empty"><i class="fa-light fa-inbox"></i><span>Empty state</span></a>
       </div>
       <div class="ntn-sidebar__group">
         <p class="ntn-sidebar__section">Containers</p>
-        <a class="ntn-sidebar__item" href="#shell"><i class="fa-light fa-browser"></i><span>App shell</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
-        <a class="ntn-sidebar__item" href="#density"><i class="fa-light fa-compress"></i><span>Density</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#layout"><i class="fa-light fa-table-cells-large"></i><span>Layout</span></a>
+        <a class="ntn-sidebar__item" href="#shell"><i class="fa-light fa-browser"></i><span>App shell</span></a>
+        <a class="ntn-sidebar__item" href="#density"><i class="fa-light fa-compress"></i><span>Density</span></a>
         <a class="ntn-sidebar__item" href="#cards"><i class="fa-light fa-clone"></i><span>Cards</span></a>
-        <a class="ntn-sidebar__item" href="#frame"><i class="fa-light fa-window-maximize"></i><span>Frame</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
-        <a class="ntn-sidebar__item" href="#edges"><i class="fa-light fa-wand-magic-sparkles"></i><span>Border effects</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
-        <a class="ntn-sidebar__item" href="#glass"><i class="fa-light fa-droplet"></i><span>Glass</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
-        <a class="ntn-sidebar__item" href="#gradient"><i class="fa-light fa-fill-drip"></i><span>Gradient</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#frame"><i class="fa-light fa-window-maximize"></i><span>Frame</span></a>
+        <a class="ntn-sidebar__item" href="#edges"><i class="fa-light fa-wand-magic-sparkles"></i><span>Border effects</span></a>
+        <a class="ntn-sidebar__item" href="#glass"><i class="fa-light fa-droplet"></i><span>Glass</span></a>
+        <a class="ntn-sidebar__item" href="#gradient"><i class="fa-light fa-fill-drip"></i><span>Gradient</span></a>
         <a class="ntn-sidebar__item" href="#accordion"><i class="fa-light fa-list"></i><span>Accordion</span></a>
         <a class="ntn-sidebar__item" href="#modal"><i class="fa-light fa-window-restore"></i><span>Modal</span></a>
       </div>
@@ -145,7 +174,8 @@
         <a class="ntn-sidebar__item" href="#tabs"><i class="fa-light fa-folder"></i><span>Tabs</span></a>
         <a class="ntn-sidebar__item" href="#crumbs"><i class="fa-light fa-angles-right"></i><span>Breadcrumbs</span></a>
         <a class="ntn-sidebar__item" href="#menu"><i class="fa-light fa-bars"></i><span>Menu</span></a>
-        <a class="ntn-sidebar__item" href="#steps"><i class="fa-light fa-circle-nodes"></i><span>Progress steps</span><span class="ntn-badge ntn-badge--primary ntn-badge--sm">new</span></a>
+        <a class="ntn-sidebar__item" href="#dropdown"><i class="fa-light fa-caret-down"></i><span>Dropdown · Popover</span></a>
+        <a class="ntn-sidebar__item" href="#steps"><i class="fa-light fa-circle-nodes"></i><span>Progress steps</span></a>
       </div>
     </nav>
   </aside>
@@ -203,8 +233,106 @@
         </div>
         <script>if (location.protocol === 'file:') document.getElementById('file-notice').hidden = false;</script>
 
+        <!-- ── Get started ────────────────────────────────────────────── -->
+        <!-- Sources sit in hidden textareas, which hold raw text; sink-code.js shows them. -->
+        <section class="sink" id="get-started">
+          <header class="sink__head">
+            <h2 class="sink__title">Get started</h2>
+            <p class="sink__note">One stylesheet, plus an optional script for the interactive parts. Put these two lines in your page's <code>&lt;head&gt;</code>, then take any example below from its <b>Code</b> button. This section's Code has a complete starter page, the npm setup, and how to pick a theme, accent and density. Everything renders without the script; <a href="#javascript">JavaScript</a> lists what it adds.</p>
+          </header>
+          <div class="ntn-card"><div class="ntn-card__body ntn-stack">
+            <textarea hidden data-sink-source="From a CDN" data-sink-lang="html" data-sink-inline>
+              <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.17.0/dist/nocturne.css">
+              <script type="module" src="https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.17.0/js/nocturne.js"></script>
+            </textarea>
+            <div class="ntn-row">
+              <a class="ntn-btn ntn-btn--sm ntn-btn--primary" href="dashboard.html"><i class="fa-light fa-gauge-high"></i>Example: Dashboard</a>
+              <a class="ntn-btn ntn-btn--sm ntn-btn--primary" href="settings.html"><i class="fa-light fa-gear"></i>Example: Settings page</a>
+              <a class="ntn-btn ntn-btn--sm" href="#javascript"><i class="fa-light fa-bolt"></i>JavaScript</a>
+              <a class="ntn-btn ntn-btn--sm" href="https://github.com/homestar9/nocturne-ui/blob/master/skill/components.md"><i class="fa-light fa-book"></i>Component reference</a>
+              <a class="ntn-btn ntn-btn--sm" href="https://github.com/homestar9/nocturne-ui/blob/master/skill/consumer-CLAUDE.md"><i class="fa-light fa-robot"></i>Building with Claude Code</a>
+            </div>
+          </div></div>
+          <textarea hidden data-sink-source="Starter page" data-sink-lang="html">
+            <!doctype html>
+            <html lang="en" data-theme="dark">
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <title>My app</title>
+              <!-- Paint the stored theme before first paint, so light users never see a dark flash. -->
+              <script>try{var p=localStorage.getItem('ntn-theme')||'dark';document.documentElement.setAttribute('data-theme',p==='auto'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):p)}catch(e){}</script>
+              <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.17.0/dist/nocturne.css">
+              <script type="module" src="https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.17.0/js/nocturne.js"></script>
+              <!-- Icons: Font Awesome. The free set has no Light weight, so the rule below draws Light
+                   classes with the Solid faces. Swap both for your Pro kit if you have one. -->
+              <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+              <style>.fa-light { font-family: "Font Awesome 6 Free"; font-weight: 900; font-style: normal }</style>
+            </head>
+            <body>
+              <div class="ntn-app">
+                <div class="ntn-app__main">
+                  <header class="ntn-navbar">
+                    <div class="ntn-navbar__brand"><span class="ntn-navbar__mark"><i class="fa-light fa-cube"></i></span>My app</div>
+                    <div class="ntn-navbar__right">
+                      <button class="ntn-icon-btn" aria-label="Toggle light theme" data-ntn-theme-toggle><i class="fa-light fa-sun" data-ntn-theme-icon></i></button>
+                    </div>
+                  </header>
+                  <div class="ntn-app__scroll">
+                    <main class="ntn-page">
+                      <div class="ntn-page__head">
+                        <div>
+                          <h1 class="ntn-page__title">Hello, Nocturne</h1>
+                          <p class="ntn-page__sub">Take any example from the kitchen sink and drop it in here.</p>
+                        </div>
+                        <div class="ntn-page__actions">
+                          <button class="ntn-btn ntn-btn--primary" data-ntn-open="#welcome">Open a dialog</button>
+                        </div>
+                      </div>
+                      <section class="ntn-card">
+                        <div class="ntn-card__body">Cards, fields and tables all go in this column.</div>
+                      </section>
+                    </main>
+                  </div>
+                </div>
+              </div>
+              <dialog class="ntn-modal" id="welcome">
+                <header class="ntn-modal__head">
+                  <div>
+                    <h2 class="ntn-modal__title">It works</h2>
+                    <p class="ntn-modal__desc">nocturne.js opened this dialog from data-ntn-open.</p>
+                  </div>
+                  <button type="button" class="ntn-modal__close" aria-label="Close" data-ntn-close><i class="fa-light fa-xmark"></i></button>
+                </header>
+                <div class="ntn-modal__body">Press Escape or the cross to close it.</div>
+              </dialog>
+            </body>
+            </html>
+          </textarea>
+          <textarea hidden data-sink-source="Install with npm" data-sink-lang="sh">
+            npm install @homestar9/nocturne-ui
+          </textarea>
+          <textarea hidden data-sink-source="Bundler entry" data-sink-lang="js">
+            import '@homestar9/nocturne-ui';     // the stylesheet
+            import '@homestar9/nocturne-ui/js';  // optional behaviours; wires itself up on import
+          </textarea>
+          <textarea hidden data-sink-source="Theme, accent and density" data-sink-lang="html">
+            <!-- Theme: dark (the default), light, or auto. nocturne.js stores the visitor's choice. -->
+            <html lang="en" data-theme="dark">
+
+            <!-- Accent: load at most one theme after nocturne.css. Violet needs none. -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@homestar9/nocturne-ui@1.17.0/themes/emerald.css">
+
+            <!-- Density: compact tightens the whole app; it also works on any subtree. -->
+            <html lang="en" data-theme="dark" data-density="compact">
+
+            <!-- A theme switch anywhere on the page -->
+            <button class="ntn-icon-btn" aria-label="Toggle light theme" data-ntn-theme-toggle><i class="fa-light fa-sun" data-ntn-theme-icon></i></button>
+          </textarea>
+        </section>
+
         <!-- ── Buttons ────────────────────────────────────────────────── -->
-        <section class="sink" id="buttons">
+        <section class="sink" id="buttons" data-sink-ref="button--ntn-btn">
           <header class="sink__head">
             <h2 class="sink__title">Buttons</h2>
             <code class="sink__code">.ntn-btn</code>
@@ -248,21 +376,29 @@
               <button class="ntn-btn">Medium</button>
               <button class="ntn-btn ntn-btn--lg">Large</button>
               <button class="ntn-btn" disabled>Disabled</button>
-              <button class="ntn-btn ntn-btn--primary" data-loading><i class="fa-light fa-sort"></i>Saving</button>
+              <button class="ntn-btn ntn-btn--primary" data-loading><i class="fa-light fa-floppy-disk"></i>Saving</button>
               <span class="ntn-loading"><span class="ntn-spinner"></span>Loading invoices</span>
+            </div>
+            <hr class="ntn-divider">
+            <span class="sink__label">Block (--block) · full width, for narrow forms</span>
+            <div style="max-width:320px">
+              <button class="ntn-btn ntn-btn--primary ntn-btn--block" data-sink-example="Block">Continue</button>
             </div>
           </div></div>
         </section>
 
         <!-- ── Icon buttons ───────────────────────────────────────────── -->
-        <section class="sink" id="icon-buttons">
+        <section class="sink" id="icon-buttons" data-sink-ref="icon-button--ntn-icon-btn">
           <header class="sink__head">
-            <h2 class="sink__title">Icon buttons</h2>
+            <h2 class="sink__title">Icon buttons · Icons · FAB</h2>
             <code class="sink__code">.ntn-icon-btn</code>
-            <p class="sink__note">Square actions for toolbars and table rows. Always give one an <code>aria-label</code>.</p>
+            <code class="sink__code">.ntn-icon</code>
+            <code class="sink__code">.ntn-fab</code>
+            <p class="sink__note">Square actions for toolbars and table rows. Always give one an <code>aria-label</code>. <code>ntn-icon</code> sizes and tints a standalone icon; inside a block, the block sizes its own icons. The floating action button is fixed to the bottom right of the window (here, of the dashed stage).</p>
           </header>
-          <div class="ntn-card"><div class="ntn-card__body">
-            <div class="ntn-row" data-sink-example="">
+          <div class="ntn-card"><div class="ntn-card__body ntn-stack">
+            <span class="sink__label">Icon buttons</span>
+            <div class="ntn-row" data-sink-example="Icon buttons">
               <button class="ntn-icon-btn" aria-label="Filter"><i class="fa-light fa-filter"></i></button>
               <button class="ntn-icon-btn ntn-icon-btn--secondary" aria-label="Download"><i class="fa-light fa-download"></i></button>
               <button class="ntn-icon-btn ntn-icon-btn--primary" aria-label="Add"><i class="fa-light fa-plus"></i></button>
@@ -271,11 +407,26 @@
               <button class="ntn-icon-btn ntn-icon-btn--sm" aria-label="More"><i class="fa-light fa-ellipsis"></i></button>
               <button class="ntn-icon-btn ntn-icon-btn--lg" aria-label="Play"><i class="fa-light fa-play"></i></button>
             </div>
+            <hr class="ntn-divider">
+            <span class="sink__label">Standalone icons: sizes and tints</span>
+            <div class="ntn-row" data-sink-example="Icons">
+              <i class="ntn-icon ntn-icon--sm fa-light fa-bolt" aria-hidden="true"></i>
+              <i class="ntn-icon fa-light fa-bolt" aria-hidden="true"></i>
+              <i class="ntn-icon ntn-icon--lg fa-light fa-bolt" aria-hidden="true"></i>
+              <i class="ntn-icon ntn-icon--lg ntn-icon--primary fa-light fa-bolt" aria-hidden="true"></i>
+              <i class="ntn-icon ntn-icon--lg ntn-icon--muted fa-light fa-bolt" aria-hidden="true"></i>
+            </div>
+            <hr class="ntn-divider">
+            <span class="sink__label">Floating action button: icon, extended</span>
+            <div class="sink__fab-stage">
+              <button class="ntn-fab" aria-label="New key" data-sink-example="FAB"><i class="fa-light fa-plus"></i></button>
+              <button class="ntn-fab ntn-fab--extended" data-sink-example="FAB"><i class="fa-light fa-plus"></i>New key</button>
+            </div>
           </div></div>
         </section>
 
         <!-- ── Toggle group ───────────────────────────────────────────── -->
-        <section class="sink" id="toggle-group">
+        <section class="sink" id="toggle-group" data-sink-ref="toggle-group--ntn-toggle-group">
           <header class="sink__head">
             <h2 class="sink__title">Toggle group</h2>
             <code class="sink__code">.ntn-toggle-group</code>
@@ -328,7 +479,7 @@
         </section>
 
         <!-- ── Text field ─────────────────────────────────────────────── -->
-        <section class="sink" id="field">
+        <section class="sink" id="field" data-sink-ref="text-field--ntn-field">
           <header class="sink__head">
             <h2 class="sink__title">Text field</h2>
             <code class="sink__code">.ntn-field</code>
@@ -348,9 +499,13 @@
               </label>
             </div></div>
             <div class="ntn-card"><div class="ntn-card__body ntn-stack">
-              <label class="ntn-field ntn-field--sm" data-sink-example="Small">
+              <label class="ntn-field ntn-field--sm" data-sink-example="Small and large">
                 <span class="ntn-field__label">Small</span>
                 <span class="ntn-field__control"><input type="text" placeholder="28px control"></span>
+              </label>
+              <label class="ntn-field ntn-field--lg" data-sink-example="Small and large">
+                <span class="ntn-field__label">Large</span>
+                <span class="ntn-field__control"><input type="text" placeholder="Large control"></span>
               </label>
               <label class="ntn-field ntn-field--textarea" data-sink-example="Textarea">
                 <span class="ntn-field__label">Description</span>
@@ -373,11 +528,11 @@
         </section>
 
         <!-- ── Select ─────────────────────────────────────────────────── -->
-        <section class="sink" id="select">
+        <section class="sink" id="select" data-sink-ref="select--ntn-select">
           <header class="sink__head">
             <h2 class="sink__title">Select</h2>
             <code class="sink__code">.ntn-select</code>
-            <p class="sink__note">A native <code>&lt;select&gt;</code>, restyled — smallest footprint, and it gets the platform picker on mobile for free. Reach for <a href="#combo">Dropdown</a> when options need descriptions, icons, filtering or multi-select.</p>
+            <p class="sink__note">A native <code>&lt;select&gt;</code>, restyled — smallest footprint, and it gets the platform picker on mobile for free. Add <code>data-ntn-select</code> and <code>nocturne.js</code> draws a listbox over it instead (search with <code>data-ntn-search</code>, an empty state with <code>data-ntn-empty</code>), while the native select still posts and fires <code>change</code>. Reach for <a href="#combo">Dropdown</a> when options need descriptions, icons or chips.</p>
           </header>
           <div class="ntn-card"><div class="ntn-card__body ntn-stack">
             <label class="ntn-select" style="max-width:280px" data-sink-example="Stacked label">
@@ -394,11 +549,165 @@
                 <span class="ntn-select__control"><select><option>Newest</option><option>Oldest</option></select></span>
               </label>
             </div>
+            <div class="ntn-grid ntn-grid--3">
+              <label class="ntn-select" data-sink-example="Hint">
+                <span class="ntn-select__label">Billing currency</span>
+                <span class="ntn-select__control"><select><option>USD</option><option>EUR</option><option>GBP</option></select></span>
+                <span class="ntn-select__hint">Applies from the next invoice.</span>
+              </label>
+              <div class="ntn-select" data-sink-example="Error message">
+                <label class="ntn-select__label" for="sink-plan">Plan</label>
+                <span class="ntn-select__control"><select id="sink-plan" aria-invalid="true" aria-describedby="sink-plan-error"><option value="">Choose a plan</option><option>Team</option><option>Enterprise</option></select></span>
+                <span class="ntn-select__error" id="sink-plan-error">Pick a plan to continue.</span>
+              </div>
+              <label class="ntn-select ntn-select--lg" data-sink-example="Large">
+                <span class="ntn-select__label">Large</span>
+                <span class="ntn-select__control"><select><option>us-east-1</option><option>eu-west-2</option></select></span>
+              </label>
+            </div>
+          </div></div>
+          <div class="ntn-card"><div class="ntn-card__body ntn-stack">
+            <div class="ntn-grid ntn-grid--3">
+              <label class="ntn-select" data-ntn-select data-sink-example="Enhanced">
+                <span class="ntn-select__label">First day of the week</span>
+                <span class="ntn-select__control"><select name="week-start"><option selected>Sunday</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select></span>
+                <span class="ntn-select__hint">Arrow keys, type-to-jump, <kbd class="ntn-kbd">esc</kbd>.</span>
+              </label>
+              <label class="ntn-select" data-ntn-select data-ntn-search="Search teams…" data-ntn-empty="No matching teams" data-sink-example="Enhanced, searchable">
+                <span class="ntn-select__label">Include private teams</span>
+                <span class="ntn-select__control"><select name="private-teams"><option value="" selected>None</option><option value="eng">Engineering</option><option value="design">Design</option><option value="ops">Operations</option><option value="mkt">Marketing</option><option value="sales">Sales</option><option value="support">Support</option></select></span>
+              </label>
+              <label class="ntn-select ntn-select--inline" data-ntn-select data-sink-example="Enhanced, inline">
+                <span class="ntn-select__label">Sort by</span>
+                <span class="ntn-select__control"><select><option>Newest</option><option>Oldest</option><option>Most active</option></select></span>
+              </label>
+            </div>
+            <div class="ntn-grid ntn-grid--2">
+              <label class="ntn-select" data-sink-example="Multiple, native">
+                <span class="ntn-select__label">Notify channels (native)</span>
+                <span class="ntn-select__control"><select name="channels-native" multiple size="4"><option value="email" selected>Email</option><option value="slack" selected>Slack</option><option value="sms">SMS</option><option value="webhook">Webhook</option></select></span>
+                <span class="ntn-select__hint">Without the script: the platform's list box.</span>
+              </label>
+              <label class="ntn-select" data-ntn-select data-ntn-placeholder="No channels" data-sink-example="Multiple, enhanced">
+                <span class="ntn-select__label">Notify channels</span>
+                <span class="ntn-select__control"><select name="channels" multiple><option value="email" selected>Email</option><option value="slack" selected>Slack</option><option value="sms">SMS</option><option value="webhook">Webhook</option></select></span>
+                <span class="ntn-select__hint">Toggles stay open; the trigger joins the labels.</span>
+              </label>
+              <label class="ntn-select" data-sink-example="Groups, native">
+                <span class="ntn-select__label">Assignee (native)</span>
+                <span class="ntn-select__control"><select name="assignee-native"><optgroup label="People"><option>Ada Lovelace</option><option>Grace Hopper</option><option>Alan Turing</option></optgroup><optgroup label="Bots" disabled><option>Deploy bot</option><option>Triage bot</option></optgroup></select></span>
+                <span class="ntn-select__hint">The Bots group is disabled.</span>
+              </label>
+              <label class="ntn-select" data-ntn-select data-ntn-search="Search people…" data-ntn-empty="No one matches" data-sink-example="Groups, enhanced">
+                <span class="ntn-select__label">Assignee</span>
+                <span class="ntn-select__control"><select name="assignee"><optgroup label="People"><option>Ada Lovelace</option><option>Grace Hopper</option><option>Alan Turing</option></optgroup><optgroup label="Bots" disabled><option>Deploy bot</option><option>Triage bot</option></optgroup></select></span>
+                <span class="ntn-select__hint">Group headings; a disabled group can't be picked.</span>
+              </label>
+            </div>
           </div></div>
         </section>
 
+        <!-- ── Form controls in both themes ──────────────────────────── -->
+        <section class="sink" id="form-themes">
+          <header class="sink__head">
+            <h2 class="sink__title">Form controls in both themes</h2>
+            <code class="sink__code">data-theme</code>
+            <p class="sink__note">The raised face and the select's listbox, side by side: a <code>data-theme="dark"</code> panel and a <code>data-theme="light"</code> panel, whatever the page's theme. Dark values are measured; the light ones are estimates, tuned in one block at the end of <code>src/tokens/_theme-light.scss</code>.</p>
+          </header>
+          <div class="ntn-grid ntn-grid--2">
+            <div class="ntn-card" data-theme="dark" style="color:var(--ntn-text-primary)"><div class="ntn-card__body ntn-stack">
+              <h3 class="ntn-card__title">Dark</h3>
+              <label class="ntn-select" data-ntn-select data-ntn-search="Search teams…" data-ntn-empty="No matching teams">
+                <span class="ntn-select__label">Include private teams</span>
+                <span class="ntn-select__control"><select name="dark-private-teams"><option value="" selected>None</option><option value="eng">Engineering</option><option value="design">Design</option><option value="ops">Operations</option><option value="mkt">Marketing</option><option value="sales">Sales</option><option value="support">Support</option></select></span>
+                <span class="ntn-select__hint">Searchable, showing its placeholder value.</span>
+              </label>
+              <label class="ntn-select" data-ntn-select>
+                <span class="ntn-select__label">First day of the week</span>
+                <span class="ntn-select__control"><select name="dark-week-start"><option selected>Sunday</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select></span>
+              </label>
+              <label class="ntn-select" data-ntn-select data-ntn-placeholder="No channels">
+                <span class="ntn-select__label">Notify channels</span>
+                <span class="ntn-select__control"><select name="dark-channels" multiple><option value="email" selected>Email</option><option value="slack">Slack</option><option value="sms">SMS</option></select></span>
+              </label>
+              <label class="ntn-select" data-ntn-select>
+                <span class="ntn-select__label">Assignee</span>
+                <span class="ntn-select__control"><select name="dark-assignee"><optgroup label="People"><option>Ada Lovelace</option><option>Grace Hopper</option></optgroup><optgroup label="Bots" disabled><option>Deploy bot</option></optgroup></select></span>
+              </label>
+              <label class="ntn-select" data-ntn-select>
+                <span class="ntn-select__label">Region (disabled)</span>
+                <span class="ntn-select__control"><select name="dark-region" disabled><option>us-east-1</option></select></span>
+              </label>
+              <label class="ntn-field">
+                <span class="ntn-field__label">Full name</span>
+                <span class="ntn-field__control"><input type="text" value="Ada Lovelace" placeholder=" "></span>
+              </label>
+              <label class="ntn-field">
+                <span class="ntn-field__label">Title</span>
+                <span class="ntn-field__control"><input type="text" placeholder="Your job title or role"></span>
+              </label>
+              <label class="ntn-field">
+                <span class="ntn-field__label">Search</span>
+                <span class="ntn-field__control"><i class="fa-light fa-magnifying-glass"></i><input type="search" placeholder="Search…"></span>
+              </label>
+              <label class="ntn-field">
+                <span class="ntn-field__label">Username (disabled)</span>
+                <span class="ntn-field__control"><input type="text" value="ada" placeholder=" " disabled></span>
+              </label>
+              <label class="ntn-field ntn-field--textarea">
+                <span class="ntn-field__label">Description</span>
+                <span class="ntn-field__control"><textarea placeholder="Add a description…"></textarea></span>
+              </label>
+            </div></div>
+            <div class="ntn-card" data-theme="light" style="color:var(--ntn-text-primary)" data-sink-example="A light panel: data-theme on any subtree"><div class="ntn-card__body ntn-stack">
+              <h3 class="ntn-card__title">Light</h3>
+              <label class="ntn-select" data-ntn-select data-ntn-search="Search teams…" data-ntn-empty="No matching teams">
+                <span class="ntn-select__label">Include private teams</span>
+                <span class="ntn-select__control"><select name="light-private-teams"><option value="" selected>None</option><option value="eng">Engineering</option><option value="design">Design</option><option value="ops">Operations</option><option value="mkt">Marketing</option><option value="sales">Sales</option><option value="support">Support</option></select></span>
+                <span class="ntn-select__hint">Searchable, showing its placeholder value.</span>
+              </label>
+              <label class="ntn-select" data-ntn-select>
+                <span class="ntn-select__label">First day of the week</span>
+                <span class="ntn-select__control"><select name="light-week-start"><option selected>Sunday</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select></span>
+              </label>
+              <label class="ntn-select" data-ntn-select data-ntn-placeholder="No channels">
+                <span class="ntn-select__label">Notify channels</span>
+                <span class="ntn-select__control"><select name="light-channels" multiple><option value="email" selected>Email</option><option value="slack">Slack</option><option value="sms">SMS</option></select></span>
+              </label>
+              <label class="ntn-select" data-ntn-select>
+                <span class="ntn-select__label">Assignee</span>
+                <span class="ntn-select__control"><select name="light-assignee"><optgroup label="People"><option>Ada Lovelace</option><option>Grace Hopper</option></optgroup><optgroup label="Bots" disabled><option>Deploy bot</option></optgroup></select></span>
+              </label>
+              <label class="ntn-select" data-ntn-select>
+                <span class="ntn-select__label">Region (disabled)</span>
+                <span class="ntn-select__control"><select name="light-region" disabled><option>us-east-1</option></select></span>
+              </label>
+              <label class="ntn-field">
+                <span class="ntn-field__label">Full name</span>
+                <span class="ntn-field__control"><input type="text" value="Ada Lovelace" placeholder=" "></span>
+              </label>
+              <label class="ntn-field">
+                <span class="ntn-field__label">Title</span>
+                <span class="ntn-field__control"><input type="text" placeholder="Your job title or role"></span>
+              </label>
+              <label class="ntn-field">
+                <span class="ntn-field__label">Search</span>
+                <span class="ntn-field__control"><i class="fa-light fa-magnifying-glass"></i><input type="search" placeholder="Search…"></span>
+              </label>
+              <label class="ntn-field">
+                <span class="ntn-field__label">Username (disabled)</span>
+                <span class="ntn-field__control"><input type="text" value="ada" placeholder=" " disabled></span>
+              </label>
+              <label class="ntn-field ntn-field--textarea">
+                <span class="ntn-field__label">Description</span>
+                <span class="ntn-field__control"><textarea placeholder="Add a description…"></textarea></span>
+              </label>
+            </div></div>
+          </div>
+        </section>
+
         <!-- ── Dropdown ──────────────────────────────────────────────── -->
-        <section class="sink" id="combo">
+        <section class="sink" id="combo" data-sink-ref="dropdown--multi-select--ntn-combo">
           <header class="sink__head">
             <h2 class="sink__title">Dropdown · Multi-select</h2>
             <code class="sink__code">.ntn-combo</code>
@@ -487,12 +796,26 @@
                 </div>
               </div>
 
+              <div class="ntn-combo ntn-combo--lg" style="max-width:280px" data-ntn-combo data-sink-example="Large">
+                <span class="ntn-combo__label">Large</span>
+                <button type="button" class="ntn-combo__trigger" aria-haspopup="listbox" aria-expanded="false">
+                  <span class="ntn-combo__value" data-ntn-combo-value></span>
+                  <i class="fa-light fa-chevron-down ntn-combo__caret"></i>
+                </button>
+                <div class="ntn-combo__panel ntn-menu" hidden>
+                  <div class="ntn-combo__list" role="listbox">
+                    <button type="button" class="ntn-combo__option" role="option" aria-selected="true"><span class="ntn-combo__text"><span class="ntn-combo__option-title">Production</span></span><i class="fa-light fa-check ntn-combo__tick"></i></button>
+                    <button type="button" class="ntn-combo__option" role="option" aria-selected="false"><span class="ntn-combo__text"><span class="ntn-combo__option-title">Staging</span></span><i class="fa-light fa-check ntn-combo__tick"></i></button>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div></div>
         </section>
 
         <!-- ── Search ─────────────────────────────────────────────────── -->
-        <section class="sink" id="search">
+        <section class="sink" id="search" data-sink-ref="search--ntn-search">
           <header class="sink__head">
             <h2 class="sink__title">Search</h2>
             <code class="sink__code">.ntn-search</code>
@@ -507,7 +830,7 @@
         </section>
 
         <!-- ── Slider ─────────────────────────────────────────────────── -->
-        <section class="sink" id="slider">
+        <section class="sink" id="slider" data-sink-ref="slider--ntn-slider">
           <header class="sink__head">
             <h2 class="sink__title">Slider</h2>
             <code class="sink__code">.ntn-slider</code>
@@ -525,7 +848,7 @@
         </section>
 
         <!-- ── Upload ─────────────────────────────────────────────────── -->
-        <section class="sink" id="upload">
+        <section class="sink" id="upload" data-sink-ref="upload--ntn-dropzone--ntn-file">
           <header class="sink__head">
             <h2 class="sink__title">Upload</h2>
             <code class="sink__code">.ntn-dropzone .ntn-file</code>
@@ -590,11 +913,11 @@
         </section>
 
         <!-- ── Date range ─────────────────────────────────────────────── -->
-        <section class="sink" id="daterange">
+        <section class="sink" id="daterange" data-sink-ref="date--range-picker--ntn-daterange">
           <header class="sink__head">
             <h2 class="sink__title">Date &amp; range picker</h2>
             <code class="sink__code">.ntn-daterange</code>
-            <p class="sink__note">Presets, two months, draft-then-apply. Nothing leaves the component until <b>Apply</b>, which fires <code>ntn:daterangechange</code>. <code>data-ntn-single</code> turns the same component into a single-date picker; add <code>data-ntn-time</code> and a footer time input for date + time. A <code>data-ntn-daterange-clear</code> button empties it, <code>data-ntn-name</code> posts it with a form, and <code>setDateRange()</code> sets it from code. The panel opens in the top layer: try one at the bottom of the window, inside a card, or in the Modal example.</p>
+            <p class="sink__note">Presets, two months, draft-then-apply. Click a month's year to type it or step it. Nothing leaves the component until <b>Apply</b>, which fires <code>ntn:daterangechange</code>. <code>data-ntn-single</code> turns the same component into a single-date picker; add <code>data-ntn-time</code> and a footer time input for date + time. A <code>data-ntn-daterange-clear</code> button empties it, <code>data-ntn-name</code> posts it with a form, and <code>setDateRange()</code> sets it from code. The panel opens in the top layer: try one at the bottom of the window, inside a card, or in the Modal example.</p>
           </header>
           <div class="ntn-card"><div class="ntn-card__body ntn-stack">
             <div class="ntn-row">
@@ -752,7 +1075,7 @@
         </section>
 
         <!-- ── Selection ────────────────────────────────────────────── -->
-        <section class="sink" id="selection">
+        <section class="sink" id="selection" data-sink-ref="checkbox--ntn-check--radio--ntn-radio--switch--ntn-switch">
           <header class="sink__head">
             <h2 class="sink__title">Checkbox · Radio · Switch</h2>
             <code class="sink__code">.ntn-check .ntn-radio .ntn-switch</code>
@@ -773,6 +1096,12 @@
                 <label class="ntn-radio"><input type="radio" name="plan"><span class="ntn-radio__label">Business</span></label>
                 <label class="ntn-radio"><input type="radio" name="plan" disabled><span class="ntn-radio__label">Enterprise</span></label>
               </div>
+              <div class="ntn-radio-group" data-sink-example="Radio group, with descriptions">
+                <label class="ntn-radio"><input type="radio" name="backup" checked><span class="ntn-radio__label">Daily
+                  <span class="ntn-radio__desc">Kept for 30 days.</span></span></label>
+                <label class="ntn-radio"><input type="radio" name="backup"><span class="ntn-radio__label">Hourly
+                  <span class="ntn-radio__desc">Kept for 7 days. Adds about $40 a month.</span></span></label>
+              </div>
               <hr class="ntn-divider">
               <fieldset class="ntn-radio-group ntn-radio-group--segmented" data-sink-example="Segmented radio group">
                 <legend>Content mode</legend>
@@ -792,6 +1121,9 @@
               <span class="ntn-rating ntn-rating--readonly" role="img" aria-label="3 of 5 stars" data-sink-example="Read-only rating">
                 <span class="ntn-rating__star" data-on></span><span class="ntn-rating__star" data-on></span><span class="ntn-rating__star" data-on></span><span class="ntn-rating__star"></span><span class="ntn-rating__star"></span>
               </span>
+              <span class="ntn-rating ntn-rating--readonly ntn-rating--sm" role="img" aria-label="4 of 5 stars" data-sink-example="Small (--sm)">
+                <span class="ntn-rating__star" data-on></span><span class="ntn-rating__star" data-on></span><span class="ntn-rating__star" data-on></span><span class="ntn-rating__star" data-on></span><span class="ntn-rating__star"></span>
+              </span>
             </div></div>
             <div class="ntn-card"><div class="ntn-card__body ntn-stack">
               <label class="ntn-switch" data-sink-example="Switch">
@@ -806,7 +1138,7 @@
         </section>
 
         <!-- ── Table ──────────────────────────────────────────────────── -->
-        <section class="sink" id="table">
+        <section class="sink" id="table" data-sink-ref="table--ntn-table">
           <header class="sink__head">
             <h2 class="sink__title">Table</h2>
             <code class="sink__code">.ntn-card--flush + .ntn-table</code>
@@ -1100,7 +1432,7 @@
         </section>
 
         <!-- ── Tree view ─────────────────────────────────────────────── -->
-        <section class="sink" id="tree">
+        <section class="sink" id="tree" data-sink-ref="tree-view--ntn-tree">
           <header class="sink__head">
             <h2 class="sink__title">Tree view</h2>
             <code class="sink__code">.ntn-tree</code>
@@ -1228,6 +1560,50 @@
                 </div>
               </div>
             </div>
+            <section class="ntn-card ntn-card--flush" style="flex:0 1 300px" data-sink-example="Flush, edge to edge in a flush card">
+              <header class="ntn-card__head">
+                <div class="ntn-card__heading">
+                  <h3 class="ntn-card__title">Files</h3>
+                  <p class="ntn-card__sub">--flush: rows run edge to edge.</p>
+                </div>
+              </header>
+              <div class="ntn-tree ntn-tree--flush" role="tree" aria-label="Files" data-ntn-tree>
+                <div class="ntn-tree__item" role="treeitem" aria-expanded="true">
+                  <div class="ntn-tree__row">
+                    <span class="ntn-tree__twisty" aria-hidden="true"><i class="fa-light fa-chevron-right"></i></span>
+                    <i class="ntn-tree__icon fa-light fa-folder-open"></i>
+                    <span class="ntn-tree__label">src</span>
+                  </div>
+                  <div class="ntn-tree__group" role="group">
+                    <div class="ntn-tree__item" role="treeitem">
+                      <div class="ntn-tree__row">
+                        <span class="ntn-tree__twisty ntn-tree__twisty--leaf" aria-hidden="true"></span>
+                        <i class="ntn-tree__icon fa-light fa-file-lines"></i>
+                        <span class="ntn-tree__label">index.js</span>
+                      </div>
+                    </div>
+                    <div class="ntn-tree__item" role="treeitem">
+                      <div class="ntn-tree__row">
+                        <span class="ntn-tree__twisty ntn-tree__twisty--leaf" aria-hidden="true"></span>
+                        <i class="ntn-tree__icon fa-light fa-file-lines"></i>
+                        <span class="ntn-tree__label">theme.css</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="ntn-tree__item" role="treeitem">
+                  <div class="ntn-tree__row">
+                    <span class="ntn-tree__twisty ntn-tree__twisty--leaf" aria-hidden="true"></span>
+                    <i class="ntn-tree__icon fa-light fa-file-lines"></i>
+                    <span class="ntn-tree__label">README.md</span>
+                    <span class="ntn-tree__actions">
+                      <button class="ntn-icon-btn ntn-icon-btn--sm" aria-label="Rename README.md"><i class="fa-light fa-pen"></i></button>
+                      <button class="ntn-icon-btn ntn-icon-btn--sm" aria-label="Delete README.md"><i class="fa-light fa-trash"></i></button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </section>
             <div class="ntn-card" style="flex:0 1 300px">
               <div class="ntn-card__body ntn-stack">
                 <p class="sink__label">Pages (links)</p>
@@ -1269,7 +1645,7 @@
         </section>
 
         <!-- ── Pagination ─────────────────────────────────────────────── -->
-        <section class="sink" id="pagination">
+        <section class="sink" id="pagination" data-sink-ref="pagination--ntn-pager">
           <header class="sink__head">
             <h2 class="sink__title">Pagination</h2>
             <code class="sink__code">.ntn-pager</code>
@@ -1309,7 +1685,7 @@
         </section>
 
         <!-- ── Stats ──────────────────────────────────────────────────── -->
-        <section class="sink" id="stats">
+        <section class="sink" id="stats" data-sink-ref="stat--ntn-stat">
           <header class="sink__head">
             <h2 class="sink__title">Stats</h2>
             <code class="sink__code">.ntn-stat</code>
@@ -1340,7 +1716,7 @@
         </section>
 
         <!-- ── Badges ─────────────────────────────────────────────────── -->
-        <section class="sink" id="badges">
+        <section class="sink" id="badges" data-sink-ref="badge--ntn-badge">
           <header class="sink__head">
             <h2 class="sink__title">Badges</h2>
             <code class="sink__code">.ntn-badge</code>
@@ -1365,7 +1741,7 @@
         </section>
 
         <!-- ── Alerts ─────────────────────────────────────────────────── -->
-        <section class="sink" id="alerts">
+        <section class="sink" id="alerts" data-sink-ref="alert--ntn-alert">
           <header class="sink__head">
             <h2 class="sink__title">Alerts</h2>
             <code class="sink__code">.ntn-alert</code>
@@ -1394,16 +1770,44 @@
                 <div class="ntn-alert__text">Two keys could not be rotated. Retry or contact support.</div>
               </div>
             </div>
+            <span class="sink__label">The other tones: info, primary, neutral</span>
+            <div class="ntn-alert ntn-alert--info" role="status" data-sink-example="Info, primary, neutral">
+              <i class="fa-light fa-circle-info"></i>
+              <div class="ntn-alert__body"><div class="ntn-alert__title">Maintenance on Sunday, 02:00–03:00 UTC</div></div>
+            </div>
+            <div class="ntn-alert ntn-alert--primary" role="status" data-sink-example="Info, primary, neutral">
+              <i class="fa-light fa-wand-magic-sparkles"></i>
+              <div class="ntn-alert__body"><div class="ntn-alert__title">Branch previews are now on for every project</div></div>
+            </div>
+            <div class="ntn-alert ntn-alert--neutral" role="status" data-sink-example="Info, primary, neutral">
+              <i class="fa-light fa-clock"></i>
+              <div class="ntn-alert__body"><div class="ntn-alert__title">Read-only while the export runs</div></div>
+            </div>
+            <span class="sink__label">Banner (--banner) · edge to edge across the top of a flush card or the page</span>
+            <section class="ntn-card ntn-card--flush" data-sink-example="Banner">
+              <div class="ntn-alert ntn-alert--warning ntn-alert--banner" role="status">
+                <i class="fa-light fa-triangle-exclamation"></i>
+                <div class="ntn-alert__body"><div class="ntn-alert__title">Your trial ends in 3 days</div></div>
+                <div class="ntn-alert__actions"><button class="ntn-btn ntn-btn--sm">Choose a plan</button></div>
+              </div>
+              <div class="ntn-card__body">Billing details go here.</div>
+            </section>
           </div></div>
         </section>
 
         <!-- ── Toast ──────────────────────────────────────────────────── -->
-        <section class="sink" id="toast">
+        <section class="sink" id="toast" data-sink-ref="toast--ntn-toast--ntn-toaster">
           <header class="sink__head">
             <h2 class="sink__title">Toast</h2>
             <code class="sink__code">.ntn-toast</code>
             <p class="sink__note"><code>toast({ message, title, tone, duration, placement })</code> from <code>nocturne.js</code>. Stacks in a corner, leaves after 4s, pauses on hover or keyboard focus, <code>Esc</code> closes the focused one. It opens in the top layer, and inside an open modal (try the Modal example's Send invite). Fires <code>ntn:toastclose</code> with a <code>reason</code>.</p>
           </header>
+          <textarea hidden data-sink-source="Show one (JavaScript)" data-sink-lang="js">
+            import { toast } from '@homestar9/nocturne-ui/js';
+
+            toast({ title: 'Post published', message: '“Spring launch” is live on the site.', tone: 'success' });
+            toast({ message: 'Draft saved', placement: 'bottom-end', duration: 0 });   // 0: until dismissed
+          </textarea>
           <div class="ntn-card"><div class="ntn-card__body ntn-stack">
             <span class="sink__label">Tones</span>
             <div class="ntn-row" id="toast-tones">
@@ -1451,12 +1855,20 @@
                 <button type="button" class="ntn-toast__close" aria-label="Dismiss"><i class="fa-light fa-xmark"></i></button>
                 <div class="ntn-toast__timer"></div>
               </div>
+              <div class="ntn-toast ntn-toast--primary" data-sink-example="Primary">
+                <div class="ntn-toast__body"><div class="ntn-toast__message">Branch preview is ready.</div></div>
+                <button type="button" class="ntn-toast__close" aria-label="Dismiss"><i class="fa-light fa-xmark"></i></button>
+              </div>
+              <div class="ntn-toast ntn-toast--neutral" data-sink-example="Neutral, written out (--neutral is the default look)">
+                <div class="ntn-toast__body"><div class="ntn-toast__message">Link copied</div></div>
+                <button type="button" class="ntn-toast__close" aria-label="Dismiss"><i class="fa-light fa-xmark"></i></button>
+              </div>
             </div>
           </div></div>
         </section>
 
         <!-- ── Progress ───────────────────────────────────────────────── -->
-        <section class="sink" id="progress">
+        <section class="sink" id="progress" data-sink-ref="progress--ntn-progress">
           <header class="sink__head">
             <h2 class="sink__title">Progress · Spinner</h2>
             <code class="sink__code">.ntn-progress .ntn-spinner</code>
@@ -1470,6 +1882,35 @@
               </div>
               <div class="ntn-progress__track"><div class="ntn-progress__fill" data-value="68"></div></div>
             </div>
+            <span class="sink__label">Tones, the large track, and indeterminate</span>
+            <div class="ntn-progress ntn-progress--success" data-sink-example="Tones">
+              <div class="ntn-progress__head"><span class="ntn-progress__label">Healthy</span><span class="ntn-progress__value">40%</span></div>
+              <div class="ntn-progress__track"><div class="ntn-progress__fill" data-value="40"></div></div>
+            </div>
+            <div class="ntn-progress ntn-progress--warning" data-sink-example="Tones">
+              <div class="ntn-progress__head"><span class="ntn-progress__label">Near the limit</span><span class="ntn-progress__value">85%</span></div>
+              <div class="ntn-progress__track"><div class="ntn-progress__fill" data-value="85"></div></div>
+            </div>
+            <div class="ntn-progress ntn-progress--danger" data-sink-example="Tones">
+              <div class="ntn-progress__head"><span class="ntn-progress__label">Over the limit</span><span class="ntn-progress__value">100%</span></div>
+              <div class="ntn-progress__track"><div class="ntn-progress__fill" data-value="100"></div></div>
+            </div>
+            <div class="ntn-progress ntn-progress--info" data-sink-example="Tones">
+              <div class="ntn-progress__head"><span class="ntn-progress__label">Info</span><span class="ntn-progress__value">55%</span></div>
+              <div class="ntn-progress__track"><div class="ntn-progress__fill" data-value="55"></div></div>
+            </div>
+            <div class="ntn-progress ntn-progress--neutral" data-sink-example="Tones">
+              <div class="ntn-progress__head"><span class="ntn-progress__label">Neutral</span><span class="ntn-progress__value">30%</span></div>
+              <div class="ntn-progress__track"><div class="ntn-progress__fill" data-value="30"></div></div>
+            </div>
+            <div class="ntn-progress ntn-progress--lg" data-sink-example="Large">
+              <div class="ntn-progress__head"><span class="ntn-progress__label">Upload</span><span class="ntn-progress__value">62%</span></div>
+              <div class="ntn-progress__track"><div class="ntn-progress__fill" data-value="62"></div></div>
+            </div>
+            <div class="ntn-progress ntn-progress--indeterminate" data-sink-example="Indeterminate">
+              <div class="ntn-progress__head"><span class="ntn-progress__label">Preparing export</span></div>
+              <div class="ntn-progress__track"><div class="ntn-progress__fill"></div></div>
+            </div>
             <div class="ntn-row" data-sink-example="Spinners">
               <span class="ntn-spinner"></span>
               <span class="ntn-spinner ntn-spinner--lg"></span>
@@ -1479,7 +1920,7 @@
         </section>
 
         <!-- ── Avatars ────────────────────────────────────────────────── -->
-        <section class="sink" id="avatars">
+        <section class="sink" id="avatars" data-sink-ref="avatar--ntn-avatar--ntn-avatars">
           <header class="sink__head">
             <h2 class="sink__title">Avatars</h2>
             <code class="sink__code">.ntn-avatar</code>
@@ -1498,6 +1939,18 @@
               <span class="ntn-avatar ntn-avatar--sm ntn-avatar--unknown" role="img" aria-label="Unassigned"><i class="fa-light fa-user"></i></span>
             </div>
             <hr class="ntn-divider">
+            <span class="sink__label">Sizes --xs to --xl, --ring, and the status dots</span>
+            <div class="ntn-row" data-sink-example="Sizes, ring and status">
+              <span class="ntn-avatar ntn-avatar--xs">XS</span>
+              <span class="ntn-avatar ntn-avatar--sm">SM</span>
+              <span class="ntn-avatar">MD</span>
+              <span class="ntn-avatar ntn-avatar--lg">LG</span>
+              <span class="ntn-avatar ntn-avatar--xl ntn-avatar--ring">XL</span>
+              <span class="ntn-avatar">ON<span class="ntn-avatar__status ntn-avatar__status--online"></span></span>
+              <span class="ntn-avatar">BU<span class="ntn-avatar__status ntn-avatar__status--busy"></span></span>
+              <span class="ntn-avatar">AW<span class="ntn-avatar__status ntn-avatar__status--away"></span></span>
+            </div>
+            <hr class="ntn-divider">
             <div class="ntn-row ntn-row--between">
               <span class="ntn-avatars" data-sink-example="A stack">
                 <span class="ntn-avatar ntn-avatar--sm">MR</span>
@@ -1514,7 +1967,7 @@
         </section>
 
         <!-- ── Tooltip ───────────────────────────────────────────────── -->
-        <section class="sink" id="tooltip">
+        <section class="sink" id="tooltip" data-sink-ref="tooltip--ntn-tooltip">
           <header class="sink__head">
             <h2 class="sink__title">Tooltip</h2>
             <code class="sink__code">.ntn-tooltip</code>
@@ -1556,6 +2009,10 @@
                 <button class="ntn-btn ntn-btn--sm ntn-btn--subtle">Edge aligned</button>
                 <span class="ntn-tooltip__bubble ntn-tooltip__bubble--wrap ntn-tooltip__bubble--start" role="tooltip">Aligned to the trigger's left edge — for a wide bubble on a narrow control.</span>
               </span>
+              <span class="ntn-tooltip" data-sink-example="End aligned">
+                <button class="ntn-btn ntn-btn--sm ntn-btn--subtle">End aligned</button>
+                <span class="ntn-tooltip__bubble ntn-tooltip__bubble--wrap ntn-tooltip__bubble--end" role="tooltip">Aligned to the trigger's right edge — for a control near the right of the view.</span>
+              </span>
             </div>
           </div></div>
         </section>
@@ -1577,8 +2034,73 @@
           </section>
         </section>
 
+        <!-- ── Layout ─────────────────────────────────────────────────── -->
+        <section class="sink" id="layout" data-sink-ref="layout">
+          <header class="sink__head">
+            <h2 class="sink__title">Layout</h2>
+            <code class="sink__code">.ntn-page</code>
+            <code class="sink__code">.ntn-grid</code>
+            <code class="sink__code">.ntn-row</code>
+            <code class="sink__code">.ntn-stack</code>
+            <p class="sink__note">The page column, its head, and the three groupings everything else sits in. Grids collapse to two columns below <code>lg</code> and to one below <code>md</code>; resize the window to see it. The text helpers and dividers live here too.</p>
+          </header>
+          <div class="ntn-card"><div class="ntn-card__body ntn-stack">
+            <span class="sink__label">Page head (inside <code>ntn-page</code>)</span>
+            <div class="ntn-page__head" data-sink-example="Page head">
+              <div>
+                <p class="ntn-eyebrow">Workspace</p>
+                <h1 class="ntn-page__title">API keys</h1>
+                <p class="ntn-page__sub">Keys let your services call the API on your behalf.</p>
+              </div>
+              <div class="ntn-page__actions">
+                <button class="ntn-btn">Docs</button>
+                <button class="ntn-btn ntn-btn--primary"><i class="fa-light fa-plus"></i>New key</button>
+              </div>
+            </div>
+            <hr class="ntn-divider">
+            <span class="sink__label">Grids: --2, --3, --4, --split, --split-reverse</span>
+            <div class="ntn-grid ntn-grid--2" data-sink-cells data-sink-example="Grids"><div>1</div><div>2</div></div>
+            <div class="ntn-grid ntn-grid--3" data-sink-cells data-sink-example="Grids"><div>1</div><div>2</div><div>3</div></div>
+            <div class="ntn-grid ntn-grid--4" data-sink-cells data-sink-example="Grids"><div>1</div><div>2</div><div>3</div><div>4</div></div>
+            <div class="ntn-grid ntn-grid--split" data-sink-cells data-sink-example="Grids"><div>Main</div><div>Aside</div></div>
+            <div class="ntn-grid ntn-grid--split-reverse" data-sink-cells data-sink-example="Grids"><div>Aside</div><div>Main</div></div>
+            <hr class="ntn-divider">
+            <span class="sink__label">Rows: default, --between, --end · Stack</span>
+            <div class="ntn-row" data-sink-example="Rows and stack">
+              <button class="ntn-btn ntn-btn--sm">One</button>
+              <button class="ntn-btn ntn-btn--sm">Two</button>
+            </div>
+            <div class="ntn-row ntn-row--between" data-sink-example="Rows and stack">
+              <span class="ntn-page__sub">3 selected</span>
+              <button class="ntn-btn ntn-btn--sm">Clear</button>
+            </div>
+            <div class="ntn-row ntn-row--end" data-sink-example="Rows and stack">
+              <button class="ntn-btn ntn-btn--sm">Cancel</button>
+              <button class="ntn-btn ntn-btn--primary ntn-btn--sm">Save</button>
+            </div>
+            <div class="ntn-stack" data-sink-cells data-sink-example="Rows and stack"><div>First</div><div>Second</div></div>
+            <hr class="ntn-divider">
+            <span class="sink__label">Text helpers: eyebrow, numbers, keys</span>
+            <div class="ntn-row" data-sink-example="Text helpers">
+              <span class="ntn-eyebrow">Billing</span>
+              <span class="ntn-num">$24,678.81</span>
+              <span>Search <kbd class="ntn-kbd">⌘</kbd> <kbd class="ntn-kbd">K</kbd></span>
+            </div>
+            <hr class="ntn-divider">
+            <span class="sink__label">Dividers: default, --subtle, labelled, --vertical</span>
+            <div class="ntn-stack" data-sink-example="Dividers">
+              <hr class="ntn-divider">
+              <hr class="ntn-divider ntn-divider--subtle">
+              <div class="ntn-divider-label">Or continue with</div>
+              <div class="ntn-row">
+                <span>Left</span><span class="ntn-divider ntn-divider--vertical"></span><span>Right</span>
+              </div>
+            </div>
+          </div></div>
+        </section>
+
         <!-- ── App shell: sticky ──────────────────────────────────────── -->
-        <section class="sink" id="shell">
+        <section class="sink" id="shell" data-sink-ref="layout">
           <header class="sink__head">
             <h2 class="sink__title">App shell</h2>
             <code class="sink__code">.ntn-app__scroll</code>
@@ -1602,10 +2124,26 @@
               </div>
             </div>
           </section>
+          <span class="sink__label">Top bar without a sidebar: the brand moves into the navbar (pinned in place here; in an app it sticks to the top)</span>
+          <div class="sink__navbar-stage">
+            <header class="ntn-navbar" data-sink-example="Top bar with a brand">
+              <div class="ntn-navbar__brand"><span class="ntn-navbar__mark"><i class="fa-light fa-cube"></i></span>Cortex Labs</div>
+              <div class="ntn-navbar__center">
+                <div class="ntn-search ntn-search--sm">
+                  <i class="fa-light fa-magnifying-glass"></i>
+                  <input type="search" placeholder="Search ..." aria-label="Search">
+                </div>
+              </div>
+              <div class="ntn-navbar__right">
+                <button class="ntn-icon-btn" aria-label="Notifications"><i class="fa-light fa-bell"></i></button>
+                <span class="ntn-avatar ntn-avatar--sm">MR</span>
+              </div>
+            </header>
+          </div>
         </section>
 
         <!-- ── Density ──────────────────────────────────────────────────── -->
-        <section class="sink" id="density">
+        <section class="sink" id="density" data-sink-ref="density">
           <header class="sink__head">
             <h2 class="sink__title">Density</h2>
             <code class="sink__code">data-density</code>
@@ -1676,7 +2214,7 @@
         </section>
 
         <!-- ── Cards ──────────────────────────────────────────────────── -->
-        <section class="sink" id="cards">
+        <section class="sink" id="cards" data-sink-ref="card--ntn-card">
           <header class="sink__head">
             <h2 class="sink__title">Cards</h2>
             <code class="sink__code">.ntn-card</code>
@@ -1716,7 +2254,7 @@
         </section>
 
         <!-- ── Border effects ───────────────────────────────────────────── -->
-        <section class="sink" id="frame">
+        <section class="sink" id="frame" data-sink-ref="frame--ntn-frame">
           <header class="sink__head">
             <h2 class="sink__title">Frame</h2>
             <code class="sink__code">.ntn-frame</code>
@@ -1750,9 +2288,18 @@
               </div>
             </div>
           </div>
+          <span class="sink__label">Fades: --fade-bottom and --fade-sides dissolve a hero frame into the page; their masks intersect</span>
+          <div class="ntn-grid ntn-grid--2">
+            <div class="ntn-frame ntn-frame--fade-bottom" style="min-height:180px" data-sink-example="Fade bottom">
+              <div class="ntn-frame__view" style="padding:var(--ntn-gutter)">Fades out toward the bottom edge.</div>
+            </div>
+            <div class="ntn-frame ntn-frame--fade-bottom ntn-frame--fade-sides" style="min-height:180px" data-sink-example="Fade bottom and sides">
+              <div class="ntn-frame__view" style="padding:var(--ntn-gutter)">Fades at the bottom and both sides.</div>
+            </div>
+          </div>
         </section>
 
-        <section class="sink" id="edges">
+        <section class="sink" id="edges" data-sink-ref="border-effects--ntn-edge">
           <header class="sink__head">
             <h2 class="sink__title">Border effects</h2>
             <code class="sink__code">.ntn-edge</code>
@@ -1783,7 +2330,7 @@
             <button class="ntn-btn ntn-btn--primary" style="border-radius:var(--ntn-radius-full)">Generate</button>
           </div>
           <div class="ntn-row" style="flex-wrap:wrap;gap:var(--ntn-space-4)">
-            <button class="ntn-btn ntn-edge--glow" style="border-radius:var(--ntn-radius-md)" data-sink-example="On a button and a pill"><i class="fa-light fa-sparkles"></i>On a button</button>
+            <button class="ntn-btn ntn-edge--glow" style="border-radius:var(--ntn-radius-md)" data-sink-example="On a button and a pill"><i class="fa-light fa-wand-magic-sparkles"></i>On a button</button>
             <button class="ntn-btn ntn-edge--processing" style="border-radius:var(--ntn-radius-md)" data-sink-example="On a button and a pill"><span class="ntn-spinner"></span>Deploying</button>
             <span class="ntn-edge ntn-edge--processing" data-sink-example="On a button and a pill" style="display:inline-flex;align-items:center;gap:var(--ntn-space-2);padding:6px 14px;border-radius:var(--ntn-radius-full);font-size:var(--ntn-font-size-xs);color:var(--ntn-text-secondary)">On a pill</span>
           </div>
@@ -1799,10 +2346,19 @@
             </div>
             <footer class="ntn-card__foot">Started 40 seconds ago</footer>
           </section>
+          <div class="ntn-grid ntn-grid--2">
+            <section class="ntn-card ntn-card--glow" data-sink-example="Card shorthand: glow">
+              <div class="ntn-card__body">The other card shorthand: <code>ntn-card--glow</code> is <code>ntn-edge--glow</code> on a card.</div>
+            </section>
+            <div class="ntn-edge ntn-edge--strong" style="padding:var(--ntn-space-5);background:var(--ntn-surface-1)" data-sink-example="Strong hairline">
+              <p class="sink__label">Strong</p>
+              <p style="margin:6px 0 0;font-size:var(--ntn-font-size-sm);color:var(--ntn-text-secondary)">The default edge with the stronger border colour, for a surface that must separate from a busy background.</p>
+            </div>
+          </div>
         </section>
 
         <!-- ── Glass ──────────────────────────────────────────────────── -->
-        <section class="sink" id="glass">
+        <section class="sink" id="glass" data-sink-ref="glass--ntn-glass--ambient--ntn-ambient">
           <header class="sink__head">
             <h2 class="sink__title">Glass</h2>
             <code class="sink__code">.ntn-glass</code>
@@ -2062,7 +2618,7 @@
         </section>
 
         <!-- ── Gradient ───────────────────────────────────────────────── -->
-        <section class="sink" id="gradient">
+        <section class="sink" id="gradient" data-sink-ref="gradient--ntn-gradient">
           <header class="sink__head">
             <h2 class="sink__title">Gradient</h2>
             <code class="sink__code">.ntn-gradient</code>
@@ -2158,7 +2714,7 @@
         </section>
 
         <!-- ── Accordion ──────────────────────────────────────────────── -->
-        <section class="sink" id="accordion">
+        <section class="sink" id="accordion" data-sink-ref="accordion--ntn-accordion">
           <header class="sink__head">
             <h2 class="sink__title">Accordion</h2>
             <code class="sink__code">.ntn-accordion</code>
@@ -2181,14 +2737,17 @@
         </section>
 
         <!-- ── Modal ──────────────────────────────────────────────────── -->
-        <section class="sink" id="modal">
+        <section class="sink" id="modal" data-sink-ref="modal--ntn-modal">
           <header class="sink__head">
             <h2 class="sink__title">Modal</h2>
             <code class="sink__code">.ntn-modal</code>
             <p class="sink__note">A native <code>&lt;dialog&gt;</code>. Open it with <code>data-ntn-open="#id"</code>.</p>
           </header>
           <div class="ntn-card"><div class="ntn-card__body">
-            <button class="ntn-btn ntn-btn--primary" data-ntn-open="#invite" data-sink-example="Trigger and dialog"><i class="fa-light fa-user-plus"></i>Open invite dialog</button>
+            <div class="ntn-row">
+              <button class="ntn-btn ntn-btn--primary" data-ntn-open="#invite" data-sink-example="Trigger and dialog"><i class="fa-light fa-user-plus"></i>Open invite dialog</button>
+              <button class="ntn-btn" data-ntn-open="#terms" data-sink-example="Large (--lg)">Open a large dialog</button>
+            </div>
           </div></div>
           <dialog class="ntn-modal" id="invite" data-sink-example="Trigger and dialog">
             <header class="ntn-modal__head">
@@ -2236,10 +2795,28 @@
               <button class="ntn-btn ntn-btn--primary" type="button" id="invite-send">Send invite</button>
             </footer>
           </dialog>
+          <dialog class="ntn-modal ntn-modal--lg" id="terms" data-sink-example="Large (--lg)">
+            <header class="ntn-modal__head">
+              <div>
+                <h2 class="ntn-modal__title">Data processing terms</h2>
+                <p class="ntn-modal__desc">The wide dialog, for reading or a two-column form.</p>
+              </div>
+              <button type="button" class="ntn-modal__close" aria-label="Close" data-ntn-close><i class="fa-light fa-xmark"></i></button>
+            </header>
+            <div class="ntn-modal__body">
+              <div class="ntn-grid ntn-grid--2">
+                <p>We process workspace data only to run the service you asked for, in the region you chose.</p>
+                <p>Backups stay in the same region and are deleted 30 days after the workspace is.</p>
+              </div>
+            </div>
+            <footer class="ntn-modal__foot">
+              <button class="ntn-btn ntn-btn--primary" data-ntn-close>Done</button>
+            </footer>
+          </dialog>
         </section>
 
         <!-- ── Tabs ───────────────────────────────────────────────────── -->
-        <section class="sink" id="tabs">
+        <section class="sink" id="tabs" data-sink-ref="tabs--ntn-tabs">
           <header class="sink__head">
             <h2 class="sink__title">Tabs</h2>
             <code class="sink__code">.ntn-tabs</code>
@@ -2332,7 +2909,7 @@
         </section>
 
         <!-- ── Breadcrumbs ────────────────────────────────────────────── -->
-        <section class="sink" id="crumbs">
+        <section class="sink" id="crumbs" data-sink-ref="breadcrumbs--ntn-crumbs">
           <header class="sink__head">
             <h2 class="sink__title">Breadcrumbs</h2>
             <code class="sink__code">.ntn-crumbs</code>
@@ -2350,7 +2927,7 @@
         </section>
 
         <!-- ── Menu ───────────────────────────────────────────────────── -->
-        <section class="sink" id="menu">
+        <section class="sink" id="menu" data-sink-ref="menu--ntn-menu">
           <header class="sink__head">
             <h2 class="sink__title">Menu</h2>
             <code class="sink__code">.ntn-menu</code>
@@ -2394,7 +2971,7 @@
         </section>
 
         <!-- ── Dropdown + popover ───────────────────────────────────── -->
-        <section class="sink" id="dropdown">
+        <section class="sink" id="dropdown" data-sink-ref="dropdown--ntn-dropdown--popover--ntn-popover">
           <header class="sink__head">
             <h2 class="sink__title">Dropdown and popover</h2>
             <code class="sink__code">.ntn-dropdown</code>
@@ -2431,7 +3008,7 @@
         </section>
 
         <!-- ── Progress steps ─────────────────────────────────────────── -->
-        <section class="sink" id="steps">
+        <section class="sink" id="steps" data-sink-ref="progress-steps--ntn-steps">
           <header class="sink__head">
             <h2 class="sink__title">Progress steps</h2>
             <code class="sink__code">.ntn-steps</code>
@@ -2477,6 +3054,21 @@
                     <li class="ntn-steps__step" data-state="upcoming"><span class="ntn-steps__marker"></span></li>
                   </ol>
                   <p class="ntn-steps__count" data-sink-example="Bars, with a count">Step 3 of 4 · Invite your team</p>
+                  <p class="sink__label">Inline · marker beside the text, for a narrow column or a toolbar</p>
+                  <ol class="ntn-steps ntn-steps--inline ntn-steps--sm" data-sink-example="Inline">
+                    <li class="ntn-steps__step" data-state="complete">
+                      <span class="ntn-steps__marker"><i class="fa-light fa-check"></i></span>
+                      <span class="ntn-steps__text"><span class="ntn-steps__title">Cart</span></span>
+                    </li>
+                    <li class="ntn-steps__step" data-state="current">
+                      <span class="ntn-steps__marker">2</span>
+                      <span class="ntn-steps__text"><span class="ntn-steps__title">Shipping</span></span>
+                    </li>
+                    <li class="ntn-steps__step" data-state="upcoming">
+                      <span class="ntn-steps__marker">3</span>
+                      <span class="ntn-steps__text"><span class="ntn-steps__title">Pay</span></span>
+                    </li>
+                  </ol>
                 </div>
               </div>
               <div class="ntn-card" style="flex:1 1 320px; min-width:min(100%,280px)">
@@ -2500,6 +3092,74 @@
               </div>
             </div>
           </div>
+        </section>
+
+        <!-- ── JavaScript ─────────────────────────────────────────────── -->
+        <section class="sink" id="javascript" data-sink-ref="js-hooks">
+          <header class="sink__head">
+            <h2 class="sink__title">JavaScript</h2>
+            <code class="sink__code">nocturne.js</code>
+            <p class="sink__note">Optional and dependency-free. It wires itself up on import and listens on the document, so markup opts in with <code>data-ntn-*</code> attributes and nothing else; each section's Code shows the attributes its example needs. Without the script every component still renders; tabs, dialogs, dropdowns, pickers, toasts and table paging are what it adds.</p>
+          </header>
+          <div class="ntn-card"><div class="ntn-card__body ntn-stack">
+            <textarea hidden data-sink-source="Markup added later" data-sink-lang="js" data-sink-inline>
+              import { refresh } from '@homestar9/nocturne-ui/js';
+
+              // Clicks and keys work on new markup by themselves. After a framework render or an
+              // HTMX swap, refresh(root) also syncs what the script draws: slider fills, progress
+              // bars, tab ink, table pages, combo chips, date grids, avatar hues.
+              refresh(container);
+            </textarea>
+            <textarea hidden data-sink-source="Calls" data-sink-lang="js" data-sink-inline>
+              import { toast, open, close, toggle, setDateRange, setTheme, toggleTheme, getTheme,
+                getThemePreference, avatarHue, configure, refresh, start } from '@homestar9/nocturne-ui/js';
+
+              const t = toast({ title: 'Saved', message: 'Your changes are live.', tone: 'success' });
+              toast('Copied');                  // a string is the message
+              t.close();                        // toast() returns { element, close }
+
+              open('#export-menu');             // a dropdown: the root, its trigger, or anything inside
+              close('#export-menu');
+              toggle('#export-menu');
+
+              setDateRange(picker, { start: '2026-12-01', end: '2026-12-31' });   // or { start, time } for one date
+
+              setTheme('auto');                 // 'dark' | 'light' | 'auto'; stored for the next visit
+              toggleTheme();
+              getTheme();                       // what is painted: 'dark' | 'light'
+              getThemePreference();             // what was chosen: 'dark' | 'light' | 'auto'
+
+              avatarHue('Ada Lovelace');        // the hue data-ntn-avatar-name gives an avatar
+
+              // Your own icon set for the icons the script draws (chip remove, calendar arrows,
+              // the theme switch, toast tones), then redraw:
+              configure({ icon: (key) => myIcon(key) });
+              refresh();
+
+              // start() runs on import, and a second call does nothing. To leave light and dark to
+              // your app, put data-ntn-theme-control="manual" on <html> instead.
+            </textarea>
+            <textarea hidden data-sink-source="Events" data-sink-lang="js" data-sink-inline>
+              // Every event reaches document (they bubble; ntn:themechange fires on it), so one
+              // listener there hears them all. detail holds the new state.
+              document.addEventListener('ntn:tabchange', (e) => console.log(e.detail.value));
+
+              // ntn:tabchange         tablist     { value, tab, initial }
+              // ntn:toggle            group       { value, pressed }
+              // ntn:combochange       combo       { value, values, labels, multiple }, then a plain change
+              // ntn:dropdownshow      dropdown    { panel }
+              // ntn:dropdownhide      dropdown    { panel }
+              // ntn:tablechange       table       { page, pages, size, matched, total }
+              // ntn:treeselect        tree        { id, ids, item }
+              // ntn:treetoggle        tree item   { id, expanded, item }
+              // ntn:treemove          tree        { id, position, targetId, parentId, index, item }
+              // ntn:stepchange        steps       { index, id, total }
+              // ntn:daterangechange   picker      { start, end, time, startISO, endISO, single }, then a plain change
+              // ntn:files             dropzone    { files }
+              // ntn:toastclose        toast       { reason: 'dismiss' | 'timeout' | 'overflow' | 'api' }
+              // ntn:themechange       document    { theme, preference }
+            </textarea>
+          </div></div>
         </section>
 
       </main>

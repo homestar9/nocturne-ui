@@ -69,6 +69,11 @@ dashboard recognisable.
 The dashboard is the only screen that greets the user, once: "Welcome back, Michael" as the page
 title with "Last updated 30 sec ago" as the subtitle.
 
+A complete, working page of this pattern ships with the package: `examples/dashboard.html`
+(next to this `skill/` folder; live at <https://homestar9.github.io/nocturne-ui/examples/dashboard.html>).
+Stats on neutral washes with the one alert in danger, a date range in the page head, and a
+deploys table that `data-ntn-paginate` pages, searches and filters.
+
 ## 3. Table page
 
 Filters above, table inside a flush card, pagination in the card footer. Never paginate outside
@@ -96,6 +101,11 @@ the card.
 Tabs across the top, then stacked cards — one card per concern, each with a title, a subtitle,
 and its own save action in the card footer. Never one giant form with a single save button at
 the bottom of the page.
+
+A complete, working page of this pattern ships with the package: `examples/settings.html`
+(next to this `skill/` folder; live at <https://homestar9.github.io/nocturne-ui/examples/settings.html>).
+Each card is its own `<form>`, a combo with `data-ntn-name` posts with it, and Discard is a
+plain `type="reset"`.
 
 ```html
 <main class="ntn-page">

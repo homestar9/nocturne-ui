@@ -72,7 +72,7 @@ try {
   console.log('Glass hooks (R15)');
   check(/--ntn-surface-filter:\s*none;/.test(css) && /--ntn-pop-filter:\s*none;/.test(css), 'both hooks default to none');
   const HOOKS = { 'ntn-card': 'surface', 'ntn-sidebar': 'surface', 'ntn-modal': 'pop', 'ntn-menu': 'pop',
-    'ntn-popover': 'pop', 'ntn-daterange__panel': 'pop', 'ntn-tooltip__bubble': 'pop', 'ntn-toast': 'pop' };
+    'ntn-popover': 'pop', 'ntn-daterange__panel': 'pop', 'ntn-select__panel': 'pop', 'ntn-tooltip__bubble': 'pop', 'ntn-toast': 'pop' };
   for (const [block, hook] of Object.entries(HOOKS)) {
     const rule = css.match(new RegExp(`(?:^|\\n)\\.${block} \\{([^}]*)\\}`));
     check(rule && rule[1].includes(`backdrop-filter: var(--ntn-${hook}-filter)`), `.${block} reads --ntn-${hook}-filter`);
@@ -91,7 +91,7 @@ try {
   ];
   const ringless = rules.filter((r) => r.sel.includes(':focus-visible')
     && /outline:\s*(0|none)\s*;/.test(r.body)
-    && !/box-shadow:\s*var\(--ntn-ring-focus\)/.test(r.body)
+    && !/box-shadow:\s*(?:var\(--ntn-shadow-face-hover\),\s*)?var\(--ntn-ring-(?:focus|face-focus|face-keyboard)\)/.test(r.body)
     && !RING_ELSEWHERE.some((re) => re.test(r.sel)));
   check(ringless.length === 0, 'no :focus-visible rule removes the outline without drawing a ring'
     + (ringless.length ? ': ' + ringless.map((r) => r.sel).join(' | ') : ''));
@@ -99,6 +99,8 @@ try {
   console.log('Reduced motion');
   const calmRise = css.match(/@media \(prefers-reduced-motion: reduce\) \{\s*@keyframes ntn-rise \{((?:[^{}]*\{[^{}]*\})*)[^{}]*\}/);
   check(calmRise && !/transform/.test(calmRise[1]), 'under reduced motion, entrances (ntn-rise) fade without moving');
+  const calmPop = css.match(/@media \(prefers-reduced-motion: reduce\) \{(?:\s*@keyframes [\w-]+ \{(?:[^{}]*\{[^{}]*\})*[^{}]*\})*?\s*@keyframes ntn-pop \{((?:[^{}]*\{[^{}]*\})*)[^{}]*\}/);
+  check(calmPop && !/transform/.test(calmPop[1]), 'under reduced motion, the select panel (ntn-pop) fades without scaling');
   const calmLeave = css.match(/@media \(prefers-reduced-motion: reduce\) \{\s*@keyframes ntn-toast-leave \{((?:[^{}]*\{[^{}]*\})*)[^{}]*\}/);
   check(calmLeave && !/transform/.test(calmLeave[1]), 'under reduced motion, a toast leaves by fading only');
   check(/@media \(prefers-reduced-motion: reduce\) \{\s*\.ntn-toast__timer \{\s*display: none;/.test(css), 'under reduced motion, the shrinking toast timer is hidden');
@@ -181,8 +183,8 @@ try {
   console.log('Surface lighting (NTN-37)');
   const rim = rules.find((r) => /::after$/.test(r.sel) && /\.ntn-card\b/.test(r.sel) && /var\(--ntn-edge-light\)/.test(r.body));
   check(rim, 'raised surfaces draw a lit rim in --ntn-edge-light on ::after');
-  check(rim && /\.ntn-edge--shine/.test(rim.sel) && /\.ntn-edge--glow/.test(rim.sel) && /\.ntn-card--glow/.test(rim.sel),
-    'the rim skips the shine (its halos own ::after) and the glow (its own accent edge)');
+  check(rim && /\.ntn-edge--shine/.test(rim.sel) && !/--glow/.test(rim.sel),
+    'the rim skips the shine (its halos own ::after) but lights the glow too');
   check(rim && /inset:\s*calc\(-1 \* var\(--ntn-hairline\)\)/.test(rim.body),
     'the rim sits on the border, not inside it, so the hairline is not doubled');
   check(rim && /at var\(--ntn-edge-light-x\) var\(--ntn-edge-light-y\)/.test(rim.body),
@@ -218,12 +220,13 @@ try {
     check(missing.length === 0, `.${block} offers every tone` + (missing.length ? ': missing ' + missing.join(' ') : ''));
   }
 
-  console.log('One control face (NTN-27)');
-  // Controls that sit side by side in a toolbar draw the same border and lift (the control-surface mixin).
-  const CONTROL_FACES = ['.ntn-field__control', '.ntn-select__control select', '.ntn-combo__trigger', '.ntn-daterange__trigger', '.ntn-toggle-group', '.ntn-radio-group--segmented', '.ntn-search'];
+  console.log('One control face (NTN-27, NTN-53)');
+  // Controls that sit side by side in a toolbar draw the same raised face (the control-surface
+  // mixin): the face fill, a transparent border, and the ring and drop of --ntn-shadow-face.
+  const CONTROL_FACES = ['.ntn-field__control', '.ntn-select__control select', '.ntn-select__trigger', '.ntn-combo__trigger', '.ntn-daterange__trigger', '.ntn-toggle-group', '.ntn-radio-group--segmented', '.ntn-search'];
   const oddFaces = CONTROL_FACES.filter((sel) => {
     const r = rules.find((x) => x.sel === sel);
-    return !(r && /border:\s*1px solid var\(--ntn-border-default\)/.test(r.body) && /box-shadow:\s*var\(--ntn-shadow-bevel\)/.test(r.body));
+    return !(r && /background:\s*var\(--ntn-face-bg\)/.test(r.body) && /border:\s*1px solid transparent/.test(r.body) && /box-shadow:\s*var\(--ntn-shadow-face\)/.test(r.body));
   });
   const pressed = ['.ntn-btn:active', '.ntn-icon-btn:active'].filter((s) => {
     const r = rules.find((x) => x.sel === s);
@@ -231,7 +234,14 @@ try {
       && new RegExp(`@media \\(prefers-reduced-motion: reduce\\) \\{\\s*${s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} \\{\\s*transform: none;`).test(css));
   });
   check(pressed.length === 0, 'buttons give to 97% when pressed, and stay put under reduced motion (NTN-38)' + (pressed.length ? ': ' + pressed.join(' ') : ''));
-  check(oddFaces.length === 0, 'every form control face draws --ntn-border-default and --ntn-shadow-bevel (NTN-38)' + (oddFaces.length ? ': ' + oddFaces.join(' ') : ''));
+  check(oddFaces.length === 0, 'every form control face is the raised face: --ntn-face-bg, a transparent border, --ntn-shadow-face' + (oddFaces.length ? ': ' + oddFaces.join(' ') : ''));
+  // A native select's own list uses the enhanced panel's colours. An <optgroup> left out paints the
+  // browser's white, even in dark mode.
+  const nativeList = rules.find((r) => r.sel.split(/\s*,\s*/).includes('.ntn-select__control select optgroup') && /background:\s*var\(--ntn-picker-bg\)/.test(r.body));
+  check(nativeList && nativeList.sel.includes('.ntn-select__control select option'), "a native select's options and optgroups take the picker panel's fill");
+  // The face's hover lifts the fill; a border colour on hover would draw a line round a borderless face.
+  const borderHovers = rules.filter((r) => CONTROL_FACES.some((f) => r.sel.startsWith(f + ':hover')) && /border-color/.test(r.body)).map((r) => r.sel);
+  check(borderHovers.length === 0, 'no control face colours its border on hover' + (borderHovers.length ? ': ' + borderHovers.join(' | ') : ''));
 
   console.log('Tree link labels (NTN-28)');
   // An <a> label takes the row's colour. The :hover half is what beats the base a:hover.
@@ -259,6 +269,16 @@ try {
   const drClosed = rules.find((r) => r.sel === '.ntn-daterange__panel[popover]:not(:popover-open)');
   check(drClosed && /display:\s*none/.test(drClosed.body), 'a closed date-picker popover stays hidden despite the panel\'s display: flex');
   check(!rules.some((r) => /^\.ntn-card:has\(\.ntn-daterange__panel/.test(r.sel)), 'no card overflow workaround for the date panel (the top layer is never clipped)');
+  // NTN-55: a loading button's leading icon becomes ntn-spinner's ring, not a spinning glyph.
+  const btnSpin = rules.find((r) => r.sel === '.ntn-btn[data-loading] > i:first-child');
+  check(btnSpin && /border-radius:\s*50%/.test(btnSpin.body) && /font-size:\s*0/.test(btnSpin.body) && /animation:\s*ntn-spin\b/.test(btnSpin.body),
+    'data-loading turns the button\'s leading icon into a spinner ring');
+  check(!rules.some((r) => r.sel === '.ntn-btn[data-loading] i:first-child'), '...and the old spinning-glyph rule is gone');
+  // NTN-52: the heading's year reads as text; only the pointer says it can be clicked.
+  const drYear = rules.find((r) => r.sel === '.ntn-daterange__year');
+  check(drYear && /cursor:\s*pointer/.test(drYear.body) && /background:\s*transparent/.test(drYear.body) && /border:\s*1px solid transparent/.test(drYear.body),
+    'the date picker year is a transparent, borderless-looking input with a pointer cursor');
+  check(!rules.some((r) => /\.ntn-daterange__year:hover/.test(r.sel)), '...with no hover style');
   // NTN-20: the page scrolls. A scroll container here would capture every sticky inside the content.
   const appScroll = rules.find((r) => r.sel === '.ntn-app__scroll');
   check(appScroll && !/overflow/.test(appScroll.body), '.ntn-app__scroll is not a scroll container, so stickies inside it stick to the viewport');
@@ -317,6 +337,12 @@ try {
   const missingDark = [...lightNames].filter((n) => !darkNames.has(n));
   check(lightNames.size > 30 && missingDark.length === 0,
     `each of the ${lightNames.size} tokens the light theme remaps also has a value on dark subtrees` + (missingDark.length ? ': ' + missingDark.join(' ') : ''));
+  // The control face's dark values are measured; its light values are estimates, all in one block.
+  const RAISED = /^--ntn-(face|picker)-|^--ntn-shadow-(face|picker)/;
+  const raisedDark = [...darkNames].filter((n) => RAISED.test(n));
+  const missingLight = raisedDark.filter((n) => !lightNames.has(n));
+  check(raisedDark.length >= 7 && missingLight.length === 0,
+    `each of the ${raisedDark.length} control face tokens has a light value too` + (missingLight.length ? ': ' + missingLight.join(' ') : ''));
   const rootOnly = blocks.filter((b) => b.sel === ':root').flatMap((b) => b.decls);
   const stale = rootOnly.filter(([, v]) => [...v.matchAll(/var\((--ntn-[a-z0-9-]+)/g)].some((m) => lightNames.has(m[1]))).map(([n]) => n);
   check(stale.length === 0, 'no :root-only token reads a mode token (it would resolve once, at the root)' + (stale.length ? ': ' + stale.join(' ') : ''));
@@ -366,8 +392,10 @@ try {
   check(chartHues.length === 0, 'no component reads --ntn-magenta-* or --ntn-cyan-*' + (chartHues.length ? ': ' + chartHues.join(' ') : ''));
 
   console.log('Mono theme');
-  // Hex (bare or URL-encoded in an SVG) and rgb()/rgba() literals, as [r, g, b].
-  const colours = (v) => [...v.matchAll(/(?:#|%23)([0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{3,4})\b|rgba?\(\s*(\d+)[\s,]+(\d+)[\s,]+(\d+)/gi)].map((m) => {
+  // Hex (bare or URL-encoded in an SVG), rgb()/rgba() and lch() literals, as [r, g, b]. An lch()
+  // with chroma reads as a tint ([L, L, L + 1]); without chroma, as the grey [L, L, L].
+  const colours = (v) => [...v.matchAll(/(?:#|%23)([0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{3,4})\b|rgba?\(\s*(\d+)[\s,]+(\d+)[\s,]+(\d+)|lch\(\s*([\d.]+)%?\s+([\d.]+)/gi)].map((m) => {
+    if (m[5]) { const l = Number(m[5]); return [l, l, Number(m[6]) > 0 ? l + 1 : l]; }
     if (!m[1]) return [m[2], m[3], m[4]].map(Number);
     const h = m[1].length <= 4 ? [...m[1]].map((c) => c + c).join('') : m[1];
     return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
@@ -500,6 +528,29 @@ try {
   const notes = await releaseNotes(version).catch((err) => err);
   check(typeof notes === 'string' && notes.includes(`@homestar9/nocturne-ui@${version}`) && /^### /m.test(notes),
     `CHANGELOG.md has release notes for ${version}, the package.json version` + (notes instanceof Error ? ': ' + notes.message : ''));
+
+  console.log('Docs stay in step with the code (NTN-47)');
+  const sink = await readFile(join(root, 'examples/kitchen-sink.html'), 'utf8');
+  const readme = await readFile(join(root, 'README.md'), 'utf8');
+  for (const [name, text] of [['kitchen sink', sink], ['README', readme]]) {
+    const pins = [...text.matchAll(/@homestar9\/nocturne-ui@(\d+\.\d+\.\d+)/g)].map((m) => m[1]);
+    const stale = pins.filter((v) => v !== version);
+    check(pins.length > 0 && !stale.length, `the ${name}'s ${pins.length} pinned CDN links name ${version}` + (stale.length ? ` (found ${[...new Set(stale)].join(', ')})` : ''));
+  }
+  // The JavaScript section names every event the module fires and every function it exports.
+  const jsSection = sink.match(/<section class="sink" id="javascript"[\s\S]*?<\/section>/)?.[0] ?? '';
+  const jsSrc = await readFile(join(root, 'js/nocturne.js'), 'utf8');
+  const events = [...new Set([...jsSrc.matchAll(/new CustomEvent\('(ntn:[a-z]+)'/g)].map((m) => m[1]))];
+  const exported = [...jsSrc.matchAll(/^export function (\w+)/gm)].map((m) => m[1]);
+  const quiet = [...events.filter((e) => !jsSection.includes(e)), ...exported.filter((f) => !jsSection.includes(f + '('))];
+  check(events.length > 10 && exported.length > 10 && !quiet.length,
+    `the kitchen sink's JavaScript section covers all ${events.length} events and ${exported.length} exports` + (quiet.length ? ` (missing: ${quiet.join(', ')})` : ''));
+  // Reference links point at real headings of skill/components.md (GitHub's anchor rules).
+  const slug = (h) => h.replace(/`/g, '').trim().toLowerCase().replace(/[^\p{L}\p{N}\s_-]/gu, '').replace(/ /g, '-');
+  const headings = new Set([...(await readFile(join(root, 'skill/components.md'), 'utf8')).matchAll(/^## (.+)$/gm)].map((m) => slug(m[1])));
+  const refs = [...sink.matchAll(/data-sink-ref="([^"]+)"/g)].map((m) => m[1]);
+  const broken = refs.filter((r) => !headings.has(r));
+  check(refs.length > 30 && !broken.length, `the sink's ${refs.length} Reference links each match a components.md heading` + (broken.length ? ` (broken: ${broken.join(', ')})` : ''));
 } finally {
   await rm(tmp, { recursive: true, force: true });
 }
