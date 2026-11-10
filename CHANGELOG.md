@@ -37,6 +37,13 @@ renamed or removed class names and tokens.
   grouped selects (the last two native and enhanced), and a new **Form controls in both themes**
   section puts a dark and a light panel side by side.
 - `scrollIntoList()` and `stepTo()` are shared by the combo and the select.
+- **Date picker year input (`ntn-daterange__year`).** Each month heading's year is a number input
+  that reads as plain text, with only a pointer cursor. Click it to type a year or step it with
+  `↑` `↓` / the spin buttons; the month follows. `Esc` restores it and `↵` keeps it, without
+  closing the panel, and its events never reach a form. Bounded by the `data-ntn-min` /
+  `data-ntn-max` years, it works from either month of a two-month panel. The month heads are now
+  built once and patched, so the focused field survives hover and arrow redraws. Non-Gregorian or
+  non-Latin-digit locales keep a plain heading.
 
 ### Changed
 - **Raised control faces.** Field, select, search, the combobox and date triggers, the toggle
@@ -65,6 +72,16 @@ renamed or removed class names and tokens.
   takes its text greys from its ramp; the translucent fill picks up its purple surfaces.
 - Tests: the one-control-face guard checks the raised face, no face colours its border on hover,
   every face token has a light value, and the mono guard reads `lch()` colours.
+- **Loading buttons spin a ring, not the icon.** `data-loading` on `ntn-btn` turns the leading
+  icon into `ntn-spinner`'s ring (700ms `ntn-spin`): 16px, or 14px on `--sm`. The ring is drawn
+  in CSS in the button's own ink, so it reads on every variant and with any icon set; the glyph is
+  hidden. Only a direct child `<i>` turns.
+
+### Fixed
+- **Date picker trigger and double clicks.** The trigger ignores the second click of a double click
+  (`event.detail > 1`), so a quick double click, or a mouse whose switch sends ghost clicks, no
+  longer opens the panel and shuts it again (or reopens one just closed). Keyboard activation
+  still toggles.
 
 ### Kitchen sink
 - **Every block is shown.** A Layout section (page head, `ntn-grid --2/3/4/split/split-reverse`,

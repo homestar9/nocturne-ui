@@ -33,7 +33,7 @@ async function page(body, { html = '', storage = {} } = {}) {
 }
 
 const EVIL = '<img src=x onerror="window.pwned=1">';
-const click = (el) => el.dispatchEvent(new globalThis.MouseEvent('click', { bubbles: true }));
+const click = (el, detail = 0) => el.dispatchEvent(new globalThis.MouseEvent('click', { bubbles: true, detail }));
 
 console.log('Combo labels are text, never HTML (R5)');
 {
@@ -330,6 +330,83 @@ console.log('Date picker opens in the top layer (NTN-21)');
   check(/^\d+px$/.test(panel.style.left) && /^\d+px$/.test(panel.style.top), `...placed against the trigger in viewport pixels (${panel.style.left}, ${panel.style.top})`);
   document.body.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
   check(!shown.has(panel) && !dr.ntnRange.open, 'Escape hides it again');
+
+  // NTN-51: a double click (or a mouse whose switch chatters) toggles once, not twice.
+  const trig = dr.querySelector('.ntn-daterange__trigger');
+  click(trig, 1); click(trig, 2);
+  check(shown.has(panel) && dr.ntnRange.open, 'the second click of a double click leaves the panel open');
+  click(trig, 1); click(trig, 2);
+  check(!shown.has(panel) && !dr.ntnRange.open, '...and leaves a just-closed panel closed');
+  click(trig, 0);
+  check(dr.ntnRange.open, 'keyboard activation (detail 0) still toggles');
+  click(trig, 0);
+}
+
+console.log('Date picker year (NTN-52)');
+{
+  const two = `<div class="ntn-daterange" id="two" data-ntn-daterange data-ntn-start="2026-12-05" data-ntn-end="2026-12-09">
+     <button type="button" class="ntn-daterange__trigger" aria-expanded="false"><span class="ntn-daterange__value" data-ntn-daterange-label></span></button>
+     <div class="ntn-daterange__panel" hidden>
+       <div class="ntn-daterange__cals"><div class="ntn-daterange__cal" data-ntn-cal="0"></div><div class="ntn-daterange__cal" data-ntn-cal="1"></div></div>
+       <footer class="ntn-daterange__foot"><button type="button" data-ntn-daterange-apply>Apply</button></footer>
+     </div>
+   </div>`;
+  const { document, window } = await page(`<form id="f">${picker('id="one" data-ntn-start="2026-09-01" data-ntn-end="2026-09-20" data-ntn-max="2028-06-30"')}${two}</form>`);
+  const form = document.getElementById('f');
+  let heard = 0;
+  form.addEventListener('input', () => heard++);
+  form.addEventListener('change', () => heard++);
+  const one = document.getElementById('one');
+  const year = (r, i = 0) => r.querySelectorAll('[data-ntn-year]')[i];
+  const firstDay = (r, i = 0) => r.querySelectorAll('[data-ntn-cal]')[i].querySelector('[data-ntn-day]:not([data-outside])').dataset.ntnDay;
+  const type = (el, v) => { el.value = v; el.dispatchEvent(new window.Event('input', { bubbles: true })); };
+  const key = (el, k) => { const e = new window.KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }); el.dispatchEvent(e); return e; };
+
+  click(one.querySelector('.ntn-daterange__trigger'));
+  const y = year(one);
+  check(y && y.type === 'number' && y.value === '2026' && one.querySelectorAll('[data-ntn-year]').length === 1,
+    'the month heading holds its year as a number input');
+  check(y.max === '2028', `data-ntn-max caps the year (max ${y.max})`);
+  check(y.getAttribute('form') === '', 'the input belongs to no form, so Enter never submits one');
+
+  y.focus();
+  type(y, '20');
+  check(firstDay(one) === '2026-09-01', 'a partly typed year changes nothing');
+  type(y, '2027');
+  check(firstDay(one) === '2027-09-01', `a whole year redraws the month in that year (${firstDay(one)})`);
+  type(y, '2028');
+  check(firstDay(one) === '2028-06-01', `...clamped to the data-ntn-max month (${firstDay(one)})`);
+
+  // jsdom moves no focus on a dispatched click, so the input stays focused through these redraws.
+  click(one.querySelector('[data-ntn-day]:not([data-outside])'));
+  one.querySelectorAll('[data-ntn-day]')[12].dispatchEvent(new window.MouseEvent('mouseover', { bubbles: true }));
+  click(one.querySelector('[data-ntn-month="-1"]'));
+  check(year(one) === y && document.activeElement === y, 'a day click, a hover redraw and an arrow keep the same focused input');
+
+  y.blur();
+  check(y.value === String(one.ntnRange.view.getFullYear()), 'leaving the field puts the year on show back');
+  y.focus();
+  const shown = firstDay(one);
+  type(y, '2027');
+  const esc = key(y, 'Escape');
+  check(esc.defaultPrevented && firstDay(one) === shown && one.ntnRange.open && document.activeElement !== y,
+    'Escape restores the year, leaves the field and keeps the panel open');
+  y.focus();
+  const enter = key(y, 'Enter');
+  check(enter.defaultPrevented && document.activeElement !== y, 'Enter keeps the year and leaves the field');
+  y.dispatchEvent(new window.Event('change', { bubbles: true }));
+  check(heard === 0, `the form hears no input or change from a year edit (${heard})`);
+
+  const tw = document.getElementById('two');
+  click(tw.querySelector('.ntn-daterange__trigger'));
+  const y2 = year(tw, 1);
+  check(year(tw, 0).value === '2026' && y2.value === '2027', 'a Dec / Jan panel shows each month its own year');
+  y2.focus();
+  type(y2, '2030');
+  check(firstDay(tw, 1) === '2030-01-01' && firstDay(tw, 0) === '2029-12-01', `editing the second month's year moves both (${firstDay(tw, 0)}, ${firstDay(tw, 1)})`);
+  type(y2, '2031');
+  type(y2, '2032');
+  check(firstDay(tw, 1) === '2032-01-01', `repeated steps set the year, never add up (${firstDay(tw, 1)})`);
 }
 
 console.log('Enhanced select (NTN-54)');
@@ -870,7 +947,7 @@ console.log('Kitchen sink covers the library (NTN-46)');
   // sink or an example page. The exceptions are drawn by nocturne.js, so the live demos show them.
   const DRAWN = [
     'ntn-combo__chip', 'ntn-combo__chip-x', 'ntn-combo__more',                     // combo chips
-    'ntn-daterange__head', 'ntn-daterange__month', 'ntn-daterange__nav', 'ntn-daterange__grid',
+    'ntn-daterange__head', 'ntn-daterange__month', 'ntn-daterange__year', 'ntn-daterange__nav', 'ntn-daterange__grid',
     'ntn-daterange__dow', 'ntn-daterange__day', 'ntn-daterange__panel--narrow',    // calendar
     'ntn-toaster', 'ntn-toaster__live',                                            // toast()
     'ntn-select__trigger', 'ntn-select__value', 'ntn-select__panel', 'ntn-select__search',

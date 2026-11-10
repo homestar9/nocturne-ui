@@ -61,7 +61,7 @@ Two axes, named for **meaning** — combine one of each:
 
 Size: `--sm` `--lg` · `--block`
 Glow: `--glow`, with `--primary` only. Adds a halo in the button's colour.
-States: `disabled`, `data-loading` (spins the leading icon).
+States: `disabled`, `data-loading` (the leading icon becomes a spinner ring in the button's ink).
 
 ```html
 <button class="ntn-btn ntn-btn--primary"><i class="fa-light fa-plus"></i>Add item</button>
@@ -69,7 +69,7 @@ States: `disabled`, `data-loading` (spins the leading icon).
 <button class="ntn-btn">Cancel</button>
 <button class="ntn-btn ntn-btn--subtle ntn-btn--sm"><i class="fa-light fa-ellipsis"></i></button>
 <button class="ntn-btn ntn-btn--primary ntn-btn--danger" disabled>Delete workspace</button>
-<button class="ntn-btn ntn-btn--primary" data-loading><i class="fa-light fa-sort"></i>Saving</button>
+<button class="ntn-btn ntn-btn--primary" data-loading><i class="fa-light fa-floppy-disk"></i>Saving</button>
 ```
 
 Default is the everyday button. One `--primary` per view. `--secondary` is for a highlighted
@@ -1076,6 +1076,14 @@ The two month grids are rendered by `nocturne.js` — write the shell only. Sele
 draft-first: presets and clicks change nothing outside the panel until **Apply**, which fires
 `ntn:daterangechange` with `{ start, end }` as `YYYY-MM-DD` (and `startDate` / `endDate` as
 `Date`s). Cancel, Escape, or a click outside reverts.
+
+Each month heading's year is a number input that reads as plain text (`__year`, drawn by
+`nocturne.js`; only the pointer cursor hints at it). Clicking it shows a small field: type a year,
+or step it with `↑` `↓` or the spin buttons, and the month jumps there. `Esc` puts the year back,
+`↵` keeps it; neither closes the panel. Its `input` and `change` never reach the picker or a form,
+since it moves the view rather than the value. It stays within the `data-ntn-min` / `data-ntn-max`
+years (a century either side of today otherwise). Locales whose heading isn't a Gregorian year in
+Latin digits (Thai, Persian, Arabic, Japanese-era) keep a plain heading.
 
 Set the initial range with `data-ntn-start` / `data-ntn-end`; bound it with `data-ntn-min` /
 `data-ntn-max`. Preset keys on `data-ntn-range`: a plain number (last N days, ending today),

@@ -183,8 +183,8 @@ try {
   console.log('Surface lighting (NTN-37)');
   const rim = rules.find((r) => /::after$/.test(r.sel) && /\.ntn-card\b/.test(r.sel) && /var\(--ntn-edge-light\)/.test(r.body));
   check(rim, 'raised surfaces draw a lit rim in --ntn-edge-light on ::after');
-  check(rim && /\.ntn-edge--shine/.test(rim.sel) && /\.ntn-edge--glow/.test(rim.sel) && /\.ntn-card--glow/.test(rim.sel),
-    'the rim skips the shine (its halos own ::after) and the glow (its own accent edge)');
+  check(rim && /\.ntn-edge--shine/.test(rim.sel) && !/--glow/.test(rim.sel),
+    'the rim skips the shine (its halos own ::after) but lights the glow too');
   check(rim && /inset:\s*calc\(-1 \* var\(--ntn-hairline\)\)/.test(rim.body),
     'the rim sits on the border, not inside it, so the hairline is not doubled');
   check(rim && /at var\(--ntn-edge-light-x\) var\(--ntn-edge-light-y\)/.test(rim.body),
@@ -269,6 +269,16 @@ try {
   const drClosed = rules.find((r) => r.sel === '.ntn-daterange__panel[popover]:not(:popover-open)');
   check(drClosed && /display:\s*none/.test(drClosed.body), 'a closed date-picker popover stays hidden despite the panel\'s display: flex');
   check(!rules.some((r) => /^\.ntn-card:has\(\.ntn-daterange__panel/.test(r.sel)), 'no card overflow workaround for the date panel (the top layer is never clipped)');
+  // NTN-55: a loading button's leading icon becomes ntn-spinner's ring, not a spinning glyph.
+  const btnSpin = rules.find((r) => r.sel === '.ntn-btn[data-loading] > i:first-child');
+  check(btnSpin && /border-radius:\s*50%/.test(btnSpin.body) && /font-size:\s*0/.test(btnSpin.body) && /animation:\s*ntn-spin\b/.test(btnSpin.body),
+    'data-loading turns the button\'s leading icon into a spinner ring');
+  check(!rules.some((r) => r.sel === '.ntn-btn[data-loading] i:first-child'), '...and the old spinning-glyph rule is gone');
+  // NTN-52: the heading's year reads as text; only the pointer says it can be clicked.
+  const drYear = rules.find((r) => r.sel === '.ntn-daterange__year');
+  check(drYear && /cursor:\s*pointer/.test(drYear.body) && /background:\s*transparent/.test(drYear.body) && /border:\s*1px solid transparent/.test(drYear.body),
+    'the date picker year is a transparent, borderless-looking input with a pointer cursor');
+  check(!rules.some((r) => /\.ntn-daterange__year:hover/.test(r.sel)), '...with no hover style');
   // NTN-20: the page scrolls. A scroll container here would capture every sticky inside the content.
   const appScroll = rules.find((r) => r.sel === '.ntn-app__scroll');
   check(appScroll && !/overflow/.test(appScroll.body), '.ntn-app__scroll is not a scroll container, so stickies inside it stick to the viewport');

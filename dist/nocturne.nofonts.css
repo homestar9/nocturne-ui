@@ -332,7 +332,7 @@
                             0 0 0 3px color-mix(in srgb, var(--ntn-accent-500) 22%, transparent);
   --ntn-ring-face-keyboard: 0 0 0 3px color-mix(in srgb, var(--ntn-accent-500) 40%, transparent);
   /* The lit top edge of a filled accent control */
-  --ntn-highlight-top: inset 0 1px 0 rgba(255,255,255,0.22);
+  --ntn-highlight-top: inset 0 1px 0 rgba(255,255,255,0.15);
   /* The colour a shine light fades through */
   --ntn-shine-color: var(--ntn-accent-500);
   /* The bright glint in the processing ring, just ahead of the accent stops */
@@ -1050,12 +1050,25 @@ i:is([class*=fa-], [data-icon], :empty) {
   width: 100%;
 }
 .ntn-btn[data-loading] {
-  /* Loading: set data-loading on the button; its leading icon spins. */
+  /* Loading: data-loading turns the leading icon into ntn-spinner's ring, sized to the icon.
+     Drawn in CSS, so any icon set works; the ring takes the button's ink, so it reads on every
+     variant (an accent head would vanish on a primary button). */
   pointer-events: none;
   opacity: 0.7;
 }
-.ntn-btn[data-loading] i:first-child {
-  animation: ntn-spin 800ms linear infinite;
+.ntn-btn[data-loading] > i:first-child {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  border-radius: 50%;
+  font-size: 0;
+  border: 2px solid color-mix(in oklab, currentColor 30%, transparent);
+  border-top-color: currentColor;
+  animation: ntn-spin 700ms linear infinite;
+}
+.ntn-btn--sm[data-loading] > i:first-child {
+  width: 14px;
+  height: 14px;
 }
 
 .ntn-icon-btn {
@@ -2583,6 +2596,48 @@ i:is([class*=fa-], [data-icon], :empty) {
   font-weight: var(--ntn-weight-semibold);
   color: var(--ntn-text-primary);
   letter-spacing: var(--ntn-tracking-heading);
+}
+.ntn-daterange__year {
+  /* The heading's year: a number input that reads as text, with nothing but the pointer to say
+     it can be clicked (the negative margin takes back its padding and border, so the digits sit
+     where text would). Focus turns it into a small field with its spin buttons. */
+  width: calc(4ch + 12px);
+  height: var(--ntn-target-min);
+  margin: 0 -6px;
+  padding: 0 5px;
+  border: 1px solid transparent;
+  border-radius: var(--ntn-radius-sm);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  appearance: textfield;
+}
+.ntn-daterange__year::-webkit-inner-spin-button, .ntn-daterange__year::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+.ntn-daterange__year:focus {
+  width: calc(4ch + 36px);
+  margin: 0;
+  outline: 0;
+  cursor: text;
+  appearance: auto;
+  background: var(--ntn-surface-1);
+  border-color: var(--ntn-border-default);
+  color-scheme: inherit;
+  border-color: var(--ntn-accent-500);
+  box-shadow: var(--ntn-ring-focus);
+}
+@media (forced-colors: active) {
+  .ntn-daterange__year:focus {
+    outline: 2px solid Highlight;
+  }
+}
+.ntn-daterange__year:focus::-webkit-inner-spin-button {
+  appearance: auto;
 }
 .ntn-daterange__nav {
   display: inline-flex;
@@ -4864,8 +4919,7 @@ i:is([class*=fa-], [data-icon], :empty) {
 }
 
 /* The lit rim: every raised surface catches the light along its top edge. It is the host's
-   ::after, so the shine (whose halos are the host's pseudo-elements) and the glow (which has
-   its own accent edge) go without. */
+   ::after, so the shine (whose halos are the host's pseudo-elements) go without. */
 :is(.ntn-card, .ntn-stat, .ntn-accordion, .ntn-modal, .ntn-edge, .ntn-frame, .ntn-frame__view):not(.ntn-edge--shine)::after {
   content: "";
   position: absolute;

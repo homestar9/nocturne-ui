@@ -70,6 +70,24 @@
   &__cal { width: 238px; flex: 0 0 auto; }
   &__head { display: flex; align-items: center; justify-content: space-between; gap: var(--ntn-space-2); height: 28px; margin-bottom: var(--ntn-space-2); }
   &__month { font-size: var(--ntn-font-size-sm); font-weight: var(--ntn-weight-semibold); color: var(--ntn-text-primary); letter-spacing: var(--ntn-tracking-heading); }
+  &__year {
+    /* The heading's year: a number input that reads as text, with nothing but the pointer to say
+       it can be clicked (the negative margin takes back its padding and border, so the digits sit
+       where text would). Focus turns it into a small field with its spin buttons. */
+    width: calc(4ch + 12px); height: var(--ntn-target-min); margin: 0 -6px; padding: 0 5px;
+    border: 1px solid transparent; border-radius: var(--ntn-radius-sm); background: transparent;
+    color: inherit; font: inherit; letter-spacing: inherit; font-variant-numeric: tabular-nums;
+    cursor: pointer; appearance: textfield;
+
+    &::-webkit-inner-spin-button, &::-webkit-outer-spin-button { appearance: none; margin: 0; }
+    &:focus {
+      width: calc(4ch + 36px); margin: 0; outline: 0; cursor: text; appearance: auto;
+      background: var(--ntn-surface-1); border-color: var(--ntn-border-default); color-scheme: inherit;
+      @include focus-accent;
+
+      &::-webkit-inner-spin-button { appearance: auto; }
+    }
+  }
   &__nav {
     display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; flex: 0 0 auto;
     border: 1px solid transparent; border-radius: var(--ntn-radius-sm); background: transparent;
