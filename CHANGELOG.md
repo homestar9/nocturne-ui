@@ -6,6 +6,13 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.17.1 — 2026-11-10
+
+### Fixed
+- **Sidebar brand meta line truncates.** `ntn-sidebar__meta` (the line under the brand name, often
+  a site address) now ends in an ellipsis like `ntn-sidebar__name`. A long value used to run out
+  of the brand box.
+
 ## 1.17.0 — 2026-11-09
 
 ### Added

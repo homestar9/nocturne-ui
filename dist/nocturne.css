@@ -1,4 +1,4 @@
-/*! Nocturne nocturne.css v1.17.0 — dark-first SaaS design system.
+/*! Nocturne nocturne.css v1.17.1 — dark-first SaaS design system.
  *  Compiled from src/*.scss. Edit files in src/, never in dist/. */
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@400..700&display=swap");
@@ -5635,6 +5635,9 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-sidebar__meta {
   font-size: var(--ntn-font-size-2xs);
   color: var(--ntn-text-disabled);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .ntn-sidebar__nav {
   display: flex;
