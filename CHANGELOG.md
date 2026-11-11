@@ -6,6 +6,15 @@ renamed or removed class names and tokens.
 
 ## [Unreleased]
 
+## 1.17.2 — 2026-11-10
+
+### Fixed
+- **A dropdown's first focus skips an enhanced select's hidden native control.** Opening a
+  dropdown or popover focuses its first focusable element, and `select:not([disabled])` also
+  matched the native `<select>` that an enhanced select (`data-ntn-select`) hides under its
+  trigger with `tabindex="-1"`. A panel whose first field was an enhanced select opened with
+  focus on an invisible control. That select is now skipped, so focus lands on its trigger.
+
 ## 1.17.1 — 2026-11-10
 
 ### Fixed
