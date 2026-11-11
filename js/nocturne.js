@@ -722,7 +722,7 @@ const ddRoot = (el) => (el && el.closest ? el.closest('[data-ntn-dropdown]') : n
 const ddPanel = (root) => root.querySelector(':scope > [popover], :scope > .ntn-menu, :scope > .ntn-popover, :scope > .ntn-select__panel');
 const ddTrigger = (root) => root.querySelector(':scope > [aria-haspopup], :scope > [data-ntn-dropdown-trigger]');
 const ddIsOpen = (root) => root.hasAttribute('data-ntn-open');
-const DD_FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+const DD_FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]):not([tabindex="-1"]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 /** Wires ARIA and the popover attribute once. Safe to call repeatedly. */
 function ddSetup(root) {
