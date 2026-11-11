@@ -24,7 +24,7 @@
   &__mark { @include brand-mark(28px, 16px); }
   &__brand-text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
   &__name { font-size: var(--ntn-font-size-sm); font-weight: var(--ntn-weight-semibold); color: var(--ntn-text-primary); @include truncate; }
-  &__meta { font-size: var(--ntn-font-size-2xs); color: var(--ntn-text-disabled); }
+  &__meta { font-size: var(--ntn-font-size-2xs); color: var(--ntn-text-disabled); @include truncate; }
   &__nav { display: flex; flex-direction: column; gap: var(--ntn-space-4); flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; }
   &__group { display: flex; flex-direction: column; gap: 2px; }
   &__section { margin: 0; padding: 4px 10px 6px; @include caps-label; }

@@ -1,4 +1,4 @@
-/*! Nocturne nocturne.nofonts.css v1.17.0 — dark-first SaaS design system.
+/*! Nocturne nocturne.nofonts.css v1.17.1 — dark-first SaaS design system.
  *  Compiled from src/*.scss. Edit files in src/, never in dist/. */
 
 /* Nocturne — full stylesheet: tokens + reset + components. */
@@ -5633,6 +5633,9 @@ i:is([class*=fa-], [data-icon], :empty) {
 .ntn-sidebar__meta {
   font-size: var(--ntn-font-size-2xs);
   color: var(--ntn-text-disabled);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .ntn-sidebar__nav {
   display: flex;
